@@ -1,4 +1,6 @@
 # e-chauffeur dashboard
+[![Build Status](https://travis-ci.org/fabnumdef/e-chauffeur_dashboard.svg?branch=master)](https://travis-ci.org/fabnumdef/e-chauffeur_dashboard) 
+[![Coverage Status](https://coveralls.io/repos/github/fabnumdef/e-chauffeur_dashboard/badge.svg?branch=master)](https://coveralls.io/github/fabnumdef/e-chauffeur_dashboard?branch=master)
 
 > e-chauffeur dashboard
 
