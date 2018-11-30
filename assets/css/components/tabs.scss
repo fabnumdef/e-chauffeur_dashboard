@@ -1,0 +1,9 @@
+.tabs {
+  a {
+    background: $white-20;
+    &.nuxt-link-active, &:hover {
+      background: $tabs-toggle-link-active-background-color;
+    }
+  }
+
+}
