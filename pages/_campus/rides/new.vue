@@ -1,5 +1,5 @@
 <template>
-  <form @submit="createRide">
+  <form @submit.prevent="createRide(ride)">
     <ec-field>
       <select
         v-model="ride.category"
@@ -34,11 +34,15 @@
           :value="i">{{ i }}</option>
       </select>
     </ec-field>
+    <ec-field>
+      <button type="submit">Envoyer</button>
+    </ec-field>
   </form>
 </template>
 <script>
 import searchPois from '~/components/form/search-pois.vue';
 import ecField from '~/components/form/field.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   asyncData: () => ({
@@ -53,9 +57,14 @@ export default {
     searchPois,
     ecField,
   },
+  computed: {
+    ...mapGetters({
+      campus: 'context/campus',
+    })
+  },
   methods: {
-    createRide() {
-
+    createRide(ride) {
+      this.$api.rides(this.campus).postRide(ride);
     },
   },
 };
