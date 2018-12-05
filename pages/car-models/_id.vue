@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nuxt-child :car="car"/>
+    <nuxt-child :carModel="carModel"/>
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 export default {
   async asyncData({ params, $api }) {
     return {
-      car: (await $api.cars.getCar(params.id, 'id,email')).data,
+      carModel: (await $api.carModels.getCarModel(params.id, 'id,label')).data,
     };
   },
 };
