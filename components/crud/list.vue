@@ -17,12 +17,8 @@
           :key="key">{{ row[key] }}</td>
         <td v-if="hasAction">
           <nuxt-link
-            v-if="routeActionEdit"
-            :to="{
-              name: routeActionEdit,
-              params: { id: row.id },
-              query: { revision: row.revision }
-            }"
+            v-if="!!actionEdit"
+            :to="routeActionEdit(row)"
             class="button is-primary"
           >
             <span class="icon is-small">
@@ -32,11 +28,6 @@
           </nuxt-link>
           <button
             v-if="$listeners['action-remove']"
-            :to="{
-              name: routeActionEdit,
-              params: { id: row.id },
-              query: { revision: row.revision }
-            }"
             class="button is-danger"
             @click="confirmRemove(row)"
           >
@@ -62,6 +53,7 @@
 </template>
 
 <script>
+  import merge from 'lodash.merge';
 import ecPagination from '../pagination.vue';
 
 export default {
@@ -113,10 +105,22 @@ export default {
       return Object.keys(this.columns);
     },
     routeActionEdit() {
-      if (!this.actionEdit) {
-        return null;
+      return (row) => {
+        if (!this.actionEdit) {
+          return null;
+        }
+        let route = {};
+        if (typeof this.actionEdit === 'string') {
+          route = {
+            name: this.actionEdit,
+          }
+        } else {
+          route = this.actionEdit;
+        }
+          return merge(route, {
+            params: { id: row.id },
+          });
       }
-      return typeof this.actionEdit === 'object' ? this.actionEdit.route : this.actionEdit;
     },
     hasAction() {
       return this.routeActionEdit || (this.$listeners && this.$listeners['action-remove']);
