@@ -12,11 +12,17 @@ export default axios => ({
     );
   },
 
-  async getRoles(mask) {
+  async getRoles(mask, { search = null } = {}) {
+    const params = { mask };
+
+    if (search) {
+      params.search = search;
+    }
+
     const response = await axios.get(
       `/${ENTITY}`,
       {
-        params: { mask },
+        params,
         headers: {
           Range: 'role=-10',
         },

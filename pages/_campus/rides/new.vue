@@ -60,7 +60,7 @@ export default {
   computed: {
     ...mapGetters({
       campus: 'context/campus',
-    })
+    }),
   },
   methods: {
     createRide(ride) {

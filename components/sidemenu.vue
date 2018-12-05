@@ -32,6 +32,9 @@
         <li>
           <nuxt-link :to="{ name: 'pois' }">POIs</nuxt-link>
         </li>
+        <li>
+          <nuxt-link :to="{ name: 'roles' }">Roles</nuxt-link>
+        </li>
       </ul>
     </div>
     <div>

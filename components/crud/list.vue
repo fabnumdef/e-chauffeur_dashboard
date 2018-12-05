@@ -53,7 +53,7 @@
 </template>
 
 <script>
-  import merge from 'lodash.merge';
+import merge from 'lodash.merge';
 import ecPagination from '../pagination.vue';
 
 export default {
@@ -113,14 +113,14 @@ export default {
         if (typeof this.actionEdit === 'string') {
           route = {
             name: this.actionEdit,
-          }
+          };
         } else {
           route = this.actionEdit;
         }
-          return merge(route, {
-            params: { id: row.id },
-          });
-      }
+        return merge(route, {
+          params: { id: row.id },
+        });
+      };
     },
     hasAction() {
       return this.routeActionEdit || (this.$listeners && this.$listeners['action-remove']);

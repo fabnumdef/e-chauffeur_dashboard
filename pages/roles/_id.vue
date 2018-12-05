@@ -9,7 +9,7 @@
 export default {
   async asyncData({ params, $api }) {
     return {
-      role: (await $api.roles.getRole(params.id, 'id,email')).data,
+      role: (await $api.roles.getRole(params.id, 'id,inherit,rights,campuses')).data,
     };
   },
 };

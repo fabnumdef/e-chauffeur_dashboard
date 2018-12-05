@@ -16,13 +16,17 @@
     </header>
     <form @submit.prevent="edit(role)">
       <ec-field
-        v-if="!id"
         label="ID"
         field-id="id">
         <input
           id="id"
+          :disabled="!!id"
           v-model="role.id"
           class="input">
+      </ec-field>
+
+      <ec-field>
+        <search-roles v-model="role.inherit" />
       </ec-field>
 
       <ec-field>
@@ -59,6 +63,7 @@
 <script>
 import ecField from '~/components/form/field.vue';
 import searchRights from '~/components/form/search-rights.vue';
+import searchRoles from '~/components/form/search-roles.vue';
 import searchCampuses from '~/components/form/search-campuses.vue';
 
 export default {
@@ -66,6 +71,7 @@ export default {
     ecField,
     searchRights,
     searchCampuses,
+    searchRoles,
   },
   props: {
     role: {
@@ -80,9 +86,9 @@ export default {
     async edit(role) {
       let data = {};
       if (this.id) {
-        ({ data } = (await this.$api.roles.patchRole(role.id, role, 'id')));
+        ({ data } = (await this.$api.roles.patchRole(role.id, role, 'id,inherit,rights,campuses')));
       } else {
-        ({ data } = (await this.$api.roles.postRole(role, 'id')));
+        ({ data } = (await this.$api.roles.postRole(role, 'id,inherit,rights,campuses')));
       }
 
       this.$router.push({

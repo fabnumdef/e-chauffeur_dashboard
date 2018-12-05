@@ -1,7 +1,5 @@
 import merge from 'lodash.merge';
-import { computePagination } from './helpers';
 
-const ENTITY = 'ride';
 const ENTITY_PLURAL = 'rides';
 
 export default axios => (campus, mask) => {
