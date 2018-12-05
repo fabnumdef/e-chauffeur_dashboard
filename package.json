@@ -19,6 +19,7 @@
     "@nuxtjs/toast": "^3.0.1",
     "cross-env": "^5.2.0",
     "lodash.debounce": "^4.0.8",
+    "lodash.merge": "^4.6.1",
     "lodash.range": "^3.2.0",
     "node-sass": "^4.10.0",
     "nuxt": "^2.3.1",
@@ -38,6 +39,8 @@
     "eslint-plugin-vue": "^4.0.0"
   },
   "peerDependencies": {
-    "vue": "2.x"
+    "vue": "2.x",
+    "vuex": "3.x",
+    "qs": "6.x"
   }
 }

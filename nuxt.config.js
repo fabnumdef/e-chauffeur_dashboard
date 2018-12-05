@@ -39,7 +39,9 @@ module.exports = {
   */
   plugins: [
     '~/api',
+    '~/plugins/axios.js',
     '~/plugins/multiselect.js',
+    '~/plugins/context.js',
   ],
 
   /*
