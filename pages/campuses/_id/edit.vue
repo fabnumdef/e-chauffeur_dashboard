@@ -2,13 +2,13 @@
   <main>
     <header>
       <h1
-        v-if="campus.id"
-        class="title">Campus #{{ campus.id }} : {{ campus.name }}</h1>
+        v-if="id"
+        class="title">Campus #{{ id }} : {{ campus.name }}</h1>
       <h1
         v-else
         class="title">Campus</h1>
       <h2
-        v-if="campus.id"
+        v-if="id"
         class="subtitle">Edit</h2>
       <h2
         v-else
@@ -16,16 +16,26 @@
     </header>
     <form @submit.prevent="edit(campus)">
       <ec-field
+        label="ID"
+        field-id="id">
+        <input
+          :disabled="!!id"
+          id="id"
+          v-model="campus.id"
+          class="input">
+      </ec-field>
+
+      <ec-field
         label="Name"
         field-id="name">
         <input
           id="name"
           v-model="campus.name"
-          class="input" >
+          class="input">
       </ec-field>
 
       <button
-        v-if="campus.id"
+        v-if="id"
         type="submit"
         class="button is-primary">
         <span class="icon is-small">
@@ -60,10 +70,13 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return { id: this.campus.id };
+  },
   methods: {
     async edit(campus) {
       let data = {};
-      if (campus.id) {
+      if (this.id) {
         ({ data } = (await this.$api.campuses.patchCampus(campus.id, campus, 'id,name')));
       } else {
         ({ data } = (await this.$api.campuses.postCampus(campus, 'id,name')));
