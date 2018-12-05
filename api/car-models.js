@@ -5,7 +5,7 @@ const ENTITY_PLURAL = 'car-models';
 
 export default axios => ({
   async getCarModels(mask, { search = null } = {}) {
-    const params = {mask};
+    const params = { mask };
     if (search) {
       params.search = search;
     }

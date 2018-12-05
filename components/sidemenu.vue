@@ -36,21 +36,22 @@
     </div>
     <div>
       Current user :
-      {{}}
+      {{ $auth.user }}
     </div>
     <div>
-      Current campus : {{campus}}
+      Current campus : {{ campus }}
     </div>
   </aside>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
-  export default {
-    computed: {
-      ...mapGetters({ campus: 'context/campus' }),
-    },
-  };
+import { mapGetters } from 'vuex';
+
+export default {
+  computed: {
+    ...mapGetters({ campus: 'context/campus' }),
+  },
+};
 </script>
 
 <style lang="scss" scoped>
