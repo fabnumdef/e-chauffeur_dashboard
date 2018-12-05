@@ -1,57 +1,68 @@
+import merge from 'lodash.merge';
 import { computePagination } from './helpers';
 
 const ENTITY = 'car';
 const ENTITY_PLURAL = 'cars';
 
-export default axios => ({
-  async getCars(mask) {
-    const response = await axios.get(
-      `/${ENTITY_PLURAL}`,
-      {
-        params: { mask },
-        headers: {
-          Range: `${ENTITY}=-10`,
+export default axios => (campus, mask) => {
+  const filters = {};
+  if (campus) {
+    filters.campus = campus.id;
+  }
+  const params = {
+    mask,
+    filters,
+  };
+  return {
+    async getCars() {
+      const response = await axios.get(
+        `/${ENTITY_PLURAL}`,
+        {
+          params,
+          headers: {
+            Range: `${ENTITY}=-10`,
+          },
         },
-      },
-    );
+      );
 
-    response.pagination = computePagination(response)[ENTITY];
+      response.pagination = computePagination(response)[ENTITY];
 
-    return response;
-  },
+      return response;
+    },
 
-  getCar(id, mask) {
-    return axios.get(
-      `/${ENTITY_PLURAL}/${id}`,
-      {
-        params: { mask },
-      },
-    );
-  },
+    getCar(id) {
+      return axios.get(
+        `/${ENTITY_PLURAL}/${id}`,
+        {
+          params,
+        },
+      );
+    },
 
-  patchCar(id, data, mask) {
-    return axios.patch(
-      `/${ENTITY_PLURAL}/${id}`,
-      data,
-      {
-        params: { mask },
-      },
-    );
-  },
+    patchCar(id, data) {
+      return axios.patch(
+        `/${ENTITY_PLURAL}/${id}`,
+        merge(data, { campus }),
+        {
+          params,
+        },
+      );
+    },
 
-  postCar(data, mask) {
-    return axios.post(
-      `/${ENTITY_PLURAL}`,
-      data,
-      {
-        params: { mask },
-      },
-    );
-  },
+    postCar(data) {
+      return axios.post(
+        `/${ENTITY_PLURAL}`,
+        merge(data, { campus }),
+        {
+          params,
+        },
+      );
+    },
 
-  deleteCar(id) {
-    return axios.delete(
-      `/${ENTITY_PLURAL}/${id}`,
-    );
-  },
-});
+    deleteCar(id) {
+      return axios.delete(
+        `/${ENTITY_PLURAL}/${id}`,
+      );
+    },
+  };
+};

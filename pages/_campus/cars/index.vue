@@ -4,7 +4,7 @@
       <h1 class="title">Cars</h1>
       <div class="options">
         <nuxt-link
-          :to="{name: 'cars-new'}"
+          :to="campusLink('cars-new')"
           class="button is-success">
           <span class="icon is-small">
             <fa-icon :icon="['fas', 'plus']" />
@@ -14,12 +14,12 @@
       </div>
     </header>
     <ec-list
-      :columns="{ id: 'ID', inherit: 'Héritage' }"
+      :columns="columns"
       :data="cars"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
-      action-edit="cars-id-edit"
+      :action-edit="campusLink('cars-id-edit')"
       @action-remove="deleteCar"
     />
 
@@ -28,23 +28,35 @@
 
 <script>
 import ecList from '~/components/crud/list.vue';
+import { mapGetters } from 'vuex';
+
+const columns = { id: 'ID', label: 'Label' };
 
 export default {
   watchQuery: ['offset'],
   components: {
     ecList,
   },
-  async asyncData({ $api }) {
-    const { data, pagination } = await $api.cars.getCars('id,email');
+  async asyncData({ params, $api }) {
+    const { data, pagination } = await $api.cars({ id: params.campus }, Object.keys(columns).join(',')).getCars();
     return {
       cars: data,
       pagination,
     };
   },
+  computed: {
+    columns: () => columns,
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
+    CarsAPI() {
+      return this.$api.cars(this.campus, Object.keys(columns).join(','));
+    },
+  },
   methods: {
     async deleteCar({ id }) {
-      await this.$api.cars.deleteCar(id);
-      const updatedList = await this.$api.cars.getCars('id,email');
+      await this.CarsAPI.deleteCar(id);
+      const updatedList = await this.CarsAPI.getCars();
       this.cars = updatedList.data;
       this.pagination = updatedList.pagination;
     },

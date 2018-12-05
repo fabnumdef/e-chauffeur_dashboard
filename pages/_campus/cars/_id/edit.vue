@@ -16,23 +16,30 @@
     </header>
     <form @submit.prevent="edit(car)">
       <ec-field
-        v-if="!id"
-        label="ID"
+        label="Licence plate"
         field-id="id">
         <input
           id="id"
+          :disabled="!!id"
           v-model="car.id"
           class="input">
       </ec-field>
-
-      <ec-field>
-        <search-rights v-model="car.rights" />
+      <ec-field
+        label="Label"
+        field-id="label">
+        <input
+          id="label"
+          v-model="car.label"
+          type="text"
+          class="input">
       </ec-field>
-
-      <ec-field>
-        <search-campuses v-model="car.campuses" />
+      <ec-field
+        label="Model"
+        field-id="model">
+        <search-car-models
+          v-model="car.model"
+          placeholder="Modèle"/>
       </ec-field>
-
       <button
         v-if="id"
         type="submit"
@@ -60,9 +67,14 @@
 import ecField from '~/components/form/field.vue';
 import searchRights from '~/components/form/search-rights.vue';
 import searchCampuses from '~/components/form/search-campuses.vue';
+import { mapGetters } from 'vuex';
+import SearchCarModels from '~/components/form/search-car-models';
+
+const EDITABLE_FIELDS = ['id', 'label', 'model'];
 
 export default {
   components: {
+    SearchCarModels,
     ecField,
     searchRights,
     searchCampuses,
@@ -76,19 +88,26 @@ export default {
   data() {
     return { id: this.car.id };
   },
+  computed: {
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
+    CarsAPI() {
+      return this.$api.cars(this.campus, EDITABLE_FIELDS.join(','));
+    },
+  },
   methods: {
     async edit(car) {
       let data = {};
       if (this.id) {
-        ({ data } = (await this.$api.cars.patchCar(car.id, car, 'id')));
+        ({ data } = (await this.CarsAPI.patchCar(car.id, car)));
       } else {
-        ({ data } = (await this.$api.cars.postCar(car, 'id')));
+        ({ data } = (await this.CarsAPI.postCar(car)));
       }
 
-      this.$router.push({
-        name: 'cars-id-edit',
+      this.$router.push(this.$context.buildCampusLink('cars-id-edit', {
         params: { id: data.id },
-      });
+      }));
     },
   },
 };
