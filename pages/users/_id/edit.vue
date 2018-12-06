@@ -34,6 +34,10 @@
           class="input">
       </ec-field>
 
+      <ec-field>
+        <search-roles v-model="user.roles" />
+      </ec-field>
+
       <button
         v-if="user.id"
         type="submit"
@@ -59,10 +63,12 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
+import searchRoles from '~/components/form/search-roles.vue';
 
 export default {
   components: {
     ecField,
+    searchRoles,
   },
   props: {
     user: {

@@ -20,8 +20,8 @@
         <li>
           <nuxt-link :to="{ name: 'campuses' }">Bases</nuxt-link>
         </li>
-        <li v-if="hasCampus">
-          <nuxt-link :to="campusLink('users')">Utilisateurs</nuxt-link>
+        <li>
+          <nuxt-link :to="{ name: 'users' }">Utilisateurs</nuxt-link>
         </li>
         <li v-if="hasCampus">
           <nuxt-link :to="campusLink('cars')">Véhicules</nuxt-link>
