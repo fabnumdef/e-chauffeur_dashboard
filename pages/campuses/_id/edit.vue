@@ -19,8 +19,8 @@
         label="ID"
         field-id="id">
         <input
-          :disabled="!!id"
           id="id"
+          :disabled="!!id"
           v-model="campus.id"
           class="input">
       </ec-field>

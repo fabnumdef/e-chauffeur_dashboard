@@ -16,10 +16,10 @@
     </header>
     <form @submit.prevent="edit(poi)">
       <ec-field
-        v-if="!id"
         label="ID"
         field-id="id">
         <input
+          :disabled="!!id"
           id="id"
           v-model="poi.id"
           class="input">
