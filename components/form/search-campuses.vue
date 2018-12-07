@@ -1,5 +1,5 @@
 <template>
-  <vue-multiselect
+  <VueMultiselect
     :id="id"
     :options="campuses"
     :value="value"

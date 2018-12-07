@@ -5,6 +5,7 @@ import cars from './cars';
 import carModels from './car-models';
 import pois from './pois';
 import rides from './rides';
+import jwt from './jwt';
 
 export default function (ctx, inject) {
   const api = {
@@ -15,6 +16,7 @@ export default function (ctx, inject) {
     carModels: carModels(ctx.$axios),
     pois: pois(ctx.$axios),
     rides: rides(ctx.$axios),
+    jwt: jwt(ctx.$axios),
   };
   ctx.$api = api;
   inject('api', api);

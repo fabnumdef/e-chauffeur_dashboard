@@ -4,35 +4,44 @@
       <tr>
         <th
           v-for="label in columnLabels"
-          :key="label">{{ label }}</th>
-        <th v-if="hasAction">Actions</th>
+          :key="label"
+        >
+          {{ label }}
+        </th>
+        <th v-if="hasAction">
+          Actions
+        </th>
       </tr>
     </thead>
     <tbody>
       <tr
         v-for="row in data"
-        :key="row[id]">
+        :key="row[id]"
+      >
         <td
           v-for="key in columnKeys"
-          :key="key">{{ row[key] }}</td>
+          :key="key"
+        >
+          {{ row[key] }}
+        </td>
         <td v-if="hasAction">
-          <nuxt-link
+          <NuxtLink
             v-if="!!actionEdit"
             :to="routeActionEdit(row)"
             class="button is-primary"
           >
             <span class="icon is-small">
-              <fa-icon :icon="['fas', 'edit']" />
+              <FaIcon :icon="['fas', 'edit']" />
             </span>
             <span>Edit</span>
-          </nuxt-link>
+          </NuxtLink>
           <button
             v-if="$listeners['action-remove']"
             class="button is-danger"
             @click="confirmRemove(row)"
           >
             <span class="icon is-small">
-              <fa-icon :icon="['fas', 'trash']" />
+              <FaIcon :icon="['fas', 'trash']" />
             </span>
             <span>Remove</span>
           </button>
@@ -42,10 +51,11 @@
     <tfoot v-if="data.length > 0">
       <tr>
         <td :colspan="columnNumber">
-          <ec-pagination
+          <EcPagination
             :total="paginationTotal"
             :offset="paginationOffset"
-            :per-page="paginationPerPage"/>
+            :per-page="paginationPerPage"
+          />
         </td>
       </tr>
     </tfoot>

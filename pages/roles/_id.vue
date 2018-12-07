@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nuxt-child :role="role"/>
+    <NuxtChild :role="role" />
   </div>
 </template>
 

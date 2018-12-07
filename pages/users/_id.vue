@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nuxt-child :user="user"/>
+    <NuxtChild :user="user" />
   </div>
 </template>
 

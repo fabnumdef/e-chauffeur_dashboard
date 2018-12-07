@@ -8,7 +8,8 @@
           type="number"
           placeholder="Longitude"
           class="input"
-          @input="input">
+          @input="input"
+        >
       </p>
       <p class="control">
         <input
@@ -17,11 +18,10 @@
           type="number"
           placeholder="Latitude"
           class="input"
-          @input="input">
+          @input="input"
+        >
       </p>
     </div>
-
-
   </div>
 </template>
 

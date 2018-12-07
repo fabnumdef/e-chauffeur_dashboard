@@ -1,7 +1,7 @@
 <template>
-  <vue-multiselect
-    :placeholder="placeholder"
+  <VueMultiselect
     :id="id"
+    :placeholder="placeholder"
     :options="carModels"
     :value="value"
     track-by="id"

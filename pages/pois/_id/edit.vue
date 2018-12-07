@@ -3,51 +3,70 @@
     <header>
       <h1
         v-if="id"
-        class="title">Poi #{{ id }}</h1>
+        class="title"
+      >
+        Poi #{{ id }}
+      </h1>
       <h1
         v-else
-        class="title">Poi</h1>
+        class="title"
+      >
+        Poi
+      </h1>
       <h2
         v-if="id"
-        class="subtitle">Edit</h2>
+        class="subtitle"
+      >
+        Edit
+      </h2>
       <h2
         v-else
-        class="subtitle">New</h2>
+        class="subtitle"
+      >
+        New
+      </h2>
     </header>
     <form @submit.prevent="edit(poi)">
-      <ec-field
+      <EcField
         label="ID"
-        field-id="id">
+        field-id="id"
+      >
         <input
-          :disabled="!!id"
           id="id"
           v-model="poi.id"
-          class="input">
-      </ec-field>
+          :disabled="!!id"
+          class="input"
+        >
+      </EcField>
 
-      <ec-field
+      <EcField
         label="Label"
-        field-id="label">
+        field-id="label"
+      >
         <input
           id="label"
           v-model="poi.label"
-          class="input">
-      </ec-field>
+          class="input"
+        >
+      </EcField>
 
-      <ec-field
+      <EcField
         label="Coordonnées GPS"
-        field-id="location">
-        <ec-gps-point
+        field-id="location"
+      >
+        <EcGpsPoint
           id="location"
-          v-model="poi.location" />
-      </ec-field>
+          v-model="poi.location"
+        />
+      </EcField>
 
       <button
         v-if="id"
         type="submit"
-        class="button is-primary">
+        class="button is-primary"
+      >
         <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
+          <FaIcon :icon="['fas', 'save']" />
         </span>
         <span>Save</span>
       </button>
@@ -55,9 +74,10 @@
       <button
         v-else
         type="submit"
-        class="button is-primary">
+        class="button is-primary"
+      >
         <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
+          <FaIcon :icon="['fas', 'plus']" />
         </span>
         <span>Create</span>
       </button>

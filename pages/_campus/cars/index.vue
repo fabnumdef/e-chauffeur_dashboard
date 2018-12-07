@@ -1,19 +1,22 @@
 <template>
   <main>
     <header class="with-options">
-      <h1 class="title">Cars</h1>
+      <h1 class="title">
+        Cars
+      </h1>
       <div class="options">
-        <nuxt-link
+        <NuxtLink
           :to="campusLink('cars-new')"
-          class="button is-success">
+          class="button is-success"
+        >
           <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
+            <FaIcon :icon="['fas', 'plus']" />
           </span>
           <span>Create</span>
-        </nuxt-link>
+        </NuxtLink>
       </div>
     </header>
-    <ec-list
+    <EcList
       :columns="columns"
       :data="cars"
       :pagination-offset="pagination.offset"
@@ -22,7 +25,6 @@
       :action-edit="campusLink('cars-id-edit')"
       @action-remove="deleteCar"
     />
-
   </main>
 </template>
 

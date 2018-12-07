@@ -3,49 +3,68 @@
     <header>
       <h1
         v-if="id"
-        class="title">Car #{{ id }}</h1>
+        class="title"
+      >
+        Car #{{ id }}
+      </h1>
       <h1
         v-else
-        class="title">Car</h1>
+        class="title"
+      >
+        Car
+      </h1>
       <h2
         v-if="id"
-        class="subtitle">Edit</h2>
+        class="subtitle"
+      >
+        Edit
+      </h2>
       <h2
         v-else
-        class="subtitle">New</h2>
+        class="subtitle"
+      >
+        New
+      </h2>
     </header>
     <form @submit.prevent="edit(car)">
-      <ec-field
+      <EcField
         label="Licence plate"
-        field-id="id">
+        field-id="id"
+      >
         <input
           id="id"
-          :disabled="!!id"
           v-model="car.id"
-          class="input">
-      </ec-field>
-      <ec-field
+          :disabled="!!id"
+          class="input"
+        >
+      </EcField>
+      <EcField
         label="Label"
-        field-id="label">
+        field-id="label"
+      >
         <input
           id="label"
           v-model="car.label"
           type="text"
-          class="input">
-      </ec-field>
-      <ec-field
+          class="input"
+        >
+      </EcField>
+      <EcField
         label="Model"
-        field-id="model">
-        <search-car-models
+        field-id="model"
+      >
+        <SearchCarModels
           v-model="car.model"
-          placeholder="Modèle"/>
-      </ec-field>
+          placeholder="Modèle"
+        />
+      </EcField>
       <button
         v-if="id"
         type="submit"
-        class="button is-primary">
+        class="button is-primary"
+      >
         <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
+          <FaIcon :icon="['fas', 'save']" />
         </span>
         <span>Save</span>
       </button>
@@ -53,9 +72,10 @@
       <button
         v-else
         type="submit"
-        class="button is-primary">
+        class="button is-primary"
+      >
         <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
+          <FaIcon :icon="['fas', 'plus']" />
         </span>
         <span>Create</span>
       </button>
@@ -65,8 +85,6 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
-import searchRights from '~/components/form/search-rights.vue';
-import searchCampuses from '~/components/form/search-campuses.vue';
 import { mapGetters } from 'vuex';
 import SearchCarModels from '~/components/form/search-car-models';
 
@@ -76,8 +94,6 @@ export default {
   components: {
     SearchCarModels,
     ecField,
-    searchRights,
-    searchCampuses,
   },
   props: {
     car: {

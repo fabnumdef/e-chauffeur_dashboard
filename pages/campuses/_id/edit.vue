@@ -3,43 +3,60 @@
     <header>
       <h1
         v-if="id"
-        class="title">Campus #{{ id }} : {{ campus.name }}</h1>
+        class="title"
+      >
+        Campus #{{ id }} : {{ campus.name }}
+      </h1>
       <h1
         v-else
-        class="title">Campus</h1>
+        class="title"
+      >
+        Campus
+      </h1>
       <h2
         v-if="id"
-        class="subtitle">Edit</h2>
+        class="subtitle"
+      >
+        Edit
+      </h2>
       <h2
         v-else
-        class="subtitle">New</h2>
+        class="subtitle"
+      >
+        New
+      </h2>
     </header>
     <form @submit.prevent="edit(campus)">
-      <ec-field
+      <EcField
         label="ID"
-        field-id="id">
+        field-id="id"
+      >
         <input
           id="id"
-          :disabled="!!id"
           v-model="campus.id"
-          class="input">
-      </ec-field>
+          :disabled="!!id"
+          class="input"
+        >
+      </EcField>
 
-      <ec-field
+      <EcField
         label="Name"
-        field-id="name">
+        field-id="name"
+      >
         <input
           id="name"
           v-model="campus.name"
-          class="input">
-      </ec-field>
+          class="input"
+        >
+      </EcField>
 
       <button
         v-if="id"
         type="submit"
-        class="button is-primary">
+        class="button is-primary"
+      >
         <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
+          <FaIcon :icon="['fas', 'save']" />
         </span>
         <span>Save</span>
       </button>
@@ -47,9 +64,10 @@
       <button
         v-else
         type="submit"
-        class="button is-primary">
+        class="button is-primary"
+      >
         <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
+          <FaIcon :icon="['fas', 'plus']" />
         </span>
         <span>Create</span>
       </button>

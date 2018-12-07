@@ -1,42 +1,61 @@
 <template>
   <form @submit.prevent="createRide(ride)">
-    <ec-field>
+    <EcField>
       <select
         v-model="ride.category"
-        class="select">
-        <option value="std">Standard</option>
-        <option value="opex">OPEX</option>
-        <option value="fret">Fret</option>
-        <option value="health">Santé</option>
+        class="select"
+      >
+        <option value="std">
+          Standard
+        </option>
+        <option value="opex">
+          OPEX
+        </option>
+        <option value="fret">
+          Fret
+        </option>
+        <option value="health">
+          Santé
+        </option>
       </select>
-    </ec-field>
-    <ec-field>
-      <fa-icon
-        icon="map-marker-alt" />
-      <search-pois
+    </EcField>
+    <EcField>
+      <FaIcon
+        icon="map-marker-alt"
+      />
+      <SearchPois
         v-model="ride.from"
-        placeholder="Départ"/>
-    </ec-field>
-    <ec-field>
-      <fa-icon
-        icon="flag" />
-      <search-pois
+        placeholder="Départ"
+      />
+    </EcField>
+    <EcField>
+      <FaIcon
+        icon="flag"
+      />
+      <SearchPois
         v-model="ride.to"
-        placeholder="Arrivée"/>
-    </ec-field>
-    <ec-field>
+        placeholder="Arrivée"
+      />
+    </EcField>
+    <EcField>
       <select
         v-model="ride.passengers"
-        class="select">
+        class="select"
+      >
         <option
           v-for="i in 8"
           :key="i"
-          :value="i">{{ i }}</option>
+          :value="i"
+        >
+          {{ i }}
+        </option>
       </select>
-    </ec-field>
-    <ec-field>
-      <button type="submit">Envoyer</button>
-    </ec-field>
+    </EcField>
+    <EcField>
+      <button type="submit">
+        Envoyer
+      </button>
+    </EcField>
   </form>
 </template>
 <script>

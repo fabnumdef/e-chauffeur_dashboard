@@ -1,13 +1,18 @@
 <template>
   <div
     :class="{'is-horizontal': isHorizontal}"
-    class="field">
+    class="field"
+  >
     <div
       v-if="label"
-      class="field-label is-normal">
+      class="field-label is-normal"
+    >
       <label
         :for="fieldId"
-        class="label">{{ label }}</label>
+        class="label"
+      >
+        {{ label }}
+      </label>
     </div>
     <div class="field-body">
       <div class="field">

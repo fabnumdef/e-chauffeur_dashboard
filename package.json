@@ -22,7 +22,7 @@
     "lodash.merge": "^4.6.1",
     "lodash.range": "^3.2.0",
     "node-sass": "^4.10.0",
-    "nuxt": "^2.3.1",
+    "nuxt": "^2.3.4",
     "nuxt-leaflet": "0.0.10",
     "qonfucius-nuxt-bulma": "0.0.3",
     "qonfucius-nuxt-fontawesome": "^1.0.1",
@@ -36,7 +36,7 @@
     "eslint-import-resolver-webpack": "^0.10.1",
     "eslint-loader": "^2.0.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-vue": "^4.0.0"
+    "eslint-plugin-vue": "^5.0.0"
   },
   "peerDependencies": {
     "vue": "2.x",

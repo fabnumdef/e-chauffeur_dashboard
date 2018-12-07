@@ -2,38 +2,60 @@
   <aside>
     <div class="menu">
       <p class="menu-label">
-        <nuxt-link :to="{ name: 'index' }">E-chauffeur</nuxt-link>
+        <NuxtLink :to="{ name: 'index' }">
+          E-chauffeur
+        </NuxtLink>
       </p>
       <ul class="menu-list">
         <li>
-          <nuxt-link :to="{ name: 'dashboard' }">Dashboard</nuxt-link>
+          <NuxtLink :to="{ name: 'dashboard' }">
+            Dashboard
+          </NuxtLink>
         </li>
         <li v-if="hasCampus">
-          <nuxt-link :to="campusLink('rides-drivers')">Courses</nuxt-link>
+          <NuxtLink :to="campusLink('rides-drivers')">
+            Courses
+          </NuxtLink>
         </li>
         <li>
-          <nuxt-link :to="{ name: 'history' }">Historique</nuxt-link>
+          <NuxtLink :to="{ name: 'history' }">
+            Historique
+          </NuxtLink>
         </li>
         <li v-if="hasCampus">
-          <nuxt-link :to="campusLink('planning')">Planning</nuxt-link>
+          <NuxtLink :to="campusLink('planning')">
+            Planning
+          </NuxtLink>
         </li>
         <li>
-          <nuxt-link :to="{ name: 'campuses' }">Bases</nuxt-link>
+          <NuxtLink :to="{ name: 'campuses' }">
+            Bases
+          </NuxtLink>
         </li>
         <li>
-          <nuxt-link :to="{ name: 'users' }">Utilisateurs</nuxt-link>
+          <NuxtLink :to="{ name: 'users' }">
+            Utilisateurs
+          </NuxtLink>
         </li>
         <li v-if="hasCampus">
-          <nuxt-link :to="campusLink('cars')">Véhicules</nuxt-link>
+          <NuxtLink :to="campusLink('cars')">
+            Véhicules
+          </NuxtLink>
         </li>
         <li>
-          <nuxt-link :to="{name: 'car-models'}">Modèles de véhicules</nuxt-link>
+          <NuxtLink :to="{name: 'car-models'}">
+            Modèles de véhicules
+          </NuxtLink>
         </li>
         <li>
-          <nuxt-link :to="{ name: 'pois' }">POIs</nuxt-link>
+          <NuxtLink :to="{ name: 'pois' }">
+            POIs
+          </NuxtLink>
         </li>
         <li>
-          <nuxt-link :to="{ name: 'roles' }">Roles</nuxt-link>
+          <NuxtLink :to="{ name: 'roles' }">
+            Roles
+          </NuxtLink>
         </li>
       </ul>
     </div>

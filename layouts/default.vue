@@ -1,8 +1,8 @@
 <template>
   <div class="columns">
-    <ec-sidemenu class="column is-narrow is-menu" />
-    <nuxt class="column" />
-    <ec-map class="column is-map" />
+    <EcSidemenu class="column is-narrow is-menu" />
+    <Nuxt class="column" />
+    <EcMap class="column is-map" />
   </div>
 </template>
 <script>

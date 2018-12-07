@@ -3,47 +3,64 @@
     <header>
       <h1
         v-if="user.id"
-        class="title">User #{{ user.id }} : {{ user.email }}</h1>
+        class="title"
+      >
+        User #{{ user.id }} : {{ user.email }}
+      </h1>
       <h1
         v-else
-        class="title">User</h1>
+        class="title"
+      >
+        User
+      </h1>
       <h2
         v-if="user.id"
-        class="subtitle">Edit</h2>
+        class="subtitle"
+      >
+        Edit
+      </h2>
       <h2
         v-else
-        class="subtitle">New</h2>
+        class="subtitle"
+      >
+        New
+      </h2>
     </header>
     <form @submit.prevent="edit(user)">
-      <ec-field
+      <EcField
         label="Email"
-        field-id="email">
+        field-id="email"
+      >
         <input
           id="email"
           v-model="user.email"
-          class="input">
-      </ec-field>
+          class="input"
+        >
+      </EcField>
 
-      <ec-field
+      <EcField
         label="Password"
-        field-id="password">
+        field-id="password"
+      >
         <input
           id="password"
           v-model="user.password"
           type="password"
-          class="input">
-      </ec-field>
+          class="input"
+        >
+      </EcField>
 
-      <ec-field>
-        <search-roles v-model="user.roles" />
-      </ec-field>
+      <EcField>
+        <SearchRoles v-model="user.roles" />
+      </EcField>
 
       <button
         v-if="user.id"
         type="submit"
-        class="button is-primary">
+        class="button is-primary"
+      >
         <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
+          <FaIcon :icon="['fas', 'save']" />
         </span>
         <span>Save</span>
       </button>
@@ -51,9 +68,10 @@
       <button
         v-else
         type="submit"
-        class="button is-primary">
+        class="button is-primary"
+      >
         <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
+          <FaIcon :icon="['fas', 'plus']" />
         </span>
         <span>Create</span>
       </button>

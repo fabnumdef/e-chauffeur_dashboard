@@ -2,28 +2,35 @@
   <nav
     class="pagination is-right"
     role="navigation"
-    aria-label="pagination">
+    aria-label="pagination"
+  >
     <div>
       {{ total }} results
     </div>
     <ul
       v-if="visiblesPages.length > 1"
-      class="pagination-list">
+      class="pagination-list"
+    >
       <li
         v-for="(p, i) in visiblesPages"
-        :key="i">
+        :key="i"
+      >
         <span
           v-if="p === null"
-          class="pagination-ellipsis">…</span>
-        <nuxt-link
+          class="pagination-ellipsis"
+        >
+          …
+        </span>
+        <NuxtLink
           v-else
           :to="`?offset=${p - 1 * perPage}`"
           :class="{'is-current': currentPage === p}"
           :aria-label="`Goto page ${p}`"
           :aria-current="currentPage === p ? 'page' : false"
-          class="pagination-link">
+          class="pagination-link"
+        >
           {{ p }}
-        </nuxt-link>
+        </NuxtLink>
       </li>
     </ul>
   </nav>

@@ -2,10 +2,12 @@
   <div>
     <main class="container content">
       <h1>Me connecter</h1>
-      <hr >
+      <hr>
       <form @submit.prevent="login(user)">
         <div class="field">
-          <label class="label">Mon email</label>
+          <label class="label">
+            Mon email
+          </label>
           <div class="control">
             <input
               v-model="user.email"
@@ -13,24 +15,30 @@
               class="input"
               type="email"
               placeholder="Email"
-              autofocus="autofocus" >
+              autofocus="autofocus"
+            >
           </div>
         </div>
 
         <div class="field">
-          <label class="label">Votre code secret</label>
+          <label class="label">
+            Votre code secret
+          </label>
           <div class="control">
             <input
               v-model="user.password"
               required="required"
               class="input"
               type="password"
-              placeholder="Tous les caractères sont acceptés" >
+              placeholder="Tous les caractères sont acceptés"
+            >
           </div>
         </div>
         <div class="field is-grouped">
           <div class="control">
-            <button class="button is-primary">Me connecter</button>
+            <button class="button is-primary">
+              Me connecter
+            </button>
           </div>
         </div>
       </form>
