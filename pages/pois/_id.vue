@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtChild :poi="poi" />
+    <nuxt-child :poi="poi" />
   </div>
 </template>
 

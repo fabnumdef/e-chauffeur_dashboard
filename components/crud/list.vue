@@ -25,23 +25,23 @@
           {{ row[key] }}
         </td>
         <td v-if="hasAction">
-          <NuxtLink
+          <nuxt-link
             v-if="!!actionEdit"
             :to="routeActionEdit(row)"
             class="button is-primary"
           >
             <span class="icon is-small">
-              <FaIcon :icon="['fas', 'edit']" />
+              <fa-icon :icon="['fas', 'edit']" />
             </span>
             <span>Edit</span>
-          </NuxtLink>
+          </nuxt-link>
           <button
             v-if="$listeners['action-remove']"
             class="button is-danger"
             @click="confirmRemove(row)"
           >
             <span class="icon is-small">
-              <FaIcon :icon="['fas', 'trash']" />
+              <fa-icon :icon="['fas', 'trash']" />
             </span>
             <span>Remove</span>
           </button>
@@ -51,7 +51,7 @@
     <tfoot v-if="data.length > 0">
       <tr>
         <td :colspan="columnNumber">
-          <EcPagination
+          <ec-pagination
             :total="paginationTotal"
             :offset="paginationOffset"
             :per-page="paginationPerPage"

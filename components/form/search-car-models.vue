@@ -1,5 +1,5 @@
 <template>
-  <VueMultiselect
+  <vue-multiselect
     :id="id"
     :placeholder="placeholder"
     :options="carModels"

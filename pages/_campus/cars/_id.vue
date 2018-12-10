@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtChild :car="car" />
+    <nuxt-child :car="car" />
   </div>
 </template>
 

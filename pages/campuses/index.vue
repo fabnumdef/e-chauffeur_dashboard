@@ -5,18 +5,18 @@
         Campuses
       </h1>
       <div class="options">
-        <NuxtLink
+        <nuxt-link
           :to="{name: 'campuses-new'}"
           class="button is-success"
         >
           <span class="icon is-small">
-            <FaIcon :icon="['fas', 'plus']" />
+            <fa-icon :icon="['fas', 'plus']" />
           </span>
           <span>Create</span>
-        </NuxtLink>
+        </nuxt-link>
       </div>
     </header>
-    <EcList
+    <ec-list
       :columns="{id: 'ID', name: 'Name'}"
       :data="campuses"
       :pagination-offset="pagination.offset"

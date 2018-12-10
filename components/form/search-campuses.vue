@@ -1,5 +1,5 @@
 <template>
-  <VueMultiselect
+  <vue-multiselect
     :id="id"
     :options="campuses"
     :value="value"
@@ -24,9 +24,11 @@ export default {
       default: () => [],
     },
   },
-  data: () => ({
-    campuses: [],
-  }),
+  data() {
+    return {
+      campuses: this.value || [],
+    }
+  },
   methods: {
     updateSet: debounce(async function updateSet(search) {
       const { data } = await this.$api.campuses.getCampuses('id,name', { search });

@@ -1,8 +1,9 @@
 <template>
-  <VueMultiselect
+  <vue-multiselect
     :id="id"
     :options="roles"
     :value="value"
+    track-by="id"
     label="id"
     multiple
     @search-change="updateSet"
@@ -23,9 +24,11 @@ export default {
       default: () => [],
     },
   },
-  data: () => ({
-    roles: [],
-  }),
+  data() {
+    return {
+      roles: this.value || [],
+    }
+  },
   methods: {
     updateSet: debounce(async function updateSet(search) {
       this.roles = (await this.$api.roles.getRoles('id', { search })).data;

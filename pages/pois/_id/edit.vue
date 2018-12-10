@@ -27,7 +27,7 @@
       </h2>
     </header>
     <form @submit.prevent="edit(poi)">
-      <EcField
+      <ec-field
         label="ID"
         field-id="id"
       >
@@ -37,9 +37,9 @@
           :disabled="!!id"
           class="input"
         >
-      </EcField>
+      </ec-field>
 
-      <EcField
+      <ec-field
         label="Label"
         field-id="label"
       >
@@ -48,17 +48,17 @@
           v-model="poi.label"
           class="input"
         >
-      </EcField>
+      </ec-field>
 
-      <EcField
+      <ec-field
         label="Coordonnées GPS"
         field-id="location"
       >
-        <EcGpsPoint
+        <ec-gps-point
           id="location"
           v-model="poi.location"
         />
-      </EcField>
+      </ec-field>
 
       <button
         v-if="id"
@@ -66,7 +66,7 @@
         class="button is-primary"
       >
         <span class="icon is-small">
-          <FaIcon :icon="['fas', 'save']" />
+          <fa-icon :icon="['fas', 'save']" />
         </span>
         <span>Save</span>
       </button>
@@ -77,7 +77,7 @@
         class="button is-primary"
       >
         <span class="icon is-small">
-          <FaIcon :icon="['fas', 'plus']" />
+          <fa-icon :icon="['fas', 'plus']" />
         </span>
         <span>Create</span>
       </button>

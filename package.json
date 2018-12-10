@@ -13,7 +13,7 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
-    "@fortawesome/free-solid-svg-icons": "^5.5.0",
+    "@fortawesome/free-solid-svg-icons": "^5.6.0",
     "@nuxtjs/auth": "^4.5.3",
     "@nuxtjs/axios": "^5.0.0",
     "@nuxtjs/toast": "^3.0.1",
@@ -21,7 +21,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
     "lodash.range": "^3.2.0",
-    "node-sass": "^4.10.0",
+    "node-sass": "^4.11.0",
     "nuxt": "^2.3.4",
     "nuxt-leaflet": "0.0.10",
     "qonfucius-nuxt-bulma": "0.0.3",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.0.1",
+    "eslint": "^5.10.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-import-resolver-webpack": "^0.10.1",
     "eslint-loader": "^2.0.0",

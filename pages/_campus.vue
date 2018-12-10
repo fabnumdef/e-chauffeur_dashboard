@@ -1,5 +1,5 @@
 <template>
-  <NuxtChild />
+  <nuxt-child />
 </template>
 <script>
 export default {

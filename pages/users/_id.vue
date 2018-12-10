@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtChild :user="user" />
+    <nuxt-child :user="user" />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 export default {
   async asyncData({ params, $api }) {
     return {
-      user: (await $api.users.getUser(params.id, 'id,email')).data,
+      user: (await $api.users.getUser(params.id, 'id,email,roles(id)')).data,
     };
   },
 };

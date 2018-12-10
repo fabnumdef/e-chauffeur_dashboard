@@ -27,7 +27,7 @@
       </h2>
     </header>
     <form @submit.prevent="edit(carModel)">
-      <EcField
+      <ec-field
         label="ID"
         field-id="id"
       >
@@ -37,9 +37,9 @@
           :disabled="!!id"
           class="input"
         >
-      </EcField>
+      </ec-field>
 
-      <EcField
+      <ec-field
         label="Label"
         field-id="label"
       >
@@ -48,7 +48,7 @@
           v-model="carModel.label"
           class="input"
         >
-      </EcField>
+      </ec-field>
 
       <button
         v-if="id"
@@ -56,7 +56,7 @@
         class="button is-primary"
       >
         <span class="icon is-small">
-          <FaIcon :icon="['fas', 'save']" />
+          <fa-icon :icon="['fas', 'save']" />
         </span>
         <span>Save</span>
       </button>
@@ -67,7 +67,7 @@
         class="button is-primary"
       >
         <span class="icon is-small">
-          <FaIcon :icon="['fas', 'plus']" />
+          <fa-icon :icon="['fas', 'plus']" />
         </span>
         <span>Create</span>
       </button>

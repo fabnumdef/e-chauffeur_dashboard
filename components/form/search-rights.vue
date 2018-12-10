@@ -1,5 +1,5 @@
 <template>
-  <VueMultiselect
+  <vue-multiselect
     :id="id"
     :options="rights"
     :value="value"

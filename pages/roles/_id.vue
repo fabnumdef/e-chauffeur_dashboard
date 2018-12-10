@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtChild :role="role" />
+    <nuxt-child :role="role" />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 export default {
   async asyncData({ params, $api }) {
     return {
-      role: (await $api.roles.getRole(params.id, 'id,inherit,rights,campuses')).data,
+      role: (await $api.roles.getRole(params.id, 'id,inherit(id),rights,campuses')).data,
     };
   },
 };

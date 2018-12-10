@@ -21,7 +21,7 @@
         >
           …
         </span>
-        <NuxtLink
+        <nuxt-link
           v-else
           :to="`?offset=${p - 1 * perPage}`"
           :class="{'is-current': currentPage === p}"
@@ -30,7 +30,7 @@
           class="pagination-link"
         >
           {{ p }}
-        </NuxtLink>
+        </nuxt-link>
       </li>
     </ul>
   </nav>

@@ -27,7 +27,7 @@
       </h2>
     </header>
     <form @submit.prevent="edit(user)">
-      <EcField
+      <ec-field
         label="Email"
         field-id="email"
       >
@@ -36,9 +36,9 @@
           v-model="user.email"
           class="input"
         >
-      </EcField>
+      </ec-field>
 
-      <EcField
+      <ec-field
         label="Password"
         field-id="password"
       >
@@ -48,11 +48,11 @@
           type="password"
           class="input"
         >
-      </EcField>
+      </ec-field>
 
-      <EcField>
-        <SearchRoles v-model="user.roles" />
-      </EcField>
+      <ec-field>
+        <search-roles v-model="user.roles" />
+      </ec-field>
 
       <button
         v-if="user.id"
@@ -60,7 +60,7 @@
         class="button is-primary"
       >
         <span class="icon is-small">
-          <FaIcon :icon="['fas', 'save']" />
+          <fa-icon :icon="['fas', 'save']" />
         </span>
         <span>Save</span>
       </button>
@@ -71,7 +71,7 @@
         class="button is-primary"
       >
         <span class="icon is-small">
-          <FaIcon :icon="['fas', 'plus']" />
+          <fa-icon :icon="['fas', 'plus']" />
         </span>
         <span>Create</span>
       </button>
@@ -98,9 +98,9 @@ export default {
     async edit(user) {
       let data = {};
       if (user.id) {
-        ({ data } = (await this.$api.users.patchUser(user.id, user, 'id,email')));
+        ({ data } = (await this.$api.users.patchUser(user.id, user, 'id,email,roles(id)')));
       } else {
-        ({ data } = (await this.$api.users.postUser(user, 'id,email')));
+        ({ data } = (await this.$api.users.postUser(user, 'id,email,roles(id)')));
       }
 
       this.$router.push({

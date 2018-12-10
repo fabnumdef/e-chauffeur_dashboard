@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtChild :campus="campus" />
+    <nuxt-child :campus="campus" />
   </div>
 </template>
 

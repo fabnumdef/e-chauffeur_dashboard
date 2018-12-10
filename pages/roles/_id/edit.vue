@@ -27,7 +27,7 @@
       </h2>
     </header>
     <form @submit.prevent="edit(role)">
-      <EcField
+      <ec-field
         label="ID"
         field-id="id"
       >
@@ -37,19 +37,19 @@
           :disabled="!!id"
           class="input"
         >
-      </EcField>
+      </ec-field>
 
-      <EcField>
-        <SearchRoles v-model="role.inherit" />
-      </EcField>
+      <ec-field>
+        <search-roles v-model="role.inherit" />
+      </ec-field>
 
-      <EcField>
-        <SearchRights v-model="role.rights" />
-      </EcField>
+      <ec-field>
+        <search-rights v-model="role.rights" />
+      </ec-field>
 
-      <EcField>
-        <SearchCampuses v-model="role.campuses" />
-      </EcField>
+      <ec-field>
+        <search-campuses v-model="role.campuses" />
+      </ec-field>
 
       <button
         v-if="id"
@@ -57,7 +57,7 @@
         class="button is-primary"
       >
         <span class="icon is-small">
-          <FaIcon :icon="['fas', 'save']" />
+          <fa-icon :icon="['fas', 'save']" />
         </span>
         <span>Save</span>
       </button>
@@ -68,7 +68,7 @@
         class="button is-primary"
       >
         <span class="icon is-small">
-          <FaIcon :icon="['fas', 'plus']" />
+          <fa-icon :icon="['fas', 'plus']" />
         </span>
         <span>Create</span>
       </button>
@@ -102,9 +102,9 @@ export default {
     async edit(role) {
       let data = {};
       if (this.id) {
-        ({ data } = (await this.$api.roles.patchRole(role.id, role, 'id,inherit,rights,campuses')));
+        ({ data } = (await this.$api.roles.patchRole(role.id, role, 'id,inherit(id),rights,campuses')));
       } else {
-        ({ data } = (await this.$api.roles.postRole(role, 'id,inherit,rights,campuses')));
+        ({ data } = (await this.$api.roles.postRole(role, 'id,inherit(id),rights,campuses')));
       }
 
       this.$router.push({

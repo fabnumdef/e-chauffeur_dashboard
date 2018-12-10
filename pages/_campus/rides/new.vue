@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="createRide(ride)">
-    <EcField>
+    <ec-field>
       <select
         v-model="ride.category"
         class="select"
@@ -18,26 +18,26 @@
           Santé
         </option>
       </select>
-    </EcField>
-    <EcField>
-      <FaIcon
+    </ec-field>
+    <ec-field>
+      <fa-icon
         icon="map-marker-alt"
       />
-      <SearchPois
+      <search-pois
         v-model="ride.from"
         placeholder="Départ"
       />
-    </EcField>
-    <EcField>
-      <FaIcon
+    </ec-field>
+    <ec-field>
+      <fa-icon
         icon="flag"
       />
-      <SearchPois
+      <search-pois
         v-model="ride.to"
         placeholder="Arrivée"
       />
-    </EcField>
-    <EcField>
+    </ec-field>
+    <ec-field>
       <select
         v-model="ride.passengers"
         class="select"
@@ -50,12 +50,12 @@
           {{ i }}
         </option>
       </select>
-    </EcField>
-    <EcField>
+    </ec-field>
+    <ec-field>
       <button type="submit">
         Envoyer
       </button>
-    </EcField>
+    </ec-field>
   </form>
 </template>
 <script>
