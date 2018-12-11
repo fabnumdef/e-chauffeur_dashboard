@@ -1,3 +1,5 @@
+import {computePagination} from "./helpers";
+
 const TOKEN_KEY = 'token';
 export default axios => ({
   async renewJWT() {
@@ -9,5 +11,13 @@ export default axios => ({
       },
     );
     return data[TOKEN_KEY];
+  },
+  async getCampuses(mask) {
+    return axios.get(
+      '/jwt/user/campuses',
+      {
+        params: { mask },
+      },
+    );
   },
 });
