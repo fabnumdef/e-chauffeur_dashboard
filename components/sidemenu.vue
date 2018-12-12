@@ -13,7 +13,7 @@
           </nuxt-link>
         </li>
         <li v-if="hasCampus">
-          <nuxt-link :to="campusLink('rides-drivers')">
+          <nuxt-link :to="campusLink('rides-new')">
             Courses
           </nuxt-link>
         </li>
@@ -59,23 +59,46 @@
         </li>
       </ul>
     </div>
-    <div>
+    <div v-if="$auth.user">
       Current user :
       {{ $auth.user.email }}
     </div>
-    <div>
-      Current campus : {{ campus }}
+    <div v-if="$auth.user">
+      <search-user-campus :value="campus" @input="setCampus" />
     </div>
   </aside>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
+import searchUserCampus from '~/components/form/search-user-campus.vue';
 
 export default {
+  components: {
+    searchUserCampus,
+  },
   computed: {
     ...mapGetters({ campus: 'context/campus' }),
   },
+  methods: {
+    ...mapMutations({ setCampus: 'context/setCampus' }),
+  },
+  watch: {
+    campus(c) {
+      if (c && c.id) {
+        this.$router.push({
+          name: 'campus',
+          params: {
+            campus: c.id,
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'index',
+        })
+      }
+    },
+  }
 };
 </script>
 

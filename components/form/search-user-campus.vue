@@ -3,7 +3,6 @@
     :id="id"
     :options="campuses"
     :value="value"
-    multiple
     track-by="id"
     label="name"
     @search-change="updateSet"
@@ -20,13 +19,13 @@ export default {
       default: '',
     },
     value: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
     return {
-      campuses: this.value || [],
+      campuses: [],
     }
   },
   methods: {
