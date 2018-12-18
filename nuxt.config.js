@@ -42,6 +42,7 @@ module.exports = {
     '~/plugins/axios.js',
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
+    '~/plugins/datetime-picker.js',
   ],
 
   /*
@@ -85,7 +86,7 @@ module.exports = {
     packs: [
       {
         package: '@fortawesome/free-solid-svg-icons',
-        icons: ['faMapMarkerAlt', 'faFlag', 'faEdit', 'faTrash', 'faPlus', 'faSave'],
+        icons: ['faMapMarkerAlt', 'faFlag', 'faEdit', 'faTrash', 'faPlus', 'faSave', 'faTimes', 'faCalendar'],
       },
     ],
   },

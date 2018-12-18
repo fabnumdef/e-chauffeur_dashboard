@@ -9,7 +9,7 @@
 //@import "~bulma/sass/elements/box.sass";
 @import "~bulma/sass/elements/button.sass";
 //@import "~bulma/sass/elements/container.sass";
-//@import "~bulma/sass/elements/content.sass";
+@import "~bulma/sass/elements/content.sass";
 @import "~bulma/sass/elements/form.sass";
 @import "elements/form";
 @import "~bulma/sass/elements/icon.sass";
@@ -27,7 +27,6 @@
 //@import "~bulma/sass/components/level.sass";
 //@import "~bulma/sass/components/media.sass";
 //@import "~bulma/sass/components/message.sass";
-//@import "~bulma/sass/components/modal.sass";
 @import "~bulma/sass/components/pagination.sass";
 //@import "~bulma/sass/components/panel.sass";
 @import "~bulma/sass/components/tabs.sass";
@@ -40,6 +39,11 @@
 //@import "~bulma/sass/layout/section.sass";
 
 @import "../../node_modules/vue-multiselect/dist/vue-multiselect.min.css";
+
+.mx-input-append {
+  background: transparent !important;
+  color: $white;
+}
 
 html, body, #__nuxt, #__layout {
   -webkit-font-smoothing: antialiased;
