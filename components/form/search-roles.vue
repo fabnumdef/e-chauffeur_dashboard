@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       roles: this.value || [],
-    }
+    };
   },
   methods: {
     updateSet: debounce(async function updateSet(search) {

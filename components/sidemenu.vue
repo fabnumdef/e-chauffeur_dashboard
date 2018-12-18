@@ -64,7 +64,10 @@
       {{ $auth.user.email }}
     </div>
     <div v-if="$auth.user">
-      <search-user-campus :value="campus" @input="setCampus" />
+      <search-user-campus
+        :value="campus"
+        @input="setCampus"
+      />
     </div>
   </aside>
 </template>
@@ -80,9 +83,6 @@ export default {
   computed: {
     ...mapGetters({ campus: 'context/campus' }),
   },
-  methods: {
-    ...mapMutations({ setCampus: 'context/setCampus' }),
-  },
   watch: {
     campus(c) {
       if (c && c.id) {
@@ -90,15 +90,18 @@ export default {
           name: 'campus',
           params: {
             campus: c.id,
-          }
-        })
+          },
+        });
       } else {
         this.$router.push({
           name: 'index',
-        })
+        });
       }
     },
-  }
+  },
+  methods: {
+    ...mapMutations({ setCampus: 'context/setCampus' }),
+  },
 };
 </script>
 

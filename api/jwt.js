@@ -1,5 +1,3 @@
-import {computePagination} from "./helpers";
-
 const TOKEN_KEY = 'token';
 export default axios => ({
   async renewJWT() {

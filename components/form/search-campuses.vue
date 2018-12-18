@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       campuses: this.value || [],
-    }
+    };
   },
   methods: {
     updateSet: debounce(async function updateSet(search) {

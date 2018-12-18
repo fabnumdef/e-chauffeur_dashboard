@@ -11,3 +11,8 @@
     </no-ssr>
   </div>
 </template>
+<style scoped>
+  #map-wrap {
+    z-index: 0;
+  }
+</style>

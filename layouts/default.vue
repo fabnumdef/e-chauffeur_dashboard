@@ -1,5 +1,5 @@
 <template>
-  <div class="columns">
+  <div class="columns is-gapless">
     <ec-sidemenu class="column is-narrow is-menu" />
     <nuxt class="column" />
     <ec-map class="column is-map" />
