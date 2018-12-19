@@ -24,7 +24,7 @@
           {{ day.start.toLocaleString({ weekday: 'long', day: '2-digit' }) }}
         </div>
         <div class="hour-slots">
-          <div class="event" v-for="(e, i) of eventsToday(day)" :style="getStyle(e, i, day)">
+          <div class="event" v-for="(e, i) of eventsToday(day)" :style="getStyle(e, i)">
             <div class="content">
               <p>Du {{e.start.toLocaleString(DATETIME_FULL)}} au {{e.end.toLocaleString(DATETIME_FULL)}}.</p>
               <p>{{e.title}}</p>
@@ -138,10 +138,7 @@ export default {
       }).filter(ev => ev.interval);
     },
 
-    getStyle(e, count = 0, day) {
-      if (e.interval === null) {
-        console.log(day, e);
-      }
+    getStyle(e, count = 0) {
       const rowsToCover = e.interval.splitBy(this.SPLIT_MINUTES);
       const rowsToSkip = Interval
         .fromDateTimes(e.interval.start.startOf('days'), e.interval.start)

@@ -79,11 +79,12 @@ export default {
   },
   methods: {
     async edit(event) {
-      const { data } = await this.$api.carEvents({ id: this.$route.params.id }).postCarEvent({
+      const { data } = await this.$api.carEvents({ id: this.$route.params.id }, 'start,end,title').postCarEvent({
         start: event.start,
         end: event.end,
         title: event.title,
       });
+      this.events.push(data);
     },
     updateDates([start, end]) {
       this.event.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
