@@ -25,6 +25,7 @@
     "node-sass": "^4.11.0",
     "nuxt": "^2.3.4",
     "nuxt-leaflet": "0.0.10",
+    "opening_hours": "^3.5.0",
     "qonfucius-nuxt-bulma": "0.0.3",
     "qonfucius-nuxt-fontawesome": "^1.0.1",
     "sass-loader": "^7.1.0",
