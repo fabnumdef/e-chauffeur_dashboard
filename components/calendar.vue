@@ -24,10 +24,20 @@
           {{ day.start.toLocaleString({ weekday: 'long', day: '2-digit' }) }}
         </div>
         <div class="hour-slots">
-          <div class="event" v-for="(e, i) of eventsToday(day)" :style="getStyle(e, i)">
+          <div
+            class="current-time"
+            :style="{top: `${percentTimeChange}%` }"
+            :class="{'is-today': isToday(day) }"
+          />
+          <div
+            v-for="(e, i) of eventsToday(day)"
+            :key="i"
+            class="event"
+            :style="getStyle(e, i)"
+          >
             <div class="content">
-              <p>Du {{e.start.toLocaleString(DATETIME_FULL)}} au {{e.end.toLocaleString(DATETIME_FULL)}}.</p>
-              <p>{{e.title}}</p>
+              <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
+              <p>{{ e.title }}</p>
             </div>
           </div>
           <div>
@@ -35,11 +45,14 @@
               v-for="s of day.splitBy(SPLIT_MINUTES)"
               :key="s.start.toISO()"
               class="hour-slot"
-              :class="{ 'is-selected': isInRange(s.start) }"
-              @mousedown="startSelectRange(s.start)"
-              @mouseup="endSelectRange(s.end)"
-              @mouseover="updateSelectedRange(s.end)"
+              :class="{
+                'is-selected': isInRange(s.start),
+                'is-closed': openingHoursFeature && !isOpen(s.start)
+              }"
               :title="s.start.toLocaleString(DATETIME_FULL)"
+              @mousedown="startSelectRange(s.start)"
+              @mouseup="endSelectRange"
+              @mouseover="updateSelectedRange(s.end)"
             >
               <template v-if="s.start.minute % 30 === 0">
                 {{ s.start.toLocaleString(TIME_SIMPLE) }}
@@ -55,25 +68,52 @@
 <script>
 import vueModal from '~/components/modal.vue';
 import { DateTime, Interval, Duration } from 'luxon';
+import OpeningHours from 'opening_hours';
+
+const SECONDS_IN_A_DAY = 60 * 60 * 24;
 
 export default {
+  components: {
+    vueModal,
+  },
   props: {
     events: {
       type: Array,
       default: () => ([]),
     },
-  },
-  components: {
-    vueModal,
+    openingHours: {
+      type: String,
+      default: null,
+    },
+    withCurrentTime: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
+      currentTime: Date.now(),
       rangeStart: null,
       rangeEnd: null,
       toggleModal: false,
     };
   },
   computed: {
+    parsedOpeningHours() {
+      try {
+        return new OpeningHours(this.openingHours);
+      } catch (e) {
+        return null;
+      }
+    },
+    weekOpeningHoursIntervals() {
+      if (!this.parsedOpeningHours) {
+        return [];
+      }
+      return this.parsedOpeningHours
+        .getOpenIntervals(this.days.start.toJSDate(), this.days.end.toJSDate())
+        .map(([start, end]) => Interval.fromDateTimes(start, end));
+    },
     days() {
       const scale = 'week';
       const date = DateTime.local();
@@ -97,10 +137,40 @@ export default {
     hourSlotHeight() {
       return 7.5;
     },
+    openingHoursFeature() {
+      return this.$listeners && this.$listeners['opening-hours-update'];
+    },
+    percentTimeChange() {
+      const current = this.currentTime;
+      const startOfDay = DateTime.local().startOf('days').toMillis();
+      const diff = (current - startOfDay) / 1000;
+      return diff / SECONDS_IN_A_DAY * 100;
+    },
+  },
+  mounted() {
+    if (this.$el && this.$el.querySelector) {
+      const el = this.$el.querySelector('.current-time');
+      if (el && el.scrollIntoView) {
+        el.scrollIntoView();
+      }
+    }
+  },
+  created() {
+    setInterval(() => {
+      this.currentTime = Date.now();
+    }, 30000);
   },
   methods: {
+    isOpen(d) {
+      if (!this.parsedOpeningHours) {
+        return false;
+      }
+      return this.parsedOpeningHours.getState(d.toJSDate());
+    },
     isInRange(dt) {
-      return (this.rangeStart && this.rangeEnd) ? Interval.fromDateTimes(this.rangeStart, this.rangeEnd).contains(dt) : false;
+      return (this.rangeStart && this.rangeEnd)
+        ? Interval.fromDateTimes(this.rangeStart, this.rangeEnd).contains(dt)
+        : false;
     },
     clearRanges() {
       this.rangeStart = null;
@@ -114,9 +184,13 @@ export default {
         this.rangeEnd = dt;
       }
     },
-    endSelectRange() {
-      this.toggleModal = true;
-      this.$emit('dates-update', [this.rangeStart, this.rangeEnd]);
+    endSelectRange({ shiftKey = false } = {}) {
+      if (this.openingHoursFeature && shiftKey) {
+        this.toggleOpeningHours(this.rangeStart, this.rangeEnd);
+      } else {
+        this.toggleModal = true;
+        this.$emit('dates-update', [this.rangeStart, this.rangeEnd]);
+      }
       this.clearRanges();
     },
     modalSubmit() {
@@ -124,18 +198,41 @@ export default {
       this.toggleModal = !this.toggleModal;
     },
     getClonedEvents() {
-      return this.events.map(e => Object.assign({}, e)).map(d => {
-        d.start = DateTime.fromISO(d.start);
-        d.end = DateTime.fromISO(d.end);
-        d.interval = Interval.fromDateTimes(d.start, d.end);
-        return d;
+      return this.events.map(e => Object.assign({}, e)).map((d) => {
+        const date = d;
+        date.start = DateTime.fromISO(d.start);
+        date.end = DateTime.fromISO(d.end);
+        date.interval = Interval.fromDateTimes(d.start, d.end);
+        return date;
       });
     },
     eventsToday(today) {
-      return this.getClonedEvents().map(ev => {
-        ev.interval = today.intersection(ev.interval);
-        return ev;
+      return this.getClonedEvents().map((ev) => {
+        const event = ev;
+        event.interval = today.intersection(ev.interval);
+        return event;
       }).filter(ev => ev.interval);
+    },
+
+    toggleOpeningHours(start, end) {
+      const current = Interval.fromDateTimes(start, end);
+      const intervals = this.weekOpeningHoursIntervals;
+      intervals.push(current);
+      // @todo: Recursive reduce intervals
+      const oh = this.days
+        .splitBy(this.A_DAY).map(d => intervals
+          .map(i => i.intersection(d))
+          .filter(i => !!i)
+          .map((i) => {
+            const day = d.start.toFormat('DDDD', { locale: 'en-US' }).substring(0, 2);
+            const startTime = i.start.toLocaleString(DateTime.TIME_24_SIMPLE);
+            const endTime = i.end.toLocaleString(DateTime.TIME_24_SIMPLE);
+            return `${day} ${startTime}-${endTime}`;
+          })
+          .reduce((acc, s) => (acc.length ? [acc, s].join(';') : s), ''))
+        .filter(i => i !== '')
+        .reduce((acc, s) => (acc.length ? [acc, s].join(';') : s), '');
+      this.$emit('opening-hours-update', oh);
     },
 
     getStyle(e, count = 0) {
@@ -147,11 +244,16 @@ export default {
       const offset = this.hourSlotHeight * rowsToSkip.length;
       const rightMargin = count * (10 + 1);
       return { height: `${height}px`, top: `${offset}px`, right: `${rightMargin}px` };
-    }
-  },
+    },
 
+    isToday(day) {
+      const today = DateTime.local();
+      return today.startOf('days').toMillis() === day.start.toMillis();
+    },
+  },
 };
 </script>
+
 <style lang="scss" scoped>
   @import "~assets/css/head";
 
@@ -183,18 +285,13 @@ export default {
     user-select: none;
     height: 7.5px;
     cursor: crosshair;
-    &:hover:not(.is-selected) {
-      border-top: 1px solid $white;
+    &:hover, &.is-selected {
+      background: rgba($white, 0.1);
     }
-    &.is-selected {
-        background: rgba($white, 0.1);
-      &:first-child {
-        border-top: 1px solid $white;
-      }
-      &:last-child {
-        border-bottom: 1px solid $white;
-      }
-    }
+  }
+
+  .is-closed {
+    background: gray;
   }
 
   .event {
@@ -208,14 +305,26 @@ export default {
     transition: all 150ms linear;
     padding: 5px;
     font-size: $size-small;
+
     > .content {
       overflow: hidden;
     }
+
     &:hover {
       width: auto;
       max-width: 250px;
       height: auto !important;
       z-index: 2;
+    }
+  }
+
+  .current-time {
+    height: 1px;
+    background: $yellow;
+    position: absolute;
+    width: 100%;
+    &.is-today {
+      background: $red
     }
   }
 </style>

@@ -2,8 +2,11 @@
   <div>
     <vue-calendar
       :events="events"
+      :opening-hours="user.workingHours"
+      with-current-time
       @modal-submit="edit(event)"
       @dates-update="updateDates"
+      @opening-hours-update="updateWorkingHours"
     >
       <template slot="modal">
         <ec-field
@@ -40,6 +43,17 @@
         </ec-field>
       </template>
     </vue-calendar>
+    <ec-field
+      label="Working hours"
+      field-id="workingHours"
+    >
+      <input
+        id="workingHours"
+        v-model="user.workingHours"
+        type="text"
+        class="input"
+      >
+    </ec-field>
   </div>
 </template>
 <script>
@@ -59,13 +73,19 @@ export default {
     ecField,
     vueCalendar,
   },
+  props: {
+    user: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
       event: generateEmptyEvent(),
     };
   },
   async asyncData({ $api, route } = {}) {
-    const { data } = await $api.carEvents({ id: route.params.id }, 'start,end,title').getCarEvents();
+    const { data } = await $api.userEvents({ id: route.params.id }, 'start,end,title').getUserEvents();
     return { events: data };
   },
   computed: {
@@ -78,7 +98,7 @@ export default {
   },
   methods: {
     async edit(event) {
-      const { data } = await this.$api.carEvents({ id: this.$route.params.id }, 'start,end,title').postCarEvent({
+      const { data } = await this.$api.userEvents({ id: this.$route.params.id }, 'start,end,title').postUserEvent({
         start: event.start,
         end: event.end,
         title: event.title,
@@ -88,6 +108,11 @@ export default {
     updateDates([start, end]) {
       this.event.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.event.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
+    },
+    async updateWorkingHours(oh) {
+      this.user.workingHours = oh;
+      const { data } = (await this.$api.users.patchUser(this.user.id, this.user, 'id,email,roles(id),workingHours'));
+      this.user = data;
     },
   },
 };

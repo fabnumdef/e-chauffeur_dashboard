@@ -7,7 +7,7 @@
   >
     <div
       class="modal-background"
-      @click="toggleModal()"
+      @click="toggleModal"
     />
     <div class="modal-card">
       <header
@@ -20,7 +20,7 @@
         <button
           class="button is-text is-rounded"
           aria-label="close"
-          @click="toggleModal()"
+          @click="toggleModal"
         >
           <fa-icon icon="times" />
         </button>
@@ -30,13 +30,16 @@
           <slot />
         </section>
         <footer class="modal-card-foot">
-          <button class="button is-success" type="submit">
+          <button
+            class="button is-success"
+            type="submit"
+          >
             Save changes
           </button>
           <button
             class="button"
             type="button"
-            @click="toggleModal()"
+            @click="toggleModal"
           >
             Cancel
           </button>
@@ -59,17 +62,17 @@ export default {
     };
   },
   methods: {
-    toggleModal(active) {
+    toggleModal() {
       this.$emit('toggle-modal', !this.active);
     },
     modalSubmit(...rest) {
       this.$emit('submit', ...rest);
-    }
+    },
   },
 };
 </script>
+
 <style scoped lang="scss">
   @import "~assets/css/head";
   @import "~bulma/sass/components/modal.sass";
-
 </style>

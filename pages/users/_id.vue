@@ -9,7 +9,7 @@
 export default {
   async asyncData({ params, $api }) {
     return {
-      user: (await $api.users.getUser(params.id, 'id,email,roles(id)')).data,
+      user: (await $api.users.getUser(params.id, 'id,email,roles(id),workingHours')).data,
     };
   },
 };
