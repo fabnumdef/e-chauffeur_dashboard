@@ -49,7 +49,12 @@
           class="input"
         >
       </ec-field>
-
+      <ec-field
+        label="Categories"
+        field-id="categories"
+      >
+        <search-categories v-model="campus.categories" />
+      </ec-field>
       <button
         v-if="id"
         type="submit"
@@ -77,10 +82,12 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
+import searchCategories from '~/components/form/search-categories.vue';
 
 export default {
   components: {
     ecField,
+    searchCategories,
   },
   props: {
     campus: {

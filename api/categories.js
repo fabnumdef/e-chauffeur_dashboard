@@ -1,4 +1,3 @@
-import merge from 'lodash.merge';
 import { computePagination } from './helpers';
 
 const ENTITY = 'category';

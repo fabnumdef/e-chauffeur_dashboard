@@ -77,12 +77,10 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
-import searchRoles from '~/components/form/search-roles.vue';
 
 export default {
   components: {
     ecField,
-    searchRoles,
   },
   props: {
     category: {
