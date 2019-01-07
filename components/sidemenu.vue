@@ -13,7 +13,7 @@
           </nuxt-link>
         </li>
         <li v-if="hasCampus">
-          <nuxt-link :to="campusLink('rides-new')">
+          <nuxt-link :to="campusLink('rides')">
             Courses
           </nuxt-link>
         </li>

@@ -1,7 +1,7 @@
 import { computePagination } from './helpers';
 
 const ENTITY = 'campus';
-const ENTITY_PLURAL = 'campuses';
+export const ENTITY_PLURAL = 'campuses';
 
 export default axios => ({
   async getCampuses(mask, { search = null } = {}) {

@@ -2,7 +2,7 @@
   <vue-multiselect
     :id="id"
     :placeholder="placeholder"
-    :options="pois"
+    :options="cars"
     :value="value"
     track-by="id"
     label="label"
@@ -15,6 +15,10 @@ import debounce from 'lodash.debounce';
 
 export default {
   props: {
+    campus: {
+      type: String,
+      default: null,
+    },
     placeholder: {
       type: String,
       default: null,
@@ -23,18 +27,31 @@ export default {
       type: String,
       default: '',
     },
+    start: {
+      type: Object,
+      default: null,
+    },
+    end: {
+      type: Object,
+      default: null,
+    },
     value: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({}),
     },
   },
   data: () => ({
-    pois: [],
+    cars: [],
   }),
   methods: {
     updateSet: debounce(async function updateSet(search) {
-      const { data } = await this.$api.pois.getPois('id,label', { search });
-      this.pois = data;
+      const { data } = await this.$api.rides(this.campus).getAvailableCars(
+        'id,label',
+        this.start.toISO(),
+        this.end.toISO(),
+        { search },
+      );
+      this.cars = data;
     }, 500),
     onInput(data) {
       this.$emit('input', data);

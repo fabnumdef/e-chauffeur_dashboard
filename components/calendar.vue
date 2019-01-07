@@ -9,58 +9,104 @@
       @toggle-modal="toggleModal = !toggleModal"
       @submit="modalSubmit"
     >
-      <template slot="title">
-        Créer un nouvel évènement
-      </template>
+      <template slot="title">Créer un nouvel évènement</template>
       <slot name="modal" />
     </vue-modal>
     <div class="columns is-gapless">
-      <div
-        v-for="day of days.splitBy(A_DAY)"
-        :key="day.start.toISO()"
-        class="column"
-      >
-        <div class="day-title">
-          {{ day.start.toLocaleString({ weekday: 'long', day: '2-digit' }) }}
-        </div>
-        <div class="hour-slots">
-          <div
-            class="current-time"
-            :style="{top: `${percentTimeChange}%` }"
-            :class="{'is-today': isToday(day) }"
-          />
-          <div
-            v-for="(e, i) of eventsToday(day)"
-            :key="i"
-            class="event"
-            :style="getStyle(e, i)"
-          >
-            <div class="content">
-              <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
-              <p>{{ e.title }}</p>
-            </div>
-          </div>
-          <div>
+      <template v-if="scheduleWith">
+        <div
+          v-for="col of scheduleWith"
+          :key="col.id"
+          class="column"
+        >
+          <div class="day-title">{{ col.name }}</div>
+          <div class="hour-slots">
             <div
-              v-for="s of day.splitBy(SPLIT_MINUTES)"
-              :key="s.start.toISO()"
-              class="hour-slot"
-              :class="{
-                'is-selected': isInRange(s.start),
-                'is-closed': openingHoursFeature && !isOpen(s.start)
-              }"
-              :title="s.start.toLocaleString(DATETIME_FULL)"
-              @mousedown="startSelectRange(s.start)"
-              @mouseup="endSelectRange"
-              @mouseover="updateSelectedRange(s.end)"
+              class="current-time"
+              :style="{ top: `${percentTimeChange}%` }"
+              :class="{ 'is-today': isToday(currentDay) }"
+            />
+            <div
+              v-for="(e, i) of eventsToday(currentDay)"
+              :key="i"
+              class="event"
+              :style="getStyle(e, i)"
             >
-              <template v-if="s.start.minute % 30 === 0">
-                {{ s.start.toLocaleString(TIME_SIMPLE) }}
-              </template>
+              <div class="content">
+                <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
+                <p>{{ e.title }}</p>
+              </div>
+            </div>
+            <div>
+              <div
+                v-for="s of currentDay.splitBy(SPLIT_MINUTES)"
+                :key="s.start.toISO()"
+                class="hour-slot"
+                :class="{
+                  'is-selected': isInRange(s.start),
+                  'is-closed': !isOpen(s, col.availabilities)
+                }"
+                :title="s.start.toLocaleString(DATETIME_FULL)"
+                @mousedown="startSelectRange(s.start)"
+                @mouseup="endSelectRange($event, col)"
+                @mouseover="updateSelectedRange(s.end)"
+              >
+                <template v-if="s.start.minute % 30 === 0">
+                  {{ s.start.toLocaleString(TIME_SIMPLE) }}
+                </template>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </template>
+      <template v-else>
+        <div
+          v-for="day of days.splitBy(A_DAY)"
+          :key="day.start.toISO()"
+          class="column"
+        >
+          <div class="day-title">
+            {{ day.start.toLocaleString({ weekday: 'long', day: '2-digit' }) }}
+          </div>
+          <div class="hour-slots">
+            <div
+              class="current-time"
+              :style="{top: `${percentTimeChange}%` }"
+              :class="{'is-today': isToday(day) }"
+            />
+            <div
+              v-for="(e, i) of eventsToday(day)"
+              :key="i"
+              class="event"
+              :style="getStyle(e, i)"
+            >
+              <div class="content">
+                <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
+                <p>{{ e.title }}</p>
+              </div>
+            </div>
+            <div>
+              <div
+                v-for="s of day.splitBy(SPLIT_MINUTES)"
+                :key="s.start.toISO()"
+                class="hour-slot"
+                :class="{
+                  'is-selected': isInRange(s.start),
+                  'is-closed': openingHoursFeature && !isOpen(s.start)
+                }"
+                :title="s.start.toLocaleString(DATETIME_FULL)"
+                @mousedown="startSelectRange(s.start)"
+                @mouseup="endSelectRange"
+                @mouseover="updateSelectedRange(s.end)"
+              >
+                <template v-if="s.start.minute % 30 === 0">
+                  {{ s.start.toLocaleString(TIME_SIMPLE) }}
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -89,6 +135,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    scheduleWith: {
+      type: Array,
+      default: null,
+    },
+    currentDate: {
+      type: Object,
+      default: null,
+    },
   },
   data() {
     return {
@@ -99,6 +153,9 @@ export default {
     };
   },
   computed: {
+    currentDay() {
+      return Interval.fromDateTimes(DateTime.local().startOf('days'), DateTime.local().endOf('days'));
+    },
     parsedOpeningHours() {
       try {
         return new OpeningHours(this.openingHours);
@@ -161,42 +218,55 @@ export default {
     }, 30000);
   },
   methods: {
-    isOpen(d) {
+    isOpen(d, availabilities) {
+      if (availabilities) {
+        if (availabilities.length < 1) {
+          return false;
+        }
+        return availabilities.reduce((result, interval) => (result || interval.engulfs(d)), false);
+      }
       if (!this.parsedOpeningHours) {
         return false;
       }
       return this.parsedOpeningHours.getState(d.toJSDate());
     },
+
     isInRange(dt) {
       return (this.rangeStart && this.rangeEnd)
         ? Interval.fromDateTimes(this.rangeStart, this.rangeEnd).contains(dt)
         : false;
     },
+
     clearRanges() {
       this.rangeStart = null;
       this.rangeEnd = null;
     },
+
     startSelectRange(dt) {
       this.rangeStart = dt;
     },
+
     updateSelectedRange(dt) {
       if (this.rangeStart) {
         this.rangeEnd = dt;
       }
     },
-    endSelectRange({ shiftKey = false } = {}) {
+
+    endSelectRange({ shiftKey = false } = {}, col = null) {
       if (this.openingHoursFeature && shiftKey) {
         this.toggleOpeningHours(this.rangeStart, this.rangeEnd);
       } else {
         this.toggleModal = true;
-        this.$emit('dates-update', [this.rangeStart, this.rangeEnd]);
+        this.$emit('dates-update', [this.rangeStart, this.rangeEnd], col);
       }
       this.clearRanges();
     },
+
     modalSubmit() {
       this.$emit('modal-submit');
       this.toggleModal = !this.toggleModal;
     },
+
     getClonedEvents() {
       return this.events.map(e => Object.assign({}, e)).map((d) => {
         const date = d;
@@ -206,6 +276,7 @@ export default {
         return date;
       });
     },
+
     eventsToday(today) {
       return this.getClonedEvents().map((ev) => {
         const event = ev;

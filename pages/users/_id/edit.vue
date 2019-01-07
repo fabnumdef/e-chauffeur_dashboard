@@ -28,6 +28,16 @@
     </header>
     <form @submit.prevent="edit(user)">
       <ec-field
+        label="Name"
+        field-id="name"
+      >
+        <input
+          id="name"
+          v-model="user.name"
+          class="input"
+        >
+      </ec-field>
+      <ec-field
         label="Email"
         field-id="email"
       >
@@ -98,9 +108,9 @@ export default {
     async edit(user) {
       let data = {};
       if (user.id) {
-        ({ data } = (await this.$api.users.patchUser(user.id, user, 'id,email,roles(id)')));
+        ({ data } = (await this.$api.users.patchUser(user.id, user, 'id,name,email,roles(id)')));
       } else {
-        ({ data } = (await this.$api.users.postUser(user, 'id,email,roles(id)')));
+        ({ data } = (await this.$api.users.postUser(user, 'id,name,email,roles(id)')));
       }
 
       this.$router.push({
