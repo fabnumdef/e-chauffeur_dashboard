@@ -65,7 +65,10 @@ module.exports = {
   },
 
   auth: {
-    plugins: ['~/plugins/auth-renew.js'],
+    plugins: [
+      '~/plugins/auth-renew.js',
+      '~/plugins/socket.js',
+    ],
     redirect: {
       login: '/login',
       logout: '/',
