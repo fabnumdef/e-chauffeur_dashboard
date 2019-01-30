@@ -26,7 +26,7 @@
     "moment": "^2.23.0",
     "node-sass": "^4.11.0",
     "nuxt": "^2.3.4",
-    "nuxt-leaflet": "0.0.10",
+    "nuxt-leaflet": "github:Qonfucius/nuxt-leaflet#feature/icon-tag",
     "opening_hours": "^3.5.0",
     "qonfucius-nuxt-bulma": "0.0.3",
     "qonfucius-nuxt-fontawesome": "^1.0.1",
@@ -48,6 +48,7 @@
   "peerDependencies": {
     "vue": "2.x",
     "vuex": "3.x",
-    "qs": "6.x"
+    "qs": "6.x",
+    "leaflet": "1.x"
   }
 }

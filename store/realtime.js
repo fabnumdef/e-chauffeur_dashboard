@@ -9,8 +9,18 @@ export const mutations = {
   setDrivers: (s, drivers = []) => {
     s.drivers = drivers;
   },
-  pushDriver: (s, driver) => {
-    s.drivers.push(driver);
+  pushDriver: (s, { user: { id }, position, date }) => {
+    if (!id) {
+      throw new Error('User id is required');
+    }
+    const i = s.drivers.findIndex(d => id === d.id);
+
+    const o = { id, position: { coordinates: position }, date };
+    if (i === -1) {
+      s.drivers.push(o);
+    } else {
+      Object.assign(s.drivers[i], o);
+    }
   },
 };
 
@@ -24,7 +34,6 @@ export const actions = {
       const { data } = await this.$api.rides(
         campus.id,
       ).getDriversPositions('id,date,position(coordinates)');
-      console.log(campus, data);
       commit('setDrivers', data);
     } catch (e) {
       throw new Error('Drivers fetching failed');
