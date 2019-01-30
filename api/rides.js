@@ -70,6 +70,27 @@ export default axios => (campus, mask) => {
       return response;
     },
 
+    async getDriversPositions(userMask) {
+      const response = await axios.get(
+        `/${CAMPUS_PLURAL}/${campus}/drivers-positions`,
+        {
+          params: {
+            mask: userMask,
+          },
+        },
+      );
+      response.data = response.data.map((u) => {
+        const user = u;
+        if (u.availabilities) {
+          user.availabilities = u.availabilities
+            .filter(r => r.s && r.e)
+            .map(a => Interval.fromDateTimes(DateTime.fromISO(a.s), DateTime.fromISO(a.e)));
+        }
+        return user;
+      });
+      return response;
+    },
+
     async getAvailableCars(carMask, start, end) {
       const response = await axios.get(
         `/${CAMPUS_PLURAL}/${campus}/cars`,

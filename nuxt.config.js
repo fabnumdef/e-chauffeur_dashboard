@@ -43,6 +43,7 @@ module.exports = {
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
     '~/plugins/datetime-picker.js',
+    '~/plugins/realtime.js',
   ],
 
   /*
