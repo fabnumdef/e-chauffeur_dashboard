@@ -55,6 +55,15 @@
       >
         <search-categories v-model="campus.categories" />
       </ec-field>
+      <ec-field
+        label="Coordonnées GPS"
+        field-id="location"
+      >
+        <ec-gps-point
+          id="location"
+          v-model="campus.location"
+        />
+      </ec-field>
       <button
         v-if="id"
         type="submit"
@@ -82,11 +91,13 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
+import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 
 export default {
   components: {
     ecField,
+    ecGpsPoint,
     searchCategories,
   },
   props: {
@@ -102,9 +113,9 @@ export default {
     async edit(campus) {
       let data = {};
       if (this.id) {
-        ({ data } = (await this.$api.campuses.patchCampus(campus.id, campus, 'id,name')));
+        ({ data } = (await this.$api.campuses.patchCampus(campus.id, campus, 'id,name,location')));
       } else {
-        ({ data } = (await this.$api.campuses.postCampus(campus, 'id,name')));
+        ({ data } = (await this.$api.campuses.postCampus(campus, 'id,name,location')));
       }
 
       this.$router.push({

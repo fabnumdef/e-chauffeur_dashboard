@@ -9,11 +9,11 @@
     >
       <template slot="modal">
         <ec-field
+          v-if="ride.driver && ride.driver.name"
           label="Driver"
           field-id="driver"
-          v-if="ride.driver && ride.driver.name"
         >
-          {{ride.driver.name}}
+          {{ ride.driver.name }}
         </ec-field>
 
         <ec-field
@@ -183,7 +183,7 @@ export default {
       this.rides.push(data);
     },
 
-    updateDates([start, end], {id, name} = {}) {
+    updateDates([start, end], { id, name } = {}) {
       this.ride.driver = { id, name };
       this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
