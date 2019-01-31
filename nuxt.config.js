@@ -101,6 +101,7 @@ module.exports = {
           'faCalendar',
           'faUser',
           'faKey',
+          'faAngleDown',
         ],
       },
     ],
@@ -108,5 +109,10 @@ module.exports = {
 
   env: {
     apiUrl: process.env.API_URL,
+  },
+
+  toast: {
+    position: 'bottom-right',
+    duration: 15000,
   },
 };

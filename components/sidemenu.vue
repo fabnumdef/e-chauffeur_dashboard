@@ -1,75 +1,79 @@
 <template>
-  <aside>
-    <div class="menu">
-      <p class="menu-label">
-        <nuxt-link :to="{ name: 'index' }">
-          E-chauffeur
+  <nav class="menu">
+    <p class="menu-label">
+      <nuxt-link :to="{ name: 'index' }">
+        <img class="logo" src="/logo.svg" alt="logo" />
+      </nuxt-link>
+    </p>
+    <p class="menu-label" v-if="hasCampus">{{campus.id}} / {{campus.name}}</p>
+    <ul class="menu-list" v-if="hasCampus">
+      <li>
+        <nuxt-link :to="campusLink('dashboard')">
+          Tableau de bord
         </nuxt-link>
-      </p>
-      <ul class="menu-list">
-        <li>
-          <nuxt-link :to="{ name: 'dashboard' }">
-            Dashboard
-          </nuxt-link>
-        </li>
-        <li v-if="hasCampus">
-          <nuxt-link :to="campusLink('rides')">
-            Courses
-          </nuxt-link>
-        </li>
-        <li>
-          <nuxt-link :to="{ name: 'history' }">
-            Historique
-          </nuxt-link>
-        </li>
-        <li v-if="hasCampus">
-          <nuxt-link :to="campusLink('planning')">
-            Planning
-          </nuxt-link>
-        </li>
-        <li>
-          <nuxt-link :to="{ name: 'campuses' }">
-            Bases
-          </nuxt-link>
-        </li>
-        <li>
-          <nuxt-link :to="{ name: 'users' }">
-            Utilisateurs
-          </nuxt-link>
-        </li>
-        <li v-if="hasCampus">
-          <nuxt-link :to="campusLink('cars')">
-            Véhicules
-          </nuxt-link>
-        </li>
-        <li>
-          <nuxt-link :to="{name: 'car-models'}">
-            Modèles de véhicules
-          </nuxt-link>
-        </li>
-        <li>
-          <nuxt-link :to="{ name: 'pois' }">
-            POIs
-          </nuxt-link>
-        </li>
-        <li>
-          <nuxt-link :to="{ name: 'roles' }">
-            Roles
-          </nuxt-link>
-        </li>
-      </ul>
-    </div>
-    <div v-if="$auth.user">
-      Current user :
-      {{ $auth.user.email }}
-    </div>
-    <div v-if="$auth.user">
-      <search-user-campus
-        :value="campus"
-        @input="setCampus"
-      />
-    </div>
-  </aside>
+      </li>
+      <li>
+        <nuxt-link :to="campusLink('history')">
+          Historique
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus">
+        <nuxt-link :to="campusLink('rides')">
+          Courses
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus">
+        <nuxt-link :to="campusLink('cars')">
+          Véhicules
+        </nuxt-link>
+      </li>
+    </ul>
+    <search-user-campus
+      class="search-campus"
+      :value="campus"
+      @input="setCampus"
+    />
+    <p class="menu-label">
+      Général
+    </p>
+    <ul class="menu-list">
+      <li>
+        <nuxt-link :to="{ name: 'campuses' }">
+          Bases
+        </nuxt-link>
+      </li>
+      <li>
+        <nuxt-link :to="{ name: 'users' }">
+          Utilisateurs
+        </nuxt-link>
+      </li>
+      <li>
+        <nuxt-link :to="{name: 'car-models'}">
+          Modèles de véhicules
+        </nuxt-link>
+      </li>
+      <li>
+        <nuxt-link :to="{ name: 'pois' }">
+          POIs
+        </nuxt-link>
+      </li>
+      <li>
+        <nuxt-link :to="{ name: 'roles' }">
+          Roles
+        </nuxt-link>
+      </li>
+    </ul>
+    <p class="menu-label">
+      {{ $auth.user.name || $auth.user.email }}
+    </p>
+    <ul class="menu-list">
+      <li>
+        <button class="button is-text" @click="$auth.logout()">
+          Déconnexion
+        </button>
+      </li>
+    </ul>
+  </nav>
 </template>
 
 <script>
@@ -109,6 +113,14 @@ export default {
   @import "~assets/css/head";
   @import "~bulma/sass/components/menu.sass";
 
+  .menu-label {
+    padding: 0 $size-small;
+  }
+
+  .logo {
+    padding: 20px;
+  }
+
   .menu-list a {
     border-left: 3px transparent solid;
     padding: $size-normal;
@@ -119,5 +131,10 @@ export default {
       border-left-color: $white;
       background: $white-20;
     }
+  }
+
+  .search-campus {
+    margin: $size-small;
+    max-width: 90%
   }
 </style>
