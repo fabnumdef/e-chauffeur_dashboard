@@ -1,3 +1,7 @@
-<template>
-  <div>index campus</div>
-</template>
+<script>
+export default {
+  async asyncData({ params: { campus }, redirect }) {
+    return redirect(`/${campus}/dashboard`);
+  },
+};
+</script>

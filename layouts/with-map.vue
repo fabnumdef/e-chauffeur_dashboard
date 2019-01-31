@@ -2,11 +2,13 @@
   <div class="columns is-gapless">
     <ec-sidemenu class="column is-narrow is-menu" />
     <nuxt class="column content-col" />
+    <ec-map class="column is-map" />
   </div>
 </template>
 
 <script>
 import ecSidemenu from '~/components/sidemenu.vue';
+import ecMap from '~/components/map.vue';
 
 export default {
   head() {
@@ -18,6 +20,7 @@ export default {
   },
   components: {
     ecSidemenu,
+    ecMap,
   },
 };
 </script>

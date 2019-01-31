@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <main>
+    <h1 class="title">
+      Supervision des courses
+    </h1>
     <vue-calendar
       :events="rides"
       with-current-time
@@ -107,7 +110,7 @@
         </ec-field>
       </template>
     </vue-calendar>
-  </div>
+  </main>
 </template>
 
 <script>
