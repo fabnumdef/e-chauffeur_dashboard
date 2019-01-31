@@ -1,6 +1,5 @@
 <template>
   <div
-    :class="{'is-horizontal': isHorizontal}"
     class="field"
   >
     <div
@@ -16,20 +15,43 @@
     </div>
     <div class="field-body">
       <div class="field">
-        <p class="control">
+        <div
+          class="control"
+          :class="{
+            'has-icons-left': !!iconLeft,
+            'has-icons-right': !!iconRight,
+          }"
+        >
           <slot />
-        </p>
+          <span
+            v-if="!!iconLeft"
+            class="icon is-small is-left"
+          >
+            <fa-icon :icon="iconLeft" />
+          </span>
+          <span
+            v-if="!!iconRight"
+            class="icon is-small is-right"
+          >
+            <fa-icon :icon="iconRight" />
+          </span>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+
 export default {
   props: {
-    isHorizontal: {
-      type: Boolean,
-      default: true,
+    iconLeft: {
+      type: Array,
+      default: null,
+    },
+    iconRight: {
+      type: Array,
+      default: null,
     },
     label: {
       type: String,
