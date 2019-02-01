@@ -178,7 +178,6 @@ export default {
   },
   methods: {
     async edit(ride) {
-      console.log(ride);
       const { data } = await this.$api.rides(
         this.campus,
         EDITABLE_FIELDS,

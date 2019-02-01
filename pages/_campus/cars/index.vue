@@ -2,7 +2,7 @@
   <main>
     <header class="with-options">
       <h1 class="title">
-        Cars
+        Véhicules
       </h1>
       <div class="options">
         <nuxt-link
@@ -12,7 +12,7 @@
           <span class="icon is-small">
             <fa-icon :icon="['fas', 'plus']" />
           </span>
-          <span>Create</span>
+          <span>Nouveau</span>
         </nuxt-link>
       </div>
     </header>
@@ -23,6 +23,7 @@
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
       :action-edit="campusLink('cars-id-edit')"
+      action-remove-confirm="Voulez vous vraiment supprimer ce véhicule ?"
       @action-remove="deleteCar"
     />
   </main>

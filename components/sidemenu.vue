@@ -2,11 +2,23 @@
   <nav class="menu">
     <p class="menu-label">
       <nuxt-link :to="{ name: 'index' }">
-        <img class="logo" src="/logo.svg" alt="logo" />
+        <img
+          class="logo"
+          src="/logo.svg"
+          alt="logo"
+        >
       </nuxt-link>
     </p>
-    <p class="menu-label" v-if="hasCampus">{{campus.id}} / {{campus.name}}</p>
-    <ul class="menu-list" v-if="hasCampus">
+    <p
+      v-if="hasCampus"
+      class="menu-label"
+    >
+      {{ campus.id }} / {{ campus.name }}
+    </p>
+    <ul
+      v-if="hasCampus"
+      class="menu-list"
+    >
       <li>
         <nuxt-link :to="campusLink('dashboard')">
           Tableau de bord
@@ -68,7 +80,10 @@
     </p>
     <ul class="menu-list">
       <li>
-        <button class="button is-text" @click="$auth.logout()">
+        <button
+          class="button is-text"
+          @click="$auth.logout()"
+        >
           Déconnexion
         </button>
       </li>
@@ -125,16 +140,23 @@ export default {
     border-left: 3px transparent solid;
     padding: $size-normal;
     display: block;
+    color: $text-invert;
 
     &:hover,
     &.nuxt-link-active {
       border-left-color: $white;
       background: $white-20;
+      color: $text-invert;
     }
   }
 
   .search-campus {
     margin: $size-small;
-    max-width: 90%
+    max-width: 90%;
+    color: $text-invert;
+  }
+
+  /deep/ .button.is-text {
+    color: $text-invert;
   }
 </style>

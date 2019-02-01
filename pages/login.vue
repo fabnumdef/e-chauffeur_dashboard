@@ -6,7 +6,10 @@
         src="/logo.svg"
       >
     </div>
-    <form @submit.prevent="login(user)" class="container">
+    <form
+      class="container"
+      @submit.prevent="login(user)"
+    >
       <ec-field
         label="Email"
         field-id="email"

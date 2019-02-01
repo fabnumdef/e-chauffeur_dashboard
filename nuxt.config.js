@@ -102,6 +102,7 @@ module.exports = {
           'faUser',
           'faKey',
           'faAngleDown',
+          'faCalendarAlt',
         ],
       },
     ],

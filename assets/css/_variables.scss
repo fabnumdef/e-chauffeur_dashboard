@@ -15,8 +15,8 @@ $dark-gray: hsl(0, 0%, 65%);
 /*************
  *   Bulma   *
  *************/
-$text: $white;
-$text-strong: $white;
+$text: $black;
+$text-strong: $black;
 $background: $blue-light;
 $primary: $blue-medium;
 $family-sans-serif: 'Source Sans Pro', sans-serif;
@@ -43,9 +43,8 @@ $tabs-toggle-link-border-width: 0;
 $tabs-toggle-link-hover-background-color: $white;
 $tabs-toggle-link-active-background-color: $white;
 
-// Table
-$table-background-color: $primary;
-$table-striped-row-even-background-color: $blue-light;
+// Box
+$box-radius: 0;
 
 // Modal
 $modal-card-body-background-color: $background;

@@ -308,6 +308,7 @@ fieldset[disabled] .multiselect {
   position: relative;
   cursor: pointer;
   white-space: nowrap;
+  background: $white;
 }
 
 .multiselect__option:after {

@@ -1,4 +1,21 @@
+$input-shadow: none;
+$input-disabled-background-color: rgba($black, 0.05);
+@import "~bulma/sass/elements/form.sass";
+
 .select select {
   border: 0;
   border-bottom: 1px solid $input-border-color;
 }
+
+.label {
+  text-align: left;
+}
+
+.input {
+  border: 0;
+  border-bottom: 1px solid $input-border-color;
+  &:focus {
+    border-bottom-color: $input-border-color;
+  }
+}
+

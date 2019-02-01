@@ -8,8 +8,8 @@
     :loading="loading"
     :searchable="false"
     :show-labels="false"
-    @input="onInput"
     placeholder="Choisir une base"
+    @input="onInput"
   />
 </template>
 <script>
@@ -24,17 +24,17 @@ export default {
       default: () => ({}),
     },
   },
-  async mounted() {
-    this.loading = true;
-    const { data } = await this.$api.jwt.getCampuses('id,name');
-    this.loading = false;
-    this.campuses = data;
-  },
   data() {
     return {
       campuses: [],
       loading: false,
     };
+  },
+  async mounted() {
+    this.loading = true;
+    const { data } = await this.$api.jwt.getCampuses('id,name');
+    this.loading = false;
+    this.campuses = data;
   },
   methods: {
     onInput(data) {

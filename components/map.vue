@@ -23,7 +23,15 @@
                 r="20"
                 class="is-danger"
               />
-              <text class="is-danger is-inverted" x="50%" y="50%" text-anchor="middle" dy=".3em">RZ</text>
+              <text
+                class="is-danger is-inverted"
+                x="50%"
+                y="50%"
+                text-anchor="middle"
+                dy=".3em"
+              >
+                RZ
+              </text>
             </svg>
           </l-icon>
         </l-marker>
@@ -36,14 +44,8 @@
 import { mapGetters } from 'vuex';
 
 export default {
-  methods: {
-    reverse([lon, lat]) {
-      return [lat, lon];
-    },
-  },
   computed: {
     center() {
-      return [48.843899069900495, 2.276982919626627];
       const [lon, lat] = this.campus.location.coordinates;
       return [lat, lon];
     },
@@ -51,6 +53,11 @@ export default {
       drivers: 'realtime/drivers',
       campus: 'context/campus',
     }),
+  },
+  methods: {
+    reverse([lon, lat]) {
+      return [lat, lon];
+    },
   },
 };
 </script>
