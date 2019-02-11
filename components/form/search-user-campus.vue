@@ -32,7 +32,7 @@ export default {
   },
   async mounted() {
     this.loading = true;
-    const { data } = await this.$api.jwt.getCampuses('id,name');
+    const { data } = await this.$api.jwt.getCampuses('id,name,location');
     this.loading = false;
     this.campuses = data;
   },
