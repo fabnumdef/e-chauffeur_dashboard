@@ -28,7 +28,7 @@ export default axios => (mask) => {
 
     getCategory(id) {
       return axios.get(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
         {
           params,
         },
@@ -37,7 +37,7 @@ export default axios => (mask) => {
 
     patchCategory(id, data) {
       return axios.patch(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
         data,
         {
           params,
@@ -57,7 +57,7 @@ export default axios => (mask) => {
 
     deleteCategory(id) {
       return axios.delete(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       );
     },
   };

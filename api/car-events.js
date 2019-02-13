@@ -31,7 +31,7 @@ export default axios => (car, mask = ',') => {
 
     getCarEvent(id) {
       return axios.get(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
         {
           params,
         },
@@ -40,7 +40,7 @@ export default axios => (car, mask = ',') => {
 
     patchCarEvent(id, data) {
       return axios.patch(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
         merge(data, { car }),
         {
           params,
@@ -60,7 +60,7 @@ export default axios => (car, mask = ',') => {
 
     deleteCarEvent(id) {
       return axios.delete(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       );
     },
   };
