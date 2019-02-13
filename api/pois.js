@@ -21,7 +21,7 @@ export default axios => ({
 
   getPoi(id, mask) {
     return axios.get(
-      `/${ENTITY}/${id}`,
+      `/${ENTITY}/${encodeURIComponent(id)}`,
       {
         params: { mask },
       },
@@ -30,7 +30,7 @@ export default axios => ({
 
   patchPoi(id, data, mask) {
     return axios.patch(
-      `/${ENTITY}/${id}`,
+      `/${ENTITY}/${encodeURIComponent(id)}`,
       data,
       {
         params: { mask },
@@ -50,7 +50,7 @@ export default axios => ({
 
   deletePoi(id) {
     return axios.delete(
-      `/${ENTITY}/${id}`,
+      `/${ENTITY}/${encodeURIComponent(id)}`,
     );
   },
 });

@@ -31,7 +31,7 @@ export default axios => (user, mask = ',') => {
 
     getUserEvent(id) {
       return axios.get(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
         {
           params,
         },
@@ -40,7 +40,7 @@ export default axios => (user, mask = ',') => {
 
     patchUserEvent(id, data) {
       return axios.patch(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
         merge(data, { user }),
         {
           params,
@@ -60,7 +60,7 @@ export default axios => (user, mask = ',') => {
 
     deleteUserEvent(id) {
       return axios.delete(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       );
     },
   };

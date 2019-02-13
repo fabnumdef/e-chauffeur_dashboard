@@ -22,7 +22,7 @@ export default axios => ({
 
   async getCampus(id, mask) {
     const response = await axios.get(
-      `/${ENTITY_PLURAL}/${id}`,
+      `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       {
         params: { mask },
       },
@@ -33,7 +33,7 @@ export default axios => ({
 
   patchCampus(id, data, mask) {
     return axios.patch(
-      `/${ENTITY_PLURAL}/${id}`,
+      `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       data,
       {
         params: { mask },
@@ -53,7 +53,7 @@ export default axios => ({
 
   deleteCampus(id) {
     return axios.delete(
-      `/${ENTITY_PLURAL}/${id}`,
+      `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
     );
   },
 });

@@ -32,7 +32,7 @@ export default axios => (campus, mask) => {
 
     getCar(id) {
       return axios.get(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
         {
           params,
         },
@@ -41,7 +41,7 @@ export default axios => (campus, mask) => {
 
     patchCar(id, data) {
       return axios.patch(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
         merge(data, { campus }),
         {
           params,
@@ -61,7 +61,7 @@ export default axios => (campus, mask) => {
 
     deleteCar(id) {
       return axios.delete(
-        `/${ENTITY_PLURAL}/${id}`,
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       );
     },
   };

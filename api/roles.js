@@ -1,6 +1,7 @@
 import { computePagination } from './helpers';
 
-const ENTITY = 'roles';
+const ENTITY = 'role';
+const ENTITY_PLURAL = 'roles';
 
 export default axios => ({
   async getRights(search) {
@@ -20,11 +21,11 @@ export default axios => ({
     }
 
     const response = await axios.get(
-      `/${ENTITY}`,
+      `/${ENTITY_PLURAL}`,
       {
         params,
         headers: {
-          Range: 'role=-10',
+          Range: `${ENTITY}=-10`,
         },
       },
     );
@@ -36,7 +37,7 @@ export default axios => ({
 
   getRole(id, mask) {
     return axios.get(
-      `/${ENTITY}/${id}`,
+      `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       {
         params: { mask },
       },
@@ -45,7 +46,7 @@ export default axios => ({
 
   patchRole(id, data, mask) {
     return axios.patch(
-      `/${ENTITY}/${id}`,
+      `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       data,
       {
         params: { mask },
@@ -55,7 +56,7 @@ export default axios => ({
 
   postRole(data, mask) {
     return axios.post(
-      `/${ENTITY}`,
+      `/${ENTITY_PLURAL}`,
       data,
       {
         params: { mask },
@@ -65,7 +66,7 @@ export default axios => ({
 
   deleteRole(id) {
     return axios.delete(
-      `/${ENTITY}/${id}`,
+      `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
     );
   },
 });
