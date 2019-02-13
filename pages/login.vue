@@ -1,71 +1,116 @@
 <template>
-  <div>
-    <main class="container content">
-      <h1>Me connecter</h1>
-      <hr>
-      <form @submit.prevent="login(user)">
-        <div class="field">
-          <label class="label">
-            Mon email
-          </label>
-          <div class="control">
-            <input
-              v-model="user.email"
-              required="required"
-              class="input"
-              type="email"
-              placeholder="Email"
-              autofocus="autofocus"
-            >
-          </div>
-        </div>
+  <main>
+    <div class="logo">
+      <img
+        alt="E-chauffeur"
+        src="/logo.svg"
+      >
+    </div>
+    <form
+      class="container"
+      @submit.prevent="login(user)"
+    >
+      <ec-field
+        label="Email"
+        field-id="email"
+        :icon-left="['fas', 'user']"
+      >
+        <input
+          id="email"
+          v-model="user.email"
+          required="required"
+          class="input"
+          type="email"
+          placeholder="john@doe.com"
+          autofocus="autofocus"
+        >
+      </ec-field>
 
-        <div class="field">
-          <label class="label">
-            Votre code secret
-          </label>
-          <div class="control">
-            <input
-              v-model="user.password"
-              required="required"
-              class="input"
-              type="password"
-              placeholder="Tous les caractères sont acceptés"
-            >
-          </div>
+      <ec-field
+        label="Mot de passe"
+        field-id="password"
+        :icon-left="['fas', 'key']"
+      >
+        <input
+          id="password"
+          v-model="user.password"
+          required="required"
+          class="input"
+          type="password"
+        >
+      </ec-field>
+
+      <div class="field login is-grouped">
+        <div class="control">
+          <button class="button">
+            Me connecter
+          </button>
         </div>
-        <div class="field is-grouped">
-          <div class="control">
-            <button class="button is-primary">
-              Me connecter
-            </button>
-          </div>
-        </div>
-      </form>
-    </main>
-  </div>
+      </div>
+    </form>
+  </main>
 </template>
 
 <script>
-const DEFAULT_REDIRECT = '/rides';
+import ecField from '~/components/form/field';
 
 export default {
-  async asyncData({ query: { redirect } }) {
+  layout: 'side-picture',
+  components: {
+    ecField,
+  },
+  async asyncData() {
     return {
-      redirectTo: redirect || DEFAULT_REDIRECT,
       user: {
         email: null,
         password: null,
       },
     };
   },
-  computed: {
-  },
   methods: {
     async login(data) {
       await this.$auth.login({ data });
+      this.$router.push('/');
       this.$toast.success('Bienvenue !');
     },
   },
 };
 </script>
+
+<style scoped lang="scss">
+  @import "~assets/css/head";
+  .logo {
+    padding: 50px;
+    display: block;
+  }
+  /deep/ .label {
+    color: $white;
+    text-align: left;
+    margin-left: 32px;
+    font-weight: normal;
+    font-size: $size-6;
+  }
+  /deep/ .input {
+    border: 0;
+    border-bottom: 1px solid;
+    box-shadow: none;
+  }
+  .container {
+    margin: 10px auto;
+    width: 100%;
+    max-width: 400px;
+  }
+  /deep/ .field.login {
+    .control {
+      width: 100%;
+    }
+    .button {
+      display: block;
+      padding: 10px 20px;
+      height: auto;
+      width: 100%;
+      color: $primary;
+      font-weight: bold;
+    }
+  }
+</style>

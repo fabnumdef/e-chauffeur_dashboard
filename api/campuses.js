@@ -20,13 +20,15 @@ export default axios => ({
     return response;
   },
 
-  getCampus(id, mask) {
-    return axios.get(
+  async getCampus(id, mask) {
+    const response = await axios.get(
       `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       {
         params: { mask },
       },
     );
+    response.data = Object.assign({ phone: {} }, response.data);
+    return response;
   },
 
   patchCampus(id, data, mask) {

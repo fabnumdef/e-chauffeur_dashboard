@@ -43,6 +43,7 @@ module.exports = {
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
     '~/plugins/datetime-picker.js',
+    '~/plugins/realtime.js',
   ],
 
   /*
@@ -65,7 +66,10 @@ module.exports = {
   },
 
   auth: {
-    plugins: ['~/plugins/auth-renew.js'],
+    plugins: [
+      '~/plugins/auth-renew.js',
+      '~/plugins/socket.js',
+    ],
     redirect: {
       login: '/login',
       logout: '/',
@@ -86,8 +90,30 @@ module.exports = {
     packs: [
       {
         package: '@fortawesome/free-solid-svg-icons',
-        icons: ['faMapMarkerAlt', 'faFlag', 'faEdit', 'faTrash', 'faPlus', 'faSave', 'faTimes', 'faCalendar'],
+        icons: [
+          'faMapMarkerAlt',
+          'faFlag',
+          'faEdit',
+          'faTrash',
+          'faPlus',
+          'faSave',
+          'faTimes',
+          'faCalendar',
+          'faUser',
+          'faKey',
+          'faAngleDown',
+          'faCalendarAlt',
+        ],
       },
     ],
+  },
+
+  env: {
+    apiUrl: process.env.API_URL,
+  },
+
+  toast: {
+    position: 'bottom-right',
+    duration: 15000,
   },
 };

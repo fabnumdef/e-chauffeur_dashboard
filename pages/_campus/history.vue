@@ -1,7 +1,7 @@
 <template>
   <main>
     <h1 class="title">
-      Tableau de bord
+      Historique
     </h1>
   </main>
 </template>

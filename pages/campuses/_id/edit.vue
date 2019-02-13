@@ -5,28 +5,28 @@
         v-if="id"
         class="title"
       >
-        Campus #{{ id }} : {{ campus.name }}
+        Base #{{ id }} : {{ campus.name }}
       </h1>
       <h1
         v-else
         class="title"
       >
-        Campus
+        Base
       </h1>
       <h2
         v-if="id"
         class="subtitle"
       >
-        Edit
+        Modification
       </h2>
       <h2
         v-else
         class="subtitle"
       >
-        New
+        Nouveau
       </h2>
     </header>
-    <form @submit.prevent="edit(campus)">
+    <form class="box" @submit.prevent="edit(campus)">
       <ec-field
         label="ID"
         field-id="id"
@@ -40,7 +40,7 @@
       </ec-field>
 
       <ec-field
-        label="Name"
+        label="Nom"
         field-id="name"
       >
         <input
@@ -50,10 +50,39 @@
         >
       </ec-field>
       <ec-field
-        label="Categories"
+        label="Numéro de téléphone (chauffeurs)"
+        field-id="phone-drivers"
+      >
+        <input
+          id="phone-drivers"
+          v-model="campus.phone.drivers"
+          class="input"
+        >
+      </ec-field>
+      <ec-field
+        label="Numéro de téléphone (public)"
+        field-id="phone-everybody"
+      >
+        <input
+          id="phone-everybody"
+          v-model="campus.phone.everybody"
+          class="input"
+        >
+      </ec-field>
+      <ec-field
+        label="Catégories"
         field-id="categories"
       >
         <search-categories v-model="campus.categories" />
+      </ec-field>
+      <ec-field
+        label="Coordonnées GPS"
+        field-id="location"
+      >
+        <ec-gps-point
+          id="location"
+          v-model="campus.location"
+        />
       </ec-field>
       <button
         v-if="id"
@@ -63,7 +92,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
         </span>
-        <span>Save</span>
+        <span>Modifier</span>
       </button>
 
       <button
@@ -74,7 +103,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
         </span>
-        <span>Create</span>
+        <span>Créer</span>
       </button>
     </form>
   </main>
@@ -82,11 +111,14 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
+import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 
+const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody)';
 export default {
   components: {
     ecField,
+    ecGpsPoint,
     searchCategories,
   },
   props: {
@@ -102,9 +134,9 @@ export default {
     async edit(campus) {
       let data = {};
       if (this.id) {
-        ({ data } = (await this.$api.campuses.patchCampus(campus.id, campus, 'id,name')));
+        ({ data } = (await this.$api.campuses.patchCampus(campus.id, campus, EDITABLE_FIELDS)));
       } else {
-        ({ data } = (await this.$api.campuses.postCampus(campus, 'id,name')));
+        ({ data } = (await this.$api.campuses.postCampus(campus, EDITABLE_FIELDS)));
       }
 
       this.$router.push({

@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <main>
+    <h1 class="title">
+      Supervision des courses
+    </h1>
     <vue-calendar
       :events="rides"
       with-current-time
@@ -9,11 +12,11 @@
     >
       <template slot="modal">
         <ec-field
+          v-if="ride.driver && ride.driver.name"
           label="Driver"
           field-id="driver"
-          v-if="ride.driver && ride.driver.name"
         >
-          {{ride.driver.name}}
+          {{ ride.driver.name }}
         </ec-field>
 
         <ec-field
@@ -107,7 +110,7 @@
         </ec-field>
       </template>
     </vue-calendar>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -175,7 +178,6 @@ export default {
   },
   methods: {
     async edit(ride) {
-      console.log(ride);
       const { data } = await this.$api.rides(
         this.campus,
         EDITABLE_FIELDS,
@@ -183,7 +185,7 @@ export default {
       this.rides.push(data);
     },
 
-    updateDates([start, end], {id, name} = {}) {
+    updateDates([start, end], { id, name } = {}) {
       this.ride.driver = { id, name };
       this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);

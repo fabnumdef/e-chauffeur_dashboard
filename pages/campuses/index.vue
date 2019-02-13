@@ -2,7 +2,7 @@
   <main>
     <header class="with-options">
       <h1 class="title">
-        Campuses
+        Bases
       </h1>
       <div class="options">
         <nuxt-link
@@ -12,12 +12,12 @@
           <span class="icon is-small">
             <fa-icon :icon="['fas', 'plus']" />
           </span>
-          <span>Create</span>
+          <span>Nouveau</span>
         </nuxt-link>
       </div>
     </header>
     <ec-list
-      :columns="{id: 'ID', name: 'Name'}"
+      :columns="{id: 'ID', name: 'Nom'}"
       :data="campuses"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
