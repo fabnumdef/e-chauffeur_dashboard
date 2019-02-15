@@ -74,6 +74,11 @@
           Roles
         </nuxt-link>
       </li>
+      <li>
+        <nuxt-link :to="{ name: 'categories' }">
+          Catégories
+        </nuxt-link>
+      </li>
     </ul>
     <p class="menu-label">
       {{ $auth.user.name || $auth.user.email }}

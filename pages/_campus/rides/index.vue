@@ -10,13 +10,26 @@
       @modal-submit="edit(ride)"
       @dates-update="updateDates"
     >
-      <template slot="modal">
+      <template slot="title">
+        Nouvelle course
+      </template>
+      <template
+        slot="modal"
+        class="white-background"
+      >
         <ec-field
           v-if="ride.driver && ride.driver.name"
-          label="Driver"
+          label="Chauffeur"
           field-id="driver"
         >
           {{ ride.driver.name }}
+        </ec-field>
+
+        <ec-field
+          label="Type de course"
+          field-id="departure"
+        >
+          <search-category v-model="ride.category" />
         </ec-field>
 
         <ec-field
@@ -118,6 +131,7 @@ import vueCalendar from '~/components/calendar.vue';
 import ecField from '~/components/form/field.vue';
 import { DateTime } from 'luxon';
 import searchPoi from '~/components/form/search-poi';
+import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
 
 const EDITABLE_FIELDS = [
@@ -130,6 +144,7 @@ const EDITABLE_FIELDS = [
   'phone',
   'comments',
   'passengersCount',
+  'category(id,label)',
 ].join(',');
 
 export function generateEmptyRide() {
@@ -167,6 +182,7 @@ export default {
     vueCalendar,
     ecField,
     searchAvailableCar,
+    searchCategory,
   },
   computed: {
     range() {

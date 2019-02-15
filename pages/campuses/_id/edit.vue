@@ -26,7 +26,10 @@
         Nouveau
       </h2>
     </header>
-    <form class="box" @submit.prevent="edit(campus)">
+    <form
+      class="box"
+      @submit.prevent="edit(campus)"
+    >
       <ec-field
         label="ID"
         field-id="id"
@@ -114,7 +117,7 @@ import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 
-const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody)';
+const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label)';
 export default {
   components: {
     ecField,
