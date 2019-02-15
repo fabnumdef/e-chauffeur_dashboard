@@ -6,11 +6,18 @@
     <vue-modal
       v-if="$slots.modal"
       :active="toggleModal"
+      :with-background="false"
       @toggle-modal="toggleModal = !toggleModal"
       @submit="modalSubmit"
     >
       <template slot="title">
-        Créer un nouvel évènement
+        <slot
+          v-if="$slots.title"
+          name="title"
+        />
+        <template v-else>
+          Créer un nouvel évènement
+        </template>
       </template>
       <slot name="modal" />
     </vue-modal>
