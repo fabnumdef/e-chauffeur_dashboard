@@ -115,5 +115,20 @@ export default axios => (campus, mask) => {
       });
       return response;
     },
+
+    async getStats(queriedStats, start, end) {
+      return axios.get(
+        `/${CAMPUS_PLURAL}/${campus}/stats`,
+        {
+          params: {
+            mask: queriedStats,
+            filters: {
+              start,
+              end,
+            },
+          },
+        },
+      );
+    },
   };
 };
