@@ -42,15 +42,15 @@ export default {
   components: {
     ecList,
   },
+  computed: {
+    columns() { return columns; },
+  },
   async asyncData({ $api }) {
     const { data, pagination } = await getPois.call($api);
     return {
       pois: data,
       pagination,
     };
-  },
-  computed: {
-    columns() { return columns; },
   },
   methods: {
     async deletePoi({ id }) {

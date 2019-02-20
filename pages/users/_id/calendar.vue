@@ -84,10 +84,6 @@ export default {
       event: generateEmptyEvent(),
     };
   },
-  async asyncData({ $api, route } = {}) {
-    const { data } = await $api.userEvents({ id: route.params.id }, 'start,end,title').getUserEvents();
-    return { events: data };
-  },
   computed: {
     range() {
       return [
@@ -95,6 +91,10 @@ export default {
         this.event.end || null,
       ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
     },
+  },
+  async asyncData({ $api, route } = {}) {
+    const { data } = await $api.userEvents({ id: route.params.id }, 'start,end,title').getUserEvents();
+    return { events: data };
   },
   methods: {
     async edit(event) {

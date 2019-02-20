@@ -40,13 +40,6 @@ export default {
   components: {
     ecList,
   },
-  async asyncData({ params, $api }) {
-    const { data, pagination } = await $api.cars({ id: params.campus }, Object.keys(columns).join(',')).getCars();
-    return {
-      cars: data,
-      pagination,
-    };
-  },
   computed: {
     columns: () => columns,
     ...mapGetters({
@@ -55,6 +48,13 @@ export default {
     CarsAPI() {
       return this.$api.cars(this.campus, Object.keys(columns).join(','));
     },
+  },
+  async asyncData({ params, $api }) {
+    const { data, pagination } = await $api.cars({ id: params.campus }, Object.keys(columns).join(',')).getCars();
+    return {
+      cars: data,
+      pagination,
+    };
   },
   methods: {
     async deleteCar({ id }) {
