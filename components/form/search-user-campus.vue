@@ -5,13 +5,14 @@
     :value="value"
     track-by="id"
     label="name"
-    @search-change="updateSet"
+    :loading="loading"
+    :searchable="false"
+    :show-labels="false"
+    placeholder="Choisir une base"
     @input="onInput"
   />
 </template>
 <script>
-import debounce from 'lodash.debounce';
-
 export default {
   props: {
     id: {
@@ -26,16 +27,24 @@ export default {
   data() {
     return {
       campuses: [],
+      loading: false,
     };
   },
+  async mounted() {
+    this.loading = true;
+    const { data } = await this.$api.jwt.getCampuses('id,name,location');
+    this.loading = false;
+    this.campuses = data;
+  },
   methods: {
-    updateSet: debounce(async function updateSet() {
-      const { data } = await this.$api.jwt.getCampuses('id,name');
-      this.campuses = data;
-    }, 500),
     onInput(data) {
       this.$emit('input', data);
     },
   },
 };
 </script>
+
+<style scoped lang="scss">
+  @import "~assets/css/head";
+
+</style>

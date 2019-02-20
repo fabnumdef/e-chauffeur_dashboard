@@ -39,51 +39,51 @@
               <div class="column"></div>
 
               <div v-bind:id="'history-ride-details-' + index" class="history-ride-details d-none">
-                  <div class="columns w-100">
-                      <div class="column is-one-fifth">
-                          <ec-map class="is-map" />
-                      </div>
-                      <div class="column">
-                          <div class="columns">
-                              <div class="column">
-                                  <p class="is-size-7">Référence course</p>
-                                  {{ ride.id }}
-                              </div>
-                              <div class="column ">
-                                  <p class="is-size-7">Type de véhicule</p>
-                                  {{ ride.car.label }}
-                              </div>
-                              <div class="column ">
-                                  <p class="is-size-7">Temps de la course</p>
-                                  {{ getIntervalDuration(ride.start, ride.end) }}
-                              </div>
-                              <div class="column ">
-                                  <p class="is-size-7">Distance de la course</p>
-                                  **
-                              </div>
-                              <div class="column ">
-                                  <p class="is-size-7">Nombre de passagers</p>
-                                  {{ ride.passengersCount }}
-                              </div>
-                              <div class="column ">
-                                  <p class="is-size-7">Numéro de téléphone</p>
-                                  {{ ride.phone }}
-                              </div>
-                              <div class="column ">
-                                  <p class="is-size-7">NIA / NID</p>
-                                  **
-                              </div>
-                          </div>
-                          <div class="columns has-text-left">
-                              <div class="column">
-                                  <p class="is-size-7">Départ</p>
-                                  HH:MM - Adresse départ
-                                  <p class="is-size-7">Arrivée</p>
-                                  HH-MM - Adresse arrivée
-                              </div>
-                          </div>
-                      </div>
+                <div class="columns w-100">
+                  <div class="column is-one-fifth">
+                    <ec-map class="is-map" />
                   </div>
+                  <div class="column">
+                    <div class="columns">
+                      <div class="column">
+                        <p class="is-size-7">Référence course</p>
+                        {{ ride.id }}
+                      </div>
+                      <div class="column ">
+                        <p class="is-size-7">Type de véhicule</p>
+                        {{ ride.car.label }}
+                      </div>
+                      <div class="column ">
+                        <p class="is-size-7">Temps de la course</p>
+                        {{ getIntervalDuration(ride.start, ride.end) }}
+                      </div>
+                      <div class="column ">
+                        <p class="is-size-7">Distance de la course</p>
+                        **
+                      </div>
+                      <div class="column ">
+                        <p class="is-size-7">Nombre de passagers</p>
+                        {{ ride.passengersCount }}
+                      </div>
+                      <div class="column ">
+                        <p class="is-size-7">Numéro de téléphone</p>
+                        {{ ride.phone }}
+                      </div>
+                      <div class="column ">
+                        <p class="is-size-7">NIA / NID</p>
+                        **
+                      </div>
+                    </div>
+                    <div class="columns has-text-left">
+                      <div class="column">
+                        <p class="is-size-7">Départ</p>
+                        HH:MM - Adresse départ
+                        <p class="is-size-7">Arrivée</p>
+                        HH-MM - Adresse arrivée
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </template>
@@ -117,8 +117,8 @@
     methods: {
       getIntervalDuration: function(startDate, endDate, format = 'hh:mm:ss') {
         return Interval .fromDateTimes(DateTime.fromISO(startDate), DateTime.fromISO(endDate))
-                                  .toDuration()
-                                  .toFormat(format);
+                .toDuration()
+                .toFormat(format);
       },
 
       getFormatDate: function(date, format) {
@@ -225,7 +225,7 @@
       font-weight: normal;
 
       &:first-child {
-          width: 100%;
+        width: 100%;
       }
 
       .is-map {
@@ -251,7 +251,7 @@
     }
 
     .w-100 {
-        width: 100% !important;
+      width: 100% !important;
     }
   }
 </style>

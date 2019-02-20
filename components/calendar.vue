@@ -6,10 +6,19 @@
     <vue-modal
       v-if="$slots.modal"
       :active="toggleModal"
+      :with-background="false"
       @toggle-modal="toggleModal = !toggleModal"
       @submit="modalSubmit"
     >
-      <template slot="title">Créer un nouvel évènement</template>
+      <template slot="title">
+        <slot
+          v-if="$slots.title"
+          name="title"
+        />
+        <template v-else>
+          Créer un nouvel évènement
+        </template>
+      </template>
       <slot name="modal" />
     </vue-modal>
     <div class="columns is-gapless">
@@ -19,7 +28,9 @@
           :key="col.id"
           class="column"
         >
-          <div class="day-title">{{ col.name }}</div>
+          <div class="day-title">
+            {{ col.name }}
+          </div>
           <div class="hour-slots">
             <div
               class="current-time"

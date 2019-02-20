@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     updateSet: debounce(async function updateSet(search) {
-      const { data } = await this.$api.campuses.getCampuses('id,name', { search });
+      const { data } = await this.$api.campuses.getCampuses('id,name,location', { search });
       this.campuses = data;
     }, 500),
     onInput(data) {

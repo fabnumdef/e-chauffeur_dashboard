@@ -5,11 +5,12 @@
 </template>
 
 <script>
+const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label)';
 
 export default {
   async asyncData({ params, $api }) {
     return {
-      campus: (await $api.campuses.getCampus(params.id, 'id,name')).data,
+      campus: (await $api.campuses.getCampus(params.id, EDITABLE_FIELDS)).data,
     };
   },
 };

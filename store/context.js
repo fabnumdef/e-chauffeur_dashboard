@@ -19,7 +19,7 @@ export const getters = {
 
 export const actions = {
   async fetchCampus({ commit }, campus) {
-    const { data } = await this.$api.campuses.getCampus(campus, 'id,name');
+    const { data } = await this.$api.campuses.getCampus(campus, 'id,name,location,categories(id,label)');
     commit('setCampus', data);
   },
 };

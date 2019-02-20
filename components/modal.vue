@@ -6,10 +6,14 @@
     }"
   >
     <div
+      v-if="withBackground"
       class="modal-background"
       @click="toggleModal"
     />
-    <div class="modal-card">
+    <form
+      class="modal-card"
+      @submit.prevent="modalSubmit"
+    >
       <header
         v-if="$slots.title"
         class="modal-card-head"
@@ -19,33 +23,32 @@
         </p>
         <button
           class="button is-text is-rounded"
+          type="button"
           aria-label="close"
           @click="toggleModal"
         >
           <fa-icon icon="times" />
         </button>
       </header>
-      <form @submit.prevent="modalSubmit">
-        <section class="modal-card-body">
-          <slot />
-        </section>
-        <footer class="modal-card-foot">
-          <button
-            class="button is-success"
-            type="submit"
-          >
-            Save changes
-          </button>
-          <button
-            class="button"
-            type="button"
-            @click="toggleModal"
-          >
-            Cancel
-          </button>
-        </footer>
-      </form>
-    </div>
+      <section class="modal-card-body">
+        <slot />
+      </section>
+      <footer class="modal-card-foot">
+        <button
+          class="button is-success"
+          type="submit"
+        >
+          Save changes
+        </button>
+        <button
+          class="button"
+          type="button"
+          @click="toggleModal"
+        >
+          Cancel
+        </button>
+      </footer>
+    </form>
   </div>
 </template>
 <script>
@@ -54,6 +57,10 @@ export default {
     active: {
       type: Boolean,
       default: false,
+    },
+    withBackground: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
@@ -74,5 +81,16 @@ export default {
 
 <style scoped lang="scss">
   @import "~assets/css/head";
+  $modal-card-body-background-color: $white;
   @import "~bulma/sass/components/modal.sass";
+
+  .modal-card {
+    box-shadow: 15px 15px 30px 0  rgba($black, 0.3);
+    &-title {
+      color: findColorInvert($modal-card-head-background-color);
+    }
+    &-head button, &-head button:hover {
+      color: findColorInvert($modal-card-head-background-color);
+    }
+  }
 </style>

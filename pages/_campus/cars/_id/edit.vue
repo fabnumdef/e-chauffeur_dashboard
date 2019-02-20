@@ -1,34 +1,47 @@
 <template>
   <main>
     <header>
+      <nuxt-link
+        v-if="id"
+        :to="campusLink('cars-id-calendar', { params: { campus } })"
+        class="button is-primary is-pulled-right"
+      >
+        <span class="icon is-small">
+          <fa-icon :icon="['fas', 'calendar-alt']" />
+        </span>
+        <span>Calendrier</span>
+      </nuxt-link>
       <h1
         v-if="id"
         class="title"
       >
-        Car #{{ id }}
+        Véhicule <em>{{ id }}</em>
       </h1>
       <h1
         v-else
         class="title"
       >
-        Car
+        Véhicule
       </h1>
       <h2
         v-if="id"
         class="subtitle"
       >
-        Edit
+        Modification
       </h2>
       <h2
         v-else
         class="subtitle"
       >
-        New
+        Création
       </h2>
     </header>
-    <form @submit.prevent="edit(car)">
+    <form
+      class="box"
+      @submit.prevent="edit(car)"
+    >
       <ec-field
-        label="Licence plate"
+        label="Immatriculation"
         field-id="id"
       >
         <input
@@ -50,7 +63,7 @@
         >
       </ec-field>
       <ec-field
-        label="Model"
+        label="Modèle"
         field-id="model"
       >
         <search-car-models
@@ -66,7 +79,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
         </span>
-        <span>Save</span>
+        <span>Sauvegarder</span>
       </button>
 
       <button
@@ -77,7 +90,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
         </span>
-        <span>Create</span>
+        <span>Créer</span>
       </button>
     </form>
   </main>
@@ -100,6 +113,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
+  },
+  asyncData({ params }) {
+    return { campus: params.campus };
   },
   data() {
     return { id: this.car.id };

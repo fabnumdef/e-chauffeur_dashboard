@@ -6,16 +6,16 @@
 @import "~bulma/sass/base/generic.sass";
 @import "~bulma/sass/base/helpers.sass";
 
-//@import "~bulma/sass/elements/box.sass";
+@import "~bulma/sass/elements/box.sass";
 @import "~bulma/sass/elements/button.sass";
-//@import "~bulma/sass/elements/container.sass";
+@import "~bulma/sass/elements/container.sass";
 @import "~bulma/sass/elements/content.sass";
-@import "~bulma/sass/elements/form.sass";
 @import "elements/form";
 @import "~bulma/sass/elements/icon.sass";
 //@import "~bulma/sass/elements/image.sass";
 //@import "~bulma/sass/elements/notification.sass";
 //@import "~bulma/sass/elements/progress.sass";
+
 @import "~bulma/sass/elements/table.sass";
 @import "~bulma/sass/elements/tag.sass";
 @import "~bulma/sass/elements/title.sass";
@@ -23,7 +23,6 @@
 
 //@import "~bulma/sass/components/breadcrumb.sass";
 //@import "~bulma/sass/components/card.sass";
-//@import "~bulma/sass/components/dropdown.sass";
 //@import "~bulma/sass/components/level.sass";
 //@import "~bulma/sass/components/media.sass";
 //@import "~bulma/sass/components/message.sass";
@@ -38,7 +37,7 @@
 //@import "~bulma/sass/layout/hero.sass";
 //@import "~bulma/sass/layout/section.sass";
 
-@import "../../node_modules/vue-multiselect/dist/vue-multiselect.min.css";
+@import "components/vue-multiselect.scss";
 
 .mx-input-append {
   background: transparent !important;
@@ -48,6 +47,6 @@
 html, body, #__nuxt, #__layout {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: $background;
-  height: 100%;
+  min-height: 100vh;
+  overflow: auto;
 }

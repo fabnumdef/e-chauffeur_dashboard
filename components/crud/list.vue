@@ -8,7 +8,10 @@
         >
           {{ label }}
         </th>
-        <th v-if="hasAction">
+        <th
+          v-if="hasAction"
+          class="actions"
+        >
           Actions
         </th>
       </tr>
@@ -33,7 +36,7 @@
             <span class="icon is-small">
               <fa-icon :icon="['fas', 'edit']" />
             </span>
-            <span>Edit</span>
+            <span>Modifier</span>
           </nuxt-link>
           <button
             v-if="$listeners['action-remove']"
@@ -43,7 +46,7 @@
             <span class="icon is-small">
               <fa-icon :icon="['fas', 'trash']" />
             </span>
-            <span>Remove</span>
+            <span>Supprimer</span>
           </button>
         </td>
       </tr>
@@ -147,3 +150,8 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss">
+  .actions {
+    width: 250px;
+  }
+</style>

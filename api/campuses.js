@@ -20,18 +20,20 @@ export default axios => ({
     return response;
   },
 
-  getCampus(id, mask) {
-    return axios.get(
-      `/${ENTITY_PLURAL}/${id}`,
+  async getCampus(id, mask) {
+    const response = await axios.get(
+      `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       {
         params: { mask },
       },
     );
+    response.data = Object.assign({ phone: {} }, response.data);
+    return response;
   },
 
   patchCampus(id, data, mask) {
     return axios.patch(
-      `/${ENTITY_PLURAL}/${id}`,
+      `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
       data,
       {
         params: { mask },
@@ -51,7 +53,7 @@ export default axios => ({
 
   deleteCampus(id) {
     return axios.delete(
-      `/${ENTITY_PLURAL}/${id}`,
+      `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
     );
   },
 });

@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <main>
+    <h1 class="title">
+      Supervision des courses
+    </h1>
     <vue-calendar
       :events="rides"
       with-current-time
@@ -7,13 +10,26 @@
       @modal-submit="edit(ride)"
       @dates-update="updateDates"
     >
-      <template slot="modal">
+      <template slot="title">
+        Nouvelle course
+      </template>
+      <template
+        slot="modal"
+        class="white-background"
+      >
         <ec-field
-          label="Driver"
-          field-id="driver"
           v-if="ride.driver && ride.driver.name"
+          label="Chauffeur"
+          field-id="driver"
         >
-          {{ride.driver.name}}
+          {{ ride.driver.name }}
+        </ec-field>
+
+        <ec-field
+          label="Type de course"
+          field-id="departure"
+        >
+          <search-category v-model="ride.category" />
         </ec-field>
 
         <ec-field
@@ -107,7 +123,7 @@
         </ec-field>
       </template>
     </vue-calendar>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -115,6 +131,7 @@ import vueCalendar from '~/components/calendar.vue';
 import ecField from '~/components/form/field.vue';
 import { DateTime } from 'luxon';
 import searchPoi from '~/components/form/search-poi';
+import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
 
 const EDITABLE_FIELDS = [
@@ -127,6 +144,7 @@ const EDITABLE_FIELDS = [
   'phone',
   'comments',
   'passengersCount',
+  'category(id,label)',
 ].join(',');
 
 export function generateEmptyRide() {
@@ -164,6 +182,7 @@ export default {
     vueCalendar,
     ecField,
     searchAvailableCar,
+    searchCategory,
   },
   computed: {
     range() {
@@ -175,7 +194,6 @@ export default {
   },
   methods: {
     async edit(ride) {
-      console.log(ride);
       const { data } = await this.$api.rides(
         this.campus,
         EDITABLE_FIELDS,
@@ -183,7 +201,7 @@ export default {
       this.rides.push(data);
     },
 
-    updateDates([start, end], {id, name} = {}) {
+    updateDates([start, end], { id, name } = {}) {
       this.ride.driver = { id, name };
       this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);

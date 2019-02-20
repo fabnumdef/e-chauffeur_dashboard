@@ -1,46 +1,69 @@
 <template>
-  <div>
-    <vue-calendar
-      :events="events"
-      @modal-submit="edit(event)"
-      @dates-update="updateDates"
-    >
-      <template slot="modal">
-        <ec-field
-          label="Dates"
-          field-id="dates"
-        >
-          <date-time
-            lang="fr"
-            append-to-body
-            input-class="input"
-            type="datetime"
-            range
-            :value="range"
-            :minute-step="5"
-            format="YYYY-MM-DD HH:mm:ss"
-            range-separator="->"
-            @input="updateDates"
+  <main>
+    <header>
+      <nuxt-link
+        :to="campusLink('cars-id-calendar', { params: { campus } })"
+        class="button is-primary is-pulled-right"
+      >
+        <span class="icon is-small">
+          <fa-icon :icon="['fas', 'edit']" />
+        </span>
+        <span>Modifier</span>
+      </nuxt-link>
+      <h1
+        class="title"
+      >
+        Véhicule <em>{{ id }}</em>
+      </h1>
+      <h2
+        class="subtitle"
+      >
+        Calendrier
+      </h2>
+    </header>
+    <div class="box">
+      <vue-calendar
+        :events="events"
+        @modal-submit="edit(event)"
+        @dates-update="updateDates"
+      >
+        <template slot="modal">
+          <ec-field
+            label="Dates"
+            field-id="dates"
           >
-            <template slot="calendar-icon">
-              <fa-icon icon="calendar" />
-            </template>
-          </date-time>
-        </ec-field>
-        <ec-field
-          label="Label"
-          field-id="label"
-        >
-          <input
-            id="label"
-            v-model="event.title"
-            type="text"
-            class="input"
+            <date-time
+              lang="fr"
+              append-to-body
+              input-class="input"
+              type="datetime"
+              range
+              :value="range"
+              :minute-step="5"
+              format="YYYY-MM-DD HH:mm:ss"
+              range-separator="->"
+              @input="updateDates"
+            >
+              <template slot="calendar-icon">
+                <fa-icon icon="calendar" />
+              </template>
+            </date-time>
+          </ec-field>
+          <ec-field
+            label="Label"
+            field-id="label"
           >
-        </ec-field>
-      </template>
-    </vue-calendar>
-  </div>
+            <input
+              id="label"
+              v-model="event.title"
+              type="text"
+              class="input"
+            >
+          </ec-field>
+        </template>
+      </vue-calendar>
+    </div>
+  </main>
 </template>
 <script>
 import { DateTime } from 'luxon';
@@ -64,9 +87,12 @@ export default {
       event: generateEmptyEvent(),
     };
   },
-  async asyncData({ $api, route } = {}) {
+  async asyncData({ params, $api, route } = {}) {
     const { data } = await $api.carEvents({ id: route.params.id }, 'start,end,title').getCarEvents();
-    return { events: data };
+    return {
+      events: data,
+      campus: params.campus,
+    };
   },
   computed: {
     range() {
