@@ -151,21 +151,24 @@ export default {
       default: null,
     },
     currentDate: {
-      type: Object,
-      default: null,
+      type: Date,
+      default: () => new Date(),
     },
   },
   data() {
     return {
-      currentTime: Date.now(),
+      currentTime: this.currentDateTime,
       rangeStart: null,
       rangeEnd: null,
       toggleModal: false,
     };
   },
   computed: {
+    currentDateTime() {
+      return DateTime.fromJSDate(this.currentDate);
+    },
     currentDay() {
-      return Interval.fromDateTimes(DateTime.local().startOf('days'), DateTime.local().endOf('days'));
+      return Interval.fromDateTimes(this.currentDateTime.startOf('days'), this.currentDateTime.endOf('days'));
     },
     parsedOpeningHours() {
       try {
@@ -184,7 +187,7 @@ export default {
     },
     days() {
       const scale = 'week';
-      const date = DateTime.local();
+      const date = this.currentDateTime;
       return Interval.fromDateTimes(
         date.startOf(scale),
         date.endOf(scale),
@@ -210,7 +213,7 @@ export default {
     },
     percentTimeChange() {
       const current = this.currentTime;
-      const startOfDay = DateTime.local().startOf('days').toMillis();
+      const startOfDay = this.currentDateTime.startOf('days').toMillis();
       const diff = (current - startOfDay) / 1000;
       return diff / SECONDS_IN_A_DAY * 100;
     },

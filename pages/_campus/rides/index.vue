@@ -3,10 +3,24 @@
     <h1 class="title">
       Supervision des courses
     </h1>
+    <div class="box today">
+      <date-time
+        v-model="today"
+        lang="fr"
+        append-to-body
+        input-class="input"
+        format="YYYY-MM-DD"
+      >
+        <template slot="calendar-icon">
+          <fa-icon icon="calendar-alt" />
+        </template>
+      </date-time>
+    </div>
     <vue-calendar
       :events="rides"
       with-current-time
       :schedule-with="drivers"
+      :current-date="today"
       @modal-submit="edit(ride)"
       @dates-update="updateDates"
     >
@@ -160,23 +174,6 @@ export function generateEmptyRide() {
 }
 
 export default {
-  async asyncData({ params, $api }) {
-    const start = DateTime.local().startOf('days').toJSDate();
-    const end = DateTime.local().endOf('days').toJSDate();
-    const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
-    const { data: drivers } = await ridesApi.getAvailableDrivers(
-      'id,name,availabilities(s,e)',
-      start,
-      end,
-    );
-    const { data: rides } = await ridesApi.getRides(start, end);
-    return {
-      campus: params.campus,
-      drivers,
-      rides,
-      ride: generateEmptyRide(),
-    };
-  },
   components: {
     searchPoi,
     vueCalendar,
@@ -191,6 +188,44 @@ export default {
         this.ride.end || null,
       ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
     },
+  },
+
+  watch: {
+    async today(v) {
+      const today = DateTime.fromJSDate(v);
+      const start = today.startOf('days').toJSDate();
+      const end = today.endOf('days').toJSDate();
+      const ridesApi = this.$api.rides(this.campus, EDITABLE_FIELDS);
+      // todo: Should be able to trigger queries in the same time.
+      const { data: drivers } = await ridesApi.getAvailableDrivers(
+        'id,name,availabilities(s,e)',
+        start,
+        end,
+      );
+      const { data: rides } = await ridesApi.getRides(start, end);
+      this.drivers = drivers;
+      this.rides = rides;
+    },
+  },
+
+  async asyncData({ params, $api }) {
+    const today = new Date();
+    const start = DateTime.local().startOf('days').toJSDate();
+    const end = DateTime.local().endOf('days').toJSDate();
+    const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
+    const { data: drivers } = await ridesApi.getAvailableDrivers(
+      'id,name,availabilities(s,e)',
+      start,
+      end,
+    );
+    const { data: rides } = await ridesApi.getRides(start, end);
+    return {
+      campus: params.campus,
+      drivers,
+      rides,
+      today,
+      ride: generateEmptyRide(),
+    };
   },
   methods: {
     async edit(ride) {
@@ -209,3 +244,14 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss">
+  @import "~assets/css/head";
+
+  .today.box {
+    padding: $size-small;
+    display: inline-block;
+    .svg-inline--fa {
+      color: $black;
+    }
+  }
+</style>
