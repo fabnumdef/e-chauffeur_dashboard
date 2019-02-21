@@ -2,6 +2,7 @@
   <div
     id="calendar"
     ref="calendar"
+    class="box"
   >
     <vue-modal
       v-if="$slots.modal"
@@ -22,102 +23,72 @@
       <slot name="modal" />
     </vue-modal>
     <div class="columns is-gapless">
-      <template v-if="scheduleWith">
+      <div class="column is-narrow">
+        <div class="day-title">
+&nbsp;
+        </div>
         <div
-          v-for="col of scheduleWith"
-          :key="col.id"
-          class="column"
+          v-for="s of currentDay.splitBy(SPLIT_MINUTES)"
+          :key="s.start.toISO()"
+          class="hour-slot"
         >
-          <div class="day-title">
-            {{ col.name }}
-          </div>
-          <div class="hour-slots">
-            <div
-              class="current-time"
-              :style="{ top: `${percentTimeChange}%` }"
-              :class="{ 'is-today': isToday(currentDay) }"
-            />
-            <div
-              v-for="(e, i) of eventsToday(currentDay)"
-              :key="i"
-              class="event"
-              :style="getStyle(e, i)"
-            >
-              <div class="content">
+          {{ s.start.toLocaleString(TIME_SIMPLE) }}
+        </div>
+      </div>
+      <div
+        v-for="col of columns"
+        :key="col.id"
+        class="column"
+      >
+        <div class="day-title">
+          <slot
+            name="col-title"
+            class="day-title"
+            :col="col"
+          >
+            {{ col.start ? col.start.toLocaleString({ weekday: 'long', day: '2-digit' }) : '' }}
+          </slot>
+        </div>
+        <div class="hour-slots">
+          <div
+            class="current-time"
+            :style="{ top: `${percentTimeChange}%` }"
+            :class="{ 'is-today': isToday(col.start ? col : currentDay) }"
+          />
+          <div
+            v-for="(e, i) of eventsToday(col.start ? col : currentDay)"
+            :key="i"
+            class="event"
+            :style="getStyle(e, eventsToday(col.start ? col : currentDay))"
+            @click="clickEvent(e)"
+          >
+            <div class="content">
+              <slot
+                name="event-card"
+                :event="e"
+              >
                 <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
                 <p>{{ e.title }}</p>
-              </div>
-            </div>
-            <div>
-              <div
-                v-for="s of currentDay.splitBy(SPLIT_MINUTES)"
-                :key="s.start.toISO()"
-                class="hour-slot"
-                :class="{
-                  'is-selected': isInRange(s.start),
-                  'is-closed': !isOpen(s, col.availabilities)
-                }"
-                :title="s.start.toLocaleString(DATETIME_FULL)"
-                @mousedown="startSelectRange(s.start)"
-                @mouseup="endSelectRange($event, col)"
-                @mouseover="updateSelectedRange(s.end)"
-              >
-                <template v-if="s.start.minute % 30 === 0">
-                  {{ s.start.toLocaleString(TIME_SIMPLE) }}
-                </template>
-              </div>
+              </slot>
             </div>
           </div>
-        </div>
-      </template>
-      <template v-else>
-        <div
-          v-for="day of days.splitBy(A_DAY)"
-          :key="day.start.toISO()"
-          class="column"
-        >
-          <div class="day-title">
-            {{ day.start.toLocaleString({ weekday: 'long', day: '2-digit' }) }}
-          </div>
-          <div class="hour-slots">
+          <div>
             <div
-              class="current-time"
-              :style="{top: `${percentTimeChange}%` }"
-              :class="{'is-today': isToday(day) }"
+              v-for="s of (col.start ? col : currentDay).splitBy(SPLIT_MINUTES)"
+              :key="s.start.toISO()"
+              class="hour-slot"
+              :class="{
+                'is-selected': isInRange(s.start),
+                'is-closed': col.start ? (openingHoursFeature && !isOpen(s.start)) : !isOpen(s, col.availabilities)
+              }"
+              :title="s.start.toLocaleString(DATETIME_FULL)"
+              @mousedown="startSelectRange(s.start)"
+              @mouseup="endSelectRange($event, col.start ? null : col)"
+              @mouseover="updateSelectedRange(s.end)"
             />
-            <div
-              v-for="(e, i) of eventsToday(day)"
-              :key="i"
-              class="event"
-              :style="getStyle(e, i)"
-            >
-              <div class="content">
-                <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
-                <p>{{ e.title }}</p>
-              </div>
-            </div>
-            <div>
-              <div
-                v-for="s of day.splitBy(SPLIT_MINUTES)"
-                :key="s.start.toISO()"
-                class="hour-slot"
-                :class="{
-                  'is-selected': isInRange(s.start),
-                  'is-closed': openingHoursFeature && !isOpen(s.start)
-                }"
-                :title="s.start.toLocaleString(DATETIME_FULL)"
-                @mousedown="startSelectRange(s.start)"
-                @mouseup="endSelectRange"
-                @mouseover="updateSelectedRange(s.end)"
-              >
-                <template v-if="s.start.minute % 30 === 0">
-                  {{ s.start.toLocaleString(TIME_SIMPLE) }}
-                </template>
-              </div>
-            </div>
           </div>
         </div>
-      </template>
+      </div>
     </div>
   </div>
 </template>
@@ -128,6 +99,7 @@ import { DateTime, Interval, Duration } from 'luxon';
 import OpeningHours from 'opening_hours';
 
 const SECONDS_IN_A_DAY = 60 * 60 * 24;
+const A_DAY = Duration.fromObject({ days: 1 });
 
 export default {
   components: {
@@ -164,6 +136,9 @@ export default {
     };
   },
   computed: {
+    columns() {
+      return this.scheduleWith ? this.scheduleWith : this.days.splitBy(A_DAY);
+    },
     currentDateTime() {
       return DateTime.fromJSDate(this.currentDate);
     },
@@ -193,11 +168,8 @@ export default {
         date.endOf(scale),
       );
     },
-    A_DAY() {
-      return Duration.fromObject({ days: 1 });
-    },
     SPLIT_MINUTES() {
-      return Duration.fromObject({ minutes: 10 });
+      return Duration.fromObject({ minutes: 30 });
     },
     TIME_SIMPLE() {
       return DateTime.TIME_SIMPLE;
@@ -206,7 +178,7 @@ export default {
       return DateTime.DATETIME_FULL;
     },
     hourSlotHeight() {
-      return 7.5;
+      return 25;
     },
     openingHoursFeature() {
       return this.$listeners && this.$listeners['opening-hours-update'];
@@ -281,6 +253,11 @@ export default {
       this.toggleModal = !this.toggleModal;
     },
 
+    clickEvent(event) {
+      this.$emit('click-event', event);
+      this.toggleModal = !this.toggleModal;
+    },
+
     getClonedEvents() {
       return this.events.map(e => Object.assign({}, e)).map((d) => {
         const date = d;
@@ -305,7 +282,7 @@ export default {
       intervals.push(current);
       // @todo: Recursive reduce intervals
       const oh = this.days
-        .splitBy(this.A_DAY).map(d => intervals
+        .splitBy(A_DAY).map(d => intervals
           .map(i => i.intersection(d))
           .filter(i => !!i)
           .map((i) => {
@@ -320,15 +297,21 @@ export default {
       this.$emit('opening-hours-update', oh);
     },
 
-    getStyle(e, count = 0) {
+    getStyle(e, events) {
+      const overlaping = events.filter(({ interval }) => e.interval.overlaps(interval));
+      const overlapingEventIndex = overlaping.findIndex(ev => ev.id === e.id);
       const rowsToCover = e.interval.splitBy(this.SPLIT_MINUTES);
       const rowsToSkip = Interval
         .fromDateTimes(e.interval.start.startOf('days'), e.interval.start)
         .splitBy(this.SPLIT_MINUTES);
       const height = this.hourSlotHeight * rowsToCover.length;
       const offset = this.hourSlotHeight * rowsToSkip.length;
-      const rightMargin = count * (10 + 1);
-      return { height: `${height}px`, top: `${offset}px`, right: `${rightMargin}px` };
+      return {
+        height: `${height}px`,
+        top: `${offset}px`,
+        width: `calc(${100 / overlaping.length}% - 0.7rem)`,
+        left: `calc(${(100 / overlaping.length) * overlapingEventIndex}%)`,
+      };
     },
 
     isToday(day) {
@@ -348,16 +331,9 @@ export default {
       border-right: none;
     }
   }
-  #calendar {
-    overflow-y: scroll;
-    height: 500px;
-  }
 
-  .day-title {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: $primary;
+  #calendar {
+    padding: 0 $size-small/2;
   }
 
   .hour-slots {
@@ -368,38 +344,33 @@ export default {
     font-size: $size-small;
     font-weight: $weight-light;
     user-select: none;
-    height: 7.5px;
+    height: 25px;
     cursor: crosshair;
     &:hover, &.is-selected {
-      background: rgba($white, 0.1);
+      background: rgba($primary, 0.4);
     }
+    border-bottom: 1px solid $gray;
   }
 
   .is-closed {
-    background: gray;
+    background: $light-gray;
   }
 
   .event {
     display: block;
-    max-width: 0;
     position: absolute;
-    background: $primary;
-    right: 0;
+    background: $white;
     cursor: pointer;
-    overflow: hidden;
-    transition: all 150ms linear;
+    left: 0;
+    right: 0;
+    margin: 0 $size-small;
     padding: 5px;
     font-size: $size-small;
-
-    > .content {
-      overflow: hidden;
-    }
-
+    overflow-y: scroll;
+    border: 1px solid $primary;
+    pointer-events: all;
     &:hover {
-      width: auto;
-      max-width: 250px;
-      height: auto !important;
-      z-index: 2;
+      z-index: 100;
     }
   }
 

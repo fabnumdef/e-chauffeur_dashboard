@@ -45,6 +45,16 @@ export default axios => (campus, mask) => {
       );
     },
 
+    patchRide(id, data) {
+      return axios.patch(
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
+        data,
+        {
+          params,
+        },
+      );
+    },
+
     async getAvailableDrivers(userMask, start, end) {
       const response = await axios.get(
         `/${CAMPUS_PLURAL}/${campus}/drivers`,
