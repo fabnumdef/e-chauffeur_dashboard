@@ -23,9 +23,27 @@
       :current-date="today"
       @modal-submit="edit(ride)"
       @dates-update="updateDates"
+      @click-event="onClickEvent"
     >
       <template slot="title">
-        Nouvelle course
+        <template v-if="ride.id">
+          Modifier course #{{ ride.id }}
+        </template>
+        <template v-else>
+          Nouvelle course
+        </template>
+      </template>
+      <template
+        slot="col-title"
+        slot-scope="{ col }"
+      >
+        {{ col.name }}
+      </template>
+      <template
+        slot="event-card"
+        slot-scope="{ event }"
+      >
+        <p>{{ event.departure.label }} <fa-icon icon="arrow-right" /> {{ event.arrival.label }}</p>
       </template>
       <template
         slot="col-title"
@@ -236,10 +254,19 @@ export default {
   },
   methods: {
     async edit(ride) {
-      const { data } = await this.$api.rides(
-        this.campus,
-        EDITABLE_FIELDS,
-      ).postRide(ride);
+      let query;
+      if (ride.id) {
+        query = this.$api.rides(
+          this.campus,
+          EDITABLE_FIELDS,
+        ).patchRide(ride.id, ride);
+      } else {
+        query = this.$api.rides(
+          this.campus,
+          EDITABLE_FIELDS,
+        ).postRide(ride);
+      }
+      const { data } = await query;
       this.rides.push(data);
     },
 
@@ -247,6 +274,10 @@ export default {
       this.ride.driver = { id, name };
       this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
+    },
+
+    onClickEvent(ride) {
+      this.ride = ride;
     },
   },
 };

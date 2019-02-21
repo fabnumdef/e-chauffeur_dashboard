@@ -60,10 +60,16 @@
             :key="i"
             class="event"
             :style="getStyle(e, eventsToday(col.start ? col : currentDay))"
+            @click="clickEvent(e)"
           >
             <div class="content">
-              <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
-              <p>{{ e.title }}</p>
+              <slot
+                name="event-card"
+                :event="e"
+              >
+                <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
+                <p>{{ e.title }}</p>
+              </slot>
             </div>
           </div>
           <div>
@@ -247,6 +253,11 @@ export default {
       this.toggleModal = !this.toggleModal;
     },
 
+    clickEvent(event) {
+      this.$emit('click-event', event);
+      this.toggleModal = !this.toggleModal;
+    },
+
     getClonedEvents() {
       return this.events.map(e => Object.assign({}, e)).map((d) => {
         const date = d;
@@ -355,6 +366,7 @@ export default {
     margin: 0 $size-small;
     padding: 5px;
     font-size: $size-small;
+    overflow-y: scroll;
     border: 1px solid $primary;
     pointer-events: all;
     &:hover {
