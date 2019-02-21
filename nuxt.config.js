@@ -1,5 +1,3 @@
-const pkg = require('./package');
-
 module.exports = {
   mode: 'spa',
 
@@ -7,11 +5,10 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: pkg.name,
+    title: 'E-chauffeur - Dashboard',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: pkg.description },
     ],
     link: [
       { rel: 'stylesheet', href: '//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' },
@@ -100,6 +97,7 @@ module.exports = {
           'faTimes',
           'faCalendar',
           'faUser',
+          'faArrowRight',
           'faKey',
           'faAngleDown',
           'faCalendarAlt',
