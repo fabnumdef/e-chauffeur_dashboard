@@ -55,15 +55,17 @@
             :style="{ top: `${percentTimeChange}%` }"
             :class="{ 'is-today': isToday(col.start ? col : currentDay) }"
           />
-          <div
-            v-for="(e, i) of eventsToday(col.start ? col : currentDay)"
-            :key="i"
-            class="event"
-            :style="getStyle(e, i)"
-          >
-            <div class="content">
-              <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
-              <p>{{ e.title }}</p>
+          <div class="events">
+            <div
+              v-for="(e, i) of eventsToday(col.start ? col : currentDay)"
+              :key="i"
+              class="event"
+              :style="getStyle(e, i)"
+            >
+              <div class="content">
+                <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
+                <p>{{ e.title }}</p>
+              </div>
             </div>
           </div>
           <div>
@@ -314,15 +316,9 @@ export default {
       border-right: none;
     }
   }
-  #calendar {
-    padding: $size-small/2;
-  }
 
-  .day-title {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: $primary;
+  #calendar {
+    padding: 0 $size-small/2;
   }
 
   .hour-slots {
@@ -336,7 +332,7 @@ export default {
     height: 25px;
     cursor: crosshair;
     &:hover, &.is-selected {
-      background: rgba($white, 0.1);
+      background: rgba($primary, 0.4);
     }
     border-bottom: 1px solid $gray;
   }
@@ -345,28 +341,26 @@ export default {
     background: $light-gray;
   }
 
+  $event-margin: 15px;
+  .events {
+    padding: 0 $event-margin;
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+  }
+
   .event {
     display: block;
-    max-width: 0;
-    position: absolute;
-    background: $primary;
-    right: 0;
+    position: relative;
+    background: $white;
     cursor: pointer;
-    overflow: hidden;
-    transition: all 150ms linear;
+    width: 100%;
     padding: 5px;
     font-size: $size-small;
-
-    > .content {
-      overflow: hidden;
-    }
-
-    &:hover {
-      width: auto;
-      max-width: 250px;
-      height: auto !important;
-      z-index: 2;
-    }
+    border: 1px solid $primary;
+    pointer-events: all;
   }
 
   .current-time {
