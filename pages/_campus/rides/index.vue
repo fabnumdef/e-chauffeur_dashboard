@@ -28,6 +28,12 @@
         Nouvelle course
       </template>
       <template
+        slot="col-title"
+        slot-scope="{ col }"
+      >
+        {{ col.name }}
+      </template>
+      <template
         slot="modal"
         class="white-background"
       >

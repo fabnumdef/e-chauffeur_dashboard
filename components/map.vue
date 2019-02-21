@@ -80,4 +80,7 @@ export default {
   #map-wrap {
     z-index: 0;
   }
+  /deep/ .leaflet-container {
+    position: fixed;
+  }
 </style>
