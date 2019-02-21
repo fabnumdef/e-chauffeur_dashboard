@@ -55,17 +55,15 @@
             :style="{ top: `${percentTimeChange}%` }"
             :class="{ 'is-today': isToday(col.start ? col : currentDay) }"
           />
-          <div class="events">
-            <div
-              v-for="(e, i) of eventsToday(col.start ? col : currentDay)"
-              :key="i"
-              class="event"
-              :style="getStyle(e, i)"
-            >
-              <div class="content">
-                <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
-                <p>{{ e.title }}</p>
-              </div>
+          <div
+            v-for="(e, i) of eventsToday(col.start ? col : currentDay)"
+            :key="i"
+            class="event"
+            :style="getStyle(e, eventsToday(col.start ? col : currentDay))"
+          >
+            <div class="content">
+              <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
+              <p>{{ e.title }}</p>
             </div>
           </div>
           <div>
@@ -288,15 +286,21 @@ export default {
       this.$emit('opening-hours-update', oh);
     },
 
-    getStyle(e, count = 0) {
+    getStyle(e, events) {
+      const overlaping = events.filter(({ interval }) => e.interval.overlaps(interval));
+      const overlapingEventIndex = overlaping.findIndex(ev => ev.id === e.id);
       const rowsToCover = e.interval.splitBy(this.SPLIT_MINUTES);
       const rowsToSkip = Interval
         .fromDateTimes(e.interval.start.startOf('days'), e.interval.start)
         .splitBy(this.SPLIT_MINUTES);
       const height = this.hourSlotHeight * rowsToCover.length;
       const offset = this.hourSlotHeight * rowsToSkip.length;
-      const rightMargin = count * (10 + 1);
-      return { height: `${height}px`, top: `${offset}px`, right: `${rightMargin}px` };
+      return {
+        height: `${height}px`,
+        top: `${offset}px`,
+        width: `calc(${100 / overlaping.length}% - 0.7rem)`,
+        left: `calc(${(100 / overlaping.length) * overlapingEventIndex}%)`,
+      };
     },
 
     isToday(day) {
@@ -341,26 +345,21 @@ export default {
     background: $light-gray;
   }
 
-  $event-margin: 15px;
-  .events {
-    padding: 0 $event-margin;
-    display: block;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    pointer-events: none;
-  }
-
   .event {
     display: block;
-    position: relative;
+    position: absolute;
     background: $white;
     cursor: pointer;
-    width: 100%;
+    left: 0;
+    right: 0;
+    margin: 0 $size-small;
     padding: 5px;
     font-size: $size-small;
     border: 1px solid $primary;
     pointer-events: all;
+    &:hover {
+      z-index: 100;
+    }
   }
 
   .current-time {

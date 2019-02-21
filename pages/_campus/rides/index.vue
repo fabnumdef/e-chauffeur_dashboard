@@ -155,6 +155,7 @@ import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
 
 const EDITABLE_FIELDS = [
+  'id',
   'start',
   'end',
   'departure(id,label)',
