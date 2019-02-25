@@ -21,8 +21,8 @@ export default {
       default: '',
     },
     value: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({}),
     },
   },
   computed: {

@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import searchUserCampus from '~/components/form/search-user-campus.vue';
 
 export default {
@@ -124,7 +124,10 @@ export default {
     },
   },
   methods: {
-    ...mapMutations({ setCampus: 'context/setCampus' }),
+    ...mapActions({ fetchCampus: 'context/fetchCampus' }),
+    setCampus({ id }) {
+      this.fetchCampus(id);
+    },
     logout() {
       try {
         this.$auth.logout();
