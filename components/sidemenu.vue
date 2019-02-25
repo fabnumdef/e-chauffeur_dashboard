@@ -87,7 +87,7 @@
       <li>
         <button
           class="button is-text"
-          @click="$auth.logout()"
+          @click="logout()"
         >
           Déconnexion
         </button>
@@ -125,6 +125,14 @@ export default {
   },
   methods: {
     ...mapMutations({ setCampus: 'context/setCampus' }),
+    logout() {
+      try {
+        this.$auth.logout();
+      } finally {
+        this.$toasted.success('À bientôt !');
+        this.$router.push('/login');
+      }
+    },
   },
 };
 </script>
