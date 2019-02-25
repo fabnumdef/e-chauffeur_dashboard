@@ -2,7 +2,7 @@
   <main>
     <div class="logo">
       <img
-        alt="E-chauffeur"
+        alt="e-Chauffeur"
         src="/logo.svg"
       >
     </div>
