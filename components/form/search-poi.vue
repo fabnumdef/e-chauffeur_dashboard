@@ -9,21 +9,28 @@
     :show-labels="false"
     @search-change="updateSet"
     @input="onInput"
+    @open="onOpen"
   >
-    <template slot="singleLabel" slot-scope="{ option }">
+    <template
+      slot="singleLabel"
+      slot-scope="{ option }"
+    >
       <p class="is-size-7">
-        {{option.id}}
+        {{ option.id }}
       </p>
       <p>
-        {{option.label}}
+        {{ option.label }}
       </p>
     </template>
-    <template slot="option" slot-scope="{ option }">
+    <template
+      slot="option"
+      slot-scope="{ option }"
+    >
       <p class="is-size-7">
-      {{option.id}}
+        {{ option.id }}
       </p>
       <p>
-      {{option.label}}
+        {{ option.label }}
       </p>
     </template>
   </vue-multiselect>
@@ -31,6 +38,7 @@
 <script>
 import debounce from 'lodash.debounce';
 
+const FIELDS = 'id,label';
 export default {
   props: {
     placeholder: {
@@ -49,17 +57,17 @@ export default {
   data: () => ({
     pois: [],
   }),
-  async mounted() {
-    const { data } = await this.$api.pois.getPois('id,label');
-    this.pois = data;
-  },
   methods: {
     updateSet: debounce(async function updateSet(search) {
-      const { data } = await this.$api.pois.getPois('id,label', { search });
+      const { data } = await this.$api.pois.getPois(FIELDS, { search });
       this.pois = data;
     }, 500),
     onInput(data) {
       this.$emit('input', data);
+    },
+    async onOpen() {
+      const { data } = await this.$api.pois.getPois(FIELDS);
+      this.pois = data;
     },
   },
 };
