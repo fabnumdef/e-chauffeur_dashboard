@@ -10,7 +10,10 @@ const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id
 export default {
   async asyncData({ params, $api }) {
     return {
-      campus: (await $api.campuses.getCampus(params.id, EDITABLE_FIELDS)).data,
+      campus: Object.assign(
+        { phone: {}, categories: [] },
+        (await $api.campuses.getCampus(params.id, EDITABLE_FIELDS)).data,
+      ),
     };
   },
 };
