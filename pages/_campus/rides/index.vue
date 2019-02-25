@@ -24,6 +24,7 @@
       @modal-submit="edit(ride)"
       @dates-update="updateDates"
       @click-event="onClickEvent"
+      @init-event="initRide"
     >
       <template slot="title">
         <template v-if="ride.id">
@@ -55,21 +56,6 @@
         slot="modal"
         class="white-background"
       >
-        <ec-field
-          v-if="ride.driver && ride.driver.name"
-          label="Chauffeur"
-          field-id="driver"
-        >
-          {{ ride.driver.name }}
-        </ec-field>
-
-        <ec-field
-          label="Type de course"
-          field-id="departure"
-        >
-          <search-category v-model="ride.category" />
-        </ec-field>
-
         <ec-field
           label="Dates"
           field-id="dates"
@@ -111,16 +97,33 @@
         </div>
 
         <ec-field
-          label="Véhicule"
-          field-id="car"
+          label="Type de course"
+          field-id="departure"
         >
-          <search-available-car
-            v-model="ride.car"
-            :start="ride.start"
-            :end="ride.end"
-            :campus="campus"
-          />
+          <search-category v-model="ride.category" />
         </ec-field>
+        <div class="columns">
+          <ec-field
+            v-if="ride.driver && ride.driver.name"
+            class="column"
+            label="Chauffeur"
+            field-id="driver"
+          >
+            {{ ride.driver.name }}
+          </ec-field>
+          <ec-field
+            class="column"
+            label="Véhicule"
+            field-id="car"
+          >
+            <search-available-car
+              v-model="ride.car"
+              :start="ride.start"
+              :end="ride.end"
+              :campus="campus"
+            />
+          </ec-field>
+        </div>
 
         <ec-field
           label="Téléphone"
@@ -282,6 +285,9 @@ export default {
 
     onClickEvent(ride) {
       this.ride = ride;
+    },
+    initRide() {
+      this.ride = generateEmptyRide();
     },
   },
 };

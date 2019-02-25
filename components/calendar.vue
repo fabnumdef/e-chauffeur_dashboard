@@ -229,6 +229,7 @@ export default {
     },
 
     startSelectRange(dt) {
+      this.$emit('init-event');
       this.rangeStart = dt;
     },
 
@@ -243,7 +244,7 @@ export default {
         this.toggleOpeningHours(this.rangeStart, this.rangeEnd);
       } else {
         this.toggleModal = true;
-        this.$emit('dates-update', [this.rangeStart, this.rangeEnd], col);
+        this.$emit('dates-update', [this.rangeStart, this.rangeEnd || this.rangeStart.plus(this.SPLIT_MINUTES)], col);
       }
       this.clearRanges();
     },
