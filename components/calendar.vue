@@ -129,7 +129,7 @@ export default {
   },
   data() {
     return {
-      currentTime: this.currentDateTime,
+      currentTime: this.currentDateTime ? this.currentDateTime.toJSDate() : null,
       rangeStart: null,
       rangeEnd: null,
       toggleModal: false,
