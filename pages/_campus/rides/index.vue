@@ -92,22 +92,26 @@
           </date-time>
         </ec-field>
 
-        <ec-field
-          label="Departure"
-          field-id="departure"
-        >
-          <search-poi v-model="ride.departure" />
-        </ec-field>
+        <div class="columns">
+          <ec-field
+            class="column"
+            label="Départ"
+            field-id="departure"
+          >
+            <search-poi v-model="ride.departure" />
+          </ec-field>
+
+          <ec-field
+            class="column"
+            label="Arrivée"
+            field-id="arrival"
+          >
+            <search-poi v-model="ride.arrival" />
+          </ec-field>
+        </div>
 
         <ec-field
-          label="Arrival"
-          field-id="arrival"
-        >
-          <search-poi v-model="ride.arrival" />
-        </ec-field>
-
-        <ec-field
-          label="Available cars"
+          label="Véhicule"
           field-id="car"
         >
           <search-available-car
@@ -119,7 +123,7 @@
         </ec-field>
 
         <ec-field
-          label="Phone number"
+          label="Téléphone"
           field-id="phone"
         >
           <input
@@ -130,7 +134,7 @@
         </ec-field>
 
         <ec-field
-          label="Passengers"
+          label="Nombre de passagers"
           field-id="passengers-count"
         >
           <div class="select">
@@ -150,7 +154,7 @@
         </ec-field>
 
         <ec-field
-          label="Comments"
+          label="Commentaires"
           field-id="comments"
         >
           <textarea
