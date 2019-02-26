@@ -2,7 +2,7 @@
   <main>
     <header>
       <nuxt-link
-        :to="campusLink('cars-id-calendar', { params: { campus } })"
+        :to="campusLink('cars-id-edit', { params: { campus } })"
         class="button is-primary is-pulled-right"
       >
         <span class="icon is-small">
