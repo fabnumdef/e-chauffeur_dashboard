@@ -125,8 +125,8 @@ export default {
   },
   methods: {
     ...mapActions({ fetchCampus: 'context/fetchCampus' }),
-    setCampus({ id }) {
-      this.fetchCampus(id);
+    setCampus(campus) {
+      this.fetchCampus(campus ? campus.id : null);
     },
     logout() {
       try {
