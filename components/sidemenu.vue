@@ -66,7 +66,7 @@
       </li>
       <li>
         <nuxt-link :to="{ name: 'pois' }">
-          POIs
+          Lieux
         </nuxt-link>
       </li>
       <li>

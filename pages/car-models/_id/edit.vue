@@ -5,28 +5,28 @@
         v-if="id"
         class="title"
       >
-        CarModel #{{ id }}
+        Modèle de véhicule #{{ id }}
       </h1>
       <h1
         v-else
         class="title"
       >
-        CarModel
+        Modèle de véhicule
       </h1>
       <h2
         v-if="id"
         class="subtitle"
       >
-        Edit
+        Modification
       </h2>
       <h2
         v-else
         class="subtitle"
       >
-        New
+        Création
       </h2>
     </header>
-    <form @submit.prevent="edit(carModel)">
+    <form @submit.prevent="edit(carModel)" class="box">
       <ec-field
         label="ID"
         field-id="id"
@@ -58,7 +58,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
         </span>
-        <span>Save</span>
+        <span>Sauvegarder</span>
       </button>
 
       <button
@@ -69,7 +69,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
         </span>
-        <span>Create</span>
+        <span>Créer</span>
       </button>
     </form>
   </main>

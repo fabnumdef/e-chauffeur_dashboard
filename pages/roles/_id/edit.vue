@@ -5,28 +5,28 @@
         v-if="id"
         class="title"
       >
-        Role #{{ id }}
+        Rôle #{{ id }}
       </h1>
       <h1
         v-else
         class="title"
       >
-        Role
+        Rôle
       </h1>
       <h2
         v-if="id"
         class="subtitle"
       >
-        Edit
+        Modification
       </h2>
       <h2
         v-else
         class="subtitle"
       >
-        New
+        Création
       </h2>
     </header>
-    <form @submit.prevent="edit(role)">
+    <form @submit.prevent="edit(role)" class="box">
       <ec-field
         label="ID"
         field-id="id"
@@ -39,15 +39,15 @@
         >
       </ec-field>
 
-      <ec-field>
+      <ec-field label="Rôles hérités">
         <search-roles v-model="role.inherit" />
       </ec-field>
 
-      <ec-field>
+      <ec-field label="Droits">
         <search-rights v-model="role.rights" />
       </ec-field>
 
-      <ec-field>
+      <ec-field label="Bases liées">
         <search-campuses v-model="role.campuses" />
       </ec-field>
 
@@ -59,7 +59,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
         </span>
-        <span>Save</span>
+        <span>Sauvegarder</span>
       </button>
 
       <button
@@ -70,7 +70,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
         </span>
-        <span>Create</span>
+        <span>Créer</span>
       </button>
     </form>
   </main>
