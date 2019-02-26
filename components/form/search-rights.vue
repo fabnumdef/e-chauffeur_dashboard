@@ -4,6 +4,7 @@
     :options="rights"
     :value="value"
     multiple
+    :show-labels="false"
     @search-change="updateSet"
     @input="onInput"
   />

@@ -6,6 +6,7 @@
     track-by="id"
     label="id"
     multiple
+    :show-labels="false"
     @search-change="updateSet"
     @input="onInput"
   />
