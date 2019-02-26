@@ -26,7 +26,10 @@
         Création
       </h2>
     </header>
-    <form @submit.prevent="edit(category)" class="box">
+    <form
+      class="box"
+      @submit.prevent="edit(category)"
+    >
       <ec-field
         label="ID"
         field-id="id"

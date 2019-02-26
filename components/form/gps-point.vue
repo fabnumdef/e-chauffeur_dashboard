@@ -1,6 +1,9 @@
 <template>
   <div class="columns">
-    <ec-field class="column is-size-7" label="Longitude">
+    <ec-field
+      class="column is-size-7"
+      label="Longitude"
+    >
       <input
         ref="longitude"
         :value="value.coordinates[0]"
@@ -11,7 +14,10 @@
         @input="input"
       >
     </ec-field>
-    <ec-field class="column is-size-7" label="Latitude">
+    <ec-field
+      class="column is-size-7"
+      label="Latitude"
+    >
       <input
         ref="latitude"
         :value="value.coordinates[1]"

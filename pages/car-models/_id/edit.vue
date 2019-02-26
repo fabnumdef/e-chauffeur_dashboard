@@ -26,7 +26,10 @@
         Création
       </h2>
     </header>
-    <form @submit.prevent="edit(carModel)" class="box">
+    <form
+      class="box"
+      @submit.prevent="edit(carModel)"
+    >
       <ec-field
         label="ID"
         field-id="id"

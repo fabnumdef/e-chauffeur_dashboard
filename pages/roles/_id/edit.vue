@@ -26,7 +26,10 @@
         Création
       </h2>
     </header>
-    <form @submit.prevent="edit(role)" class="box">
+    <form
+      class="box"
+      @submit.prevent="edit(role)"
+    >
       <ec-field
         label="ID"
         field-id="id"

@@ -26,7 +26,10 @@
         Création
       </h2>
     </header>
-    <form @submit.prevent="edit(poi)" class="box">
+    <form
+      class="box"
+      @submit.prevent="edit(poi)"
+    >
       <ec-field
         label="ID"
         field-id="id"
