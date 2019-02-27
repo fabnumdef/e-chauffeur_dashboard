@@ -172,6 +172,7 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex';
 import vueCalendar from '~/components/calendar.vue';
 import ecField from '~/components/form/field.vue';
 import { DateTime } from 'luxon';
@@ -214,6 +215,7 @@ export default {
     searchCategory,
   },
   computed: {
+    ...mapGetters({ rides: 'realtime/rides' }),
     range() {
       return [
         this.ride.start || null,
@@ -236,11 +238,11 @@ export default {
       );
       const { data: rides } = await ridesApi.getRides(start, end);
       this.drivers = drivers;
-      this.rides = rides;
+      this.setRides(rides);
     },
   },
 
-  async asyncData({ params, $api }) {
+  async asyncData({ params, $api, store }) {
     const today = new Date();
     const start = DateTime.local().startOf('days').toJSDate();
     const end = DateTime.local().endOf('days').toJSDate();
@@ -251,30 +253,31 @@ export default {
       end,
     );
     const { data: rides } = await ridesApi.getRides(start, end);
+    store.commit('realtime/setRides', rides);
     return {
       campus: params.campus,
       drivers,
-      rides,
       today,
       ride: generateEmptyRide(),
     };
   },
   methods: {
+    ...mapMutations({
+      pushRide: 'realtime/pushRide',
+      setRides: 'realtime/setRides',
+    }),
     async edit(ride) {
-      let query;
       if (ride.id) {
-        query = this.$api.rides(
+        await this.$api.rides(
           this.campus,
           EDITABLE_FIELDS,
         ).patchRide(ride.id, ride);
       } else {
-        query = this.$api.rides(
+        await this.$api.rides(
           this.campus,
           EDITABLE_FIELDS,
         ).postRide(ride);
       }
-      const { data } = await query;
-      this.rides.push(data);
     },
 
     updateDates([start, end], { id, name } = {}) {
