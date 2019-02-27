@@ -26,6 +26,7 @@
       @dates-update="updateDates"
       @click-event="onClickEvent"
       @init-event="initRide"
+      @time-pace="onTimePace"
     >
       <template slot="title">
         <template v-if="ride.id">
@@ -34,12 +35,6 @@
         <template v-else>
           Nouvelle course
         </template>
-      </template>
-      <template
-        slot="col-title"
-        slot-scope="{ col }"
-      >
-        {{ col.name }}
       </template>
       <template
         slot="event-card"
@@ -61,7 +56,7 @@
         slot="col-title"
         slot-scope="{ col }"
       >
-        {{ col.name }}
+        <ride-calendar-head :driver="col" :ride="getCurrentRide(col.id)" />
       </template>
       <template
         slot="modal"
@@ -185,8 +180,9 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex';
 import vueCalendar from '~/components/calendar.vue';
+import rideCalendarHead from '~/components/ride-calendar-head.vue';
 import ecField from '~/components/form/field.vue';
-import { DateTime } from 'luxon';
+import { DateTime, Interval } from 'luxon';
 import searchPoi from '~/components/form/search-poi';
 import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
@@ -228,6 +224,7 @@ export default {
     ecField,
     searchAvailableCar,
     searchCategory,
+    rideCalendarHead,
   },
   computed: {
     ...mapGetters({ rides: 'realtime/rides' }),
@@ -333,6 +330,15 @@ export default {
         default:
           return false;
       }
+    },
+    onTimePace(currentTime) {
+      this.currentTime = currentTime;
+    },
+    getCurrentRide(driverId) {
+      const currentTime = DateTime.fromJSDate(this.currentTime);
+      return this.rides
+        .filter(r => r.driver.id === driverId)
+        .find(r => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
   },
 };

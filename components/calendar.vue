@@ -132,7 +132,7 @@ export default {
   },
   data() {
     return {
-      currentTime: this.currentDateTime ? this.currentDateTime.toJSDate() : null,
+      currentTime: this.currentDateTime ? this.currentDateTime.toJSDate() : new Date(),
       rangeStart: null,
       rangeEnd: null,
       toggleModal: false,
@@ -193,6 +193,11 @@ export default {
       return diff / SECONDS_IN_A_DAY * 100;
     },
   },
+  watch: {
+    currentTime() {
+      this.$emit('time-pace', this.currentTime);
+    },
+  },
   mounted() {
     if (this.$el && this.$el.querySelector) {
       const el = this.$el.querySelector('.current-time');
@@ -203,8 +208,9 @@ export default {
   },
   created() {
     setInterval(() => {
-      this.currentTime = Date.now();
-    }, 30000);
+      this.currentTime = new Date();
+    }, 3000);
+    this.$emit('time-pace', this.currentTime);
   },
   methods: {
     isOpen(d, availabilities) {
