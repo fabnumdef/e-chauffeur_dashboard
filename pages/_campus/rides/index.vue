@@ -21,6 +21,7 @@
       with-current-time
       :schedule-with="drivers"
       :current-date="today"
+      without-default-event-style
       @modal-submit="edit(ride)"
       @dates-update="updateDates"
       @click-event="onClickEvent"
@@ -44,7 +45,17 @@
         slot="event-card"
         slot-scope="{ event }"
       >
-        <p>{{ event.departure.label }} <fa-icon icon="arrow-right" /> {{ event.arrival.label }}</p>
+        <div
+          class="event-status"
+          :class="eventStatusClass(event)"
+        >
+          <fa-icon
+            v-if="isWaiting(event)"
+            icon="comment-dots"
+            class="waiting-icon"
+          />
+          <p>{{ event.departure.label }} <fa-icon icon="arrow-right" /> {{ event.arrival.label }}</p>
+        </div>
       </template>
       <template
         slot="col-title"
@@ -179,6 +190,9 @@ import { DateTime } from 'luxon';
 import searchPoi from '~/components/form/search-poi';
 import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
+import {
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, DONE,
+} from '~/api/status';
 
 const EDITABLE_FIELDS = [
   'id',
@@ -189,6 +203,7 @@ const EDITABLE_FIELDS = [
   'car(id,label)',
   'driver(id,name)',
   'phone',
+  'status',
   'comments',
   'passengersCount',
   'category(id,label)',
@@ -289,12 +304,40 @@ export default {
     onClickEvent(ride) {
       this.ride = ride;
     },
+
     initRide() {
       this.ride = generateEmptyRide();
+    },
+
+    eventStatusClass(event) {
+      switch (event.status) {
+        case DONE:
+          return 'event-status-done';
+        case STARTED:
+        case WAITING:
+          return 'event-status-going';
+        case IN_PROGRESS:
+        case DELIVERED:
+          return 'event-status-coming';
+        case ACCEPTED:
+        default:
+          return 'event-status-planned';
+      }
+    },
+    isWaiting(event) {
+      switch (event.status) {
+        case VALIDATED:
+        case WAITING:
+        case DELIVERED:
+          return true;
+        default:
+          return false;
+      }
     },
   },
 };
 </script>
+
 <style scoped lang="scss">
   @import "~assets/css/head";
 
@@ -304,5 +347,36 @@ export default {
     .svg-inline--fa {
       color: $black;
     }
+  }
+  .event-status {
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    &-done {
+      color: $black;
+      border: 1px solid $black;
+    }
+    &-planned {
+      background: $dark-gray;
+      color: findColorInvert($dark-gray);
+    }
+    &-going {
+      background: $warning;
+      color: findColorInvert($warning);
+    }
+    &-coming {
+      background: $primary;
+      color: findColorInvert($primary);
+    }
+  }
+  .waiting-icon {
+    color: $primary;
+    font-size: $size-medium;
+    position: absolute;
+    right: -$size-small;
+    top: -$size-small;
+    filter: drop-shadow(1px 1px 5px rgba($light-gray, 0.7));
   }
 </style>

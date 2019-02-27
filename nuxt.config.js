@@ -104,6 +104,7 @@ module.exports = {
           'faKey',
           'faAngleDown',
           'faCalendarAlt',
+          'faCommentDots',
         ],
       },
     ],

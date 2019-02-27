@@ -20,6 +20,7 @@
     "@nuxtjs/toast": "^3.0.2",
     "cross-env": "^5.2.0",
     "i18next-client": "^1.11.4",
+    "javascript-state-machine": "^3.1.0",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
     "lodash.range": "^3.2.0",
