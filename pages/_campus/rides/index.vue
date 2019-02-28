@@ -347,6 +347,9 @@ export default {
 <style scoped lang="scss">
   @import "~assets/css/head";
 
+  /deep/ .day-title {
+    height: 120px;
+  }
   .today.box {
     padding: $size-small;
     display: inline-block;
