@@ -1,7 +1,7 @@
 <template>
-  <div id="history">
+  <div id="history" >
     <div id="history-container" class="columns ">
-      <div id="history-container-filter" class="column is-one-fifth ">
+      <div id="history-container-filter" class="column is-one-fifth">
         <div class="history-title">
           <h1 class="">Historique</h1>
         </div>
@@ -9,33 +9,79 @@
         <div class="columns ">
           <div class="column">
             <p class="is-size-3 has-text-weight-bold">
-              <span class="has-text-info">{{ rides.data.length }}</span> courses
+              <span class="has-text-info">
+                {{ rides.length }}
+              </span>
+              <span v-if="rides.length > 0">courses</span>
+              <span v-else>course</span>
             </p>
+          </div>
+          <div class="column is-size-4 has-text-weight-bold pb-0">
+            Filtres
+          </div>
+          <div class="column">
+            <div class="columns is-mobile">
+              <div class="column is-narrow has-text-weight-bold">Date</div>
+              <div class="column filter-title-line"></div>
+            </div>
+            <ec-date-picker :value="filters.date" v-on:dateChange="updateFilterDate" />
           </div>
         </div>
       </div>
+
       <div id="history-container-content" class="column ">
         <div class="columns  is-mobile history-header">
-          <div class="column">Date</div>
-          <div class="column">Heure</div>
-          <div class="column">Chauffeur</div>
-          <div class="column">Type de course</div>
-          <div class="column">Statut</div>
-          <div class="column"><a class="button is-rounded">Exporter CSV</a></div>
+          <div class="column">
+            Date
+          </div>
+          <div class="column">
+            Heure
+          </div>
+          <div class="column">
+            Chauffeur
+          </div>
+          <div class="column">
+            Type de course
+          </div>
+          <div class="column">
+            Statut
+          </div>
+          <div class="column">
+            <a class="button is-rounded" @click="getExportRides">
+              <fa-icon :icon="['fas', 'file-export']" class="has-text-info" />
+              Exporter CSV
+            </a>
+          </div>
         </div>
 
         <div class="history-container-ride">
-          <template v-for="(ride,index) in rides.data" >
-            <div  v-bind:id="'history-ride-' + index" class="columns is-multiline is-mobile history-ride">
-              <div class="column" @click="collapseRideDetails(index)">
-                <span class="icon is-small" >
+          <p class="has-text-weight-bold" v-if="rides.length === 0">Aucunes données à afficher.</p>
+
+          <template v-for="(ride,index) in rides" >
+            <div v-bind:id="'history-ride-' + index" class="columns is-multiline is-mobile history-ride">
+              <div class="column" >
+                <span class="icon is-small" @click="collapseRideDetails(index)">
                     <fa-icon :icon="['fas', 'chevron-right']" />
                 </span>
                 {{  getFormatDate(ride.start, 'D') }}</div>
-              <div class="column">{{ getFormatDate(ride.start, 'T') }} </div>
-              <div class="column">{{ ride.driver.name }}</div>
-              <div class="column">Service</div>
-              <div class="column"><span class="tag is-info is-medium">COURSE EFFECTUEE</span></div>
+              <div class="column">
+                {{ getFormatDate(ride.start, 'T') }}
+              </div>
+              <div class="column">
+                {{ ride.driver.name }}
+              </div>
+              <div class="column">
+                {{ ride.category }}
+              </div>
+              <div class="column">
+                <span class="tag is-medium"
+                      v-bind:class="[
+                      { 'is-done': ride.status === 'finish' },
+                      { 'is-cancel': ride.status === 'void' }
+                      ]">
+                  {{ getStatusText(ride.status) }}
+                </span>
+              </div>
               <div class="column"></div>
 
               <div v-bind:id="'history-ride-details-' + index" class="history-ride-details d-none">
@@ -74,12 +120,12 @@
                         **
                       </div>
                     </div>
-                    <div class="columns has-text-left">
+                    <div class="columns has-text-left has-text-centered-mobile">
                       <div class="column">
                         <p class="is-size-7">Départ</p>
-                        HH:MM - Adresse départ
+                        {{ getFormatDate(ride.start, 'hh:mm' ) }} - Adresse départ
                         <p class="is-size-7">Arrivée</p>
-                        HH-MM - Adresse arrivée
+                        {{ getFormatDate(ride.end, 'hh:mm' ) }} - Adresse arrivée
                       </div>
                     </div>
                   </div>
@@ -97,24 +143,61 @@
   import { DateTime } from "luxon";
   import Interval from 'luxon/src/interval';
   import ecMap from '~/components/map.vue';
+  import ecDatePicker from '~/components/datepicker.vue';
 
   export default {
     components: {
       ecMap,
+      ecDatePicker,
     },
 
-    async asyncData({ $api }) {
-      // const { data, pagination } = await $api.campuses.getCampuses('id,name');
-      const endDate = DateTime.local().toISO();
-      const startDate = DateTime.local().minus({ months: 1 }).toISO();
-      const rides = await $api.rides('BSL', '*').getRides(startDate, endDate);
-
+    data() {
       return {
-        rides
-      };
+        campus: '',
+        status: {
+          finish: 'course effectuée',
+          void: 'course annulée'
+        },
+        rides: [],
+        filters: {
+          date: [
+            DateTime.local().minus({ months: 1 }).toJSDate(),
+            DateTime.local().toJSDate()
+          ]
+        },
+      }
+    },
+
+    created() {
+      this.campus = this.$route.params.campus;
+      this.getRides();
     },
 
     methods: {
+      getRides: async function() {
+        const response = await this.$api.rides(this.campus, '*').getRides(this.filters.date[0], this.filters.date[1]);
+        this.rides = response.data;
+      },
+
+      getExportRides: async function() {
+        if(this.rides.length > 0) {
+          const response = await this.$api.rides(this.campus, '*')
+                                 .getExportRides(this.filters.date[0], this.filters.date[1]);
+
+          let encodedUri = encodeURI("data:text/csv;charset=utf-8," + response.data);
+          let link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download",  'export_' + this.getFormatDate(DateTime.local(), 'dd_MM_yyyy') + '.csv');
+          document.body.appendChild(link);
+          link.click();
+        }
+      },
+
+      updateFilterDate: function(date) {
+        this.filters.date = date;
+        this.getRides();
+      },
+
       getIntervalDuration: function(startDate, endDate, format = 'hh:mm:ss') {
         return Interval .fromDateTimes(DateTime.fromISO(startDate), DateTime.fromISO(endDate))
                 .toDuration()
@@ -123,6 +206,10 @@
 
       getFormatDate: function(date, format) {
         return DateTime.fromISO(date).toFormat(format);
+      },
+
+      getStatusText: function(status) {
+        return this.status[status];
       },
 
       collapseRideDetails: function (id) {
@@ -173,7 +260,23 @@
         padding-top:0;
         padding-right:0;
 
-        div:nth-child(2) { flex-direction: column; }
+        div:nth-child(2) {
+          flex-direction: column;
+          padding-right: 15px
+        }
+
+        .filter-title-line {
+          padding-left: 0;
+
+          &:after {
+            content:'';
+            display:inline-block;
+            vertical-align: middle;
+            width: 100%;
+            height: 1px;
+            background: $grey-lighter
+          }
+        }
       }
 
       #history-container-content {
@@ -187,6 +290,11 @@
 
       text-align: center;
       font-weight: bold;
+
+      svg {
+        margin-right: 15px;
+      }
+
     }
 
     .history-container-ride {
@@ -195,8 +303,24 @@
       text-align: center;
       border: 1px solid $border-color;
 
+      .column {
+        text-transform: capitalize;
+      }
       .columns:not(:first-child) {
         margin-top: $margin;
+      }
+
+      .tag {
+        width: 100%;
+        color: white;
+        text-transform: uppercase;
+
+        &.is-done {
+          background-color: #8192a9;
+        }
+        &.is-cancel {
+          background-color: #e61300;
+        }
       }
     }
 
@@ -248,6 +372,10 @@
 
     .rotate90 {
       transform: rotate(90deg);
+    }
+
+    .pb-0 {
+      padding-bottom: 0 !important;
     }
 
     .w-100 {

@@ -104,6 +104,7 @@ module.exports = {
           'faAngleDown',
           'faCalendarAlt',
           'faChevronRight',
+          'faFileExport'
         ],
       },
     ],

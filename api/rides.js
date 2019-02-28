@@ -35,6 +35,20 @@ export default axios => (campus, mask) => {
       return response;
     },
 
+    async getExportRides(start, end) {
+      const response = await axios.get(
+        `/${ENTITY_PLURAL}/export`,
+        {
+          params: {
+            mask,
+            filters: merge({}, filters, { start, end }),
+          },
+        },
+      );
+
+      return response;
+    },
+
     postRide(data) {
       return axios.post(
         `/${ENTITY_PLURAL}`,
