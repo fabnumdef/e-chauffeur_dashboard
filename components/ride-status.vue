@@ -1,5 +1,5 @@
 <template>
-  <div class="ride-status" :class="badgeClass">
+  <div class="ride-status" :class="`ride-status-${badgeClass}`">
     {{ badgeTitle }}
   </div>
 </template>
@@ -41,19 +41,19 @@ export default {
 
     badgeClass() {
       if (!this.ride) {
-        return 'ride-status-available';
+        return 'available';
       }
       switch (this.ride.status) {
         case STARTED:
         case WAITING:
-          return 'ride-status-going';
+          return 'going';
         case IN_PROGRESS:
         case DELIVERED:
-          return 'ride-status-coming';
+          return 'coming';
         case ACCEPTED:
         case DONE:
         default:
-          return 'ride-status-available';
+          return 'available';
       }
     },
   },

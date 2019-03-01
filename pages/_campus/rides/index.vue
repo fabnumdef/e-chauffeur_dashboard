@@ -196,7 +196,7 @@ const EDITABLE_FIELDS = [
   'end',
   'departure(id,label)',
   'arrival(id,label)',
-  'car(id,label)',
+  'car(id,label,model(id,label))',
   'driver(id,name)',
   'phone',
   'status',
