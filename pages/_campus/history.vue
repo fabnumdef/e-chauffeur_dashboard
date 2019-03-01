@@ -3,7 +3,7 @@
     <div id="history-container" class="columns ">
       <div id="history-container-filter" class="column is-one-fifth">
         <div class="history-title">
-          <h1 class="">Historique</h1>
+          <h1>Historique</h1>
         </div>
 
         <div class="columns ">
@@ -16,7 +16,7 @@
               <span v-else>course</span>
             </p>
           </div>
-          <div class="column is-size-4 has-text-weight-bold pb-0">
+          <div class="column is-size-4 has-text-weight-bold">
             Filtres
           </div>
           <div class="column">
@@ -58,10 +58,10 @@
           <p class="has-text-weight-bold" v-if="rides.length === 0">Aucunes données à afficher.</p>
 
           <template v-for="(ride,index) in rides" >
-            <div v-bind:id="'history-ride-' + index" class="columns is-multiline is-mobile history-ride">
+            <div :id="'history-ride-' + index" class="columns is-multiline is-mobile history-ride">
               <div class="column" >
-                <span class="icon is-small" @click="collapseRideDetails(index)">
-                    <fa-icon :icon="['fas', 'chevron-right']" />
+                <span class="icon is-small" :class="{'icon-rotate90': show[index]}" @click="showRideDetails(index)">
+                    <fa-icon :icon="['fas', 'chevron-right']"  />
                 </span>
                 {{  getFormatDate(ride.start, 'D') }}</div>
               <div class="column">
@@ -75,7 +75,7 @@
               </div>
               <div class="column">
                 <span class="tag is-medium"
-                      v-bind:class="[
+                      :class="[
                       { 'is-done': ride.status === 'finish' },
                       { 'is-cancel': ride.status === 'void' }
                       ]">
@@ -84,8 +84,8 @@
               </div>
               <div class="column"></div>
 
-              <div v-bind:id="'history-ride-details-' + index" class="history-ride-details d-none">
-                <div class="columns w-100">
+              <div :id="'history-ride-details-' + index" class="history-ride-details" v-if="show[index]">
+                <div class="columns">
                   <div class="column is-one-fifth">
                     <ec-map class="is-map" />
                   </div>
@@ -141,7 +141,7 @@
 
 <script>
   import { DateTime } from "luxon";
-  import Interval from 'luxon/src/interval';
+  import  Interval from 'luxon/src/interval' ;
   import ecMap from '~/components/map.vue';
   import ecDatePicker from '~/components/datepicker.vue';
 
@@ -165,6 +165,9 @@
             DateTime.local().toJSDate()
           ]
         },
+        fields: ['id', 'start', 'end', 'phone', 'departure', 'arrival', 'driver', 'passengerCount', 'car',
+        'campus', 'status', 'category'],
+        show: []
       }
     },
 
@@ -175,13 +178,14 @@
 
     methods: {
       getRides: async function() {
-        const response = await this.$api.rides(this.campus, '*').getRides(this.filters.date[0], this.filters.date[1]);
+        const response = await this.$api.rides(this.campus, this.fields.join(',')).getRides(this.filters.date[0], this.filters.date[1]);
         this.rides = response.data;
+        this.show = Array(this.rides.length).fill(false);
       },
 
       getExportRides: async function() {
         if(this.rides.length > 0) {
-          const response = await this.$api.rides(this.campus, '*')
+          const response = await this.$api.rides(this.campus, this.fields.join(','))
                                  .getExportRides(this.filters.date[0], this.filters.date[1]);
 
           let encodedUri = encodeURI("data:text/csv;charset=utf-8," + response.data);
@@ -212,17 +216,8 @@
         return this.status[status];
       },
 
-      collapseRideDetails: function (id) {
-        let elHistoRideDetails = document.getElementById('history-ride-details-' + id);
-        let elHistoRideIconChevron = document.getElementById('history-ride-' + id).getElementsByClassName('icon')[0];
-
-        if (! elHistoRideDetails.classList.contains('d-none')){
-          elHistoRideDetails.classList.add('d-none');
-          elHistoRideIconChevron.classList.remove('rotate90');
-        } else {
-          elHistoRideDetails.classList.remove('d-none');
-          elHistoRideIconChevron.classList.add('rotate90');
-        }
+      showRideDetails: function(i) {
+        this.$set(this.show, i, !this.show[i]);
       }
     }
   }
@@ -310,6 +305,10 @@
         margin-top: $margin;
       }
 
+      .icon.icon-rotate90 {
+        transform: rotate(90deg);
+      }
+
       .tag {
         width: 100%;
         color: white;
@@ -340,17 +339,15 @@
     }
 
     .history-ride-details {
-      display: flex !important;
+      display: flex;
+      flex-shrink: 1;
+      flex-grow: 1;
       background-color: $white;
       margin: { left: 1px; right: 1px; bottom: 1px }
       border-top: 1px solid $grey-lighter;
       flex-wrap: wrap;
       width: 100%;
       font-weight: normal;
-
-      &:first-child {
-        width: 100%;
-      }
 
       .is-map {
         height: 170px;
@@ -364,22 +361,6 @@
 
     .columns:not(:last-child) {
       margin-bottom: 0;
-    }
-
-    .d-none {
-      display: none !important;
-    }
-
-    .rotate90 {
-      transform: rotate(90deg);
-    }
-
-    .pb-0 {
-      padding-bottom: 0 !important;
-    }
-
-    .w-100 {
-      width: 100% !important;
     }
   }
 </style>
