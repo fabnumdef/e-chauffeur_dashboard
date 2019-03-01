@@ -1,12 +1,18 @@
 <template>
-  <div id="history" >
-    <div id="history-container" class="columns ">
-      <div id="history-container-filter" class="column is-one-fifth">
+  <div id="history">
+    <div
+      id="history-container"
+      class="columns"
+    >
+      <div
+        id="history-container-filter"
+        class="column is-one-fifth"
+      >
         <div class="history-title">
           <h1>Historique</h1>
         </div>
 
-        <div class="columns ">
+        <div class="columns">
           <div class="column">
             <p class="is-size-3 has-text-weight-bold">
               <span class="has-text-info">
@@ -21,15 +27,23 @@
           </div>
           <div class="column">
             <div class="columns is-mobile">
-              <div class="column is-narrow has-text-weight-bold">Date</div>
-              <div class="column filter-title-line"></div>
+              <div class="column is-narrow has-text-weight-bold">
+                Date
+              </div>
+              <div class="column filter-title-line" />
             </div>
-            <ec-date-picker :value="filters.date" v-on:dateChange="updateFilterDate" />
+            <ec-date-picker
+              :value="filters.date"
+              @dateChange="updateFilterDate"
+            />
           </div>
         </div>
       </div>
 
-      <div id="history-container-content" class="column ">
+      <div
+        id="history-container-content"
+        class="column"
+      >
         <div class="columns  is-mobile history-header">
           <div class="column">
             Date
@@ -47,23 +61,43 @@
             Statut
           </div>
           <div class="column">
-            <a class="button is-rounded" @click="getExportRides">
-              <fa-icon :icon="['fas', 'file-export']" class="has-text-info" />
+            <a
+              class="button is-rounded"
+              @click="getExportRides"
+            >
+              <fa-icon
+                :icon="['fas', 'file-export']"
+                class="has-text-info"
+              />
               Exporter CSV
             </a>
           </div>
         </div>
 
         <div class="history-container-ride">
-          <p class="has-text-weight-bold" v-if="rides.length === 0">Aucunes données à afficher.</p>
+          <p
+            v-if="rides.length === 0"
+            class="has-text-weight-bold"
+          >
+            Aucunes données à afficher.
+          </p>
 
-          <template v-for="(ride,index) in rides" >
-            <div :id="'history-ride-' + index" class="columns is-multiline is-mobile history-ride">
-              <div class="column" >
-                <span class="icon is-small" :class="{'icon-rotate90': show[index]}" @click="showRideDetails(index)">
-                    <fa-icon :icon="['fas', 'chevron-right']"  />
+          <template v-for="(ride,index) in rides">
+            <div
+              :id="'history-ride-' + index"
+              :key="ride.id"
+              class="columns is-multiline is-mobile history-ride"
+            >
+              <div class="column">
+                <span
+                  class="icon is-small"
+                  :class="{'icon-rotate90': show[index]}"
+                  @click="showRideDetails(index)"
+                >
+                  <fa-icon :icon="['fas', 'chevron-right']" />
                 </span>
-                {{  getFormatDate(ride.start, 'D') }}</div>
+                {{ getFormatDate(ride.start, 'D') }}
+              </div>
               <div class="column">
                 {{ getFormatDate(ride.start, 'T') }}
               </div>
@@ -74,17 +108,23 @@
                 {{ ride.category }}
               </div>
               <div class="column">
-                <span class="tag is-medium"
-                      :class="[
-                      { 'is-done': ride.status === 'finish' },
-                      { 'is-cancel': ride.status === 'void' }
-                      ]">
+                <span
+                  class="tag is-medium"
+                  :class="[
+                    { 'is-done': ride.status === 'finish' },
+                    { 'is-cancel': ride.status === 'void' }
+                  ]"
+                >
                   {{ getStatusText(ride.status) }}
                 </span>
               </div>
-              <div class="column"></div>
+              <div class="column" />
 
-              <div :id="'history-ride-details-' + index" class="history-ride-details" v-if="show[index]">
+              <div
+                v-if="show[index]"
+                :id="'history-ride-details-' + index"
+                class="history-ride-details"
+              >
                 <div class="columns">
                   <div class="column is-one-fifth">
                     <ec-map class="is-map" />
@@ -92,39 +132,57 @@
                   <div class="column">
                     <div class="columns">
                       <div class="column">
-                        <p class="is-size-7">Référence course</p>
+                        <p class="is-size-7">
+                          Référence course
+                        </p>
                         {{ ride.id }}
                       </div>
-                      <div class="column ">
-                        <p class="is-size-7">Type de véhicule</p>
+                      <div class="column">
+                        <p class="is-size-7">
+                          Type de véhicule
+                        </p>
                         {{ ride.car.label }}
                       </div>
-                      <div class="column ">
-                        <p class="is-size-7">Temps de la course</p>
+                      <div class="column">
+                        <p class="is-size-7">
+                          Temps de la course
+                        </p>
                         {{ getIntervalDuration(ride.start, ride.end) }}
                       </div>
-                      <div class="column ">
-                        <p class="is-size-7">Distance de la course</p>
+                      <div class="column">
+                        <p class="is-size-7">
+                          Distance de la course
+                        </p>
                         **
                       </div>
-                      <div class="column ">
-                        <p class="is-size-7">Nombre de passagers</p>
+                      <div class="column">
+                        <p class="is-size-7">
+                          Nombre de passagers
+                        </p>
                         {{ ride.passengersCount }}
                       </div>
-                      <div class="column ">
-                        <p class="is-size-7">Numéro de téléphone</p>
+                      <div class="column">
+                        <p class="is-size-7">
+                          Numéro de téléphone
+                        </p>
                         {{ ride.phone }}
                       </div>
-                      <div class="column ">
-                        <p class="is-size-7">NIA / NID</p>
+                      <div class="column">
+                        <p class="is-size-7">
+                          NIA / NID
+                        </p>
                         **
                       </div>
                     </div>
                     <div class="columns has-text-left has-text-centered-mobile">
                       <div class="column">
-                        <p class="is-size-7">Départ</p>
+                        <p class="is-size-7">
+                          Départ
+                        </p>
                         {{ getFormatDate(ride.start, 'hh:mm' ) }} - Adresse départ
-                        <p class="is-size-7">Arrivée</p>
+                        <p class="is-size-7">
+                          Arrivée
+                        </p>
                         {{ getFormatDate(ride.end, 'hh:mm' ) }} - Adresse arrivée
                       </div>
                     </div>
@@ -140,87 +198,88 @@
 </template>
 
 <script>
-  import { DateTime } from "luxon";
-  import  Interval from 'luxon/src/interval' ;
-  import ecMap from '~/components/map.vue';
-  import ecDatePicker from '~/components/datepicker.vue';
+import { DateTime } from 'luxon';
+import Interval from 'luxon/src/interval';
+import ecMap from '~/components/map.vue';
+import ecDatePicker from '~/components/datepicker.vue';
 
-  export default {
-    components: {
-      ecMap,
-      ecDatePicker,
+export default {
+  components: {
+    ecMap,
+    ecDatePicker,
+  },
+
+  data() {
+    return {
+      campus: '',
+      status: {
+        finish: 'course effectuée',
+        void: 'course annulée',
+      },
+      rides: [],
+      filters: {
+        date: [
+          DateTime.local().minus({ months: 1 }).toJSDate(),
+          DateTime.local().toJSDate(),
+        ],
+      },
+      fields: ['id', 'start', 'end', 'phone', 'departure', 'arrival', 'driver', 'passengerCount', 'car',
+        'campus', 'status', 'category'],
+      show: [],
+    };
+  },
+
+  created() {
+    this.campus = this.$route.params.campus;
+    this.getRides();
+  },
+
+  methods: {
+    async getRides() {
+      const response = await this.$api.rides(this.campus, this.fields.join(','))
+        .getRides(this.filters.date[0], this.filters.date[1]);
+      this.rides = response.data;
+      this.show = Array(this.rides.length).fill(false);
     },
 
-    data() {
-      return {
-        campus: '',
-        status: {
-          finish: 'course effectuée',
-          void: 'course annulée'
-        },
-        rides: [],
-        filters: {
-          date: [
-            DateTime.local().minus({ months: 1 }).toJSDate(),
-            DateTime.local().toJSDate()
-          ]
-        },
-        fields: ['id', 'start', 'end', 'phone', 'departure', 'arrival', 'driver', 'passengerCount', 'car',
-        'campus', 'status', 'category'],
-        show: []
+    async getExportRides() {
+      if (this.rides.length > 0) {
+        const response = await this.$api.rides(this.campus, this.fields.join(','))
+          .getExportRides(this.filters.date[0], this.filters.date[1]);
+
+        const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${response.data}`);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', `export_${this.getFormatDate(DateTime.local(), 'dd_MM_yyyy')}.csv`);
+        document.body.appendChild(link);
+        link.click();
       }
     },
 
-    created() {
-      this.campus = this.$route.params.campus;
+    updateFilterDate(date) {
+      this.filters.date = date;
       this.getRides();
     },
 
-    methods: {
-      getRides: async function() {
-        const response = await this.$api.rides(this.campus, this.fields.join(',')).getRides(this.filters.date[0], this.filters.date[1]);
-        this.rides = response.data;
-        this.show = Array(this.rides.length).fill(false);
-      },
+    getIntervalDuration(startDate, endDate, format = 'hh:mm:ss') {
+      return Interval.fromDateTimes(DateTime.fromISO(startDate), DateTime.fromISO(endDate))
+        .toDuration()
+        .toFormat(format);
+    },
 
-      getExportRides: async function() {
-        if(this.rides.length > 0) {
-          const response = await this.$api.rides(this.campus, this.fields.join(','))
-                                 .getExportRides(this.filters.date[0], this.filters.date[1]);
+    getFormatDate(date, format) {
+      return DateTime.fromISO(date).toFormat(format);
+    },
 
-          let encodedUri = encodeURI("data:text/csv;charset=utf-8," + response.data);
-          let link = document.createElement("a");
-          link.setAttribute("href", encodedUri);
-          link.setAttribute("download",  'export_' + this.getFormatDate(DateTime.local(), 'dd_MM_yyyy') + '.csv');
-          document.body.appendChild(link);
-          link.click();
-        }
-      },
+    getStatusText(status) {
+      return this.status[status];
+    },
 
-      updateFilterDate: function(date) {
-        this.filters.date = date;
-        this.getRides();
-      },
-
-      getIntervalDuration: function(startDate, endDate, format = 'hh:mm:ss') {
-        return Interval .fromDateTimes(DateTime.fromISO(startDate), DateTime.fromISO(endDate))
-                .toDuration()
-                .toFormat(format);
-      },
-
-      getFormatDate: function(date, format) {
-        return DateTime.fromISO(date).toFormat(format);
-      },
-
-      getStatusText: function(status) {
-        return this.status[status];
-      },
-
-      showRideDetails: function(i) {
-        this.$set(this.show, i, !this.show[i]);
-      }
-    }
-  }
+    showRideDetails(i) {
+      this.$set(this.show, i, !this.show[i]);
+    },
+  },
+};
 </script>
 
 <style scope lang="scss" scoped>
