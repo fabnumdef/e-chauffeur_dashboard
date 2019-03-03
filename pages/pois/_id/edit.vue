@@ -5,28 +5,31 @@
         v-if="id"
         class="title"
       >
-        Poi #{{ id }}
+        Lieu #{{ id }}
       </h1>
       <h1
         v-else
         class="title"
       >
-        Poi
+        Lieu
       </h1>
       <h2
         v-if="id"
         class="subtitle"
       >
-        Edit
+        Modification
       </h2>
       <h2
         v-else
         class="subtitle"
       >
-        New
+        Création
       </h2>
     </header>
-    <form @submit.prevent="edit(poi)">
+    <form
+      class="box"
+      @submit.prevent="edit(poi)"
+    >
       <ec-field
         label="ID"
         field-id="id"
@@ -68,7 +71,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
         </span>
-        <span>Save</span>
+        <span>Sauvegarder</span>
       </button>
 
       <button
@@ -79,7 +82,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
         </span>
-        <span>Create</span>
+        <span>Créer</span>
       </button>
     </form>
   </main>

@@ -104,7 +104,7 @@ export default {
     },
     actionRemoveConfirm: {
       type: String,
-      default: 'Do you really want to remove this row ?',
+      default: 'Voulez vous vraiment supprimer cette ligne ?',
     },
   },
   computed: {

@@ -1,60 +1,97 @@
 <template>
-  <div>
-    <vue-calendar
-      :events="events"
-      :opening-hours="user.workingHours"
-      with-current-time
-      @modal-submit="edit(event)"
-      @dates-update="updateDates"
-      @opening-hours-update="updateWorkingHours"
-    >
-      <template slot="modal">
-        <ec-field
-          label="Dates"
-          field-id="dates"
-        >
-          <date-time
-            lang="fr"
-            append-to-body
-            input-class="input"
-            type="datetime"
-            range
-            :value="range"
-            :minute-step="5"
-            format="YYYY-MM-DD HH:mm:ss"
-            range-separator="->"
-            @input="updateDates"
-          >
-            <template slot="calendar-icon">
-              <fa-icon icon="calendar" />
-            </template>
-          </date-time>
-        </ec-field>
-        <ec-field
-          label="Label"
-          field-id="label"
-        >
-          <input
-            id="label"
-            v-model="event.title"
-            type="text"
-            class="input"
-          >
-        </ec-field>
-      </template>
-    </vue-calendar>
-    <ec-field
-      label="Working hours"
-      field-id="workingHours"
-    >
-      <input
-        id="workingHours"
-        v-model="user.workingHours"
-        type="text"
-        class="input"
+  <main>
+    <header>
+      <nuxt-link
+        :to="{name: 'users-id-edit' }"
+        class="button is-primary is-pulled-right"
       >
-    </ec-field>
-  </div>
+        <span class="icon is-small">
+          <fa-icon :icon="['fas', 'edit']" />
+        </span>
+        <span>Modifier</span>
+      </nuxt-link>
+      <h1
+        class="title"
+      >
+        Utilisateur <em class="is-size-6">#{{ user.id }}</em>
+      </h1>
+      <h2
+        class="subtitle"
+      >
+        Calendrier
+      </h2>
+    </header>
+    <div class="box">
+      <vue-calendar
+        :events="events"
+        :opening-hours="user.workingHours"
+        with-current-time
+        @modal-submit="edit(event)"
+        @dates-update="updateDates"
+        @opening-hours-update="updateWorkingHours"
+      >
+        <template slot="modal">
+          <ec-field
+            label="Dates"
+            field-id="dates"
+          >
+            <date-time
+              lang="fr"
+              append-to-body
+              input-class="input"
+              type="datetime"
+              range
+              :value="range"
+              :minute-step="5"
+              format="YYYY-MM-DD HH:mm:ss"
+              range-separator="->"
+              @input="updateDates"
+            >
+              <template slot="calendar-icon">
+                <fa-icon icon="calendar" />
+              </template>
+            </date-time>
+          </ec-field>
+          <ec-field
+            label="Label"
+            field-id="label"
+          >
+            <input
+              id="label"
+              v-model="event.title"
+              type="text"
+              class="input"
+            >
+          </ec-field>
+        </template>
+      </vue-calendar>
+    </div>
+    <form
+      class="box"
+      @submit.prevent="updateWorkingHours(user.workingHours)"
+    >
+      <ec-field
+        label="Horaires de travail"
+        field-id="workingHours"
+      >
+        <input
+          id="workingHours"
+          v-model="user.workingHours"
+          type="text"
+          class="input"
+        >
+      </ec-field>
+      <button
+        type="submit"
+        class="button is-primary"
+      >
+        <span class="icon is-small">
+          <fa-icon :icon="['fas', 'save']" />
+        </span>
+        <span>Sauvegarder</span>
+      </button>
+    </form>
+  </main>
 </template>
 <script>
 import { DateTime } from 'luxon';
@@ -84,10 +121,6 @@ export default {
       event: generateEmptyEvent(),
     };
   },
-  async asyncData({ $api, route } = {}) {
-    const { data } = await $api.userEvents({ id: route.params.id }, 'start,end,title').getUserEvents();
-    return { events: data };
-  },
   computed: {
     range() {
       return [
@@ -95,6 +128,10 @@ export default {
         this.event.end || null,
       ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
     },
+  },
+  async asyncData({ $api, route } = {}) {
+    const { data } = await $api.userEvents({ id: route.params.id }, 'start,end,title').getUserEvents();
+    return { events: data };
   },
   methods: {
     async edit(event) {
@@ -112,7 +149,7 @@ export default {
     async updateWorkingHours(oh) {
       this.user.workingHours = oh;
       const { data } = (await this.$api.users.patchUser(this.user.id, this.user, 'id,email,roles(id),workingHours'));
-      this.user = data;
+      Object.assign(this.user, data);
     },
   },
 };

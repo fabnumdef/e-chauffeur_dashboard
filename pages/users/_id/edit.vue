@@ -1,34 +1,47 @@
 <template>
   <main>
     <header>
+      <nuxt-link
+        v-if="user.id"
+        :to="{name: 'users-id-calendar'}"
+        class="button is-primary is-pulled-right"
+      >
+        <span class="icon is-small">
+          <fa-icon :icon="['fas', 'calendar-alt']" />
+        </span>
+        <span>Calendrier</span>
+      </nuxt-link>
       <h1
         v-if="user.id"
         class="title"
       >
-        User #{{ user.id }} : {{ user.email }}
+        Utilisateur <em class="is-size-6">#{{ user.id }} : {{ user.email }}</em>
       </h1>
       <h1
         v-else
         class="title"
       >
-        User
+        Utilisateur
       </h1>
       <h2
         v-if="user.id"
         class="subtitle"
       >
-        Edit
+        Modifier
       </h2>
       <h2
         v-else
         class="subtitle"
       >
-        New
+        Créer
       </h2>
     </header>
-    <form @submit.prevent="edit(user)">
+    <form
+      class="box"
+      @submit.prevent="edit(user)"
+    >
       <ec-field
-        label="Name"
+        label="Nom"
         field-id="name"
       >
         <input
@@ -49,7 +62,7 @@
       </ec-field>
 
       <ec-field
-        label="Password"
+        label="Mot de passe"
         field-id="password"
       >
         <input
@@ -60,7 +73,7 @@
         >
       </ec-field>
 
-      <ec-field>
+      <ec-field label="Rôles">
         <search-roles v-model="user.roles" />
       </ec-field>
 
@@ -72,7 +85,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
         </span>
-        <span>Save</span>
+        <span>Sauvegarder</span>
       </button>
 
       <button
@@ -83,7 +96,7 @@
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
         </span>
-        <span>Create</span>
+        <span>Créer</span>
       </button>
     </form>
   </main>

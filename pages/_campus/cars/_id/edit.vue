@@ -114,9 +114,6 @@ export default {
       default: () => ({}),
     },
   },
-  asyncData({ params }) {
-    return { campus: params.campus };
-  },
   data() {
     return { id: this.car.id };
   },
@@ -127,6 +124,9 @@ export default {
     CarsAPI() {
       return this.$api.cars(this.campus, EDITABLE_FIELDS.join(','));
     },
+  },
+  asyncData({ params }) {
+    return { campus: params.campus };
   },
   methods: {
     async edit(car) {

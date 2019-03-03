@@ -3,12 +3,18 @@
 
 export const state = () => ({
   drivers: [],
+  rides: [],
 });
 
 export const mutations = {
   setDrivers: (s, drivers = []) => {
     s.drivers = drivers;
   },
+
+  setRides: (s, rides = []) => {
+    s.rides = rides;
+  },
+
   pushDriver: (s, { user: { id }, position, date }) => {
     if (!id) {
       throw new Error('User id is required');
@@ -22,10 +28,23 @@ export const mutations = {
       Object.assign(s.drivers[i], o);
     }
   },
+
+  pushRide: (s, ride) => {
+    if (!ride.id) {
+      throw new Error('Id is required');
+    }
+    const i = s.rides.findIndex(({ id }) => id === ride.id);
+    if (i === -1) {
+      s.rides.push(ride);
+    } else {
+      Object.assign(s.rides[i], ride);
+    }
+  },
 };
 
 export const getters = {
   drivers: s => s.drivers,
+  rides: s => s.rides,
 };
 
 export const actions = {

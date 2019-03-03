@@ -2,7 +2,7 @@
   <main>
     <header class="with-options">
       <h1 class="title">
-        Pois
+        Lieux
       </h1>
       <div class="options">
         <nuxt-link
@@ -12,7 +12,7 @@
           <span class="icon is-small">
             <fa-icon :icon="['fas', 'plus']" />
           </span>
-          <span>Create</span>
+          <span>Créer</span>
         </nuxt-link>
       </div>
     </header>
@@ -42,15 +42,15 @@ export default {
   components: {
     ecList,
   },
+  computed: {
+    columns() { return columns; },
+  },
   async asyncData({ $api }) {
     const { data, pagination } = await getPois.call($api);
     return {
       pois: data,
       pagination,
     };
-  },
-  computed: {
-    columns() { return columns; },
   },
   methods: {
     async deletePoi({ id }) {

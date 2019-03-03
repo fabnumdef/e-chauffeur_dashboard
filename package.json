@@ -16,13 +16,15 @@
     "@fortawesome/free-solid-svg-icons": "^5.6.3",
     "@nuxtjs/auth": "^4.5.3",
     "@nuxtjs/axios": "^5.0.0",
+    "@nuxtjs/pwa": "^3.0.0-beta.8",
     "@nuxtjs/toast": "^3.0.2",
     "cross-env": "^5.2.0",
     "i18next-client": "^1.11.4",
+    "javascript-state-machine": "^3.1.0",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
     "lodash.range": "^3.2.0",
-    "luxon": "^1.10.0",
+    "luxon": "^1.11.3",
     "moment": "^2.23.0",
     "node-sass": "^4.11.0",
     "nuxt": "^2.3.4",
@@ -38,12 +40,12 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.12.0",
+    "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-import-resolver-webpack": "^0.10.1",
+    "eslint-import-resolver-webpack": "^0.11.0",
     "eslint-loader": "^2.0.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-vue": "^5.1.0"
+    "eslint-plugin-vue": "^5.2.2"
   },
   "peerDependencies": {
     "vue": "2.x",

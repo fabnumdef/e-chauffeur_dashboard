@@ -1,5 +1,3 @@
-const pkg = require('./package');
-
 module.exports = {
   mode: 'spa',
 
@@ -7,11 +5,10 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: pkg.name,
+    title: 'e-Chauffeur - Dashboard',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: pkg.description },
     ],
     link: [
       { rel: 'stylesheet', href: '//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' },
@@ -43,6 +40,7 @@ module.exports = {
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
     '~/plugins/datetime-picker.js',
+    '~/plugins/luxon.js',
     '~/plugins/realtime.js',
   ],
 
@@ -55,6 +53,7 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/toast',
     '@nuxtjs/auth',
+    '@nuxtjs/pwa',
     ['qonfucius-nuxt-bulma', { css: false, postcss: false }],
     'qonfucius-nuxt-fontawesome',
   ],
@@ -81,6 +80,7 @@ module.exports = {
         endpoints: {
           login: { url: '/jwt/generate', method: 'post', propertyName: 'token' },
           user: { url: '/jwt/user?mask=id,email', method: 'get', propertyName: false },
+          logout: null,
         },
       },
     },
@@ -100,6 +100,7 @@ module.exports = {
           'faTimes',
           'faCalendar',
           'faUser',
+          'faArrowRight',
           'faKey',
           'faAngleDown',
           'faCalendarAlt',

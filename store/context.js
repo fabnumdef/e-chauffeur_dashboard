@@ -19,6 +19,10 @@ export const getters = {
 
 export const actions = {
   async fetchCampus({ commit }, campus) {
+    if (!campus) {
+      commit('setCampus', null);
+      return;
+    }
     const { data } = await this.$api.campuses.getCampus(campus, 'id,name,location,categories(id,label)');
     commit('setCampus', data);
   },

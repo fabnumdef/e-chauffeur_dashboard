@@ -127,7 +127,7 @@ export default {
   props: {
     campus: {
       type: Object,
-      default: () => ({}),
+      default: () => ({ phone: {}, categories: [] }),
     },
   },
   data() {

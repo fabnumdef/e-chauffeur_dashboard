@@ -59,6 +59,16 @@ export default axios => (campus, mask) => {
       );
     },
 
+    patchRide(id, data) {
+      return axios.patch(
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
+        data,
+        {
+          params,
+        },
+      );
+    },
+
     async getAvailableDrivers(userMask, start, end) {
       const response = await axios.get(
         `/${CAMPUS_PLURAL}/${campus}/drivers`,
@@ -128,6 +138,21 @@ export default axios => (campus, mask) => {
         return car;
       });
       return response;
+    },
+
+    async getStats(queriedStats, start, end) {
+      return axios.get(
+        `/${CAMPUS_PLURAL}/${campus}/stats`,
+        {
+          params: {
+            mask: queriedStats,
+            filters: {
+              start,
+              end,
+            },
+          },
+        },
+      );
     },
   };
 };

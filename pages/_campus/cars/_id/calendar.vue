@@ -2,7 +2,7 @@
   <main>
     <header>
       <nuxt-link
-        :to="campusLink('cars-id-calendar', { params: { campus } })"
+        :to="campusLink('cars-id-edit', { params: { campus } })"
         class="button is-primary is-pulled-right"
       >
         <span class="icon is-small">
@@ -87,13 +87,6 @@ export default {
       event: generateEmptyEvent(),
     };
   },
-  async asyncData({ params, $api, route } = {}) {
-    const { data } = await $api.carEvents({ id: route.params.id }, 'start,end,title').getCarEvents();
-    return {
-      events: data,
-      campus: params.campus,
-    };
-  },
   computed: {
     range() {
       return [
@@ -101,6 +94,13 @@ export default {
         this.event.end || null,
       ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
     },
+  },
+  async asyncData({ params, $api, route } = {}) {
+    const { data } = await $api.carEvents({ id: route.params.id }, 'start,end,title').getCarEvents();
+    return {
+      events: data,
+      campus: params.campus,
+    };
   },
   methods: {
     async edit(event) {

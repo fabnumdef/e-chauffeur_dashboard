@@ -1,34 +1,43 @@
 <template>
-  <div>
-    <div class="field has-addons">
-      <p class="control">
-        <input
-          ref="longitude"
-          :value="value.coordinates[0]"
-          type="number"
-          step="any"
-          placeholder="Longitude"
-          class="input"
-          @input="input"
-        >
-      </p>
-      <p class="control">
-        <input
-          ref="latitude"
-          :value="value.coordinates[1]"
-          type="number"
-          step="any"
-          placeholder="Latitude"
-          class="input"
-          @input="input"
-        >
-      </p>
-    </div>
+  <div class="columns">
+    <ec-field
+      class="column is-size-7"
+      label="Longitude"
+    >
+      <input
+        ref="longitude"
+        :value="value.coordinates[0]"
+        type="number"
+        step="any"
+        placeholder="Longitude"
+        class="input"
+        @input="input"
+      >
+    </ec-field>
+    <ec-field
+      class="column is-size-7"
+      label="Latitude"
+    >
+      <input
+        ref="latitude"
+        :value="value.coordinates[1]"
+        type="number"
+        step="any"
+        placeholder="Latitude"
+        class="input"
+        @input="input"
+      >
+    </ec-field>
   </div>
 </template>
 
 <script>
+import ecField from './field.vue';
+
 export default {
+  components: {
+    ecField,
+  },
   props: {
     value: {
       type: Object,

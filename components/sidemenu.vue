@@ -66,7 +66,7 @@
       </li>
       <li>
         <nuxt-link :to="{ name: 'pois' }">
-          POIs
+          Lieux
         </nuxt-link>
       </li>
       <li>
@@ -87,7 +87,7 @@
       <li>
         <button
           class="button is-text"
-          @click="$auth.logout()"
+          @click="logout()"
         >
           Déconnexion
         </button>
@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import searchUserCampus from '~/components/form/search-user-campus.vue';
 
 export default {
@@ -124,7 +124,18 @@ export default {
     },
   },
   methods: {
-    ...mapMutations({ setCampus: 'context/setCampus' }),
+    ...mapActions({ fetchCampus: 'context/fetchCampus' }),
+    setCampus(campus) {
+      this.fetchCampus(campus ? campus.id : null);
+    },
+    logout() {
+      try {
+        this.$auth.logout();
+      } finally {
+        this.$toasted.success('À bientôt !');
+        this.$router.push('/login');
+      }
+    },
   },
 };
 </script>
