@@ -140,5 +140,15 @@ export default axios => (campus, mask) => {
         },
       );
     },
+
+    async mutateRide({ id }, action) {
+      return axios.post(
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}/${action}`,
+        {},
+        {
+          params,
+        },
+      );
+    },
   };
 };

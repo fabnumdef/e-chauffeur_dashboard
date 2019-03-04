@@ -4,10 +4,10 @@
     <p>{{ driver.name }}</p>
     <template v-if="ride && ride.car">
       <p v-if="ride.car.model">
-        <strong>{{ride.car.model.label}}</strong>
+        <strong>{{ ride.car.model.label }}</strong>
       </p>
       <p>
-        {{ride.car.id}}
+        {{ ride.car.id }}
       </p>
     </template>
   </header>

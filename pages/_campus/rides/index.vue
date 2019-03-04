@@ -178,6 +178,47 @@
           />
         </ec-field>
       </template>
+      <template slot="modal-submit">
+        <button
+          v-if="can(ride, VALIDATE)"
+          class="button is-success"
+          type="button"
+          @click="edit(ride, VALIDATED)"
+        >
+          Accepter la course
+        </button>
+        <button
+          v-else
+          class="button is-success"
+          type="button"
+          @click="edit(ride)"
+        >
+          Sauvegarder
+        </button>
+
+        <bulma-dropdown
+          v-if="can(ride, REJECT_BOUNDARY) || can(ride, REJECT_CAPACITY)"
+          class="is-danger"
+          :options="{[REJECTED_BOUNDARY]: 'Refuser (périmètre)', [REJECTED_CAPACITY]: 'Refuser (capacité)'}"
+          @click="edit(ride, $event)"
+        >
+          Refuser la course
+        </bulma-dropdown>
+        <bulma-dropdown
+          v-if="can(ride, CANCEL_TECHNICAL) || can(ride, CANCEL_REQUESTED_CUSTOMER)
+            || can(ride, CANCEL_CUSTOMER_OVERLOAD) || can(ride, CANCEL_CUSTOMER_MISSING)"
+          class="is-danger"
+          :options="{
+            [CANCEL_TECHNICAL]: 'Annuler (problème technique)',
+            [CANCEL_REQUESTED_CUSTOMER]: 'Annuler (demande utilisateur)',
+            [CANCEL_CUSTOMER_OVERLOAD]: 'Annuler (surcharge)',
+            [CANCEL_CUSTOMER_MISSING]: 'Annuler (passager absent)',
+          }"
+          @click="changeStatus(ride, $event)"
+        >
+          Annuler la course
+        </bulma-dropdown>
+      </template>
     </vue-calendar>
   </main>
 </template>
@@ -191,8 +232,19 @@ import { DateTime, Interval } from 'luxon';
 import searchPoi from '~/components/form/search-poi';
 import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
-import {
-  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, DONE,
+import bulmaDropdown from '~/components/dropdown.vue';
+import Status, {
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, VALIDATE, DONE, CREATED,
+  REJECT_BOUNDARY, REJECT_CAPACITY,
+  REJECTED_BOUNDARY, REJECTED_CAPACITY,
+  CANCEL_TECHNICAL,
+  CANCEL_REQUESTED_CUSTOMER,
+  CANCEL_CUSTOMER_OVERLOAD,
+  CANCEL_CUSTOMER_MISSING,
+  CANCELED_TECHNICAL,
+  CANCELED_REQUESTED_CUSTOMER,
+  CANCELED_CUSTOMER_OVERLOAD,
+  CANCELED_CUSTOMER_MISSING,
 } from '~/api/status';
 
 const EDITABLE_FIELDS = [
@@ -218,9 +270,23 @@ export function generateEmptyRide() {
     departure: null,
     arrival: null,
     driver: null,
+    status: CREATED,
     passengersCount: 0,
   };
 }
+
+const actions = {
+  VALIDATE,
+  VALIDATED,
+  REJECT_BOUNDARY,
+  REJECTED_BOUNDARY,
+  REJECT_CAPACITY,
+  REJECTED_CAPACITY,
+  CANCEL_TECHNICAL,
+  CANCEL_REQUESTED_CUSTOMER,
+  CANCEL_CUSTOMER_OVERLOAD,
+  CANCEL_CUSTOMER_MISSING,
+};
 
 export default {
   components: {
@@ -230,9 +296,13 @@ export default {
     searchAvailableCar,
     searchCategory,
     rideCalendarHead,
+    bulmaDropdown,
   },
   computed: {
     ...mapGetters({ rides: 'realtime/rides' }),
+    ...Object.keys(actions)
+      .map(a => ({ [a]: () => actions[a] }))
+      .reduce((acc, curr) => Object.assign(acc, curr), {}),
     range() {
       return [
         this.ride.start || null,
@@ -284,7 +354,10 @@ export default {
       pushRide: 'realtime/pushRide',
       setRides: 'realtime/setRides',
     }),
-    async edit(ride) {
+
+    async edit(r, status) {
+      const ride = Object.assign({}, r, status ? { status } : {});
+
       try {
         if (ride.id) {
           await this.$api.rides(
@@ -304,7 +377,21 @@ export default {
         this.$toasted.error(`La course n'a pas été créée ou mise à jour (${e}), merci de vérifiez les champs.`);
       }
     },
-
+    async changeStatus(ride, status) {
+      if (!ride.id) {
+        this.$toasted.error('Changement de status possible uniquement pour une course sauvegardée');
+      }
+      try {
+        await this.$api.rides(
+          this.campus,
+          EDITABLE_FIELDS,
+        ).mutateRide(ride, status);
+        this.$toasted.success('Status modifié.');
+        this.toggleModal(false);
+      } catch (e) {
+        this.$toasted.error(`La course n'a pas été créée ou mise à jour (${e}), merci de vérifiez les champs.`);
+      }
+    },
     toggleModal(newStatus = false) {
       this.modalOpen = newStatus;
     },
@@ -317,6 +404,7 @@ export default {
 
     onClickEvent(ride) {
       this.ride = ride;
+      this.toggleModal(true);
     },
 
     initRide() {
@@ -333,6 +421,13 @@ export default {
         case IN_PROGRESS:
         case DELIVERED:
           return 'event-status-coming';
+        case REJECTED_CAPACITY:
+        case REJECTED_BOUNDARY:
+        case CANCELED_TECHNICAL:
+        case CANCELED_CUSTOMER_MISSING:
+        case CANCELED_CUSTOMER_OVERLOAD:
+        case CANCELED_REQUESTED_CUSTOMER:
+          return 'event-status-wrong';
         case ACCEPTED:
         default:
           return 'event-status-planned';
@@ -355,6 +450,10 @@ export default {
       return this.rides
         .filter(r => r.driver.id === driverId)
         .find(r => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
+    },
+    can: ({ status }, action) => {
+      const state = new Status(status);
+      return state.can(action);
     },
   },
 };
@@ -394,6 +493,11 @@ export default {
     &-coming {
       background: $primary;
       color: findColorInvert($primary);
+    }
+    &-wrong {
+      background: $white;
+      color: $danger;
+      border: 1px solid $danger;
     }
   }
   .waiting-icon {

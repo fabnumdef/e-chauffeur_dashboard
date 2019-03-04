@@ -21,6 +21,12 @@
         </template>
       </template>
       <slot name="modal" />
+      <template
+        v-if="$slots['modal-submit']"
+        slot="submit"
+      >
+        <slot name="modal-submit" />
+      </template>
     </vue-modal>
     <div class="columns is-gapless">
       <div class="column is-narrow">

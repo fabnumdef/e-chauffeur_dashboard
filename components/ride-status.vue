@@ -1,5 +1,8 @@
 <template>
-  <div class="ride-status" :class="`ride-status-${badgeClass}`">
+  <div
+    class="ride-status"
+    :class="`ride-status-${badgeClass}`"
+  >
     {{ badgeTitle }}
   </div>
 </template>
