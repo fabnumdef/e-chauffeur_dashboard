@@ -105,17 +105,14 @@
                 {{ ride.driver.name }}
               </div>
               <div class="column">
-                {{ ride.category }}
+                {{ ride.category.label }}
               </div>
               <div class="column">
                 <span
                   class="tag is-medium"
-                  :class="[
-                    { 'is-done': ride.status === 'finish' },
-                    { 'is-cancel': ride.status === 'void' }
-                  ]"
+                  :class="getStatusInfos(ride.status, 'class')"
                 >
-                  {{ getStatusText(ride.status) }}
+                  {{ getStatusInfos(ride.status, 'text') }}
                 </span>
               </div>
               <div class="column" />
@@ -126,10 +123,37 @@
                 class="history-ride-details"
               >
                 <div class="columns">
-                  <div class="column is-one-fifth">
-                    <ec-map class="is-map" />
+                  <div class="column is-one-quarter">
+                    <no-ssr>
+                      <l-map
+                        :zoom="13"
+                        :center="center"
+                      >
+                        <l-tile-layer url="//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <l-marker
+                          v-for="arDep in [ride.departure, ride.arrival]"
+                          :key="arDep.id"
+                          :lat-lng="reverseLonLat(arDep.location.coordinates)"
+                        >
+                          <l-icon>
+                            <svg
+                              width="40"
+                              height="40"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <circle
+                                cx="5"
+                                cy="5"
+                                r="5"
+                                :class="'color'"
+                              />
+                            </svg>
+                          </l-icon>
+                        </l-marker>
+                      </l-map>
+                    </no-ssr>
                   </div>
-                  <div class="column">
+                  <div class="column is-full">
                     <div class="columns">
                       <div class="column">
                         <p class="is-size-7">
@@ -200,22 +224,19 @@
 <script>
 import { DateTime } from 'luxon';
 import Interval from 'luxon/src/interval';
-import ecMap from '~/components/map.vue';
 import ecDatePicker from '~/components/datepicker.vue';
+import { mapGetters } from 'vuex';
+import {
+  CANCELED, CANCEL, DONE, FINISH,
+} from '~/api/status';
 
 export default {
   components: {
-    ecMap,
     ecDatePicker,
   },
 
   data() {
     return {
-      campus: '',
-      status: {
-        finish: 'course effectuée',
-        void: 'course annulée',
-      },
       rides: [],
       filters: {
         date: [
@@ -223,20 +244,29 @@ export default {
           DateTime.local().toJSDate(),
         ],
       },
-      fields: ['id', 'start', 'end', 'phone', 'departure', 'arrival', 'driver', 'passengerCount', 'car',
+      fields: ['id', 'start', 'end', 'phone', 'departure', 'arrival', 'driver', 'passengersCount', 'car',
         'campus', 'status', 'category'],
       show: [],
     };
   },
 
+  computed: {
+    center() {
+      const [lon, lat] = this.campus.location.coordinates;
+      return [lat, lon];
+    },
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
+  },
+
   created() {
-    this.campus = this.$route.params.campus;
     this.getRides();
   },
 
   methods: {
     async getRides() {
-      const response = await this.$api.rides(this.campus, this.fields.join(','))
+      const response = await this.$api.rides(this.campus.id, this.fields.join(','))
         .getRides(this.filters.date[0], this.filters.date[1]);
       this.rides = response.data;
       this.show = Array(this.rides.length).fill(false);
@@ -244,7 +274,7 @@ export default {
 
     async getExportRides() {
       if (this.rides.length > 0) {
-        const response = await this.$api.rides(this.campus, this.fields.join(','))
+        const response = await this.$api.rides(this.campus.id, this.fields.join(','))
           .getExportRides(this.filters.date[0], this.filters.date[1]);
 
         const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${response.data}`);
@@ -271,12 +301,32 @@ export default {
       return DateTime.fromISO(date).toFormat(format);
     },
 
-    getStatusText(status) {
-      return this.status[status];
+    getStatusInfos: (status, info) => {
+      let statusInfos = {};
+
+      switch (status) {
+        case CANCEL:
+        case CANCELED:
+          statusInfos = { class: 'is-cancel', text: 'course annulée' };
+          break;
+        case FINISH:
+        case DONE:
+          statusInfos = { class: 'is-done', text: 'course effectuée' };
+          break;
+        default:
+          statusInfos = { class: 'is-progress', text: 'course en cours' };
+          break;
+      }
+
+      return statusInfos[info];
     },
 
     showRideDetails(i) {
       this.$set(this.show, i, !this.show[i]);
+    },
+
+    reverseLonLat([lon, lat]) {
+      return [lat, lon];
     },
   },
 };
@@ -364,6 +414,10 @@ export default {
         margin-top: $margin;
       }
 
+      circle.color {
+        fill: $info;
+      }
+
       .icon.icon-rotate90 {
         transform: rotate(90deg);
       }
@@ -377,7 +431,10 @@ export default {
           background-color: #8192a9;
         }
         &.is-cancel {
-          background-color: #e61300;
+          background-color: $danger;
+        }
+        &.is-progress {
+          background-color: $light;
         }
       }
     }
