@@ -83,11 +83,11 @@
               :key="s.start.toISO()"
               class="hour-slot"
               :class="{
-                'is-selected': isInRange(s.start),
+                'is-selected': isInRange(s.start, col),
                 'is-closed': col.start ? (openingHoursFeature && !isOpen(s.start)) : !isOpen(s, col.availabilities)
               }"
               :title="s.start.toLocaleString(DATETIME_FULL)"
-              @mousedown="startSelectRange(s.start)"
+              @mousedown="startSelectRange(s.start, col.start ? null : col)"
               @mouseup="endSelectRange($event, col.start ? null : col)"
               @mouseover="updateSelectedRange(s.end)"
             />
@@ -235,8 +235,8 @@ export default {
       return this.parsedOpeningHours.getState(d.toJSDate());
     },
 
-    isInRange(dt) {
-      return (this.rangeStart && this.rangeEnd)
+    isInRange(dt, col) {
+      return (this.rangeStart && this.rangeEnd && (this.rangeCol && this.rangeCol.id === col.id))
         ? Interval.fromDateTimes(this.rangeStart, this.rangeEnd).contains(dt)
         : false;
     },
@@ -244,11 +244,15 @@ export default {
     clearRanges() {
       this.rangeStart = null;
       this.rangeEnd = null;
+      this.rangeCol = null;
     },
 
-    startSelectRange(dt) {
+    startSelectRange(dt, col) {
       this.$emit('init-event');
       this.rangeStart = dt;
+      if (col) {
+        this.rangeCol = col;
+      }
     },
 
     updateSelectedRange(dt) {
@@ -292,11 +296,9 @@ export default {
           event.interval = col.intersection(ev.interval);
           return event;
         }).filter(ev => ev.interval);
-      } else {
-        console.log(col, this.getClonedEvents());
-        // todo: make this rule generic
-        return this.getClonedEvents().filter(ev => ev.driver.id === col.id);
       }
+      // todo: make this rule generic
+      return this.getClonedEvents().filter(ev => ev.driver.id === col.id);
     },
 
     toggleOpeningHours(start, end) {
