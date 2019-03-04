@@ -145,6 +145,7 @@ export default {
       currentTime: this.currentDateTime ? this.currentDateTime.toJSDate() : new Date(),
       rangeStart: null,
       rangeEnd: null,
+      rangeCol: null,
     };
   },
   computed: {
@@ -236,7 +237,10 @@ export default {
     },
 
     isInRange(dt, col) {
-      return (this.rangeStart && this.rangeEnd && (this.rangeCol && this.rangeCol.id === col.id))
+      if (!Interval.isInterval(col) && (this.rangeCol || {}).id !== col.id) {
+        return false;
+      }
+      return (this.rangeStart && this.rangeEnd)
         ? Interval.fromDateTimes(this.rangeStart, this.rangeEnd).contains(dt)
         : false;
     },
