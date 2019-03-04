@@ -6,9 +6,9 @@
   >
     <vue-modal
       v-if="$slots.modal"
-      :active="toggleModal"
+      :active="modalStatus"
       :with-background="false"
-      @toggle-modal="toggleModal = !toggleModal"
+      @toggle-modal="$emit('modal-toggle', !modalStatus)"
       @submit="modalSubmit"
     >
       <template slot="title">
@@ -129,13 +129,16 @@ export default {
       type: Date,
       default: () => new Date(),
     },
+    modalStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       currentTime: this.currentDateTime ? this.currentDateTime.toJSDate() : new Date(),
       rangeStart: null,
       rangeEnd: null,
-      toggleModal: false,
     };
   },
   computed: {
@@ -252,20 +255,18 @@ export default {
       if (this.openingHoursFeature && shiftKey) {
         this.toggleOpeningHours(this.rangeStart, this.rangeEnd);
       } else {
-        this.toggleModal = true;
+        this.$emit('modal-toggle', true);
         this.$emit('dates-update', [this.rangeStart, this.rangeEnd || this.rangeStart.plus(this.SPLIT_MINUTES)], col);
       }
       this.clearRanges();
     },
 
     modalSubmit() {
-      this.$emit('modal-submit');
-      this.toggleModal = !this.toggleModal;
+      return this.$emit('modal-submit');
     },
 
     clickEvent(event) {
-      this.$emit('click-event', event);
-      this.toggleModal = !this.toggleModal;
+      return this.$emit('click-event', event);
     },
 
     getClonedEvents() {

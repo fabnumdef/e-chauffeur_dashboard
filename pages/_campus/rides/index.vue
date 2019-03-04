@@ -22,11 +22,13 @@
       :schedule-with="drivers"
       :current-date="today"
       without-default-event-style
+      :modal-status="modalOpen"
       @modal-submit="edit(ride)"
       @dates-update="updateDates"
       @click-event="onClickEvent"
       @init-event="initRide"
       @time-pace="onTimePace"
+      @modal-toggle="toggleModal"
     >
       <template slot="title">
         <template v-if="ride.id">
@@ -56,7 +58,10 @@
         slot="col-title"
         slot-scope="{ col }"
       >
-        <ride-calendar-head :driver="col" :ride="getCurrentRide(col.id)" />
+        <ride-calendar-head
+          :driver="col"
+          :ride="getCurrentRide(col.id)"
+        />
       </template>
       <template
         slot="modal"
@@ -271,6 +276,7 @@ export default {
       drivers,
       today,
       ride: generateEmptyRide(),
+      modalOpen: false,
     };
   },
   methods: {
@@ -279,17 +285,28 @@ export default {
       setRides: 'realtime/setRides',
     }),
     async edit(ride) {
-      if (ride.id) {
-        await this.$api.rides(
-          this.campus,
-          EDITABLE_FIELDS,
-        ).patchRide(ride.id, ride);
-      } else {
-        await this.$api.rides(
-          this.campus,
-          EDITABLE_FIELDS,
-        ).postRide(ride);
+      try {
+        if (ride.id) {
+          await this.$api.rides(
+            this.campus,
+            EDITABLE_FIELDS,
+          ).patchRide(ride.id, ride);
+          this.$toasted.success('La course a bien été mise à jour.');
+        } else {
+          await this.$api.rides(
+            this.campus,
+            EDITABLE_FIELDS,
+          ).postRide(ride);
+          this.$toasted.success('La course a bien été créée.');
+        }
+        this.toggleModal(false);
+      } catch (e) {
+        this.$toasted.error(`La course n'a pas été créée ou mise à jour (${e}), merci de vérifiez les champs.`);
       }
+    },
+
+    toggleModal(newStatus = false) {
+      this.modalOpen = newStatus;
     },
 
     updateDates([start, end], { id, name } = {}) {
@@ -325,7 +342,6 @@ export default {
       switch (event.status) {
         case VALIDATED:
         case WAITING:
-        case DELIVERED:
           return true;
         default:
           return false;
