@@ -3,7 +3,7 @@
     <header>
       <nuxt-link
         v-if="id"
-        :to="campusLink('cars-id-calendar', { params: { campus } })"
+        :to="campusLink('cars-id-calendar', { params: { campus: campus.id } })"
         class="button is-primary is-pulled-right"
       >
         <span class="icon is-small">
@@ -124,9 +124,6 @@ export default {
     CarsAPI() {
       return this.$api.cars(this.campus, EDITABLE_FIELDS.join(','));
     },
-  },
-  asyncData({ params }) {
-    return { campus: params.campus };
   },
   methods: {
     async edit(car) {
