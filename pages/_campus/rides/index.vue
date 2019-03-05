@@ -68,6 +68,12 @@
         class="white-background"
       >
         <ec-field
+          label="Type de course"
+          field-id="departure"
+        >
+          <search-category v-model="ride.category" />
+        </ec-field>
+        <ec-field
           label="Dates"
           field-id="dates"
         >
@@ -107,12 +113,40 @@
           </ec-field>
         </div>
 
-        <ec-field
-          label="Type de course"
-          field-id="departure"
-        >
-          <search-category v-model="ride.category" default-first />
-        </ec-field>
+        <div class="columns">
+          <ec-field
+            label="Nombre de passagers"
+            class="column"
+            field-id="passengers-count"
+          >
+            <div class="select">
+              <select
+                id="passengers-count"
+                v-model="ride.passengersCount"
+              >
+                <option
+                  v-for="i in 8"
+                  :key="i"
+                  :value="i"
+                >
+                  {{ i }}
+                </option>
+              </select>
+            </div>
+          </ec-field>
+          <ec-field
+            label="Téléphone"
+            class="column"
+            field-id="phone"
+          >
+            <input
+              id="phone"
+              v-model="ride.phone"
+              class="input"
+            >
+          </ec-field>
+        </div>
+
         <div class="columns">
           <ec-field
             v-if="ride.driver && ride.driver.name"
@@ -135,37 +169,6 @@
             />
           </ec-field>
         </div>
-
-        <ec-field
-          label="Téléphone"
-          field-id="phone"
-        >
-          <input
-            id="phone"
-            v-model="ride.phone"
-            class="input"
-          >
-        </ec-field>
-
-        <ec-field
-          label="Nombre de passagers"
-          field-id="passengers-count"
-        >
-          <div class="select">
-            <select
-              id="passengers-count"
-              v-model="ride.passengersCount"
-            >
-              <option
-                v-for="i in 8"
-                :key="i"
-                :value="i"
-              >
-                {{ i }}
-              </option>
-            </select>
-          </div>
-        </ec-field>
 
         <ec-field
           label="Commentaires"
@@ -272,7 +275,7 @@ export function generateEmptyRide() {
     driver: null,
     status: CREATED,
     category: null,
-    passengersCount: 0,
+    passengersCount: 1,
   };
 }
 
