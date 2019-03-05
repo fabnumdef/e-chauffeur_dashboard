@@ -111,7 +111,7 @@
           label="Type de course"
           field-id="departure"
         >
-          <search-category v-model="ride.category" />
+          <search-category v-model="ride.category" default-first />
         </ec-field>
         <div class="columns">
           <ec-field
@@ -271,6 +271,7 @@ export function generateEmptyRide() {
     arrival: null,
     driver: null,
     status: CREATED,
+    category: null,
     passengersCount: 0,
   };
 }
@@ -299,7 +300,7 @@ export default {
     bulmaDropdown,
   },
   computed: {
-    ...mapGetters({ rides: 'realtime/rides' }),
+    ...mapGetters({ rides: 'realtime/rides', currentCampus: 'context/campus' }),
     ...Object.keys(actions)
       .map(a => ({ [a]: () => actions[a] }))
       .reduce((acc, curr) => Object.assign(acc, curr), {}),
@@ -409,6 +410,9 @@ export default {
 
     initRide() {
       this.ride = generateEmptyRide();
+      if (this.currentCampus.categories.length > 0) {
+        [this.ride.category] = this.currentCampus.categories;
+      }
     },
 
     eventStatusClass(event) {
