@@ -62,11 +62,11 @@
             :class="{ 'is-today': isToday(col.start ? col : currentDay) }"
           />
           <div
-            v-for="(e, i) of eventsToday(col.start ? currentDay : col)"
+            v-for="(e, i) of eventsToday(col)"
             :key="i"
             class="event"
             :class="{ 'event-default': !withoutDefaultEventStyle }"
-            :style="getStyle(e, eventsToday(col.start ? currentDay : col))"
+            :style="getStyle(e, eventsToday(col))"
             @click="clickEvent(e)"
           >
             <slot
@@ -295,14 +295,17 @@ export default {
 
     eventsToday(col) {
       if (Interval.isInterval(col)) {
-        return this.getClonedEvents().map((ev) => {
-          const event = ev;
-          event.interval = col.intersection(ev.interval);
-          return event;
-        }).filter(ev => ev.interval);
+        return this.getClonedEvents()
+          .map((ev) => {
+            const event = ev;
+            event.interval = col.intersection(ev.interval);
+            return event;
+          })
+          .filter(ev => !!ev.interval);
       }
       // todo: make this rule generic
-      return this.getClonedEvents().filter(ev => ev.driver.id === col.id);
+      return this.getClonedEvents()
+        .filter(ev => ev.driver.id === col.id);
     },
 
     toggleOpeningHours(start, end) {

@@ -25,10 +25,12 @@
       <vue-calendar
         :events="events"
         :opening-hours="user.workingHours"
+        :modal-status="modalOpen"
         with-current-time
         @modal-submit="edit(event)"
         @dates-update="updateDates"
         @opening-hours-update="updateWorkingHours"
+        @modal-toggle="toggleModal"
       >
         <template slot="modal">
           <ec-field
@@ -119,6 +121,7 @@ export default {
   data() {
     return {
       event: generateEmptyEvent(),
+      modalOpen: false,
     };
   },
   computed: {
@@ -140,6 +143,7 @@ export default {
         end: event.end,
         title: event.title,
       });
+      this.toggleModal(false);
       this.events.push(data);
     },
     updateDates([start, end]) {
@@ -150,6 +154,9 @@ export default {
       this.user.workingHours = oh;
       const { data } = (await this.$api.users.patchUser(this.user.id, this.user, 'id,email,roles(id),workingHours'));
       Object.assign(this.user, data);
+    },
+    toggleModal(newStatus = false) {
+      this.modalOpen = newStatus;
     },
   },
 };
