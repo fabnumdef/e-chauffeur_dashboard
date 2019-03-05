@@ -6,9 +6,9 @@
   >
     <vue-modal
       v-if="$slots.modal"
-      :active="toggleModal"
+      :active="modalStatus"
       :with-background="false"
-      @toggle-modal="toggleModal = !toggleModal"
+      @toggle-modal="$emit('modal-toggle', !modalStatus)"
       @submit="modalSubmit"
     >
       <template slot="title">
@@ -21,6 +21,12 @@
         </template>
       </template>
       <slot name="modal" />
+      <template
+        v-if="$slots['modal-submit']"
+        slot="submit"
+      >
+        <slot name="modal-submit" />
+      </template>
     </vue-modal>
     <div class="columns is-gapless">
       <div class="column is-narrow">
@@ -56,11 +62,11 @@
             :class="{ 'is-today': isToday(col.start ? col : currentDay) }"
           />
           <div
-            v-for="(e, i) of eventsToday(col.start ? col : currentDay)"
+            v-for="(e, i) of eventsToday(col.start ? currentDay : col)"
             :key="i"
             class="event"
             :class="{ 'event-default': !withoutDefaultEventStyle }"
-            :style="getStyle(e, eventsToday(col.start ? col : currentDay))"
+            :style="getStyle(e, eventsToday(col.start ? currentDay : col))"
             @click="clickEvent(e)"
           >
             <slot
@@ -77,11 +83,11 @@
               :key="s.start.toISO()"
               class="hour-slot"
               :class="{
-                'is-selected': isInRange(s.start),
+                'is-selected': isInRange(s.start, col),
                 'is-closed': col.start ? (openingHoursFeature && !isOpen(s.start)) : !isOpen(s, col.availabilities)
               }"
               :title="s.start.toLocaleString(DATETIME_FULL)"
-              @mousedown="startSelectRange(s.start)"
+              @mousedown="startSelectRange(s.start, col.start ? null : col)"
               @mouseup="endSelectRange($event, col.start ? null : col)"
               @mouseover="updateSelectedRange(s.end)"
             />
@@ -129,13 +135,16 @@ export default {
       type: Date,
       default: () => new Date(),
     },
+    modalStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       currentTime: this.currentDateTime ? this.currentDateTime.toJSDate() : new Date(),
       rangeStart: null,
       rangeEnd: null,
-      toggleModal: false,
     };
   },
   computed: {
@@ -226,8 +235,8 @@ export default {
       return this.parsedOpeningHours.getState(d.toJSDate());
     },
 
-    isInRange(dt) {
-      return (this.rangeStart && this.rangeEnd)
+    isInRange(dt, col) {
+      return (this.rangeStart && this.rangeEnd && (this.rangeCol && this.rangeCol.id === col.id))
         ? Interval.fromDateTimes(this.rangeStart, this.rangeEnd).contains(dt)
         : false;
     },
@@ -235,11 +244,15 @@ export default {
     clearRanges() {
       this.rangeStart = null;
       this.rangeEnd = null;
+      this.rangeCol = null;
     },
 
-    startSelectRange(dt) {
+    startSelectRange(dt, col) {
       this.$emit('init-event');
       this.rangeStart = dt;
+      if (col) {
+        this.rangeCol = col;
+      }
     },
 
     updateSelectedRange(dt) {
@@ -252,20 +265,18 @@ export default {
       if (this.openingHoursFeature && shiftKey) {
         this.toggleOpeningHours(this.rangeStart, this.rangeEnd);
       } else {
-        this.toggleModal = true;
+        this.$emit('modal-toggle', true);
         this.$emit('dates-update', [this.rangeStart, this.rangeEnd || this.rangeStart.plus(this.SPLIT_MINUTES)], col);
       }
       this.clearRanges();
     },
 
     modalSubmit() {
-      this.$emit('modal-submit');
-      this.toggleModal = !this.toggleModal;
+      return this.$emit('modal-submit');
     },
 
     clickEvent(event) {
-      this.$emit('click-event', event);
-      this.toggleModal = !this.toggleModal;
+      return this.$emit('click-event', event);
     },
 
     getClonedEvents() {
@@ -278,12 +289,16 @@ export default {
       });
     },
 
-    eventsToday(today) {
-      return this.getClonedEvents().map((ev) => {
-        const event = ev;
-        event.interval = today.intersection(ev.interval);
-        return event;
-      }).filter(ev => ev.interval);
+    eventsToday(col) {
+      if (Interval.isInterval(col)) {
+        return this.getClonedEvents().map((ev) => {
+          const event = ev;
+          event.interval = col.intersection(ev.interval);
+          return event;
+        }).filter(ev => ev.interval);
+      }
+      // todo: make this rule generic
+      return this.getClonedEvents().filter(ev => ev.driver.id === col.id);
     },
 
     toggleOpeningHours(start, end) {

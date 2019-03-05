@@ -34,19 +34,21 @@
         <slot />
       </section>
       <footer class="modal-card-foot">
-        <button
-          class="button is-success"
-          type="submit"
-        >
-          Save changes
-        </button>
-        <button
-          class="button"
-          type="button"
-          @click="toggleModal"
-        >
-          Cancel
-        </button>
+        <slot name="submit">
+          <button
+            class="button is-success"
+            type="submit"
+          >
+            Sauvegarder
+          </button>
+          <button
+            class="button"
+            type="button"
+            @click="toggleModal"
+          >
+            Annuler
+          </button>
+        </slot>
       </footer>
     </form>
   </div>

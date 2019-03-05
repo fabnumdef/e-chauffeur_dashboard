@@ -13,7 +13,7 @@
       <h1
         class="title"
       >
-        Véhicule <em>{{ id }}</em>
+        Véhicule <em>{{ car.id }}</em>
       </h1>
       <h2
         class="subtitle"
@@ -24,8 +24,10 @@
     <div class="box">
       <vue-calendar
         :events="events"
+        :modal-status="modalOpen"
         @modal-submit="edit(event)"
         @dates-update="updateDates"
+        @modal-toggle="toggleModal"
       >
         <template slot="modal">
           <ec-field
@@ -82,9 +84,16 @@ export default {
     ecField,
     vueCalendar,
   },
+  props: {
+    car: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
       event: generateEmptyEvent(),
+      modalOpen: false,
     };
   },
   computed: {
@@ -114,6 +123,9 @@ export default {
     updateDates([start, end]) {
       this.event.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.event.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
+    },
+    toggleModal(newStatus = false) {
+      this.modalOpen = newStatus;
     },
   },
 };

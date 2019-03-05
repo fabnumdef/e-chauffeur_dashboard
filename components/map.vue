@@ -25,15 +25,15 @@
                   :class="getStatus(driver)"
                 />
                 <text
+                  v-if="driver.currentRide && driver.currentRide.car && driver.currentRide.car.model"
                   :class="getStatus(driver)"
                   class="is-inverted is-uppercase"
                   x="50%"
                   y="50%"
                   text-anchor="middle"
                   dy=".3em"
-                  v-if="driver.currentRide && driver.currentRide.car && driver.currentRide.car.model"
                 >
-                  {{driver.currentRide.car.model.label.split(" ").map((n)=>n[0]).join('')}}
+                  {{ driver.currentRide.car.model.label.split(" ").map((n)=>n[0]).join('') }}
                 </text>
               </svg>
             </l-icon>

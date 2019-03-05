@@ -49,7 +49,7 @@ export default axios => (campus, mask) => {
       return response;
     },
 
-    postRide(data) {
+    async postRide(data) {
       return axios.post(
         `/${ENTITY_PLURAL}`,
         merge(data, { campus: { id: campus } }),
@@ -59,7 +59,7 @@ export default axios => (campus, mask) => {
       );
     },
 
-    patchRide(id, data) {
+    async patchRide(id, data) {
       return axios.patch(
         `/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
         data,
@@ -151,6 +151,16 @@ export default axios => (campus, mask) => {
               end,
             },
           },
+        },
+      );
+    },
+
+    async mutateRide({ id }, action) {
+      return axios.post(
+        `/${ENTITY_PLURAL}/${encodeURIComponent(id)}/${action}`,
+        {},
+        {
+          params,
         },
       );
     },
