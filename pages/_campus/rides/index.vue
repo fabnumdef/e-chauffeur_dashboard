@@ -149,12 +149,16 @@
 
         <div class="columns">
           <ec-field
-            v-if="ride.driver && ride.driver.name"
             class="column"
             label="Chauffeur"
             field-id="driver"
           >
-            {{ ride.driver.name }}
+            <search-available-driver
+              v-model="ride.driver"
+              :start="ride.start"
+              :end="ride.end"
+              :campus="campus"
+            />
           </ec-field>
           <ec-field
             class="column"
@@ -235,6 +239,7 @@ import { DateTime, Interval } from 'luxon';
 import searchPoi from '~/components/form/search-poi';
 import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
+import searchAvailableDriver from '~/components/form/search-available-driver';
 import bulmaDropdown from '~/components/dropdown.vue';
 import Status, {
   DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, VALIDATE, CREATED,
@@ -298,6 +303,7 @@ export default {
     vueCalendar,
     ecField,
     searchAvailableCar,
+    searchAvailableDriver,
     searchCategory,
     rideCalendarHead,
     bulmaDropdown,
