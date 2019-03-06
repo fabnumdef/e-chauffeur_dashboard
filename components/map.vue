@@ -48,7 +48,7 @@
 import { mapGetters } from 'vuex';
 import { DateTime, Interval } from 'luxon';
 import {
-  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, DONE,
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED,
 } from '~/api/status';
 
 export default {
@@ -88,10 +88,9 @@ export default {
         case WAITING:
           return 'is-warning';
         case IN_PROGRESS:
-        case DELIVERED:
           return 'is-primary';
         case ACCEPTED:
-        case DONE:
+        case DELIVERED:
         default:
           return 'is-success';
       }

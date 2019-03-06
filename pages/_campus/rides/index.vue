@@ -237,7 +237,7 @@ import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
 import bulmaDropdown from '~/components/dropdown.vue';
 import Status, {
-  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, VALIDATE, DONE, CREATED,
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, VALIDATE, CREATED,
   REJECT_BOUNDARY, REJECT_CAPACITY,
   REJECTED_BOUNDARY, REJECTED_CAPACITY,
   CANCEL_TECHNICAL,
@@ -420,13 +420,12 @@ export default {
 
     eventStatusClass(event) {
       switch (event.status) {
-        case DONE:
+        case DELIVERED:
           return 'event-status-done';
         case STARTED:
         case WAITING:
           return 'event-status-going';
         case IN_PROGRESS:
-        case DELIVERED:
           return 'event-status-coming';
         case REJECTED_CAPACITY:
         case REJECTED_BOUNDARY:
