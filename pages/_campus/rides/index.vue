@@ -68,6 +68,12 @@
         class="white-background"
       >
         <ec-field
+          label="Type de course"
+          field-id="departure"
+        >
+          <search-category v-model="ride.category" />
+        </ec-field>
+        <ec-field
           label="Dates"
           field-id="dates"
         >
@@ -107,20 +113,52 @@
           </ec-field>
         </div>
 
-        <ec-field
-          label="Type de course"
-          field-id="departure"
-        >
-          <search-category v-model="ride.category" />
-        </ec-field>
         <div class="columns">
           <ec-field
-            v-if="ride.driver && ride.driver.name"
+            label="Nombre de passagers"
+            class="column"
+            field-id="passengers-count"
+          >
+            <div class="select">
+              <select
+                id="passengers-count"
+                v-model="ride.passengersCount"
+              >
+                <option
+                  v-for="i in 8"
+                  :key="i"
+                  :value="i"
+                >
+                  {{ i }}
+                </option>
+              </select>
+            </div>
+          </ec-field>
+          <ec-field
+            label="Téléphone"
+            class="column"
+            field-id="phone"
+          >
+            <input
+              id="phone"
+              v-model="ride.phone"
+              class="input"
+            >
+          </ec-field>
+        </div>
+
+        <div class="columns">
+          <ec-field
             class="column"
             label="Chauffeur"
             field-id="driver"
           >
-            {{ ride.driver.name }}
+            <search-available-driver
+              v-model="ride.driver"
+              :start="ride.start"
+              :end="ride.end"
+              :campus="campus"
+            />
           </ec-field>
           <ec-field
             class="column"
@@ -135,37 +173,6 @@
             />
           </ec-field>
         </div>
-
-        <ec-field
-          label="Téléphone"
-          field-id="phone"
-        >
-          <input
-            id="phone"
-            v-model="ride.phone"
-            class="input"
-          >
-        </ec-field>
-
-        <ec-field
-          label="Nombre de passagers"
-          field-id="passengers-count"
-        >
-          <div class="select">
-            <select
-              id="passengers-count"
-              v-model="ride.passengersCount"
-            >
-              <option
-                v-for="i in 8"
-                :key="i"
-                :value="i"
-              >
-                {{ i }}
-              </option>
-            </select>
-          </div>
-        </ec-field>
 
         <ec-field
           label="Commentaires"
@@ -232,9 +239,10 @@ import { DateTime, Interval } from 'luxon';
 import searchPoi from '~/components/form/search-poi';
 import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
+import searchAvailableDriver from '~/components/form/search-available-driver';
 import bulmaDropdown from '~/components/dropdown.vue';
 import Status, {
-  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, VALIDATE, DONE, CREATED,
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, VALIDATE, CREATED,
   REJECT_BOUNDARY, REJECT_CAPACITY,
   REJECTED_BOUNDARY, REJECTED_CAPACITY,
   CANCEL_TECHNICAL,
@@ -271,7 +279,8 @@ export function generateEmptyRide() {
     arrival: null,
     driver: null,
     status: CREATED,
-    passengersCount: 0,
+    category: null,
+    passengersCount: 1,
   };
 }
 
@@ -294,12 +303,13 @@ export default {
     vueCalendar,
     ecField,
     searchAvailableCar,
+    searchAvailableDriver,
     searchCategory,
     rideCalendarHead,
     bulmaDropdown,
   },
   computed: {
-    ...mapGetters({ rides: 'realtime/rides' }),
+    ...mapGetters({ rides: 'realtime/rides', currentCampus: 'context/campus' }),
     ...Object.keys(actions)
       .map(a => ({ [a]: () => actions[a] }))
       .reduce((acc, curr) => Object.assign(acc, curr), {}),
@@ -409,17 +419,19 @@ export default {
 
     initRide() {
       this.ride = generateEmptyRide();
+      if (this.currentCampus.categories.length > 0) {
+        [this.ride.category] = this.currentCampus.categories;
+      }
     },
 
     eventStatusClass(event) {
       switch (event.status) {
-        case DONE:
+        case DELIVERED:
           return 'event-status-done';
         case STARTED:
         case WAITING:
           return 'event-status-going';
         case IN_PROGRESS:
-        case DELIVERED:
           return 'event-status-coming';
         case REJECTED_CAPACITY:
         case REJECTED_BOUNDARY:

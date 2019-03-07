@@ -119,6 +119,7 @@ export default {
         title: event.title,
       });
       this.events.push(data);
+      this.toggleModal(false);
     },
     updateDates([start, end]) {
       this.event.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);

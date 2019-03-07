@@ -9,7 +9,7 @@
 
 <script>
 import {
-  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, DONE,
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED,
 } from '~/api/status';
 
 export default {
@@ -35,8 +35,6 @@ export default {
         case IN_PROGRESS:
           return 'En route';
         case DELIVERED:
-          return 'Retour';
-        case DONE:
         default:
           return 'Disponible';
       }
@@ -51,10 +49,9 @@ export default {
         case WAITING:
           return 'going';
         case IN_PROGRESS:
-        case DELIVERED:
           return 'coming';
         case ACCEPTED:
-        case DONE:
+        case DELIVERED:
         default:
           return 'available';
       }
