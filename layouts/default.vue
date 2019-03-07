@@ -1,24 +1,25 @@
 <template>
-    <div class="columns is-gapless">
-        <ec-sidemenu class="column is-narrow is-menu" />
-        <nuxt class="column content-col" />
-    </div>
+  <div class="columns is-gapless">
+    <ec-sidemenu class="column is-narrow is-menu" />
+    <nuxt class="column content-col" />
+  </div>
 </template>
 
 <script>
-    import ecSidemenu from '~/components/sidemenu.vue';
-    export default {
-        head() {
-            return {
-                bodyAttrs: {
-                    class: 'has-background',
-                },
-            };
-        },
-        components: {
-            ecSidemenu,
-        },
+import ecSidemenu from '~/components/sidemenu.vue';
+
+export default {
+  head() {
+    return {
+      bodyAttrs: {
+        class: 'has-background',
+      },
     };
+  },
+  components: {
+    ecSidemenu,
+  },
+};
 </script>
 
 <style scoped lang="scss">

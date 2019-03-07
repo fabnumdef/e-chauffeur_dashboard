@@ -63,7 +63,7 @@
           <div class="column">
             <a
               class="button is-rounded"
-              @click="getExportRides"
+              @click="downloadRides"
             >
               <fa-icon
                 :icon="['fas', 'file-export']"
@@ -227,7 +227,7 @@ import Interval from 'luxon/src/interval';
 import ecDatePicker from '~/components/datepicker.vue';
 import { mapGetters } from 'vuex';
 import {
-  CANCELED, CANCEL, DONE, FINISH,
+  CANCELED, CANCEL, FINISH, DELIVERED,
 } from '~/api/status';
 
 export default {
@@ -266,23 +266,27 @@ export default {
 
   methods: {
     async getRides() {
-      const response = await this.$api.rides(this.campus.id, this.fields.join(','))
+      const response = await this.$api
+        .rides(this.campus.id, this.fields.join(','))
         .getRides(this.filters.date[0], this.filters.date[1]);
       this.rides = response.data;
       this.show = Array(this.rides.length).fill(false);
     },
 
-    async getExportRides() {
-      if (this.rides.length > 0) {
-        const response = await this.$api.rides(this.campus.id, this.fields.join(','))
-          .getExportRides(this.filters.date[0], this.filters.date[1]);
+    async downloadRides() {
+      const response = await this.$api
+        .rides(this.campus.id, this.fields.join(','))
+        .getRides(this.filters.date[0], this.filters.date[1], { format: 'text/csv', count: 1000 });
 
-        const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${response.data}`);
-        const link = document.createElement('a');
+      const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${response.data}`);
+      if (window && window.document) {
+        const link = window.document
+          .createElement('a');
         link.setAttribute('href', encodedUri);
         link.setAttribute('download', `export_${this.getFormatDate(DateTime.local(), 'dd_MM_yyyy')}.csv`);
-        document.body.appendChild(link);
+        window.document.body.appendChild(link);
         link.click();
+        link.remove();
       }
     },
 
@@ -307,14 +311,14 @@ export default {
       switch (status) {
         case CANCEL:
         case CANCELED:
-          statusInfos = { class: 'is-cancel', text: 'course annulée' };
+          statusInfos = { class: 'is-cancel', text: 'Course annulée' };
           break;
         case FINISH:
-        case DONE:
-          statusInfos = { class: 'is-done', text: 'course effectuée' };
+        case DELIVERED:
+          statusInfos = { class: 'is-done', text: 'Course effectuée' };
           break;
         default:
-          statusInfos = { class: 'is-progress', text: 'course en cours' };
+          statusInfos = { class: 'is-progress', text: 'Course en cours' };
           break;
       }
 
