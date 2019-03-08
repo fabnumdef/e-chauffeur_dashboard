@@ -70,7 +70,7 @@
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link :to="{ name: 'roles' }">
+        <nuxt-link v-if="$auth.hasRight('canListRole')" :to="{ name: 'roles' }">
           Roles
         </nuxt-link>
       </li>
