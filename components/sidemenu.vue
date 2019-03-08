@@ -75,7 +75,10 @@
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link :to="{ name: 'categories' }">
+        <nuxt-link
+          v-if="$auth.hasRight('canListCategory')"
+          :to="{ name: 'categories' }"
+        >
           Catégories
         </nuxt-link>
       </li>
