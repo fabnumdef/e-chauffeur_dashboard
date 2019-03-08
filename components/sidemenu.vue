@@ -58,7 +58,10 @@
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link :to="{ name: 'users' }">
+        <nuxt-link
+          v-if="$auth.hasRight('canListUser')"
+          :to="{ name: 'users' }"
+        >
           Utilisateurs
         </nuxt-link>
       </li>
