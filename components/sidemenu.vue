@@ -50,7 +50,10 @@
     </p>
     <ul class="menu-list">
       <li>
-        <nuxt-link :to="{ name: 'campuses' }">
+        <nuxt-link
+          v-if="$auth.hasRight('canListCampus')"
+          :to="{ name: 'campuses' }"
+        >
           Bases
         </nuxt-link>
       </li>
@@ -70,7 +73,10 @@
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link v-if="$auth.hasRight('canListRole')" :to="{ name: 'roles' }">
+        <nuxt-link
+          v-if="$auth.hasRight('canListRole')"
+          :to="{ name: 'roles' }"
+        >
           Roles
         </nuxt-link>
       </li>
