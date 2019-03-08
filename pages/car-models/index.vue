@@ -22,9 +22,33 @@
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
-      action-edit="car-models-id-edit"
-      @action-remove="deleteCarModel"
-    />
+    >
+      <template #actions="{ row }">
+        <nuxt-link
+          v-if="$auth.hasRight('canEditCarModel')"
+          :to="{
+            name: 'car-models-id-edit',
+            params: { id: row.id },
+          }"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'edit']" />
+          </span>
+          <span>Modifier</span>
+        </nuxt-link>
+        <button
+          v-if="$auth.hasRight('canRemoveCarModel')"
+          class="button is-danger"
+          @click="deleteCarModel(row)"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'trash']" />
+          </span>
+          <span>Supprimer</span>
+        </button>
+      </template>
+    </ec-list>
   </main>
 </template>
 

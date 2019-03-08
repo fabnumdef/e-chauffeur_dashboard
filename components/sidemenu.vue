@@ -66,7 +66,10 @@
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link :to="{name: 'car-models'}">
+        <nuxt-link
+          v-if="$auth.hasRight('canListCarModel')"
+          :to="{name: 'car-models'}"
+        >
           Modèles de véhicules
         </nuxt-link>
       </li>
