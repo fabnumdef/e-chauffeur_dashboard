@@ -9,43 +9,42 @@
       <form
         class="box"
       >
-        <p>
-          Si vous rencontrez la moindre difficulté ou souhaitez nous partager une
-          idée d’amélioration du service e-Chauffeur, n’hésitez pas à remplir le formulaire ci-dessous.
-          Nous tâcherons de revenir vers vous dans les plus brefs délais.
-        </p>
-        <div class="field">
-          <label class="label">Votre type de retour</label>
-          <div class="control">
-            <label class="radio">
-              <input
-                v-model="type"
-                value="Amélioration"
-                type="radio"
-                name="type"
-              >
-              Amélioration
-            </label>
-            <label class="radio">
-              <input
-                v-model="type"
-                value="Bug"
-                type="radio"
-                name="type"
-              >
-              Bug
-            </label>
-            <label class="radio">
-              <input
-                v-model="type"
-                value="Question"
-                type="radio"
-                name="type"
-              >
-              Question
-            </label>
-          </div>
-        </div>
+        <ec-field>
+          <p>
+            Si vous rencontrez la moindre difficulté ou souhaitez nous partager une
+            idée d’amélioration du service e-Chauffeur, n’hésitez pas à remplir le formulaire ci-dessous.
+            Nous tâcherons de revenir vers vous dans les plus brefs délais.
+          </p>
+        </ec-field>
+        <ec-field label="Votre type de retour">
+          <label class="radio">
+            <input
+              v-model="type"
+              value="Amélioration"
+              type="radio"
+              name="type"
+            >
+            Amélioration
+          </label>
+          <label class="radio">
+            <input
+              v-model="type"
+              value="Bug"
+              type="radio"
+              name="type"
+            >
+            Bug
+          </label>
+          <label class="radio">
+            <input
+              v-model="type"
+              value="Question"
+              type="radio"
+              name="type"
+            >
+            Question
+          </label>
+        </ec-field>
         <ec-field
           label="Votre message"
           field-id="commentary"
@@ -85,11 +84,8 @@ export default {
     message: '',
   }),
   methods: {
-    async deleteUser({ id }) {
-      await this.$api.users.deleteUser(id);
-      const updatedList = await this.$api.users.getUsers('id,email');
-      this.users = updatedList.data;
-      this.pagination = updatedList.pagination;
+    async sendFeedback() {
+      // je ne suis pas empty
     },
   },
 };
