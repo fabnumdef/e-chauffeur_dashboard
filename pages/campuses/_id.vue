@@ -10,7 +10,7 @@ const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id
 export default {
   async asyncData({ app, params, $api }) {
     if (!app.$auth.hasRight('canGetCampus')) {
-      throw new Error('Vous d\'avez pas les droits pour récupérer les informations d\'une base.');
+      throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'une base.');
     }
     return {
       campus: Object.assign(

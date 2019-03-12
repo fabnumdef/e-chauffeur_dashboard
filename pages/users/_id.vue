@@ -9,7 +9,7 @@
 export default {
   async asyncData({ app, params, $api }) {
     if (!app.$auth.hasRight('canGetUser')) {
-      throw new Error('Vous d\'avez pas les droits pour récupérer les informations d\'un utilisateur.');
+      throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'un utilisateur.');
     }
     return {
       user: Object.assign(
