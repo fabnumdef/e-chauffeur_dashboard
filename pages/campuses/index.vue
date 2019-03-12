@@ -6,6 +6,7 @@
       </h1>
       <div class="options">
         <nuxt-link
+          v-if="$auth.hasRight('canEditCampus')"
           :to="{name: 'campuses-new'}"
           class="button is-success"
         >
@@ -22,9 +23,33 @@
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
-      action-edit="campuses-id-edit"
-      @action-remove="deleteCampus"
-    />
+    >
+      <template #actions="{ row }">
+        <nuxt-link
+          v-if="$auth.hasRight('canEditCampus')"
+          :to="{
+            name: 'campuses-id-edit',
+            params: { id: row.id },
+          }"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'edit']" />
+          </span>
+          <span>Modifier</span>
+        </nuxt-link>
+        <button
+          v-if="$auth.hasRight('canRemoveCampus')"
+          class="button is-danger"
+          @click="deleteCampus(row)"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'trash']" />
+          </span>
+          <span>Supprimer</span>
+        </button>
+      </template>
+    </ec-list>
   </main>
 </template>
 

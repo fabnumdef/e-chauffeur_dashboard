@@ -50,17 +50,26 @@
     </p>
     <ul class="menu-list">
       <li>
-        <nuxt-link :to="{ name: 'campuses' }">
+        <nuxt-link
+          v-if="$auth.hasRight('canListCampus')"
+          :to="{ name: 'campuses' }"
+        >
           Bases
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link :to="{ name: 'users' }">
+        <nuxt-link
+          v-if="$auth.hasRight('canListUser')"
+          :to="{ name: 'users' }"
+        >
           Utilisateurs
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link :to="{name: 'car-models'}">
+        <nuxt-link
+          v-if="$auth.hasRight('canListCarModel')"
+          :to="{name: 'car-models'}"
+        >
           Modèles de véhicules
         </nuxt-link>
       </li>
@@ -70,12 +79,18 @@
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link :to="{ name: 'roles' }">
+        <nuxt-link
+          v-if="$auth.hasRight('canListRole')"
+          :to="{ name: 'roles' }"
+        >
           Roles
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link :to="{ name: 'categories' }">
+        <nuxt-link
+          v-if="$auth.hasRight('canListCategory')"
+          :to="{ name: 'categories' }"
+        >
           Catégories
         </nuxt-link>
       </li>
