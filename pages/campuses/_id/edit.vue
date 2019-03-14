@@ -87,6 +87,19 @@
           v-model="campus.location"
         />
       </ec-field>
+
+      <ec-field
+          label="Informations"
+          field-id="informations"
+      >
+        <no-ssr>
+          <markdown-editor
+            v-model="campus.informations"
+          >
+          </markdown-editor>
+        </no-ssr>
+      </ec-field>
+
       <button
         v-if="id"
         type="submit"
@@ -117,7 +130,7 @@ import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 
-const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label)';
+const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),informations';
 export default {
   components: {
     ecField,
@@ -147,6 +160,6 @@ export default {
         params: { id: data.id },
       });
     },
-  },
+  }
 };
 </script>

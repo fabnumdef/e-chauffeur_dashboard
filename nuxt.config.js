@@ -45,6 +45,7 @@ module.exports = {
     '~/plugins/datetime-picker.js',
     '~/plugins/luxon.js',
     '~/plugins/realtime.js',
+    { src: '~plugins/markdown-editor.js', ssr: false }
   ],
 
   /*
@@ -71,7 +72,6 @@ module.exports = {
     plugins: [
       '~/plugins/auth-renew.js',
       '~/plugins/socket.js',
-      '~/plugins/has-right.js',
     ],
     redirect: {
       login: '/login',
@@ -83,7 +83,7 @@ module.exports = {
       local: {
         endpoints: {
           login: { url: '/jwt/generate', method: 'post', propertyName: 'token' },
-          user: { url: '/jwt/user?mask=id,email,cachedRights', method: 'get', propertyName: false },
+          user: { url: '/jwt/user?mask=id,email', method: 'get', propertyName: false },
           logout: null,
         },
       },
