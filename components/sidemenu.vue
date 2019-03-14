@@ -95,7 +95,10 @@
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link :to="{ name: 'feedback' }">
+        <nuxt-link
+          v-if="$auth.hasRight('canSendFeedback')"
+          :to="{ name: 'feedback' }"
+        >
           Contactez-nous
         </nuxt-link>
       </li>
