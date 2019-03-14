@@ -16,6 +16,7 @@ module.exports = {
   ],
   rules: {
     'max-len': ['error', { code: 120 }],
+    'no-alert': 0,
     'vue/component-name-in-template-casing': ['error', 'kebab-case'],
   },
   settings: {

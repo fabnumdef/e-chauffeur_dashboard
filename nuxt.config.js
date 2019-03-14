@@ -71,6 +71,7 @@ module.exports = {
     plugins: [
       '~/plugins/auth-renew.js',
       '~/plugins/socket.js',
+      '~/plugins/has-right.js',
     ],
     redirect: {
       login: '/login',
@@ -82,7 +83,7 @@ module.exports = {
       local: {
         endpoints: {
           login: { url: '/jwt/generate', method: 'post', propertyName: 'token' },
-          user: { url: '/jwt/user?mask=id,email', method: 'get', propertyName: false },
+          user: { url: '/jwt/user?mask=id,email,cachedRights', method: 'get', propertyName: false },
           logout: null,
         },
       },
@@ -107,6 +108,8 @@ module.exports = {
           'faKey',
           'faAngleDown',
           'faCalendarAlt',
+          'faChevronRight',
+          'faFileExport',
           'faCommentDots',
         ],
       },

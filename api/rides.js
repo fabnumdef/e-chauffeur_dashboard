@@ -16,7 +16,13 @@ export default axios => (campus, mask) => {
     filters,
   };
   return {
-    async getRides(start, end) {
+    async getRides(start, end, { format = null, count = 10 } = {}) {
+      const headers = {
+        Range: `${ENTITY}=-${count}`,
+      };
+      if (format) {
+        headers.Accept = format;
+      }
       const response = await axios.get(
         `/${ENTITY_PLURAL}`,
         {
@@ -24,9 +30,7 @@ export default axios => (campus, mask) => {
             mask,
             filters: merge({}, filters, { start, end }),
           },
-          headers: {
-            Range: `${ENTITY}=-10`,
-          },
+          headers,
         },
       );
 
