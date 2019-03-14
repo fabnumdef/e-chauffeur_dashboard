@@ -8,6 +8,7 @@
     <div>
       <form
         class="box"
+        @submit.prevent="sendFeedback"
       >
         <ec-field>
           <p>
@@ -75,7 +76,6 @@
 import ecField from '~/components/form/field.vue';
 
 export default {
-  watchQuery: ['offset'],
   components: {
     ecField,
   },
@@ -85,7 +85,7 @@ export default {
   }),
   methods: {
     async sendFeedback() {
-      // je ne suis pas empty
+      await this.$api.feedback.postFeedback(this.message, this.type);
     },
   },
 };
