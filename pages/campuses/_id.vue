@@ -5,16 +5,16 @@
 </template>
 
 <script>
-  const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),informations';
+const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),informations';
 
-  export default {
-    async asyncData({ params, $api }) {
-      return {
-        campus: Object.assign(
-          { phone: {}, categories: [] },
-          (await $api.campuses.getCampus(params.id, EDITABLE_FIELDS)).data,
-        ),
-      };
-    },
-  };
+export default {
+  async asyncData({ params, $api }) {
+    return {
+      campus: Object.assign(
+        { phone: {}, categories: [] },
+        (await $api.campuses.getCampus(params.id, EDITABLE_FIELDS)).data,
+      ),
+    };
+  },
+};
 </script>
