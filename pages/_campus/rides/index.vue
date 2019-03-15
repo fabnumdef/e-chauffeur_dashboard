@@ -16,6 +16,12 @@
           <fa-icon icon="calendar-alt" />
         </template>
       </date-time>
+      <button
+        class="button is-primary"
+        @click="toToday"
+      >
+        Aujourd'hui
+      </button>
     </div>
     <vue-calendar
       :events="rides"
@@ -467,6 +473,9 @@ export default {
     can: ({ status }, action) => {
       const state = new Status(status);
       return state.can(action);
+    },
+    toToday() {
+      this.today = new Date();
     },
   },
 };
