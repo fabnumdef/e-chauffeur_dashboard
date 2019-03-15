@@ -10,6 +10,7 @@
         append-to-body
         input-class="input"
         format="YYYY-MM-DD"
+        :clearable="false"
       >
         <template slot="calendar-icon">
           <fa-icon icon="calendar-alt" />
