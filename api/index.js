@@ -9,6 +9,7 @@ import userEvents from './user-events';
 import pois from './pois';
 import rides from './rides';
 import jwt from './jwt';
+import feedback from './feedback';
 
 export default function (ctx, inject) {
   const api = {
@@ -23,6 +24,7 @@ export default function (ctx, inject) {
     pois: pois(ctx.$axios),
     rides: rides(ctx.$axios),
     jwt: jwt(ctx.$axios),
+    feedback: feedback(ctx.$axios),
   };
   ctx.$api = api;
   inject('api', api);

@@ -94,6 +94,14 @@
           Catégories
         </nuxt-link>
       </li>
+      <li>
+        <nuxt-link
+          v-if="$auth.hasRight('canSendFeedback')"
+          :to="{ name: 'feedback' }"
+        >
+          Contactez-nous
+        </nuxt-link>
+      </li>
     </ul>
     <p class="menu-label">
       {{ $auth.user.name || $auth.user.email }}
