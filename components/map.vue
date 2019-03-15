@@ -33,7 +33,7 @@
                   text-anchor="middle"
                   dy=".3em"
                 >
-                  {{ driver.currentRide.car.model.label.split(" ").map((n)=>n[0]).join('') }}
+                  {{ getInitials(driver.currentRide) }}
                 </text>
               </svg>
             </l-icon>
@@ -94,6 +94,17 @@ export default {
         default:
           return 'is-success';
       }
+    },
+    getInitials(currentRide) {
+      let initials = '';
+      const words = currentRide.driver.name.split(' ');
+      if (words.length > 1) {
+        initials = words.map(n => n[0]).join('');
+      } else {
+        initials += currentRide.driver.name[0] || '';
+        initials += currentRide.driver.name[1] || '';
+      }
+      return initials;
     },
   },
 };
