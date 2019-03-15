@@ -92,7 +92,7 @@
             range
             :value="range"
             :minute-step="5"
-            format="YYYY-MM-DD HH:mm:ss"
+            format="YYYY-MM-DD HH:mm"
             range-separator="->"
             @input="updateDates"
           >
