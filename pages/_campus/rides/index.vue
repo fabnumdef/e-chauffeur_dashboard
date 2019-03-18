@@ -168,7 +168,7 @@
             />
           </ec-field>
           <ec-field
-            class="column"
+            class="column only-one-scroll"
             label="Véhicule"
             field-id="car"
           >
@@ -529,5 +529,13 @@ export default {
     right: -$size-small;
     top: -$size-small;
     filter: drop-shadow(1px 1px 5px rgba($light-gray, 0.7));
+  }
+  .only-one-scroll {
+    /deep/ .multiselect__content-wrapper {
+      position: initial;
+    }
+    /deep/ .multiselect__content {
+      position: absolute;
+    }
   }
 </style>
