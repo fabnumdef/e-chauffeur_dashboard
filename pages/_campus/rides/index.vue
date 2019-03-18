@@ -177,6 +177,7 @@
               :start="ride.start"
               :end="ride.end"
               :campus="campus"
+              :driver="ride.driver"
             />
           </ec-field>
         </div>
