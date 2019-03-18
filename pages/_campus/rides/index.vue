@@ -92,7 +92,7 @@
             range
             :value="range"
             :minute-step="5"
-            format="YYYY-MM-DD HH:mm:ss"
+            format="YYYY-MM-DD HH:mm"
             range-separator="->"
             @input="updateDates"
           >
@@ -168,7 +168,7 @@
             />
           </ec-field>
           <ec-field
-            class="column"
+            class="column only-one-scroll"
             label="Véhicule"
             field-id="car"
           >
@@ -177,6 +177,7 @@
               :start="ride.start"
               :end="ride.end"
               :campus="campus"
+              :driver="ride.driver"
             />
           </ec-field>
         </div>
@@ -529,5 +530,13 @@ export default {
     right: -$size-small;
     top: -$size-small;
     filter: drop-shadow(1px 1px 5px rgba($light-gray, 0.7));
+  }
+  .only-one-scroll {
+    /deep/ .multiselect__content-wrapper {
+      position: initial;
+    }
+    /deep/ .multiselect__content {
+      position: absolute;
+    }
   }
 </style>
