@@ -305,7 +305,10 @@ export default {
       }
       // todo: make this rule generic
       return this.getClonedEvents()
-        .filter(ev => ev.driver.id === col.id);
+        .filter((ev) => {
+          const end = DateTime.fromISO(ev.end);
+          return ev.driver.id === col.id && end.hasSame(DateTime.fromISO(ev.end), 'day');
+        });
     },
 
     toggleOpeningHours(start, end) {
