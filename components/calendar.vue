@@ -307,7 +307,7 @@ export default {
       return this.getClonedEvents()
         .filter((ev) => {
           const end = DateTime.fromISO(ev.end);
-          return ev.driver.id === col.id && end.hasSame(DateTime.fromISO(ev.end), 'day');
+          return ev.driver.id === col.id && end.hasSame(this.currentDateTime, 'day');
         });
     },
 
