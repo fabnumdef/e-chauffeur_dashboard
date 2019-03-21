@@ -25,7 +25,7 @@
     >
       <template #actions="{ row }">
         <nuxt-link
-          v-if="$auth.hasRight('canEditCarModel')"
+          v-if="$auth.isSuperAdmin()"
           :to="{
             name: 'car-models-id-edit',
             params: { id: row.id },
@@ -38,7 +38,7 @@
           <span>Modifier</span>
         </nuxt-link>
         <button
-          v-if="$auth.hasRight('canRemoveCarModel')"
+          v-if="$auth.isSuperAdmin()"
           class="button is-danger"
           @click="deleteCarModel(row)"
         >

@@ -5,10 +5,9 @@
 </template>
 
 <script>
-
 export default {
   async asyncData({ app, params, $api }) {
-    if (!app.$auth.hasRight('canGetCarModel')) {
+    if (!app.$auth.isRegulator()) {
       throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'un modèle de véhicule.');
     }
     return {

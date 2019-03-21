@@ -152,7 +152,12 @@ export default {
     },
     async updateWorkingHours(oh) {
       this.user.workingHours = oh;
-      const { data } = (await this.$api.users.patchUser(this.user.id, this.user, 'id,email,roles(id),workingHours'));
+      const { data } = (await this.$api.users.patchUser(
+        this.user.id,
+        this.user,
+        'id,email,roles(role,campuses(id,name),workingHours',
+      )
+      );
       Object.assign(this.user, data);
     },
     toggleModal(newStatus = false) {

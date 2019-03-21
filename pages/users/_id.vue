@@ -5,16 +5,15 @@
 </template>
 
 <script>
-
 export default {
   async asyncData({ app, params, $api }) {
-    if (!app.$auth.hasRight('canGetUser')) {
+    if (!app.$auth.isRegulator()) {
       throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'un utilisateur.');
     }
     return {
       user: Object.assign(
         { workingHours: '' },
-        (await $api.users.getUser(params.id, 'id,name,email,roles(id),workingHours')).data,
+        (await $api.users.getUser(params.id, 'id,name,email,roles(role,campuses(id,name),workingHours')).data,
       ),
     };
   },
