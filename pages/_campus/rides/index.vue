@@ -10,11 +10,18 @@
         append-to-body
         input-class="input"
         format="YYYY-MM-DD"
+        :clearable="false"
       >
         <template slot="calendar-icon">
           <fa-icon icon="calendar-alt" />
         </template>
       </date-time>
+      <button
+        class="button is-primary"
+        @click="toToday"
+      >
+        Aujourd'hui
+      </button>
     </div>
     <vue-calendar
       :events="rides"
@@ -85,7 +92,7 @@
             range
             :value="range"
             :minute-step="5"
-            format="YYYY-MM-DD HH:mm:ss"
+            format="YYYY-MM-DD HH:mm"
             range-separator="->"
             @input="updateDates"
           >
@@ -161,7 +168,7 @@
             />
           </ec-field>
           <ec-field
-            class="column"
+            class="column only-one-scroll"
             label="Véhicule"
             field-id="car"
           >
@@ -170,6 +177,7 @@
               :start="ride.start"
               :end="ride.end"
               :campus="campus"
+              :driver="ride.driver"
             />
           </ec-field>
         </div>
@@ -467,6 +475,9 @@ export default {
       const state = new Status(status);
       return state.can(action);
     },
+    toToday() {
+      this.today = new Date();
+    },
   },
 };
 </script>
@@ -519,5 +530,13 @@ export default {
     right: -$size-small;
     top: -$size-small;
     filter: drop-shadow(1px 1px 5px rgba($light-gray, 0.7));
+  }
+  .only-one-scroll {
+    /deep/ .multiselect__content-wrapper {
+      position: initial;
+    }
+    /deep/ .multiselect__content {
+      position: absolute;
+    }
   }
 </style>
