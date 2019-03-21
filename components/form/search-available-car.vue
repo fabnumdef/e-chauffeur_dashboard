@@ -7,7 +7,6 @@
     track-by="id"
     label="label"
     :show-labels="false"
-    @search-change="updateSet"
     @input="onInput"
     @open="onOpen"
   >
@@ -26,7 +25,6 @@
   </vue-multiselect>
 </template>
 <script>
-import debounce from 'lodash.debounce';
 
 const FIELDS = 'id,label,model(id,label)';
 export default {
@@ -55,25 +53,44 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    driver: {
+      type: Object,
+      default: null,
+    },
   },
   data: () => ({
     cars: [],
   }),
+  watch: {
+    async driver() {
+      let sort = null;
+      if (this.driver && (!this.value || Object.keys(this.value).length === 0)) {
+        sort = {
+          'last-driver-ride': this.driver.id,
+        };
+        const { data } = await this.$api.rides(this.campus).getAvailableCars(
+          FIELDS,
+          this.start.toISO(),
+          this.end.toISO(),
+          sort,
+        );
+        this.$emit('input', data[0]);
+      }
+    },
+  },
   methods: {
-    updateSet: debounce(async function updateSet(search) {
-      const { data } = await this.$api.rides(this.campus).getAvailableCars(
-        FIELDS,
-        this.start.toISO(),
-        this.end.toISO(),
-        { search },
-      );
-      this.cars = data;
-    }, 500),
     async onOpen() {
+      let sort = null;
+      if (this.driver) {
+        sort = {
+          'last-driver-ride': this.driver.id,
+        };
+      }
       const { data } = await this.$api.rides(this.campus).getAvailableCars(
         FIELDS,
         this.start.toISO(),
         this.end.toISO(),
+        sort,
       );
       this.cars = data;
     },

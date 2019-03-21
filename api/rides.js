@@ -105,17 +105,21 @@ export default axios => (campus, mask) => {
       return response;
     },
 
-    async getAvailableCars(carMask, start, end) {
+    async getAvailableCars(carMask, start, end, sort) {
+      const parameters = {
+        mask: carMask,
+        filters: {
+          start,
+          end,
+        },
+      };
+      if (sort) {
+        parameters.sort = sort;
+      }
       const response = await axios.get(
         `/${CAMPUS_PLURAL}/${campus}/cars`,
         {
-          params: {
-            mask: carMask,
-            filters: {
-              start,
-              end,
-            },
-          },
+          params: parameters,
         },
       );
       response.data = response.data.map((c) => {

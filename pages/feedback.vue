@@ -85,7 +85,15 @@ export default {
   }),
   methods: {
     async sendFeedback() {
-      await this.$api.feedback.postFeedback(this.message, this.type);
+      try {
+        await this.$api.feedback.postFeedback(this.message, this.type);
+        this.$toast.success('Message envoyé');
+        this.message = '';
+      } catch (e) {
+        this.$toast.error('Une erreur est survenue lord de l\'envoi de votre message.'
+          + 'Merci de réessayer.\n'
+          + 'Si le problème persiste, contactez nous.');
+      }
     },
   },
 };
