@@ -80,15 +80,7 @@
       </li>
       <li>
         <nuxt-link
-          v-if="$auth.hasRight('canListRole')"
-          :to="{ name: 'roles' }"
-        >
-          Roles
-        </nuxt-link>
-      </li>
-      <li>
-        <nuxt-link
-          v-if="$auth.hasRight('canListCategory')"
+          v-if="$auth.isSuperAdmin()"
           :to="{ name: 'categories' }"
         >
           Catégories
