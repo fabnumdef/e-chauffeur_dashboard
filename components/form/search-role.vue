@@ -1,16 +1,15 @@
 <template>
   <vue-multiselect
     :id="id"
-    :options="rights"
+    :options="roles"
     :value="value"
-    multiple
     :show-labels="false"
-    @search-change="updateSet"
+    :placeholder="placeholder"
     @input="onInput"
   />
 </template>
 <script>
-import debounce from 'lodash.debounce';
+import * as roles from '../../api/roles';
 
 export default {
   props: {
@@ -19,17 +18,20 @@ export default {
       default: '',
     },
     value: {
-      type: Array,
-      default: () => [],
+      type: String,
+      default: null,
+    },
+    placeholder: {
+      type: String,
+      default: null,
     },
   },
-  data: () => ({
-    rights: [],
-  }),
+  data() {
+    return {
+      roles: Object.keys(roles),
+    };
+  },
   methods: {
-    updateSet: debounce(async function updateSet(search) {
-      this.rights = (await this.$api.roles.getRights(search)).data;
-    }, 500),
     onInput(data) {
       this.$emit('input', data);
     },

@@ -51,7 +51,7 @@
     <ul class="menu-list">
       <li>
         <nuxt-link
-          v-if="$auth.hasRight('canListCampus')"
+          v-if="$auth.isSuperAdmin()"
           :to="{ name: 'campuses' }"
         >
           Bases
@@ -59,7 +59,7 @@
       </li>
       <li>
         <nuxt-link
-          v-if="$auth.hasRight('canListUser')"
+          v-if="$auth.isRegulator()"
           :to="{ name: 'users' }"
         >
           Utilisateurs
@@ -67,7 +67,7 @@
       </li>
       <li>
         <nuxt-link
-          v-if="$auth.hasRight('canListCarModel')"
+          v-if="$auth.isSuperAdmin()"
           :to="{name: 'car-models'}"
         >
           Modèles de véhicules
@@ -88,7 +88,7 @@
       </li>
       <li>
         <nuxt-link
-          v-if="$auth.hasRight('canSendFeedback')"
+          v-if="$auth.isRegulator()"
           :to="{ name: 'feedback' }"
         >
           Contactez-nous
