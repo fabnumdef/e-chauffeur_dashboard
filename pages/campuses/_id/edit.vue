@@ -95,7 +95,7 @@
         <no-ssr>
           <markdown-editor
             ref="markdownEditor"
-            v-model="campus.informations"
+            v-model="campus.information"
           />
         </no-ssr>
       </ec-field>
@@ -131,7 +131,7 @@ import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 import markdownEditor from 'vue-simplemde/src/markdown-editor';
 
-const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),informations';
+const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),information';
 export default {
   components: {
     ecField,
