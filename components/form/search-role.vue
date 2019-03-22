@@ -9,7 +9,7 @@
   />
 </template>
 <script>
-import * as roles from '../../api/roles';
+import * as roles from '~/api/roles';
 
 export default {
   props: {

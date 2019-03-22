@@ -104,7 +104,7 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
-import RoleRules from '../../../components/form/role-rules';
+import RoleRules from '~/components/form/role-rules';
 
 export default {
   components: {

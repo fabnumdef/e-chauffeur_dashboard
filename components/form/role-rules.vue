@@ -49,7 +49,7 @@
 <script>
 import searchRole from './search-role';
 import searchCampuses from './search-campuses';
-import ecField from '../../../user/components/form/field';
+import ecField from '~/components/form/field';
 
 export default {
   components: {
