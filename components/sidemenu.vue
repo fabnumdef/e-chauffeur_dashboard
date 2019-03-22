@@ -49,46 +49,43 @@
       Général
     </p>
     <ul class="menu-list">
-      <li>
+      <li
+        v-if="$auth.isSuperAdmin()"
+      >
         <nuxt-link
-          v-if="$auth.isSuperAdmin()"
           :to="{ name: 'campuses' }"
         >
           Bases
         </nuxt-link>
       </li>
-      <li>
+      <li v-if="$auth.isRegulator()">
         <nuxt-link
-          v-if="$auth.isRegulator()"
           :to="{ name: 'users' }"
         >
           Utilisateurs
         </nuxt-link>
       </li>
-      <li>
+      <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
-          v-if="$auth.isSuperAdmin()"
           :to="{name: 'car-models'}"
         >
           Modèles de véhicules
         </nuxt-link>
       </li>
-      <li>
+      <li v-if="$auth.isSuperAdmin()">
         <nuxt-link :to="{ name: 'pois' }">
           Lieux
         </nuxt-link>
       </li>
-      <li>
+      <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
-          v-if="$auth.isSuperAdmin()"
           :to="{ name: 'categories' }"
         >
           Catégories
         </nuxt-link>
       </li>
-      <li>
+      <li v-if="$auth.isRegulator()">
         <nuxt-link
-          v-if="$auth.isRegulator()"
           :to="{ name: 'feedback' }"
         >
           Contactez-nous
