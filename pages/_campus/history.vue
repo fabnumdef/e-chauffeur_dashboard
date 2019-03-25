@@ -153,7 +153,7 @@
                       </l-map>
                     </no-ssr>
                   </div>
-                  <div class="column is-full">
+                  <div class="column">
                     <div class="columns">
                       <div class="column">
                         <p class="is-size-7">
@@ -469,9 +469,9 @@ export default {
       width: 100%;
       font-weight: normal;
 
-      .is-map {
-        height: 170px;
-        width: 170px;
+      .columns:first-child {
+        width: 100%;
+        flex-wrap: wrap;
       }
 
       p {
