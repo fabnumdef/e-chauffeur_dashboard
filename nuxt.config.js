@@ -83,7 +83,7 @@ module.exports = {
       local: {
         endpoints: {
           login: { url: '/jwt/generate?mask=token', method: 'post', propertyName: 'token' },
-          user: { url: '/jwt/user?mask=id,email,cachedRights', method: 'get', propertyName: false },
+          user: { url: '/jwt/user?mask=id,email,roles', method: 'get', propertyName: false },
           logout: null,
         },
       },

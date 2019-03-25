@@ -74,7 +74,7 @@
       </ec-field>
 
       <ec-field label="Rôles">
-        <search-roles v-model="user.roles" />
+        <role-rules v-model="user.roles" />
       </ec-field>
 
       <button
@@ -104,12 +104,12 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
-import searchRoles from '~/components/form/search-roles.vue';
+import RoleRules from '~/components/form/role-rules';
 
 export default {
   components: {
+    RoleRules,
     ecField,
-    searchRoles,
   },
   props: {
     user: {
@@ -121,9 +121,9 @@ export default {
     async edit(user) {
       let data = {};
       if (user.id) {
-        ({ data } = (await this.$api.users.patchUser(user.id, user, 'id,name,email,roles(id)')));
+        ({ data } = (await this.$api.users.patchUser(user.id, user, 'id,name,email,roles(role,campuses(id,name)')));
       } else {
-        ({ data } = (await this.$api.users.postUser(user, 'id,name,email,roles(id)')));
+        ({ data } = (await this.$api.users.postUser(user, 'id,name,email,roles(role,campuses(id,name)')));
       }
 
       this.$router.push({
