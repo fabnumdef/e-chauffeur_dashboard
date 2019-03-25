@@ -7,6 +7,7 @@
     track-by="id"
     label="name"
     :show-labels="false"
+    :placeholder="placeholder"
     @search-change="updateSet"
     @input="onInput"
   />
@@ -23,6 +24,10 @@ export default {
     value: {
       type: Array,
       default: () => [],
+    },
+    placeholder: {
+      type: String,
+      default: null,
     },
   },
   data() {

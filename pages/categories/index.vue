@@ -6,7 +6,7 @@
       </h1>
       <div class="options">
         <nuxt-link
-          v-if="$auth.hasRight('canEditCategory')"
+          v-if="$auth.isSuperAdmin()"
           :to="{name: 'categories-new'}"
           class="button is-success"
         >
@@ -26,7 +26,7 @@
     >
       <template #actions="{ row }">
         <nuxt-link
-          v-if="$auth.hasRight('canEditCategory')"
+          v-if="$auth.isSuperAdmin()"
           :to="{
             name: 'categories-id-edit',
             params: { id: row.id },
@@ -39,7 +39,7 @@
           <span>Modifier</span>
         </nuxt-link>
         <button
-          v-if="$auth.hasRight('canRemoveCategory')"
+          v-if="$auth.isSuperAdmin()"
           class="button is-danger"
           @click="deleteCategory(row)"
         >

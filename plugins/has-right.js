@@ -1,13 +1,26 @@
+import * as roles from '../api/roles';
+
+const rolesKeys = {
+  ...Object.keys(roles)
+    .map(r => ({ [r]: r }))
+    .reduce((acc, r) => Object.assign(acc, r), {}),
+};
+
 export default function ({ app }) {
   Object.assign(app.$auth, {
-    hasRight(right, campus) {
-      if (!this.user || !this.user.cachedRights) {
+    hasRole(role, campus) {
+      if (!this.user || !this.user.roles) {
         return false;
       }
-      return this.user.cachedRights.reduce(
-        (acc, { rights, campuses }) => acc || (rights.includes(right) && (!campus || campuses.includes(campus))),
-        false,
+      return this.user.roles.find(
+        rule => rolesKeys[rule.role].includes(role) && (!campus || rule.campuses.includes(campus)),
       );
+    },
+    isRegulator(...params) {
+      return this.hasRole(rolesKeys.ROLE_REGULATOR, ...params);
+    },
+    isSuperAdmin(...params) {
+      return this.hasRole(rolesKeys.ROLE_SUPERADMIN, ...params);
     },
   });
 }
