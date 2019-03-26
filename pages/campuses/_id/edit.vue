@@ -87,6 +87,19 @@
           v-model="campus.location"
         />
       </ec-field>
+
+      <ec-field
+        label="Informations"
+        field-id="informations"
+      >
+        <no-ssr>
+          <markdown-editor
+            ref="markdownEditor"
+            v-model="campus.information"
+          />
+        </no-ssr>
+      </ec-field>
+
       <button
         v-if="id"
         type="submit"
@@ -116,13 +129,15 @@
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
+import markdownEditor from 'vue-simplemde/src/markdown-editor';
 
-const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label)';
+const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),information';
 export default {
   components: {
     ecField,
     ecGpsPoint,
     searchCategories,
+    markdownEditor,
   },
   props: {
     campus: {
@@ -150,3 +165,7 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  @import 'simplemde/dist/simplemde.min.css';
+</style>

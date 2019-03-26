@@ -5,7 +5,7 @@
 </template>
 
 <script>
-const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label)';
+const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),information';
 
 export default {
   async asyncData({ app, params, $api }) {
