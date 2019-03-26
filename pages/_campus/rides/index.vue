@@ -142,14 +142,43 @@
             </div>
           </ec-field>
           <ec-field
-            label="Téléphone"
+            label="Présence de bagages"
             class="column"
-            field-id="phone"
+            field-id="luggage"
+          >
+            <div class="buttons">
+              <span
+                class="button is-rounded"
+                :class="{
+                  'is-primary is-selected': ride.luggage
+                }"
+                @click="ride.luggage = true"
+              >
+                Oui
+              </span>
+              <span
+                class="button is-rounded"
+                :class="{
+                  'is-primary is-selected': !ride.luggage
+                }"
+                @click="ride.luggage = false"
+              >
+                Non
+              </span>
+            </div>
+          </ec-field>
+        </div>
+
+        <div class="columns">
+          <ec-field
+              label="Téléphone"
+              class="column"
+              field-id="phone"
           >
             <input
-              id="phone"
-              v-model="ride.phone"
-              class="input"
+                id="phone"
+                v-model="ride.phone"
+                class="input"
             >
           </ec-field>
         </div>
@@ -276,6 +305,7 @@ const EDITABLE_FIELDS = [
   'comments',
   'passengersCount',
   'category(id,label)',
+  'luggage',
 ].join(',');
 
 export function generateEmptyRide() {
@@ -289,6 +319,7 @@ export function generateEmptyRide() {
     status: CREATED,
     category: null,
     passengersCount: 1,
+    luggage: false,
   };
 }
 
