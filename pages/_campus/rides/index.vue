@@ -147,7 +147,8 @@
             field-id="luggage"
           >
             <div class="buttons">
-              <span
+              <button
+                type="button"
                 class="button is-rounded"
                 :class="{
                   'is-primary is-selected': ride.luggage
@@ -155,8 +156,9 @@
                 @click="ride.luggage = true"
               >
                 Oui
-              </span>
-              <span
+              </button>
+              <button
+                type="button"
                 class="button is-rounded"
                 :class="{
                   'is-primary is-selected': !ride.luggage
@@ -164,21 +166,21 @@
                 @click="ride.luggage = false"
               >
                 Non
-              </span>
+              </button>
             </div>
           </ec-field>
         </div>
 
         <div class="columns">
           <ec-field
-              label="Téléphone"
-              class="column"
-              field-id="phone"
+            label="Téléphone"
+            class="column"
+            field-id="phone"
           >
             <input
-                id="phone"
-                v-model="ride.phone"
-                class="input"
+              id="phone"
+              v-model="ride.phone"
+              class="input"
             >
           </ec-field>
         </div>
