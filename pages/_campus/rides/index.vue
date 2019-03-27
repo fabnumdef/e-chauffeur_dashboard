@@ -522,6 +522,11 @@ export default {
       color: $danger;
       border: 1px solid $danger;
     }
+    p {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
   .waiting-icon {
     color: $primary;
