@@ -266,11 +266,14 @@ export default {
     },
 
     endSelectRange({ shiftKey = false } = {}, col = null) {
+      const start = this.currentDateTime.diff(this.rangeStart).valueOf() > 0
+      && this.currentDateTime.diff(this.rangeStart).valueOf() < this.SPLIT_MINUTES.valueOf()
+        ? this.currentDateTime : this.rangeStart;
       if (this.openingHoursFeature && shiftKey) {
         this.toggleOpeningHours(this.rangeStart, this.rangeEnd);
       } else {
         this.$emit('modal-toggle', true);
-        this.$emit('dates-update', [this.rangeStart, this.rangeEnd || this.rangeStart.plus(this.SPLIT_MINUTES)], col);
+        this.$emit('dates-update', [start, this.rangeEnd || this.rangeStart.plus(this.SPLIT_MINUTES)], col);
       }
       this.clearRanges();
     },
@@ -339,6 +342,9 @@ export default {
       const rowsToSkip = Interval
         .fromDateTimes(e.interval.start.startOf('days'), e.interval.start)
         .splitBy(this.SPLIT_MINUTES);
+      if (rowsToSkip[rowsToSkip.length - 1].toDuration().valueOf() - this.SPLIT_MINUTES.valueOf() < 0) {
+        rowsToSkip.splice(-1, 1);
+      }
       const height = this.hourSlotHeight * rowsToCover.length;
       const offset = this.hourSlotHeight * rowsToSkip.length;
       return {
