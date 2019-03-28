@@ -13,7 +13,7 @@ export default {
     return {
       user: Object.assign(
         { workingHours: '' },
-        (await $api.users.getUser(params.id, 'id,name,email,roles(role,campuses(id,name),workingHours')).data,
+        (await $api.users.getUser(params.id, 'id,name,email,roles(role,campuses(id,name)),workingHours')).data,
       ),
     };
   },
