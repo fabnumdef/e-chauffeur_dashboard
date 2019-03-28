@@ -141,37 +141,7 @@
               </select>
             </div>
           </ec-field>
-          <ec-field
-            label="Présence de bagages"
-            class="column"
-            field-id="luggage"
-          >
-            <div class="buttons">
-              <button
-                type="button"
-                class="button is-rounded"
-                :class="{
-                  'is-primary is-selected': ride.luggage
-                }"
-                @click="ride.luggage = true"
-              >
-                Oui
-              </button>
-              <button
-                type="button"
-                class="button is-rounded"
-                :class="{
-                  'is-primary is-selected': !ride.luggage
-                }"
-                @click="ride.luggage = false"
-              >
-                Non
-              </button>
-            </div>
-          </ec-field>
-        </div>
 
-        <div class="columns">
           <ec-field
             label="Téléphone"
             class="column"
@@ -183,6 +153,20 @@
               class="input"
             >
           </ec-field>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <div class="control">
+              <label class="checkbox">
+                <input
+                  v-model="ride.luggage"
+                  type="checkbox"
+                >
+                Présence de bagages.
+              </label>
+            </div>
+          </div>
         </div>
 
         <div class="columns">
