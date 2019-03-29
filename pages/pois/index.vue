@@ -33,20 +33,24 @@ import ecList from '~/components/crud/list.vue';
 
 const columns = { id: 'ID', label: 'Label' };
 
-function getPois() {
-  return this.pois.getPois(Object.keys(columns).join(','));
+function getPois(offset = 0, query = 30) {
+  return this.pois.getPois(Object.keys(columns).join(','), offset, query);
 }
 
 export default {
-  watchQuery: ['offset'],
+  watchQuery: ['offset', 'limit'],
   components: {
     ecList,
   },
   computed: {
     columns() { return columns; },
   },
-  async asyncData({ $api }) {
-    const { data, pagination } = await getPois.call($api);
+  async asyncData({ $api, query }) {
+    console.log(query);
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    // const { parseInt(offset) = 0, limit = 30 } = query;
+    const { data, pagination } = await getPois.call($api, offset, limit);
     return {
       pois: data,
       pagination,

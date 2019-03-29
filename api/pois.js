@@ -3,13 +3,13 @@ import { computePagination } from './helpers';
 const ENTITY = 'pois';
 
 export default axios => ({
-  async getPois(mask, { search = null } = {}) {
+  async getPois(mask, offset = 0, limit = 30) {
     const response = await axios.get(
       `/${ENTITY}`,
       {
-        params: { mask, search },
+        params: { mask },
         headers: {
-          Range: 'poi=-10',
+          Range: `poi=${offset}-${offset + limit - 1}`,
         },
       },
     );

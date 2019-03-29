@@ -23,7 +23,7 @@
         </span>
         <nuxt-link
           v-else
-          :to="`?offset=${p - 1 * perPage}`"
+          :to="`?offset=${(p - 1) * perPage}`"
           :class="{'is-current': currentPage === p}"
           :aria-label="`Goto page ${p}`"
           :aria-current="currentPage === p ? 'page' : false"
@@ -63,7 +63,7 @@ export default {
       return Math.floor(this.offset / this.perPage) + 1;
     },
     numberOfPages() {
-      return Math.floor(this.total / (this.perPage));
+      return Math.floor(this.total / (this.perPage)) + (this.total % this.perPage === 0 ? 0 : 1);
     },
     visiblesPages() {
       const extraPages = (this.numberLinks - 3);
@@ -91,3 +91,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  @import "~assets/css/head";
+
+  .pagination-link.is-current {
+    background-color: $primary;
+  }
+</style>
