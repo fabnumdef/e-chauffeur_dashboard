@@ -9,7 +9,7 @@
 export default {
   async asyncData({ params, $api }) {
     return {
-      poi: (await $api.pois.getPoi(params.id, 'id,label,location(coordinates)')).data,
+      poi: (await $api.pois(null, 'id,label,location(coordinates),campus').getPoi(params.id)).data,
     };
   },
 };

@@ -1,56 +1,67 @@
+import merge from 'lodash.merge';
 import { computePagination } from './helpers';
 
 const ENTITY = 'pois';
 
-export default axios => ({
-  async getPois(mask, { search = null } = {}) {
-    const response = await axios.get(
-      `/${ENTITY}`,
-      {
-        params: { mask, search },
-        headers: {
-          Range: 'poi=-10',
+export default axios => (campus, mask) => {
+  const filters = {};
+  if (campus) {
+    filters.campus = campus.id;
+  }
+  const params = {
+    mask,
+    filters,
+  };
+  return {
+    async getPois(offset = 0, limit = 30, search = null) {
+      const response = await axios.get(
+        `/${ENTITY}`,
+        {
+          params: merge(params, { search }),
+          headers: {
+            Range: `poi=${offset}-${offset + limit - 1}`,
+          },
         },
-      },
-    );
+      );
 
-    response.pagination = computePagination(response).poi;
+      response.pagination = computePagination(response).poi;
 
-    return response;
-  },
+      return response;
+    },
 
-  getPoi(id, mask) {
-    return axios.get(
-      `/${ENTITY}/${encodeURIComponent(id)}`,
-      {
-        params: { mask },
-      },
-    );
-  },
+    getPoi(id) {
+      return axios.get(
+        `/${ENTITY}/${encodeURIComponent(id)}`,
+        {
+          params,
+        },
+      );
+    },
 
-  patchPoi(id, data, mask) {
-    return axios.patch(
-      `/${ENTITY}/${encodeURIComponent(id)}`,
-      data,
-      {
-        params: { mask },
-      },
-    );
-  },
+    patchPoi(id, data) {
+      return axios.patch(
+        `/${ENTITY}/${encodeURIComponent(id)}`,
+        merge(data, { campus }),
+        {
+          params,
+        },
+      );
+    },
 
-  postPoi(data, mask) {
-    return axios.post(
-      `/${ENTITY}`,
-      data,
-      {
-        params: { mask },
-      },
-    );
-  },
+    postPoi(data) {
+      return axios.post(
+        `/${ENTITY}`,
+        merge(data, { campus }),
+        {
+          params,
+        },
+      );
+    },
 
-  deletePoi(id) {
-    return axios.delete(
-      `/${ENTITY}/${encodeURIComponent(id)}`,
-    );
-  },
-});
+    deletePoi(id) {
+      return axios.delete(
+        `/${ENTITY}/${encodeURIComponent(id)}`,
+      );
+    },
+  };
+};

@@ -6,7 +6,7 @@
       </h1>
       <div class="options">
         <nuxt-link
-          :to="{name: 'pois-new'}"
+          :to="campusLink('pois-new')"
           class="button is-success"
         >
           <span class="icon is-small">
@@ -22,7 +22,7 @@
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
-      action-edit="pois-id-edit"
+      :action-edit="campusLink('pois-id-edit')"
       @action-remove="deletePoi"
     />
   </main>
@@ -30,6 +30,7 @@
 
 <script>
 import ecList from '~/components/crud/list.vue';
+import { mapGetters } from 'vuex';
 
 const columns = { id: 'ID', label: 'Label' };
 
@@ -40,11 +41,15 @@ export default {
   },
   computed: {
     columns() { return columns; },
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
   },
-  async asyncData({ $api, query }) {
+  async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.pois(null, Object.keys(columns).join(',')).getPois(offset, limit);
+    const { data, pagination } = await $api.pois({ id: params.campus }, Object.keys(columns).join(','))
+      .getPois(offset, limit);
     return {
       pois: data,
       pagination,
@@ -55,7 +60,7 @@ export default {
       await this.$api.pois().deletePoi(id);
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.$api.pois(null, Object.keys(columns).join(',')).getPois(offset, limit);
+      const updatedList = await this.$api.pois(this.campus, Object.keys(columns).join(',')).getPois(offset, limit);
       this.pois = updatedList.data;
       this.pagination = updatedList.pagination;
     },

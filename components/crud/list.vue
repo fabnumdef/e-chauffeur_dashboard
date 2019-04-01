@@ -136,7 +136,7 @@ export default {
         } else {
           route = this.actionEdit;
         }
-        return merge(route, {
+        return merge({}, route, {
           params: { id: row.id },
         });
       };

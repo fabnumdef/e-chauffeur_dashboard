@@ -53,20 +53,24 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    currentCampus: {
+      type: Object,
+      default: null,
+    },
   },
   data: () => ({
     pois: [],
   }),
   methods: {
     updateSet: debounce(async function updateSet(search) {
-      const { data } = await this.$api.pois.getPois(FIELDS, { search });
+      const { data } = await this.$api.pois(this.currentCampus, FIELDS).getPois(0, 30, search);
       this.pois = data;
     }, 500),
     onInput(data) {
       this.$emit('input', data);
     },
     async onOpen() {
-      const { data } = await this.$api.pois.getPois(FIELDS);
+      const { data } = await this.$api.pois(this.currentCampus, FIELDS).getPois();
       this.pois = data;
     },
   },

@@ -41,14 +41,6 @@
           class="input"
         >
       </ec-field>
-      <ec-field
-        label="Campus"
-      >
-        <search-campus
-          v-model="poi.campus"
-          class="search-campus"
-        />
-      </ec-field>
 
       <ec-field
         label="Label"
@@ -99,13 +91,12 @@
 <script>
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
-import searchCampus from '~/components/form/search-campus.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
     ecField,
     ecGpsPoint,
-    searchCampus,
   },
   props: {
     poi: {
@@ -116,14 +107,22 @@ export default {
   data() {
     return { id: this.poi.id };
   },
+  computed: {
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
+    PoisAPI() {
+      const { id, name } = this.campus;
+      return this.$api.pois({ id, name }, 'id,label,location(coordinates),campus');
+    },
+  },
   methods: {
     async edit(poi) {
       let data = {};
       if (this.id) {
-        ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus')
-          .patchPoi(this.id, poi)));
+        ({ data } = (await this.PoisAPI.patchPoi(this.id, poi)));
       } else {
-        ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus').postPoi(poi)));
+        ({ data } = (await this.PoisAPI.postPoi(poi)));
       }
 
       this.$router.push({

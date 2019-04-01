@@ -117,6 +117,7 @@
                 inputName: 'rideDeparture',
                 cb: focusNext
               }"
+              :current-campus="currentCampus"
             />
           </ec-field>
 
@@ -134,6 +135,7 @@
                 inputName: 'rideArrival',
                 cb: focusNext
               }"
+              :current-campus="currentCampus"
             />
           </ec-field>
         </div>
