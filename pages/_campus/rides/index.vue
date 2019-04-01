@@ -159,6 +159,7 @@
               </select>
             </div>
           </ec-field>
+
           <ec-field
             label="Téléphone"
             class="column"
@@ -177,6 +178,20 @@
               class="input"
             >
           </ec-field>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <div class="control">
+              <label class="checkbox">
+                <input
+                  v-model="ride.luggage"
+                  type="checkbox"
+                >
+                Présence de bagages.
+              </label>
+            </div>
+          </div>
         </div>
 
         <div class="columns">
@@ -301,6 +316,7 @@ const EDITABLE_FIELDS = [
   'comments',
   'passengersCount',
   'category(id,label)',
+  'luggage',
 ].join(',');
 
 export function generateEmptyRide() {
@@ -314,6 +330,7 @@ export function generateEmptyRide() {
     status: CREATED,
     category: null,
     passengersCount: 1,
+    luggage: false,
   };
 }
 
