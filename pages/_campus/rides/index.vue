@@ -108,7 +108,16 @@
             label="Départ"
             field-id="departure"
           >
-            <search-poi v-model="ride.departure" />
+            <search-poi
+              v-model="ride.departure"
+              v-autofocus="{
+                hasBeenFocused: hasBeenFocused,
+                focus: focusState.rideDeparture,
+                input: ride.departure,
+                inputName: 'rideDeparture',
+                cb: focusNext
+              }"
+            />
           </ec-field>
 
           <ec-field
@@ -116,7 +125,16 @@
             label="Arrivée"
             field-id="arrival"
           >
-            <search-poi v-model="ride.arrival" />
+            <search-poi
+              v-model="ride.arrival"
+              v-autofocus="{
+                hasBeenFocused: hasBeenFocused,
+                focus: focusState.rideArrival,
+                input: ride.arrival,
+                inputName: 'rideArrival',
+                cb: focusNext
+              }"
+            />
           </ec-field>
         </div>
 
@@ -150,6 +168,13 @@
             <input
               id="phone"
               v-model="ride.phone"
+              v-autofocus="{
+                hasBeenFocused: hasBeenFocused,
+                focus: focusState.phone,
+                input: ride.phone,
+                inputName: 'phone',
+                cb: focusNext
+              }"
               class="input"
             >
           </ec-field>
@@ -333,6 +358,21 @@ export default {
     rideCalendarHead,
     bulmaDropdown,
   },
+
+  directives: {
+    autofocus: {
+      update(el, binding) {
+        if (binding.value.focus === 'watch' && binding.value.input === binding.oldValue.input) {
+          el.focus();
+          binding.value.hasBeenFocused(binding.value.inputName);
+        } else if (binding.value.focus === 'focused' && binding.value.cb
+          && binding.value.input !== binding.oldValue.input) {
+          binding.value.cb(binding.value.inputName);
+        }
+      },
+    },
+  },
+
   computed: {
     ...mapGetters({ rides: 'realtime/rides', currentCampus: 'context/campus' }),
     ...Object.keys(actions)
@@ -382,6 +422,17 @@ export default {
       today,
       ride: generateEmptyRide(),
       modalOpen: false,
+      focusState: {
+        rideDeparture: 'unwatch',
+        rideArrival: 'unwatch',
+        phone: 'unwatch',
+      },
+      focusSequence: [
+        'rideDeparture',
+        'rideArrival',
+        'phone',
+      ],
+      isAutoFocus: false,
     };
   },
   methods: {
@@ -389,6 +440,30 @@ export default {
       pushRide: 'realtime/pushRide',
       setRides: 'realtime/setRides',
     }),
+
+    focusNext(input) {
+      if (this.focusState[input]) {
+        this.focusState[input] = 'unwatch';
+      }
+      if (this.isAutoFocus) {
+        this.isAutoFocus = false;
+        const idx = this.focusSequence.indexOf(input);
+        if (idx !== -1 && idx + 1 !== this.focusSequence.length) {
+          this.autoFocus(this.focusSequence[idx + 1]);
+        }
+      }
+    },
+
+    autoFocus(input) {
+      if (input && typeof this.focusState[input] !== 'undefined') {
+        this.isAutoFocus = true;
+        this.focusState[input] = 'watch';
+      }
+    },
+
+    hasBeenFocused(input) {
+      this.focusState[input] = 'focused';
+    },
 
     async edit(r, status) {
       const ride = Object.assign({}, r, status ? { status } : {});
@@ -429,6 +504,9 @@ export default {
     },
     toggleModal(newStatus = false) {
       this.modalOpen = newStatus;
+      if (newStatus) {
+        this.autoFocus('rideDeparture');
+      }
     },
 
     updateDates([start, end], { id, name } = {}) {
@@ -538,6 +616,11 @@ export default {
       background: $white;
       color: $danger;
       border: 1px solid $danger;
+    }
+    p {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
   .waiting-icon {
