@@ -33,10 +33,6 @@ import ecList from '~/components/crud/list.vue';
 
 const columns = { id: 'ID', label: 'Label' };
 
-function getPois(offset = 0, query = 30) {
-  return this.pois.getPois(Object.keys(columns).join(','), offset, query);
-}
-
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
@@ -46,11 +42,9 @@ export default {
     columns() { return columns; },
   },
   async asyncData({ $api, query }) {
-    console.log(query);
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    // const { parseInt(offset) = 0, limit = 30 } = query;
-    const { data, pagination } = await getPois.call($api, offset, limit);
+    const { data, pagination } = await $api.pois(null, Object.keys(columns).join(',')).getPois(offset, limit);
     return {
       pois: data,
       pagination,
@@ -58,8 +52,10 @@ export default {
   },
   methods: {
     async deletePoi({ id }) {
-      await this.$api.pois.deletePoi(id);
-      const updatedList = await getPois.call(this.$api);
+      await this.$api.pois().deletePoi(id);
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.pois(null, Object.keys(columns).join(',')).getPois(offset, limit);
       this.pois = updatedList.data;
       this.pagination = updatedList.pagination;
     },
