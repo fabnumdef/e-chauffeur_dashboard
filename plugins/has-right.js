@@ -13,7 +13,7 @@ export default function ({ app }) {
         return false;
       }
       return this.user.roles.find(
-        rule => rolesKeys[rule.role].includes(role) && (!campus || rule.campuses.includes(campus)),
+        rule => roles[rule.role].includes(role) && (!campus || rule.campuses.includes(campus)),
       );
     },
     isRegulator(...params) {
