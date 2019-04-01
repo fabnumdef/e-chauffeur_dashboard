@@ -108,7 +108,10 @@
             label="Départ"
             field-id="departure"
           >
-            <search-poi v-model="ride.departure" />
+            <search-poi
+              v-model="ride.departure"
+              :current-campus="currentCampus"
+            />
           </ec-field>
 
           <ec-field
@@ -116,7 +119,10 @@
             label="Arrivée"
             field-id="arrival"
           >
-            <search-poi v-model="ride.arrival" />
+            <search-poi
+              v-model="ride.arrival"
+              :current-campus="currentCampus"
+            />
           </ec-field>
         </div>
 

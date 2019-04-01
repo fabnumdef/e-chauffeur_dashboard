@@ -181,7 +181,9 @@ export default {
   .search-campus {
     margin: $size-small;
     max-width: 90%;
-    color: $text-invert;
+    /deep/ .multiselect__tags{
+      color: $text-invert;
+    }
   }
 
   /deep/ .button.is-text {

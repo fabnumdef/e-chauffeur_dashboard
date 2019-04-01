@@ -13,11 +13,11 @@ export default axios => (campus, mask) => {
     filters,
   };
   return {
-    async getPois(offset = 0, limit = 30) {
+    async getPois(offset = 0, limit = 30, search = null) {
       const response = await axios.get(
         `/${ENTITY}`,
         {
-          params,
+          params: merge(params, { search }),
           headers: {
             Range: `poi=${offset}-${offset + limit - 1}`,
           },
