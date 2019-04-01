@@ -39,6 +39,11 @@
           Véhicules
         </nuxt-link>
       </li>
+      <li v-if="hasCampus">
+        <nuxt-link :to="campusLink('pois')">
+          Lieux
+        </nuxt-link>
+      </li>
     </ul>
     <search-user-campus
       class="search-campus"
