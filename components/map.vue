@@ -63,10 +63,16 @@ export default {
       campus: 'context/campus',
     }),
     drivers() {
-      return this.realTimeDrivers.map(d => ({
-        ...d,
-        currentRide: this.getCurrentRide(d),
-      }));
+      return this.realTimeDrivers.reduce((acc, d) => {
+        const diffLastPositionDate = DateTime.fromJSDate(new Date()).diff(DateTime.fromISO(d.date));
+        if (diffLastPositionDate < 7200 * 1000) {
+          acc.push({
+            ...d,
+            currentRide: this.getCurrentRide(d),
+          });
+        }
+        return acc;
+      }, []);
     },
   },
   methods: {
