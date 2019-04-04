@@ -89,6 +89,13 @@
           Catégories
         </nuxt-link>
       </li>
+      <li v-if="$auth.isSuperAdmin()">
+        <nuxt-link
+          :to="{ name: 'logs' }"
+        >
+          Logs
+        </nuxt-link>
+      </li>
       <li v-if="$auth.isRegulator()">
         <nuxt-link
           :to="{ name: 'feedback' }"
