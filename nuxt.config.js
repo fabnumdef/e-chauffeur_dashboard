@@ -1,9 +1,6 @@
 module.exports = {
   mode: 'spa',
 
-  /*
-  ** Headers of the page
-  */
   head: {
     title: 'e-Chauffeur - Dashboard',
     htmlAttrs: {
@@ -22,33 +19,20 @@ module.exports = {
     middleware: ['auth'],
   },
 
-  /*
-  ** Customize the progress-bar color
-  */
   loading: { color: '#fff' },
 
-  /*
-  ** Global CSS
-  */
   css: [
     { src: '~assets/css/main.scss', lang: 'scss' },
   ],
 
-  /*
-  ** Plugins to load before mounting the App
-  */
   plugins: [
     '~/api',
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
     '~/plugins/datetime-picker.js',
-    '~/plugins/luxon.js',
     '~/plugins/realtime.js',
   ],
 
-  /*
-  ** Nuxt.js modules
-  */
   modules: [
     'nuxt-leaflet',
     '@nuxtjs/auth',
