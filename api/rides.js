@@ -61,7 +61,7 @@ export default axios => (campus, mask) => {
 
     async getAvailableDrivers(userMask, start, end) {
       const response = await axios.get(
-        `/${CAMPUS_PLURAL}/${campus}/drivers`,
+        `/${CAMPUS_PLURAL}/${campus}/drivers/date-interval`,
         {
           params: {
             mask: userMask,
