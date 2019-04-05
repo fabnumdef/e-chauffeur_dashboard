@@ -23,5 +23,15 @@ export default axios => (campus, mask) => {
       );
       return response;
     },
+
+    postDriver(data) {
+      return axios.post(
+        `/${ENTITY_CAMPUSES}/${campus}/${ENTITY_PLURAL}/`,
+        data,
+        {
+          params: { campus, mask },
+        },
+      );
+    },
   };
 };

@@ -114,7 +114,18 @@ export default {
   },
   methods: {
     async edit(driver) {
-      // TODO driver edit function
+      let data = {};
+      if (driver.id) {
+        // TODO patch user
+        data.id = '';
+      } else {
+        ({ data } = (await this.$api.drivers(this.campus.id, 'name,email,password').postDriver(driver)));
+      }
+
+      this.$router.push({
+        name: 'users-id-edit',
+        params: { id: data.id },
+      });
     },
   },
 };
