@@ -39,7 +39,6 @@ module.exports = {
   */
   plugins: [
     '~/api',
-    '~/plugins/axios.js',
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
     '~/plugins/datetime-picker.js',
@@ -52,20 +51,12 @@ module.exports = {
   */
   modules: [
     'nuxt-leaflet',
-    // Doc: https://github.com/nuxt-community/axios-module#usage
-    '@nuxtjs/axios',
     '@nuxtjs/toast',
     '@nuxtjs/auth',
     '@nuxtjs/pwa',
     ['qonfucius-nuxt-bulma', { css: false, postcss: false }],
     'qonfucius-nuxt-fontawesome',
   ],
-  /*
-  ** Axios module configuration
-  */
-  axios: {
-    // See https://github.com/nuxt-community/axios-module#options
-  },
 
   auth: {
     plugins: [
