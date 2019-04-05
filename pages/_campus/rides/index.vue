@@ -506,8 +506,10 @@ export default {
     },
     toggleModal(newStatus = false) {
       this.modalOpen = newStatus;
-      if (newStatus) {
+      if (newStatus && this.ride && !this.ride.departure) {
         this.autoFocus('rideDeparture');
+      } else {
+        this.isAutoFocus = false;
       }
     },
 
