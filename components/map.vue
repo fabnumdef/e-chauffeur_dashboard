@@ -1,6 +1,26 @@
 <template>
   <div class="fixed is-hidden-mobile is-hidden-tablet-only">
-    <div id="map-wrap">
+    <div
+      id="detach"
+    >
+      <nuxt-link
+        v-if="!isFullscreen"
+        :to="{ name: 'campus-map' }"
+        target="_blank"
+      >
+        <button
+          class="button is-primary"
+          @click="hideMap"
+        >
+          <fa-icon icon="external-link-alt" />&nbsp;
+          Détacher la carte
+        </button>
+      </nuxt-link>
+    </div>
+    <div
+      id="map-wrap"
+      :class="{'fullscreen': isFullscreen}"
+    >
       <no-ssr>
         <l-map
           :zoom="13"
@@ -52,6 +72,12 @@ import {
 } from '~/api/status';
 
 export default {
+  props: {
+    isFullscreen: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     center() {
       const [lon, lat] = this.campus.location.coordinates;
@@ -76,6 +102,9 @@ export default {
     },
   },
   methods: {
+    hideMap() {
+      this.$store.dispatch('context/hideMap', true);
+    },
     reverse([lon, lat]) {
       return [lat, lon];
     },
@@ -136,6 +165,16 @@ export default {
     height: 100vh;
     position: fixed;
     width: 45vw;
+  }
+  #detach {
+    z-index: 10;
+    position: fixed;
+    right: 0;
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+  #map-wrap.fullscreen {
+    width: 100vw;
   }
   .fixed {
     height: 100vh;
