@@ -54,6 +54,12 @@ module.exports = {
     '@nuxtjs/toast',
     '@nuxtjs/auth',
     '@nuxtjs/pwa',
+    [
+      '@fabnumdef/e-chauffeur_lib-vue',
+      {
+        components: {},
+      },
+    ],
     ['qonfucius-nuxt-bulma', { css: false, postcss: false }],
     'qonfucius-nuxt-fontawesome',
   ],
