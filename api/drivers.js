@@ -33,5 +33,15 @@ export default axios => (campus, mask) => {
         },
       );
     },
+
+    patchDriver(id, data) {
+      return axios.patch(
+        `/${ENTITY_CAMPUSES}/${campus}/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
+        data,
+        {
+          params: { mask },
+        },
+      );
+    },
   };
 };

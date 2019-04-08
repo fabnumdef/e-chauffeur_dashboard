@@ -116,16 +116,16 @@ export default {
     async edit(driver) {
       let data = {};
       if (driver.id) {
-        // TODO patch user
-        data.id = '';
+        ({ data } = (await this.$api.drivers(this.campus.id, EDITABLE_FIELDS.join(',')).patchDriver(driver.id, driver)));
       } else {
-        ({ data } = (await this.$api.drivers(this.campus.id, 'name,email,password').postDriver(driver)));
+        ({ data } = (await this.$api.drivers(this.campus.id, EDITABLE_FIELDS.join(',')).postDriver(driver)));
       }
 
-      this.$router.push({
-        name: 'users-id-edit',
-        params: { id: data.id },
-      });
+      this.$router.push(
+        this.$context.buildCampusLink('drivers-id-edit', {
+          params: { id: data.id },
+        }),
+      );
     },
   },
 };
