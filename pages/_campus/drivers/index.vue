@@ -23,9 +23,9 @@
     <ec-list
       :columns="columns"
       :data="drivers"
-      :pagination-offset="0"
-      :pagination-total="drivers.length"
-      :pagination-per-page="0"
+      :pagination-offset="pagination.offset"
+      :pagination-total="pagination.total"
+      :pagination-per-page="pagination.limit"
       :action-edit="campusLink('drivers-id-edit')"
       action-remove-confirm="Voulez-vous vraiment supprimer ce chauffeur ?"
       @action-remove="deleteDriver"
@@ -51,10 +51,10 @@ export default {
     }),
   },
   async asyncData({ params, $api }) {
-    const { data } = await $api.drivers(params.campus, Object.keys(columns).join(',')).getDrivers();
+    const { data, pagination } = await $api.drivers(params.campus, Object.keys(columns).join(',')).getDrivers();
     return {
       drivers: data,
-      // pagination, // TODO find a solution for pagination
+      pagination,
     };
   },
   methods: {
@@ -62,6 +62,7 @@ export default {
       await this.$api.drivers(this.campus.id).deleteDriver(id);
       const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(',')).getDrivers();
       this.drivers = updatedList.data;
+      this.pagination = updatedList.pagination;
     },
   },
 };
