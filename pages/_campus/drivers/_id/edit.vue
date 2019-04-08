@@ -116,7 +116,9 @@ export default {
     async edit(driver) {
       let data = {};
       if (driver.id) {
-        ({ data } = (await this.$api.drivers(this.campus.id, EDITABLE_FIELDS.join(',')).patchDriver(driver.id, driver)));
+        ({ data } = (await this.$api
+          .drivers(this.campus.id, EDITABLE_FIELDS.join(','))
+          .patchDriver(driver.id, driver)));
       } else {
         ({ data } = (await this.$api.drivers(this.campus.id, EDITABLE_FIELDS.join(',')).postDriver(driver)));
       }

@@ -12,9 +12,9 @@
             :to="campusLink('drivers-new')"
             class="button is-success"
           >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
+            <span class="icon is-small">
+              <fa-icon :icon="['fas', 'plus']" />
+            </span>
             <span>Nouveau</span>
           </nuxt-link>
         </div>
