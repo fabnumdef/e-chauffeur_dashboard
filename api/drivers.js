@@ -43,5 +43,11 @@ export default axios => (campus, mask) => {
         },
       );
     },
+
+    deleteDriver(id) {
+      return axios.delete(
+        `/${ENTITY_CAMPUSES}/${campus}/${ENTITY_PLURAL}/${encodeURIComponent(id)}`,
+      );
+    },
   };
 };

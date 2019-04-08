@@ -37,7 +37,7 @@
 import ecList from '~/components/crud/list.vue';
 import { mapGetters } from 'vuex';
 
-const columns = { id: 'ID', name: 'Nom', email: 'E-mail' };
+const columns = { id: 'ID', email: 'E-mail' };
 
 export default {
   watchQuery: ['offset'],
@@ -59,7 +59,9 @@ export default {
   },
   methods: {
     async deleteDriver({ id }) {
-      // TODO driver delete function
+      await this.$api.drivers(this.campus.id).deleteDriver(id);
+      const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(',')).getDrivers();
+      this.drivers = updatedList.data;
     },
   },
 };
