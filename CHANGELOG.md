@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Improved driver management.
 ### Fix
 * Filter drivers in map by last position date (2h)
 ## Version 1.1.0
