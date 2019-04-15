@@ -125,10 +125,9 @@ export default {
         ({ data } = (await this.PoisAPI.postPoi(poi)));
       }
 
-      this.$router.push({
-        name: 'pois-id-edit',
+      this.$router.push(this.$context.buildCampusLink('pois-id-edit', {
         params: { id: data.id },
-      });
+      }));
     },
   },
 };
