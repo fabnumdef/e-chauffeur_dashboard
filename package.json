@@ -34,6 +34,7 @@
     "qonfucius-nuxt-fontawesome": "^1.0.1",
     "sass-loader": "^7.1.0",
     "socket.io-client": "^2.2.0",
+    "vue-cal": "^1.50.3",
     "vue-multiselect": "^2.1.4",
     "vue-simplemde": "^0.5.1",
     "vue-socket.io-extended": "^3.2.1",
