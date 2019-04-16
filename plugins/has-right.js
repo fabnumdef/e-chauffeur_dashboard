@@ -19,6 +19,9 @@ export default function ({ app }) {
     isRegulator(...params) {
       return this.hasRole(rolesKeys.ROLE_REGULATOR, ...params);
     },
+    isAdmin(...params) {
+      return this.hasRole(rolesKeys.ROLE_ADMIN, ...params);
+    },
     isSuperAdmin(...params) {
       return this.hasRole(rolesKeys.ROLE_SUPERADMIN, ...params);
     },
