@@ -1,6 +1,10 @@
 # Changelog
 ## Current
 ### Features
+* Add POIs per base rights (local admin)
+### Fix
+## Version 1.1.1
+### Features
 ### Fix
 * Filter drivers in map by last position date (2h)
 ## Version 1.1.0
