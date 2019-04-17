@@ -6,8 +6,9 @@
     <div class="calendrier">
       <vue-cal
         class="vuecal--blue-theme"
-        :time-from="5 * 60"
-        :time-step="30"
+        :time-from="START_DAY_HOUR * 60"
+        :time-to="END_DAY_HOUR * 60"
+        :time-step="STEP"
         :time-cell-height="18"
         default-view="day"
         locale="fr"
@@ -208,50 +209,46 @@
           />
         </ec-field>
 
-        <template
-          slot="submit"
-        >
-          <template slot="modal-submit">
-            <button
-              v-if="can(ride, VALIDATE)"
-              class="button is-success"
-              type="button"
-              @click="edit(ride, VALIDATED)"
-            >
-              Accepter la course
-            </button>
-            <button
-              v-else
-              class="button is-success"
-              type="button"
-              @click="edit(ride)"
-            >
-              Sauvegarder
-            </button>
+        <template slot="submit">
+          <button
+            v-if="can(ride, VALIDATE)"
+            class="button is-success"
+            type="button"
+            @click="edit(ride, VALIDATED)"
+          >
+            Accepter la course
+          </button>
+          <button
+            v-else
+            class="button is-success"
+            type="button"
+            @click="edit(ride)"
+          >
+            Sauvegarder
+          </button>
 
-            <bulma-dropdown
-              v-if="can(ride, REJECT_BOUNDARY) || can(ride, REJECT_CAPACITY)"
-              class="is-danger"
-              :options="{[REJECTED_BOUNDARY]: 'Refuser (périmètre)', [REJECTED_CAPACITY]: 'Refuser (capacité)'}"
-              @click="edit(ride, $event)"
-            >
-              Refuser la course
-            </bulma-dropdown>
-            <bulma-dropdown
-              v-if="can(ride, CANCEL_TECHNICAL) || can(ride, CANCEL_REQUESTED_CUSTOMER)
-                || can(ride, CANCEL_CUSTOMER_OVERLOAD) || can(ride, CANCEL_CUSTOMER_MISSING)"
-              class="is-danger"
-              :options="{
-                [CANCEL_TECHNICAL]: 'Annuler (problème technique)',
-                [CANCEL_REQUESTED_CUSTOMER]: 'Annuler (demande utilisateur)',
-                [CANCEL_CUSTOMER_OVERLOAD]: 'Annuler (surcharge)',
-                [CANCEL_CUSTOMER_MISSING]: 'Annuler (passager absent)',
-              }"
-              @click="changeStatus(ride, $event)"
-            >
-              Annuler la course
-            </bulma-dropdown>
-          </template>
+          <bulma-dropdown
+            v-if="can(ride, REJECT_BOUNDARY) || can(ride, REJECT_CAPACITY)"
+            class="is-danger"
+            :options="{[REJECTED_BOUNDARY]: 'Refuser (périmètre)', [REJECTED_CAPACITY]: 'Refuser (capacité)'}"
+            @click="edit(ride, $event)"
+          >
+            Refuser la course
+          </bulma-dropdown>
+          <bulma-dropdown
+            v-if="can(ride, CANCEL_TECHNICAL) || can(ride, CANCEL_REQUESTED_CUSTOMER)
+              || can(ride, CANCEL_CUSTOMER_OVERLOAD) || can(ride, CANCEL_CUSTOMER_MISSING)"
+            class="is-danger"
+            :options="{
+              [CANCEL_TECHNICAL]: 'Annuler (problème technique)',
+              [CANCEL_REQUESTED_CUSTOMER]: 'Annuler (demande utilisateur)',
+              [CANCEL_CUSTOMER_OVERLOAD]: 'Annuler (surcharge)',
+              [CANCEL_CUSTOMER_MISSING]: 'Annuler (passager absent)',
+            }"
+            @click="changeStatus(ride, $event)"
+          >
+            Annuler la course
+          </bulma-dropdown>
         </template>
       </vue-modal>
     </div>
@@ -260,8 +257,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex';
-import VueCal from 'vue-cal';
-import 'vue-cal/dist/vuecal.css';
+import VueCal from '~/components/vue-cal';
 import ecField from '~/components/form/field.vue';
 import { DateTime, Interval } from 'luxon';
 import searchPoi from '~/components/form/search-poi';
@@ -327,6 +323,10 @@ const actions = {
   CANCEL_CUSTOMER_OVERLOAD,
   CANCEL_CUSTOMER_MISSING,
 };
+
+const STEP = 30;
+const START_DAY_HOUR = 5;
+const END_DAY_HOUR = 23;
 
 export default {
   components: {
@@ -433,6 +433,9 @@ export default {
     const { data: rides } = await ridesApi.getRides(start, end);
     store.commit('realtime/setRides', rides);
     return {
+      STEP,
+      START_DAY_HOUR,
+      END_DAY_HOUR,
       campus: params.campus,
       drivers,
       today,
@@ -538,8 +541,11 @@ export default {
     },
 
     onClickEvent(event) {
-      this.ride = event.ride;
-      console.log(this.ride);
+      const ride = Object.assign({}, event.ride);
+      ride.start = DateTime.fromISO(event.ride.start);
+      ride.end = DateTime.fromISO(event.ride.end);
+      ride.interval = Interval.fromDateTimes(ride.start, ride.end);
+      this.ride = ride;
       this.toggleModal(true);
     },
 
@@ -601,7 +607,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import "vue-cal/dist/vuecal.css";
   @import "~assets/css/head";
   .calendrier {
     height: calc(100vh - 100px);
