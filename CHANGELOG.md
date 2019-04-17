@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Improved driver management.
 * Add POIs per base rights (local admin)
 ### Fix
 ## Version 1.1.1
