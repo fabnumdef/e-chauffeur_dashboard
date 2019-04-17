@@ -22,9 +22,32 @@
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
-      :action-edit="campusLink('pois-id-edit')"
-      @action-remove="deletePoi"
-    />
+    >
+      <template #actions="{ row }">
+        <nuxt-link
+          v-if="$auth.isAdmin()"
+          :to="campusLink('pois-id-edit', {
+            params: { id: row.id },
+          })"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'edit']" />
+          </span>
+          <span>Modifier</span>
+        </nuxt-link>
+        <button
+          v-if="$auth.isAdmin()"
+          class="button is-danger"
+          @click="deletePoi(row)"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'trash']" />
+          </span>
+          <span>Supprimer</span>
+        </button>
+      </template>
+    </ec-list>
   </main>
 </template>
 

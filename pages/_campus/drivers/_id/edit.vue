@@ -5,13 +5,13 @@
         v-if="id"
         class="title"
       >
-        Lieu #{{ id }}
+        Chauffeur <em>{{ id }}</em>
       </h1>
       <h1
         v-else
         class="title"
       >
-        Lieu
+        Chauffeur
       </h1>
       <h2
         v-if="id"
@@ -28,41 +28,41 @@
     </header>
     <form
       class="box"
-      @submit.prevent="edit(poi)"
+      @submit.prevent="edit(driver)"
     >
       <ec-field
-        label="ID"
-        field-id="id"
+        label="Nom"
+        field-id="name"
       >
         <input
-          id="id"
-          v-model="poi.id"
-          :disabled="!!id"
+          id="name"
+          v-model="driver.name"
+          type="text"
           class="input"
         >
       </ec-field>
-
       <ec-field
-        label="Label"
-        field-id="label"
+        label="Email"
+        field-id="email"
       >
         <input
-          id="label"
-          v-model="poi.label"
+          id="email"
+          v-model="driver.email"
+          type="text"
           class="input"
         >
       </ec-field>
-
       <ec-field
-        label="Coordonnées GPS"
-        field-id="location"
+        label="Mot de passe"
+        field-id="password"
       >
-        <ec-gps-point
-          id="location"
-          v-model="poi.location"
-        />
+        <input
+          id="password"
+          v-model="driver.password"
+          type="password"
+          class="input"
+        >
       </ec-field>
-
       <button
         v-if="id"
         type="submit"
@@ -90,44 +90,44 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
-import ecGpsPoint from '~/components/form/gps-point.vue';
 import { mapGetters } from 'vuex';
+
+const EDITABLE_FIELDS = ['id', 'email', 'password', 'name'];
 
 export default {
   components: {
     ecField,
-    ecGpsPoint,
   },
   props: {
-    poi: {
+    driver: {
       type: Object,
       default: () => ({}),
     },
   },
   data() {
-    return { id: this.poi.id };
+    return { id: this.driver.id };
   },
   computed: {
     ...mapGetters({
       campus: 'context/campus',
     }),
-    PoisAPI() {
-      const { id, name } = this.campus;
-      return this.$api.pois({ id, name }, 'id,label,location(coordinates),campus');
-    },
   },
   methods: {
-    async edit(poi) {
+    async edit(driver) {
       let data = {};
-      if (this.id) {
-        ({ data } = (await this.PoisAPI.patchPoi(this.id, poi)));
+      if (driver.id) {
+        ({ data } = (await this.$api
+          .drivers(this.campus.id, EDITABLE_FIELDS.join(','))
+          .patchDriver(driver.id, driver)));
       } else {
-        ({ data } = (await this.PoisAPI.postPoi(poi)));
+        ({ data } = (await this.$api.drivers(this.campus.id, EDITABLE_FIELDS.join(',')).postDriver(driver)));
       }
 
-      this.$router.push(this.$context.buildCampusLink('pois-id-edit', {
-        params: { id: data.id },
-      }));
+      this.$router.push(
+        this.$context.buildCampusLink('drivers-id-edit', {
+          params: { id: data.id },
+        }),
+      );
     },
   },
 };

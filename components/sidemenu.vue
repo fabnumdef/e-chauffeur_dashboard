@@ -29,6 +29,11 @@
           Historique
         </nuxt-link>
       </li>
+      <li>
+        <nuxt-link :to="campusLink('drivers')">
+          Chauffeurs
+        </nuxt-link>
+      </li>
       <li v-if="hasCampus">
         <nuxt-link :to="campusLink('rides')">
           Courses
