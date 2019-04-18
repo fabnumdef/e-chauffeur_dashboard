@@ -297,6 +297,10 @@ const EDITABLE_FIELDS = [
   'luggage',
 ].join(',');
 
+const STEP = 30;
+const START_DAY_HOUR = 5;
+const END_DAY_HOUR = 23;
+
 export function generateEmptyRide() {
   return {
     start: null,
@@ -325,18 +329,72 @@ const actions = {
   CANCEL_CUSTOMER_MISSING,
 };
 
-function getVueCalDateFromISO(date) {
-  return DateTime.fromISO(date).setLocale('fr')
+function getFloorMinute(minute) {
+  const numberOfStep = Math.floor(60 / STEP);
+  let res = 0;
+  for (let i = 1; i <= numberOfStep; i++) {
+    const currentStep = STEP * i;
+    if (currentStep > minute) {
+      break;
+    }
+    res = currentStep;
+  }
+  return res;
+}
+
+function getCeilMinute(minute) {
+  const numberOfStep = Math.floor(60 / STEP);
+  let res = 0;
+  // eslint-disable-next-line no-plusplus
+  for (let i = 1; i <= numberOfStep; i++) {
+    const currentStep = STEP * i;
+    if (currentStep > minute) {
+      res = currentStep;
+      break;
+    }
+  }
+  return res === 60 ? 0 : res;
+}
+
+function getVueCalFloorDateFromISO(date) {
+  const exactDate = DateTime.fromISO(date);
+  return DateTime.fromObject({
+    day: exactDate.day,
+    hour: exactDate.hour,
+    minute: getFloorMinute(exactDate.minute),
+  }).setLocale('fr')
     .toFormat('yyyy-LL-dd HH:mm');
 }
 
-function getDateTimeFromVueCal(date) {
-  return DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
+function getVueCalCeilDateFromISO(date) {
+  const exactDate = DateTime.fromISO(date);
+  const minute = getCeilMinute(exactDate.minute);
+  return DateTime.fromObject({
+    day: exactDate.day,
+    hour: minute === 0 ? exactDate.hour + 1 : exactDate.hour,
+    minute,
+  }).setLocale('fr')
+    .toFormat('yyyy-LL-dd HH:mm');
 }
 
-const STEP = 30;
-const START_DAY_HOUR = 5;
-const END_DAY_HOUR = 23;
+function getDateTimeFloorFromVueCal(date) {
+  const exactDate = DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
+  return DateTime.fromObject({
+    day: exactDate.day,
+    hour: exactDate.hour,
+    minute: getFloorMinute(exactDate.minute),
+  });
+}
+
+function getDateTimeCeilFromVueCal(date) {
+  const exactDate = DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
+  const minute = getCeilMinute(exactDate.minute);
+  return DateTime.fromObject({
+    day: exactDate.day,
+    hour: minute === 0 ? exactDate.hour + 1 : exactDate.hour,
+    minute,
+  });
+}
 
 export default {
   components: {
@@ -392,8 +450,8 @@ export default {
     },
     ridesCalendar() {
       return this.rides.map((ride) => {
-        const start = getVueCalDateFromISO(ride.start);
-        const end = getVueCalDateFromISO(ride.end);
+        const start = getVueCalFloorDateFromISO(ride.start);
+        const end = getVueCalCeilDateFromISO(ride.end);
         const title = `${ride.departure.label} -> ${ride.arrival.label}`;
         const content = `De ${ride.departure.label} à ${ride.arrival.label}`;
         const split = this.drivers.findIndex(driver => driver.id === ride.driver.id) + 1;
@@ -469,8 +527,9 @@ export default {
     }),
 
     onClickAndRelease(event) {
+      this.initRide();
       const { id, name } = this.drivers[event.split - 1];
-      this.updateDates([getDateTimeFromVueCal(event.start), getDateTimeFromVueCal(event.end)], {
+      this.updateDates([getDateTimeFloorFromVueCal(event.start), getDateTimeCeilFromVueCal(event.end)], {
         id,
         name,
       });
