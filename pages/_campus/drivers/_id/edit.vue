@@ -1,11 +1,21 @@
 <template>
   <main>
     <header>
+      <nuxt-link
+        v-if="driver.id"
+        :to="campusLink('drivers-id-calendar')"
+        class="button is-primary is-pulled-right"
+      >
+        <span class="icon is-small">
+          <fa-icon :icon="['fas', 'calendar-alt']" />
+        </span>
+        <span>Calendrier</span>
+      </nuxt-link>
       <h1
         v-if="id"
         class="title"
       >
-        Chauffeur <em>{{ id }}</em>
+        Chauffeur <em class="is-size-6">#{{ driver.id }} : {{ driver.email }}</em>
       </h1>
       <h1
         v-else
