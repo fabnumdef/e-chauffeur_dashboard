@@ -116,7 +116,7 @@ export default {
       // Prevent a double mouse down on touch devices.
       if ('ontouchstart' in window && !touch) return false
 
-      if (this.clickAndRelease) {
+      if (this.clickAndRelease && !this.isDOMElementAnEvent(e.target)) {
         this.mouseDownEvent = {
           e,
           split
