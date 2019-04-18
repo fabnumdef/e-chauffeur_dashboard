@@ -9,14 +9,15 @@
         :time-from="START_DAY_HOUR * 60"
         :time-to="END_DAY_HOUR * 60"
         :time-step="STEP"
-        :time-cell-height="18"
+        :time-cell-height="20"
         default-view="day"
         locale="fr"
         :disable-views="['years', 'year', 'month']"
         :split-days="splitDrivers"
         :events="ridesCalendar"
-        :on-event-create="onEventCreate"
         :on-event-click="onClickEvent"
+        @click-and-release="onClickAndRelease"
+        @ready="initRide"
       >
         <div
           slot="time-cell"
@@ -324,6 +325,15 @@ const actions = {
   CANCEL_CUSTOMER_MISSING,
 };
 
+function getVueCalDateFromISO(date) {
+  return DateTime.fromISO(date).setLocale('fr')
+    .toFormat('yyyy-LL-dd HH:mm');
+}
+
+function getDateTimeFromVueCal(date) {
+  return DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
+}
+
 const STEP = 30;
 const START_DAY_HOUR = 5;
 const END_DAY_HOUR = 23;
@@ -382,10 +392,8 @@ export default {
     },
     ridesCalendar() {
       return this.rides.map((ride) => {
-        const start = DateTime.fromISO(ride.start).setLocale('fr')
-          .toFormat('yyyy-LL-dd HH:mm');
-        const end = DateTime.fromISO(ride.end).setLocale('fr')
-          .toFormat('yyyy-LL-dd HH:mm');
+        const start = getVueCalDateFromISO(ride.start);
+        const end = getVueCalDateFromISO(ride.end);
         const title = `${ride.departure.label} -> ${ride.arrival.label}`;
         const content = `De ${ride.departure.label} à ${ride.arrival.label}`;
         const split = this.drivers.findIndex(driver => driver.id === ride.driver.id) + 1;
@@ -460,8 +468,13 @@ export default {
       setRides: 'realtime/setRides',
     }),
 
-    onEventCreate(ev, del) {
-      setTimeout(del, 500);
+    onClickAndRelease(event) {
+      const { id, name } = this.drivers[event.split - 1];
+      this.updateDates([getDateTimeFromVueCal(event.start), getDateTimeFromVueCal(event.end)], {
+        id,
+        name,
+      });
+      this.toggleModal(true);
     },
 
     focusNext(input) {
