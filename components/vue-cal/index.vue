@@ -94,8 +94,10 @@
 </template>
 
 <script>
+/* eslint-disable */
+
 import { now, isDateToday, getPreviousFirstDayOfWeek, formatDate, formatTime } from './date-utils'
-import { createAnEvent, eventDefaults, onResizeEvent } from './event-utils'
+import { createAnEvent, eventDefaults, newEvent, onResizeEvent } from './event-utils';
 import Header from './header'
 import WeekdaysHeadings from './weekdays-headings'
 import Cell from './cell'
@@ -461,6 +463,16 @@ export default {
       resizeAnEvent.start = null
       resizeAnEvent.originalHeight = null
       resizeAnEvent.newHeight = null
+    },
+
+    onClickAndRelease(formattedDate, down, up, split) {
+      const downMouseY = this.getPosition(down.e).y
+      const upMouseY = this.getPosition(up.e).y
+      const startTimeMinutes = downMouseY * this.timeStep / parseInt(this.timeCellHeight) + this.timeFrom
+      const endTimeMinutes = upMouseY * this.timeStep / parseInt(this.timeCellHeight) + this.timeFrom
+
+      const event = newEvent(formattedDate, startTimeMinutes, endTimeMinutes, { split }, this)
+      this.$emit('click-and-release', event);
     },
 
     onEventTitleBlur (e, event) {

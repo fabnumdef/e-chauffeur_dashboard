@@ -11,6 +11,7 @@
       column
       @touchstart="onCellTouchStart($event, splits.length ? i : null)"
       @mousedown="onCellMouseDown($event, splits.length ? i : null)"
+      @mouseup="onCellMouseUp($event, splits.length ? i : null)"
       @click="selectCell()"
       @dblclick="$parent.dblClickToNavigate && $parent.switchToNarrowerView()")
       slot(name="cell-content" :events="events" :selectCell="() => {selectCell(true)}" :split="splits[i - 1]")
@@ -30,6 +31,8 @@
 </template>
 
 <script>
+/* eslint-disable */
+
 import { updateEventPosition, checkCellOverlappingEvents } from './event-utils'
 import Event from './event'
 
@@ -66,6 +69,12 @@ export default {
     }
   },
 
+  data: function() {
+    return {
+      mouseDownEvent: null,
+    }
+  },
+
   methods: {
     checkCellOverlappingEvents,
 
@@ -96,9 +105,23 @@ export default {
       }
     },
 
+    onCellMouseUp(e, split = null, touch = false) {
+      if (this.clickAndRelease && this.mouseDownEvent && this.mouseDownEvent.split === split) {
+        this.$parent.onClickAndRelease(this.formattedDate, this.mouseDownEvent, {e, split}, split);
+        this.mouseDownEvent = null;
+      }
+    },
+
     onCellMouseDown (e, split = null, touch = false) {
       // Prevent a double mouse down on touch devices.
       if ('ontouchstart' in window && !touch) return false
+
+      if (this.clickAndRelease) {
+        this.mouseDownEvent = {
+          e,
+          split
+        };
+      }
 
       let { clickHoldACell } = this.domEvents
 
@@ -159,6 +182,9 @@ export default {
     },
     editableEvents () {
       return this.$parent.editableEvents
+    },
+    clickAndRelease() {
+      return this.$parent.$listeners['click-and-release']
     },
     clickToNavigate () {
       return this.$parent.clickToNavigate

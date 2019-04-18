@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Vue from 'vue'
 
 export const eventDefaults = {
@@ -20,6 +21,41 @@ export const eventDefaults = {
   height: 0,
   top: 0,
   classes: []
+}
+
+export const newEvent = (formattedDate, startTimeMinutes, endTimeMinutes = null, eventOptions, vuecal) => {
+  startTimeMinutes = parseInt(startTimeMinutes)
+  const startHours = parseInt(startTimeMinutes / 60)
+  const startMinutes = parseInt(startTimeMinutes % 60)
+  endTimeMinutes = parseInt(endTimeMinutes) || startTimeMinutes + 120
+  const endHours = parseInt(endTimeMinutes / 60)
+  const endMinutes = parseInt(endTimeMinutes % 60)
+  const formattedHours = (startHours < 10 ? '0' : '') + startHours
+  const formattedMinutes = (startMinutes < 10 ? '0' : '') + startMinutes
+  const formattedEndHours = (endHours < 10 ? '0' : '') + endHours
+  const formattedEndMinutes = (endMinutes < 10 ? '0' : '') + endMinutes
+
+  let event = {
+    ...eventDefaults,
+    // Nested objects need to be reinitialized or they will be shared across all instances.
+    overlapped: {},
+    overlapping: {},
+    simultaneous: {},
+    multipleDays: {},
+
+    eid: `${vuecal._uid}_${vuecal.eventIdIncrement++}`,
+    start: formattedDate + (vuecal.time ? ` ${formattedHours}:${formattedMinutes}` : ''),
+    startDate: formattedDate,
+    startTime: (vuecal.time ? ` ${formattedHours}:${formattedMinutes}` : null),
+    startTimeMinutes,
+    end: formattedDate + (vuecal.time ? ` ${formattedEndHours}:${formattedEndMinutes}` : ''),
+    endDate: formattedDate,
+    endTime: (vuecal.time ? ` ${formattedEndHours}:${formattedEndMinutes}` : null),
+    endTimeMinutes,
+    ...eventOptions
+  }
+
+  return event
 }
 
 // Create an event on formattedDate at the given startTimeMinutes, and allow overriding
