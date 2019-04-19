@@ -43,6 +43,7 @@
     "vue": "2.x",
     "vuex": "3.x",
     "qs": "6.x",
-    "leaflet": "1.x"
+    "leaflet": "1.x",
+    "luxon": "1.x.x"
   }
 }

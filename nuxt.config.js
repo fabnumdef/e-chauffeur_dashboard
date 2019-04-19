@@ -40,6 +40,23 @@ module.exports = {
       '@fabnumdef/e-chauffeur_lib-vue',
       {
         components: {},
+        api: {
+          campuses: 'campuses',
+          carEvents: 'car-events',
+          carModels: 'car-models',
+          cars: 'cars',
+          categories: 'categories',
+          feedback: 'feedback',
+          jwt: 'jwt',
+          logs: 'logs',
+          pois: 'pois',
+          rides: 'rides',
+          userEvents: 'user-events',
+          users: 'users',
+        },
+        plugins: [
+          'has-right',
+        ],
       },
     ],
   ],
@@ -48,7 +65,6 @@ module.exports = {
     plugins: [
       '~/plugins/auth-renew.js',
       '~/plugins/socket.js',
-      '~/plugins/has-right.js',
     ],
     redirect: {
       login: '/login',
