@@ -14,7 +14,7 @@
         locale="fr"
         :disable-views="['years', 'year', 'month']"
         :split-days="splitDrivers"
-        :events="ridesCalendar"
+        :events="events"
         :on-event-click="onClickEvent"
         @click-and-release="onClickAndRelease"
         @ready="initRide"
@@ -348,7 +348,7 @@ function getCeilMinute(minute) {
   // eslint-disable-next-line no-plusplus
   for (let i = 1; i <= numberOfStep; i++) {
     const currentStep = STEP * i;
-    if (currentStep > minute) {
+    if (currentStep >= minute) {
       res = currentStep;
       break;
     }
@@ -465,6 +465,41 @@ export default {
           class: 'grey',
         };
       });
+    },
+    events() {
+      const evts = this.ridesCalendar;
+      const openingHoursEvents = [];
+      this.drivers.forEach((driver, index) => {
+        if (driver.availabilities && driver.availabilities.length > 0) {
+          driver.availabilities.forEach((avail) => {
+            if (avail.start.hour > START_DAY_HOUR) {
+              const start = getVueCalFloorDateFromISO(DateTime.fromObject({ hour: START_DAY_HOUR }).toISO());
+              const end = getVueCalCeilDateFromISO(avail.start.toISO());
+              const split = index + 1;
+              openingHoursEvents.push({
+                start,
+                end,
+                split,
+                class: 'not-working',
+                background: true,
+              });
+            }
+            if (avail.end.hour < END_DAY_HOUR) {
+              const start = getVueCalFloorDateFromISO(avail.end.toISO());
+              const end = getVueCalCeilDateFromISO(DateTime.fromObject({ hour: END_DAY_HOUR }).toISO());
+              const split = index + 1;
+              openingHoursEvents.push({
+                start,
+                end,
+                split,
+                class: 'not-working',
+                background: true,
+              });
+            }
+          });
+        }
+      });
+      return evts.concat(openingHoursEvents);
     },
   },
 
@@ -613,12 +648,14 @@ export default {
     },
 
     onClickEvent(event) {
-      const ride = Object.assign({}, event.ride);
-      ride.start = DateTime.fromISO(event.ride.start);
-      ride.end = DateTime.fromISO(event.ride.end);
-      ride.interval = Interval.fromDateTimes(ride.start, ride.end);
-      this.ride = ride;
-      this.toggleModal(true);
+      if (event.ride) {
+        const ride = Object.assign({}, event.ride);
+        ride.start = DateTime.fromISO(event.ride.start);
+        ride.end = DateTime.fromISO(event.ride.end);
+        ride.interval = Interval.fromDateTimes(ride.start, ride.end);
+        this.ride = ride;
+        this.toggleModal(true);
+      }
     },
 
     initRide() {
@@ -692,6 +729,15 @@ export default {
   background-color: grey;
     color: white;
   }
+
+  /deep/ .vuecal__event.not-working {
+    background: repeating-linear-gradient(45deg, white, white 10px, #f2f2f2 10px, #f2f2f2 20px);/* IE 10+ */
+    color: #999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  /deep/ .vuecal__event.not-working .vuecal__event-time {display: none;align-items: center;}
 
   /deep/ .day-title {
     height: 120px;
