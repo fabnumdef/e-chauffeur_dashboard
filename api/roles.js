@@ -1,6 +1,0 @@
-export const ROLE_ANONYMOUS = ['ROLE_ANONYMOUS'];
-export const ROLE_USER = [...ROLE_ANONYMOUS, 'ROLE_USER'];
-export const ROLE_DRIVER = [...ROLE_USER, 'ROLE_DRIVER'];
-export const ROLE_REGULATOR = [...ROLE_DRIVER, 'ROLE_REGULATOR'];
-export const ROLE_ADMIN = [...ROLE_REGULATOR, 'ROLE_ADMIN'];
-export const ROLE_SUPERADMIN = [...ROLE_ADMIN, 'ROLE_SUPERADMIN'];

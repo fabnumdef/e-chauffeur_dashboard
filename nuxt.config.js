@@ -3,13 +3,6 @@ module.exports = {
 
   head: {
     title: 'e-Chauffeur - Dashboard',
-    htmlAttrs: {
-      lang: 'fr',
-    },
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-    ],
     link: [
       { rel: 'stylesheet', href: '//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' },
     ],
@@ -19,14 +12,11 @@ module.exports = {
     middleware: ['auth'],
   },
 
-  loading: { color: '#fff' },
-
   css: [
     { src: '~assets/css/main.scss', lang: 'scss' },
   ],
 
   plugins: [
-    '~/api',
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
     '~/plugins/datetime-picker.js',
@@ -35,7 +25,6 @@ module.exports = {
 
   modules: [
     'nuxt-leaflet',
-    '@nuxtjs/auth',
     [
       '@fabnumdef/e-chauffeur_lib-vue',
       {
@@ -53,8 +42,10 @@ module.exports = {
           rides: 'rides',
           userEvents: 'user-events',
           users: 'users',
+          drivers: 'drivers',
         },
-        plugins: [
+        withAuth: true,
+        authPlugins: [
           'has-right',
         ],
       },
@@ -71,15 +62,6 @@ module.exports = {
       logout: '/',
       callback: '/login',
       home: '/',
-    },
-    strategies: {
-      local: {
-        endpoints: {
-          login: { url: '/jwt/generate?mask=token', method: 'post', propertyName: 'token' },
-          user: { url: '/jwt/user?mask=id,email,roles', method: 'get', propertyName: false },
-          logout: null,
-        },
-      },
     },
   },
 
@@ -109,19 +91,9 @@ module.exports = {
     ],
   },
 
-  env: {
-    apiUrl: process.env.API_URL,
-  },
-
-  toast: {
-    position: 'bottom-right',
-    duration: 15000,
-  },
-
   manifest: {
     name: 'e-Chauffeur - Régulateur',
     short_name: 'e-Chauffeur',
     description: 'Application régulateur',
-    lang: 'fr',
   },
 };

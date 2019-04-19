@@ -49,7 +49,7 @@ import { mapGetters } from 'vuex';
 import { DateTime, Interval } from 'luxon';
 import {
   DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED,
-} from '~/api/status';
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
 export default {
   computed: {
