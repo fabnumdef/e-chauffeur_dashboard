@@ -222,13 +222,15 @@
 </template>
 
 <script>
-import { DateTime } from 'luxon';
-import Interval from 'luxon/src/interval';
-import ecDatePicker from '~/components/datepicker.vue';
+import { DateTime, Interval } from 'luxon';
 import { mapGetters } from 'vuex';
 import {
-  CANCELED, CANCEL, FINISH, DELIVERED,
-} from '~/api/status';
+  CANCELED, DELIVERED,
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
+import {
+  CANCEL,
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
+import ecDatePicker from '~/components/datepicker.vue';
 
 export default {
   components: {
@@ -313,7 +315,6 @@ export default {
         case CANCELED:
           statusInfos = { class: 'is-cancel', text: 'Course annulée' };
           break;
-        case FINISH:
         case DELIVERED:
           statusInfos = { class: 'is-done', text: 'Course effectuée' };
           break;

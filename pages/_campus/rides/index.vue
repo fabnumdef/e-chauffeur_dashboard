@@ -291,19 +291,23 @@ import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
 import searchAvailableDriver from '~/components/form/search-available-driver';
 import bulmaDropdown from '~/components/dropdown.vue';
-import Status, {
-  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, VALIDATE, CREATED,
-  REJECT_BOUNDARY, REJECT_CAPACITY,
+import Status from '@fabnumdef/e-chauffeur_lib-vue/api/status';
+import {
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, CREATED,
   REJECTED_BOUNDARY, REJECTED_CAPACITY,
-  CANCEL_TECHNICAL,
-  CANCEL_REQUESTED_CUSTOMER,
-  CANCEL_CUSTOMER_OVERLOAD,
-  CANCEL_CUSTOMER_MISSING,
   CANCELED_TECHNICAL,
   CANCELED_REQUESTED_CUSTOMER,
   CANCELED_CUSTOMER_OVERLOAD,
   CANCELED_CUSTOMER_MISSING,
-} from '~/api/status';
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
+import {
+  VALIDATE,
+  REJECT_BOUNDARY, REJECT_CAPACITY,
+  CANCEL_TECHNICAL,
+  CANCEL_REQUESTED_CUSTOMER,
+  CANCEL_CUSTOMER_OVERLOAD,
+  CANCEL_CUSTOMER_MISSING,
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
 
 const EDITABLE_FIELDS = [
   'id',

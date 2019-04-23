@@ -1,27 +1,21 @@
-import Vue from 'vue';
-import VueSocketio from 'vue-socket.io-extended';
-import io from 'socket.io-client';
+import { AUTH_HEADER_KEY } from '@fabnumdef/e-chauffeur_lib-vue/plugins/socket';
 
-const authHeaderKey = '_token.local';
-
-export default function ({ env, store, app }, inject) {
-  const ioInstance = io(env.apiUrl, { autoConnect: false });
-  Vue.use(VueSocketio, ioInstance, { store });
-  inject('io', ioInstance);
+export default function ({ store, app }) {
+  const ioInstance = app.$io;
   const watched = [];
   ioInstance.on('connect', () => {
     const init = async function init(campus) {
       if (campus) {
         await store.dispatch('realtime/fetchDrivers', campus);
-        app.$io.emit('roomLeaveAll');
-        app.$io.emit('roomJoinAdmin', app.$auth.$storage.getUniversal(authHeaderKey), campus);
+        ioInstance.emit('roomLeaveAll');
+        ioInstance.emit('roomJoinAdmin', app.$auth.$storage.getUniversal(AUTH_HEADER_KEY), campus);
       }
     };
     init(store.getters['context/campus']);
     watched.push(store.watch((state, getters) => getters['context/campus'], init));
   });
   ioInstance.on('disconnect', () => {
-    watched.forEach(cb => cb());
+    watched.forEach(unwatch => unwatch());
   });
   const autoConnect = (isLogged) => {
     if (isLogged) {
