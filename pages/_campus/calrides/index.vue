@@ -462,7 +462,7 @@ export default {
           content,
           ride,
           split,
-          class: 'grey',
+          class: 'grey ride-event',
         };
       });
     },
@@ -724,18 +724,23 @@ export default {
   /deep/ .vuecal__time-cell .hours.line:before {border-color: #42b983;}
   /deep/ .driver-col, /deep/ .driver-col-bis {
     border-right: 1px solid black;
+    cursor: crosshair;
   }
   /deep/ .grey {
-  background-color: grey;
-    color: white;
+    background-color: rgba(253,156,66,.85);
+    border: 1px solid #e9882e;
   }
-
+  /deep/ .ride-event {
+    margin-right: 15px;
+    cursor: pointer;
+  }
   /deep/ .vuecal__event.not-working {
     background: repeating-linear-gradient(45deg, white, white 10px, #f2f2f2 10px, #f2f2f2 20px);/* IE 10+ */
     color: #999;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: default;
   }
   /deep/ .vuecal__event.not-working .vuecal__event-time {display: none;align-items: center;}
 
