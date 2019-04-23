@@ -3,6 +3,7 @@
 ### Features
 * Improved driver management.
 * Add POIs per base rights (local admin)
+* Use common library
 ### Fix
 ## Version 1.1.1
 ### Features
