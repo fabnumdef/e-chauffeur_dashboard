@@ -47,24 +47,6 @@ export const mutations = {
 export const getters = {
   drivers: s => s.drivers,
   rides: s => s.rides,
-  ridesCalendar: s => s.rides.map((ride) => {
-    const start = DateTime.fromISO(ride.start).setLocale('fr')
-      .toFormat('yyyy-LL-dd HH:mm');
-    const end = DateTime.fromISO(ride.end).setLocale('fr')
-      .toFormat('yyyy-LL-dd HH:mm');
-    const title = `${ride.departure.label} -> ${ride.arrival.label}`;
-    const content = `De ${ride.departure.label} à ${ride.arrival.label}`;
-    const split = s.drivers.findIndex(driver => driver.id === ride.driver.id);
-    return {
-      start,
-      end,
-      title,
-      content,
-      ride,
-      split,
-      class: 'grey',
-    };
-  }),
 };
 
 export const actions = {
