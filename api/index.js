@@ -10,6 +10,7 @@ import rides from './rides';
 import jwt from './jwt';
 import feedback from './feedback';
 import drivers from './drivers';
+import phones from './phones';
 
 export default function (ctx, inject) {
   const api = {
@@ -25,6 +26,7 @@ export default function (ctx, inject) {
     jwt: jwt(ctx.$axios),
     feedback: feedback(ctx.$axios),
     drivers: drivers(ctx.$axios),
+    phones: phones(ctx.$axios),
   };
   ctx.$api = api;
   inject('api', api);
