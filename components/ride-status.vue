@@ -10,7 +10,7 @@
 <script>
 import {
   DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED,
-} from '~/api/status';
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
 export default {
   props: {
