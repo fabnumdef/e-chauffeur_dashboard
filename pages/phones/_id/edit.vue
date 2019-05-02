@@ -84,6 +84,15 @@
         />
       </ec-field>
       <ec-field
+        label="Assigné à"
+        field-id="driver"
+      >
+        <ec-search-campus-drivers
+          id="driver"
+          v-model="phone.driver"
+        />
+      </ec-field>
+      <ec-field
         label="Commentaires"
         field-id="comments"
       >
@@ -122,6 +131,7 @@
 <script>
 import ecField from '~/components/form/field.vue';
 import ecSearchPhoneStates from '~/components/form/search-phone-states.vue';
+import ecSearchCampusDrivers from '~/components/form/search-campus-drivers.vue';
 
 const EDITABLE_FIELDS = ['*'];
 
@@ -129,6 +139,7 @@ export default {
   components: {
     ecField,
     ecSearchPhoneStates,
+    ecSearchCampusDrivers,
   },
   props: {
     phone: {
