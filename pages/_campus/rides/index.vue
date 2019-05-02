@@ -575,7 +575,7 @@ export default {
         .find(r => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     can: ({ status }, action) => {
-      const state = new Status(status);
+      const state = Status(status);
       return state.can(action);
     },
     toToday() {
