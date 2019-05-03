@@ -64,7 +64,7 @@
             <button
               class="button is-rounded"
               type="button"
-              @click="csvStatus = true"
+              @click="toggleCsvModal(true)"
             >
               <fa-icon
                 :icon="['fas', 'file-export']"
@@ -76,7 +76,7 @@
         </div>
         <vue-modal
           :active="csvStatus"
-          @toggle-modal="csvStatus = false"
+          @toggle-modal="toggleCsvModal(false)"
         >
           <template slot="title">
             Télécharger le CSV
@@ -402,6 +402,9 @@ export default {
             link.remove();
           }
         });
+    },
+    toggleCsvModal(force) {
+      this.csvStatus = force || !this.csvStatus;
     },
     async getRides() {
       const { data, pagination } = await this.$api
