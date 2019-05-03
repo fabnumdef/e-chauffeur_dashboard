@@ -61,18 +61,88 @@
             Statut
           </div>
           <div class="column">
-            <a
+            <button
               class="button is-rounded"
-              @click="downloadRides"
+              type="button"
+              @click="csvStatus = true"
             >
               <fa-icon
                 :icon="['fas', 'file-export']"
                 class="has-text-info"
               />
               Exporter CSV
-            </a>
+            </button>
           </div>
         </div>
+        <vue-modal
+          :active="csvStatus"
+          @toggle-modal="csvStatus = false"
+        >
+          <template slot="title">
+            Télécharger le CSV
+          </template>
+          <fieldset>
+            <ec-field
+              label="Délimiteur CSV"
+              field-id="delimiter"
+            >
+              <input
+                id="delimiter"
+                v-model="csv.delimiter"
+                type="text"
+                class="input"
+              >
+            </ec-field>
+            <ec-field
+              label="Séparateur de champ CSV"
+              field-id="separator"
+            >
+              <input
+                id="separator"
+                v-model="csv.separator"
+                type="text"
+                class="input"
+              >
+            </ec-field>
+            <ec-field
+              label="Mask de champs"
+              field-id="mask"
+            >
+              <textarea
+                id="mask"
+                v-model="csv.mask"
+                class="textarea"
+              />
+            </ec-field>
+            <ec-field
+              label="Ride flatten"
+              field-id="flatten"
+            >
+              <label class="checkbox">
+                <input
+                  v-model="csv.flatten"
+                  type="checkbox"
+                >
+                Oui
+              </label>
+            </ec-field>
+          </fieldset>
+          <hr>
+          <ul>
+            <li
+              v-for="(row, i) in downloadLinks"
+              :key="i"
+            >
+              <button
+                class="button is-primary"
+                @click="row"
+              >
+                Partie {{ i+1 }}
+              </button>
+            </li>
+          </ul>
+          <template slot="submit" />
+        </vue-modal>
 
         <div class="history-container-ride">
           <p
@@ -231,15 +301,32 @@ import {
   CANCEL,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
 import ecDatePicker from '~/components/datepicker.vue';
+import vueModal from '~/components/modal.vue';
+import ecField from '~/components/form/field.vue';
+
+const ROWS_PER_QUERY = 1000;
 
 export default {
   components: {
     ecDatePicker,
+    vueModal,
+    ecField,
   },
 
   data() {
     return {
       rides: [],
+      downloadLinks: [],
+      pagination: {},
+      csvStatus: false,
+      csv: {
+        separator: ';',
+        delimiter: '"',
+        flatten: true,
+        mask: 'id,departure(id,label,location),arrival(id,label,location),car(id,label,model(id,label)),'
+          + 'campus(id,phone(drivers,everybody)),status(*),start,end,phone,driver(id,name),category(id,label),'
+          + 'passengersCount,luggage,comments,createdAt',
+      },
       filters: {
         date: [
           DateTime.local().minus({ months: 1 }).toJSDate(),
@@ -261,35 +348,71 @@ export default {
       campus: 'context/campus',
     }),
   },
+  watch: {
+    async pagination() {
+      await this.recalcDownloadLinks();
+    },
+    'csv.separator': async function csvSeparator() {
+      await this.recalcDownloadLinks();
+    },
+    'csv.delimiter': async function csvSeparator() {
+      await this.recalcDownloadLinks();
+    },
+    'csv.flatten': async function csvSeparator() {
+      await this.recalcDownloadLinks();
+    },
+    'csv.mask': async function csvSeparator() {
+      await this.recalcDownloadLinks();
+    },
+  },
 
   created() {
     this.getRides();
   },
 
   methods: {
-    async getRides() {
-      const response = await this.$api
-        .rides(this.campus.id, this.fields.join(','))
-        .getRides(this.filters.date[0], this.filters.date[1]);
-      this.rides = response.data;
-      this.show = Array(this.rides.length).fill(false);
+    async recalcDownloadLinks() {
+      const { pagination: { total, limit }, csv } = this;
+      this.downloadLinks = Array
+        .from({ length: Math.ceil(total / limit) })
+        .map((_, i) => async () => {
+          const response = await this.$api
+            .rides(this.campus.id, this.fields.join(','))
+            .getRides(
+              this.filters.date[0],
+              this.filters.date[1],
+              {
+                format: 'text/csv',
+                offset: ROWS_PER_QUERY * i,
+                limit: ROWS_PER_QUERY,
+                csv,
+              },
+            );
+          const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${response.data}`);
+          if (window && window.document) {
+            const link = window.document
+              .createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute(
+              'download',
+              `export_${this.getFormatDate(DateTime.local(), 'dd_MM_yyyy')}_part${i + 1}.csv`,
+            );
+            window.document.body.appendChild(link);
+            link.click();
+            link.remove();
+          }
+        });
     },
-
-    async downloadRides() {
-      const response = await this.$api
+    async getRides() {
+      const { data, pagination } = await this.$api
         .rides(this.campus.id, this.fields.join(','))
-        .getRides(this.filters.date[0], this.filters.date[1], { format: 'text/csv', count: 1000 });
-
-      const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${response.data}`);
-      if (window && window.document) {
-        const link = window.document
-          .createElement('a');
-        link.setAttribute('href', encodedUri);
-        link.setAttribute('download', `export_${this.getFormatDate(DateTime.local(), 'dd_MM_yyyy')}.csv`);
-        window.document.body.appendChild(link);
-        link.click();
-        link.remove();
-      }
+        .getRides(this.filters.date[0], this.filters.date[1], {
+          offset: 0,
+          limit: ROWS_PER_QUERY,
+        });
+      this.rides = data;
+      this.pagination = pagination;
+      this.show = Array(this.rides.length).fill(false);
     },
 
     updateFilterDate(date) {
