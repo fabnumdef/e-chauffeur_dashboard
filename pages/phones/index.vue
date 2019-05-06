@@ -18,7 +18,7 @@
       </div>
     </header>
     <ec-list
-      :columns="{id: 'S/N', labelModel: 'Modèle'}"
+      :columns="{id: 'S/N', driverNameEmail: 'Assigné à'}"
       :data="phones"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
