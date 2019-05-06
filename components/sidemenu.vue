@@ -82,6 +82,13 @@
           Téléphones
         </nuxt-link>
       </li>
+      <li v-if="$auth.isAdmin()">
+        <nuxt-link
+          :to="{ name: 'phone-models' }"
+        >
+          Modèles de téléphones
+        </nuxt-link>
+      </li>
       <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
           :to="{name: 'car-models'}"

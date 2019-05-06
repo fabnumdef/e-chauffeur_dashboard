@@ -5,7 +5,7 @@
         v-if="id"
         class="title"
       >
-        Téléphone <em class="is-size-6">#{{ phone.id }} : {{ phone.model }}</em>
+        Téléphone <em class="is-size-6">#{{ phone.id }}</em>
       </h1>
       <h1
         v-else
@@ -37,6 +37,7 @@
         <input
           id="id"
           v-model="phone.id"
+          :disabled="!!id"
           type="text"
           class="input"
         >
@@ -56,12 +57,7 @@
         label="Modèle"
         field-id="model"
       >
-        <input
-          id="model"
-          v-model="phone.model"
-          type="text"
-          class="input"
-        >
+        <ec-search-phone-models v-model="phone.model" />
       </ec-field>
       <ec-field
         label="N° de téléphone"
@@ -132,14 +128,24 @@
 import ecField from '~/components/form/field.vue';
 import ecSearchPhoneStates from '~/components/form/search-phone-states.vue';
 import ecSearchCampusDrivers from '~/components/form/search-campus-drivers.vue';
+import ecSearchPhoneModels from '~/components/form/search-phone-models.vue';
 
-const EDITABLE_FIELDS = ['*'];
+const EDITABLE_FIELDS = [
+  'id',
+  'imei',
+  'phone',
+  'model',
+  'driver',
+  'state',
+  'comments',
+];
 
 export default {
   components: {
     ecField,
     ecSearchPhoneStates,
     ecSearchCampusDrivers,
+    ecSearchPhoneModels,
   },
   props: {
     phone: {

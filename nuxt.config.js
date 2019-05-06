@@ -43,6 +43,8 @@ module.exports = {
           userEvents: 'user-events',
           users: 'users',
           drivers: 'drivers',
+          phones: 'phones',
+          phoneModels: 'phone-models',
         },
         withAuth: true,
         authPlugins: [

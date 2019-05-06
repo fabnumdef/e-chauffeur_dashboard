@@ -11,7 +11,7 @@ export default {
       throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'un téléphone.');
     }
     return {
-      phone: (await $api.phones.getPhone(params.id, '*')).data,
+      phone: (await $api.phones.getPhone(params.id, 'id,imei,phone,model,driver,state,comments')).data,
     };
   },
 };
