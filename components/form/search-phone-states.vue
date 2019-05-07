@@ -29,7 +29,7 @@ export default {
     },
     value: {
       type: String,
-      default: null,
+      default: '',
     },
     placeholder: {
       type: String,
@@ -43,7 +43,11 @@ export default {
   },
   methods: {
     onInput(data) {
-      this.$emit('input', data.id);
+      if (data) {
+        this.$emit('input', data.id);
+      } else {
+        this.$emit('input', '');
+      }
     },
     formatValue(value) {
       return STATES_OPTIONS.find(state => state.id === value);
