@@ -2,7 +2,7 @@
   <vue-multiselect
     :id="id"
     :options="states"
-    :value="formatValue(value)"
+    :value="getObjectValue"
     track-by="id"
     label="name"
     :searchable="false"
@@ -41,16 +41,15 @@ export default {
       states: STATES_OPTIONS,
     };
   },
+  computed: {
+    getObjectValue() {
+      return STATES_OPTIONS.find(state => state.id === this.value);
+    },
+  },
   methods: {
     onInput(data) {
-      if (data) {
-        this.$emit('input', data.id);
-      } else {
-        this.$emit('input', '');
-      }
-    },
-    formatValue(value) {
-      return STATES_OPTIONS.find(state => state.id === value);
+      const returnData = (data) ? data.id : '';
+      this.$emit('input', returnData);
     },
   },
 };

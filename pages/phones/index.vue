@@ -19,7 +19,7 @@
     </header>
     <ec-list
       :columns="{id: 'S/N', driverNameEmail: 'Assigné à'}"
-      :data="phones"
+      :data="getPhones"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
@@ -37,6 +37,19 @@ export default {
   watchQuery: ['offset'],
   components: {
     ecList,
+  },
+  computed: {
+    getPhones() {
+      return this.phones.map(
+        (phone) => {
+          const phoneComputed = phone;
+          if (phone.driver && (phone.driver.name && phone.driver.email)) {
+            phoneComputed.driverNameEmail = `${phone.driver.name} (${phone.driver.email})`;
+          }
+          return phoneComputed;
+        },
+      );
+    },
   },
   async asyncData({ $api }) {
     const { data, pagination } = await $api.phones.getPhones('*');

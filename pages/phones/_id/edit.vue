@@ -57,7 +57,10 @@
         label="Modèle"
         field-id="model"
       >
-        <ec-search-phone-models v-model="phone.model" />
+        <ec-search-phone-models
+          id="model"
+          v-model="phone.model"
+        />
       </ec-field>
       <ec-field
         label="N° de téléphone"
