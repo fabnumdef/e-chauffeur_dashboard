@@ -95,16 +95,16 @@ export default {
       if (driver) {
         Object.assign(this.returnData, {
           campus: {
-            _id: this.campus.id,
+            id: this.campus.id,
             name: this.campus.name,
           },
-          _id: driver.id,
+          id: driver.id,
           name: driver.name,
           email: driver.email,
         });
       } else {
         this.driver = {};
-        delete this.returnData._id;
+        delete this.returnData.id;
         delete this.returnData.name;
         delete this.returnData.email;
       }
