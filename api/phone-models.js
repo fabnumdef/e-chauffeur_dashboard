@@ -1,6 +1,6 @@
 import { computePagination } from './helpers';
 
-const ENTITY = 'car-model';
+const ENTITY = 'phone-model';
 const ENTITY_PLURAL = 'phone-models';
 
 export default axios => ({
