@@ -33,6 +33,16 @@
 <script>
 import ecList from '~/components/crud/list.vue';
 
+const FIELDS = [
+  'id',
+  'imei',
+  'phone',
+  'model',
+  'driver',
+  'state',
+  'comments',
+];
+
 export default {
   watchQuery: ['offset'],
   components: {
@@ -52,7 +62,7 @@ export default {
     },
   },
   async asyncData({ $api }) {
-    const { data, pagination } = await $api.phones.getPhones('*');
+    const { data, pagination } = await $api.phones.getPhones(FIELDS.join(','));
     return {
       phones: data,
       pagination,
@@ -61,7 +71,7 @@ export default {
   methods: {
     async deleteUser({ id }) {
       await this.$api.phones.deletePhone(id);
-      const updatedList = await this.$api.phones.getPhones('*');
+      const updatedList = await this.$api.phones.getPhones(FIELDS.join(','));
       this.phones = updatedList.data;
       this.pagination = updatedList.pagination;
     },
