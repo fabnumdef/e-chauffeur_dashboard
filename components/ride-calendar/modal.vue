@@ -220,10 +220,274 @@
 </template>
 
 <script>
+import ecField from '~/components/form/field.vue';
+import { DateTime } from 'luxon';
+import searchPoi from '~/components/form/search-poi';
+import searchCategory from '~/components/form/search-campus-category';
+import searchAvailableCar from '~/components/form/search-available-car';
+import searchAvailableDriver from '~/components/form/search-available-driver';
+import bulmaDropdown from '~/components/dropdown.vue';
+import vueModal from '~/components/modal.vue';
+import Status, {
+  VALIDATED, VALIDATE, CREATED,
+  REJECT_BOUNDARY, REJECT_CAPACITY,
+  REJECTED_BOUNDARY, REJECTED_CAPACITY,
+  CANCEL_TECHNICAL,
+  CANCEL_REQUESTED_CUSTOMER,
+  CANCEL_CUSTOMER_OVERLOAD,
+  CANCEL_CUSTOMER_MISSING,
+} from '~/api/status';
+
+const EDITABLE_FIELDS = [
+  'id',
+  'start',
+  'end',
+  'departure(id,label)',
+  'arrival(id,label)',
+  'car(id,label,model(id,label))',
+  'driver(id,name)',
+  'phone',
+  'status',
+  'comments',
+  'passengersCount',
+  'category(id,label)',
+  'luggage',
+].join(',');
+
+const actions = {
+  VALIDATE,
+  VALIDATED,
+  REJECT_BOUNDARY,
+  REJECTED_BOUNDARY,
+  REJECT_CAPACITY,
+  REJECTED_CAPACITY,
+  CANCEL_TECHNICAL,
+  CANCEL_REQUESTED_CUSTOMER,
+  CANCEL_CUSTOMER_OVERLOAD,
+  CANCEL_CUSTOMER_MISSING,
+};
+
 export default {
+  components: {
+    searchPoi,
+    ecField,
+    searchAvailableCar,
+    searchAvailableDriver,
+    searchCategory,
+    bulmaDropdown,
+    vueModal,
+  },
+
+  directives: {
+    autofocus: {
+      update(el, binding) {
+        if (binding.value.focus === 'watch' && binding.value.input === binding.oldValue.input) {
+          el.focus();
+          binding.value.hasBeenFocused(binding.value.inputName);
+        } else if (binding.value.focus === 'focused' && binding.value.cb
+          && binding.value.input !== binding.oldValue.input) {
+          binding.value.cb(binding.value.inputName);
+        }
+      },
+    },
+  },
+
+  props: {
+    currentRide: {
+      type: Object,
+      default: () => ({
+        start: null,
+        end: null,
+        phone: null,
+        departure: null,
+        arrival: null,
+        driver: null,
+        status: CREATED,
+        category: null,
+        passengersCount: 1,
+        luggage: false,
+      }),
+    },
+    currentCampus: {
+      type: Object,
+      default: () => {},
+    },
+    campus: {
+      type: String,
+      default: '',
+    },
+    modalOpen: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  data() {
+    return {
+      ride: Object.assign({}, this.currentRide),
+      focusState: {
+        rideDeparture: 'unwatch',
+        rideArrival: 'unwatch',
+        phone: 'unwatch',
+      },
+      focusSequence: [
+        'rideDeparture',
+        'rideArrival',
+        'phone',
+      ],
+      isAutoFocus: false,
+    };
+  },
+
+  computed: {
+    range() {
+      return [
+        this.ride.start || null,
+        this.ride.end || null,
+      ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
+    },
+    ...Object.keys(actions)
+      .map(a => ({ [a]: () => actions[a] }))
+      .reduce((acc, curr) => Object.assign(acc, curr), {}),
+  },
+
+  watch: {
+    currentRide() {
+      this.ride = Object.assign({}, this.currentRide);
+    },
+    modalOpen() {
+      if (this.modalOpen && this.ride && !this.ride.departure) {
+        this.autoFocus('rideDeparture');
+      } else {
+        this.isAutoFocus = false;
+      }
+    },
+  },
+
+  methods: {
+    toggleModal(newStatus = false) {
+      if (!newStatus) {
+        this.$emit('toggle-modal', newStatus);
+      }
+    },
+
+    focusNext(input) {
+      if (this.focusState[input]) {
+        this.focusState[input] = 'unwatch';
+      }
+      if (this.isAutoFocus) {
+        this.isAutoFocus = false;
+        const idx = this.focusSequence.indexOf(input);
+        if (idx !== -1 && idx + 1 !== this.focusSequence.length) {
+          this.autoFocus(this.focusSequence[idx + 1]);
+        }
+      }
+    },
+    autoFocus(input) {
+      if (input && typeof this.focusState[input] !== 'undefined') {
+        this.isAutoFocus = true;
+        this.focusState[input] = 'watch';
+      }
+    },
+    hasBeenFocused(input) {
+      this.focusState[input] = 'focused';
+    },
+
+    updateDates([start, end], { id, name } = {}) {
+      this.ride.driver = { id, name };
+      this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
+      this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
+    },
+
+    async edit(r, status) {
+      const ride = Object.assign({}, r, status ? { status } : {});
+
+      try {
+        if (ride.id) {
+          await this.$api.rides(
+            this.campus,
+            EDITABLE_FIELDS,
+          ).patchRide(ride.id, ride);
+          this.$toasted.success('La course a bien été mise à jour.');
+        } else {
+          await this.$api.rides(
+            this.campus,
+            EDITABLE_FIELDS,
+          ).postRide(ride);
+          this.$toasted.success('La course a bien été créée.');
+        }
+        this.toggleModal(false);
+      } catch (e) {
+        this.$toasted.error(`La course n'a pas été créée ou mise à jour (${e}), merci de vérifiez les champs.`);
+      }
+    },
+
+    async changeStatus(ride, status) {
+      if (!ride.id) {
+        this.$toasted.error('Changement de status possible uniquement pour une course sauvegardée');
+      }
+      try {
+        await this.$api.rides(
+          this.campus,
+          EDITABLE_FIELDS,
+        ).mutateRide(ride, status);
+        this.$toasted.success('Status modifié.');
+        this.toggleModal(false);
+      } catch (e) {
+        this.$toasted.error(`La course n'a pas été créée ou mise à jour (${e}), merci de vérifiez les champs.`);
+      }
+    },
+
+    can: ({ status }, action) => {
+      const state = new Status(status);
+      return state.can(action);
+    },
+  },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  @import "~assets/css/head";
 
+  .event-status {
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    &-done {
+      color: $black;
+      border: 1px solid $black;
+    }
+    &-planned {
+      background: $dark-gray;
+      color: findColorInvert($dark-gray);
+    }
+    &-going {
+      background: $warning;
+      color: findColorInvert($warning);
+    }
+    &-coming {
+      background: $primary;
+      color: findColorInvert($primary);
+    }
+    &-wrong {
+      background: $white;
+      color: $danger;
+      border: 1px solid $danger;
+    }
+    p {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .only-one-scroll {
+    /deep/ .multiselect__content-wrapper {
+      position: initial;
+    }
+    /deep/ .multiselect__content {
+      position: absolute;
+    }
+  }
 </style>

@@ -8,13 +8,13 @@
       :time-cell-height="20"
       default-view="day"
       locale="fr"
-      :disable-views="['years', 'year', 'month']"
+      :disable-views="['years', 'year', 'week']"
       :split-days="splitDrivers"
       :events="events"
       :on-event-click="onClickEvent"
       @click-and-release="onClickAndRelease"
       @ready="initRide"
-    >˚
+    >
       <div
         slot="time-cell"
         slot-scope="{ hours, minutes }"
@@ -30,6 +30,13 @@
         >{{ minutes }}</span>
       </div>
     </vue-cal>
+    <modal
+      :current-ride="ride"
+      :current-campus="currentCampus"
+      :campus="campus"
+      :modal-open="modalOpen"
+      @toggle-modal="toggleModal"
+    />
   </div>
 </template>
 
@@ -37,20 +44,9 @@
 /* eslint-disable no-plusplus */
 
 import VueCal from '~/components/vue-cal';
+import Modal from './modal';
 import { DateTime, Interval } from 'luxon';
-import Status, {
-  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, VALIDATE, CREATED,
-  REJECT_BOUNDARY, REJECT_CAPACITY,
-  REJECTED_BOUNDARY, REJECTED_CAPACITY,
-  CANCEL_TECHNICAL,
-  CANCEL_REQUESTED_CUSTOMER,
-  CANCEL_CUSTOMER_OVERLOAD,
-  CANCEL_CUSTOMER_MISSING,
-  CANCELED_TECHNICAL,
-  CANCELED_REQUESTED_CUSTOMER,
-  CANCELED_CUSTOMER_OVERLOAD,
-  CANCELED_CUSTOMER_MISSING,
-} from '~/api/status';
+import { CREATED } from '~/api/status';
 
 const STEP = 30;
 const START_DAY_HOUR = 5;
@@ -87,14 +83,14 @@ function getFloorMinute(minute) {
 function getCeilMinute(minute) {
   const numberOfStep = Math.floor(60 / STEP);
   let res = 0;
-  for (let i = 1; i <= numberOfStep; i++) {
+  for (let i = 0; i <= numberOfStep; i++) {
     const currentStep = STEP * i;
     if (currentStep >= minute) {
       res = currentStep;
       break;
     }
   }
-  return res === 60 ? 0 : res;
+  return res;
 }
 
 function getVueCalFloorDateFromISO(date) {
@@ -112,8 +108,8 @@ function getVueCalCeilDateFromISO(date) {
   const minute = getCeilMinute(exactDate.minute);
   return DateTime.fromObject({
     day: exactDate.day,
-    hour: minute === 0 ? exactDate.hour + 1 : exactDate.hour,
-    minute,
+    hour: minute === 60 ? exactDate.hour + 1 : exactDate.hour,
+    minute: minute === 60 ? 0 : minute,
   }).setLocale('fr')
     .toFormat('yyyy-LL-dd HH:mm');
 }
@@ -132,14 +128,15 @@ function getDateTimeCeilFromVueCal(date) {
   const minute = getCeilMinute(exactDate.minute);
   return DateTime.fromObject({
     day: exactDate.day,
-    hour: minute === 0 ? exactDate.hour + 1 : exactDate.hour,
-    minute,
+    hour: minute === 60 ? exactDate.hour + 1 : exactDate.hour,
+    minute: minute === 60 ? 0 : minute,
   });
 }
 
 export default {
   components: {
     VueCal,
+    Modal,
   },
 
   props: {
@@ -155,6 +152,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    campus: {
+      type: String,
+      default: '',
+    },
   },
 
   data() {
@@ -163,6 +164,7 @@ export default {
       STEP,
       START_DAY_HOUR,
       END_DAY_HOUR,
+      modalOpen: false,
     };
   },
 
@@ -232,28 +234,22 @@ export default {
       });
       return evts.concat(openingHoursEvents);
     },
-    range() {
-      return [
-        this.ride.start || null,
-        this.ride.end || null,
-      ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
-    },
   },
 
   methods: {
     toggleModal(newStatus = false) {
       this.modalOpen = newStatus;
-      if (newStatus && this.ride && !this.ride.departure) {
-        this.autoFocus('rideDeparture');
-      } else {
-        this.isAutoFocus = false;
-      }
     },
     initRide() {
       this.ride = generateEmptyRide();
       if (this.currentCampus.categories.length > 0) {
         [this.ride.category] = this.currentCampus.categories;
       }
+    },
+    updateDates([start, end], { id, name } = {}) {
+      this.ride.driver = { id, name };
+      this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
+      this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
     onClickAndRelease(event) {
       this.initRide();
@@ -278,7 +274,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   @import "~assets/css/head";
   .calendrier {
     height: calc(100vh - 100px);
