@@ -447,41 +447,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "~assets/css/head";
-
-  .event-status {
-    width: 100%;
-    height: 100%;
-    padding: 5px;
-    border-radius: 5px;
-    font-weight: bold;
-    &-done {
-      color: $black;
-      border: 1px solid $black;
-    }
-    &-planned {
-      background: $dark-gray;
-      color: findColorInvert($dark-gray);
-    }
-    &-going {
-      background: $warning;
-      color: findColorInvert($warning);
-    }
-    &-coming {
-      background: $primary;
-      color: findColorInvert($primary);
-    }
-    &-wrong {
-      background: $white;
-      color: $danger;
-      border: 1px solid $danger;
-    }
-    p {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
   .only-one-scroll {
     /deep/ .multiselect__content-wrapper {
       position: initial;

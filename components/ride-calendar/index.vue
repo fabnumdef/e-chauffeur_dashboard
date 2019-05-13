@@ -29,6 +29,14 @@
           style="font-size: 11px"
         >{{ minutes }}</span>
       </div>
+      <div
+        slot="event-renderer"
+        slot-scope="{ event }"
+      >
+        <div v-if="event.ride" class="vuecal__event-title">
+          {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
+        </div>
+      </div>
     </vue-cal>
     <modal
       :current-ride="ride"
@@ -46,7 +54,14 @@
 import VueCal from '~/components/vue-cal';
 import Modal from './modal';
 import { DateTime, Interval } from 'luxon';
-import { CREATED } from '~/api/status';
+import {
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, CREATED,
+  REJECTED_BOUNDARY, REJECTED_CAPACITY,
+  CANCELED_TECHNICAL,
+  CANCELED_REQUESTED_CUSTOMER,
+  CANCELED_CUSTOMER_OVERLOAD,
+  CANCELED_CUSTOMER_MISSING,
+} from '~/api/status';
 
 const STEP = 30;
 const START_DAY_HOUR = 5;
@@ -186,16 +201,15 @@ export default {
         const start = getVueCalFloorDateFromISO(ride.start);
         const end = getVueCalCeilDateFromISO(ride.end);
         const title = `${ride.departure.label} -> ${ride.arrival.label}`;
-        const content = `De ${ride.departure.label} à ${ride.arrival.label}`;
         const split = this.drivers.findIndex(driver => driver.id === ride.driver.id) + 1;
+        const clas = `ride-event ${this.eventStatusClass(ride)}`;
         return {
           start,
           end,
           title,
-          content,
           ride,
           split,
-          class: 'grey ride-event',
+          class: clas,
         };
       });
     },
@@ -270,6 +284,27 @@ export default {
         this.toggleModal(true);
       }
     },
+    eventStatusClass(event) {
+      switch (event.status) {
+        case DELIVERED:
+          return 'event-status-done';
+        case STARTED:
+        case WAITING:
+          return 'event-status-going';
+        case IN_PROGRESS:
+          return 'event-status-coming';
+        case REJECTED_CAPACITY:
+        case REJECTED_BOUNDARY:
+        case CANCELED_TECHNICAL:
+        case CANCELED_CUSTOMER_MISSING:
+        case CANCELED_CUSTOMER_OVERLOAD:
+        case CANCELED_REQUESTED_CUSTOMER:
+          return 'event-status-wrong';
+        case ACCEPTED:
+        default:
+          return 'event-status-planned';
+      }
+    },
   },
 };
 </script>
@@ -285,10 +320,6 @@ export default {
     border-right: 1px solid black;
     cursor: crosshair;
   }
-  /deep/ .grey {
-    background-color: rgba(253,156,66,.85);
-    border: 1px solid #e9882e;
-  }
   /deep/ .ride-event {
     margin-right: 15px;
     cursor: pointer;
@@ -302,4 +333,42 @@ export default {
     cursor: default;
   }
   /deep/ .vuecal__event.not-working .vuecal__event-time {display: none;align-items: center;}
+  /deep/ .vuecal__event-title {
+    font-size: 0.75rem;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /deep/ .event-status {
+    &-done {
+      color: $black;
+      border: 1px solid $black;
+    }
+    &-planned {
+      background: rgba(129, 146, 169, 0.85);
+      color: findColorInvert($dark-gray);
+      border: 1px solid $dark-gray;
+    }
+    &-going {
+      background: rgba(255, 221, 87, 0.85);
+      color: findColorInvert($warning);
+      border: 1px solid $warning;
+    }
+    &-coming {
+      background: rgba(0, 83, 179, 0.86);
+      color: findColorInvert($primary);
+      border: 1px solid $primary;
+    }
+    &-wrong {
+      background: rgba(248, 248, 248, 0.85);
+      color: $danger;
+      border: 1px solid $danger;
+    }
+    p {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 </style>
