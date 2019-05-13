@@ -1,12 +1,309 @@
 <template>
-  <div />
+  <div class="calendrier">
+    <vue-cal
+      class="vuecal--blue-theme"
+      :time-from="START_DAY_HOUR * 60"
+      :time-to="END_DAY_HOUR * 60"
+      :time-step="STEP"
+      :time-cell-height="20"
+      default-view="day"
+      locale="fr"
+      :disable-views="['years', 'year', 'month']"
+      :split-days="splitDrivers"
+      :events="events"
+      :on-event-click="onClickEvent"
+      @click-and-release="onClickAndRelease"
+      @ready="initRide"
+    >˚
+      <div
+        slot="time-cell"
+        slot-scope="{ hours, minutes }"
+        :class="{ line: true, hours: !minutes }"
+      >
+        <strong
+          v-if="!minutes"
+          style="font-size: 15px"
+        >{{ hours }}</strong>
+        <span
+          v-else
+          style="font-size: 11px"
+        >{{ minutes }}</span>
+      </div>
+    </vue-cal>
+  </div>
 </template>
 
 <script>
+/* eslint-disable no-plusplus */
+
+import VueCal from '~/components/vue-cal';
+import { DateTime, Interval } from 'luxon';
+import Status, {
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, VALIDATE, CREATED,
+  REJECT_BOUNDARY, REJECT_CAPACITY,
+  REJECTED_BOUNDARY, REJECTED_CAPACITY,
+  CANCEL_TECHNICAL,
+  CANCEL_REQUESTED_CUSTOMER,
+  CANCEL_CUSTOMER_OVERLOAD,
+  CANCEL_CUSTOMER_MISSING,
+  CANCELED_TECHNICAL,
+  CANCELED_REQUESTED_CUSTOMER,
+  CANCELED_CUSTOMER_OVERLOAD,
+  CANCELED_CUSTOMER_MISSING,
+} from '~/api/status';
+
+const STEP = 30;
+const START_DAY_HOUR = 5;
+const END_DAY_HOUR = 23;
+
+function generateEmptyRide() {
+  return {
+    start: null,
+    end: null,
+    phone: null,
+    departure: null,
+    arrival: null,
+    driver: null,
+    status: CREATED,
+    category: null,
+    passengersCount: 1,
+    luggage: false,
+  };
+}
+
+function getFloorMinute(minute) {
+  const numberOfStep = Math.floor(60 / STEP);
+  let res = 0;
+  for (let i = 1; i <= numberOfStep; i++) {
+    const currentStep = STEP * i;
+    if (currentStep > minute) {
+      break;
+    }
+    res = currentStep;
+  }
+  return res;
+}
+
+function getCeilMinute(minute) {
+  const numberOfStep = Math.floor(60 / STEP);
+  let res = 0;
+  for (let i = 1; i <= numberOfStep; i++) {
+    const currentStep = STEP * i;
+    if (currentStep >= minute) {
+      res = currentStep;
+      break;
+    }
+  }
+  return res === 60 ? 0 : res;
+}
+
+function getVueCalFloorDateFromISO(date) {
+  const exactDate = DateTime.fromISO(date);
+  return DateTime.fromObject({
+    day: exactDate.day,
+    hour: exactDate.hour,
+    minute: getFloorMinute(exactDate.minute),
+  }).setLocale('fr')
+    .toFormat('yyyy-LL-dd HH:mm');
+}
+
+function getVueCalCeilDateFromISO(date) {
+  const exactDate = DateTime.fromISO(date);
+  const minute = getCeilMinute(exactDate.minute);
+  return DateTime.fromObject({
+    day: exactDate.day,
+    hour: minute === 0 ? exactDate.hour + 1 : exactDate.hour,
+    minute,
+  }).setLocale('fr')
+    .toFormat('yyyy-LL-dd HH:mm');
+}
+
+function getDateTimeFloorFromVueCal(date) {
+  const exactDate = DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
+  return DateTime.fromObject({
+    day: exactDate.day,
+    hour: exactDate.hour,
+    minute: getFloorMinute(exactDate.minute),
+  });
+}
+
+function getDateTimeCeilFromVueCal(date) {
+  const exactDate = DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
+  const minute = getCeilMinute(exactDate.minute);
+  return DateTime.fromObject({
+    day: exactDate.day,
+    hour: minute === 0 ? exactDate.hour + 1 : exactDate.hour,
+    minute,
+  });
+}
+
 export default {
+  components: {
+    VueCal,
+  },
+
+  props: {
+    drivers: {
+      type: Array,
+      default: () => [],
+    },
+    rides: {
+      type: Array,
+      default: () => [],
+    },
+    currentCampus: {
+      type: Object,
+      default: () => {},
+    },
+  },
+
+  data() {
+    return {
+      ride: generateEmptyRide(),
+      STEP,
+      START_DAY_HOUR,
+      END_DAY_HOUR,
+    };
+  },
+
+  computed: {
+    splitDrivers() {
+      return this.drivers.map((driver, index) => {
+        let driverClass = 'driver-col';
+        if (index % 2 !== 0) {
+          driverClass = 'driver-col-bis';
+        }
+        return {
+          class: driverClass,
+          label: driver.name,
+        };
+      });
+    },
+    ridesCalendar() {
+      return this.rides.map((ride) => {
+        const start = getVueCalFloorDateFromISO(ride.start);
+        const end = getVueCalCeilDateFromISO(ride.end);
+        const title = `${ride.departure.label} -> ${ride.arrival.label}`;
+        const content = `De ${ride.departure.label} à ${ride.arrival.label}`;
+        const split = this.drivers.findIndex(driver => driver.id === ride.driver.id) + 1;
+        return {
+          start,
+          end,
+          title,
+          content,
+          ride,
+          split,
+          class: 'grey ride-event',
+        };
+      });
+    },
+    events() {
+      const evts = this.ridesCalendar;
+      const openingHoursEvents = [];
+      this.drivers.forEach((driver, index) => {
+        if (driver.availabilities && driver.availabilities.length > 0) {
+          driver.availabilities.forEach((avail) => {
+            if (avail.start.hour > START_DAY_HOUR) {
+              const start = getVueCalFloorDateFromISO(DateTime.fromObject({ hour: START_DAY_HOUR }).toISO());
+              const end = getVueCalCeilDateFromISO(avail.start.toISO());
+              const split = index + 1;
+              openingHoursEvents.push({
+                start,
+                end,
+                split,
+                class: 'not-working',
+                background: true,
+              });
+            }
+            if (avail.end.hour < END_DAY_HOUR) {
+              const start = getVueCalFloorDateFromISO(avail.end.toISO());
+              const end = getVueCalCeilDateFromISO(DateTime.fromObject({ hour: END_DAY_HOUR }).toISO());
+              const split = index + 1;
+              openingHoursEvents.push({
+                start,
+                end,
+                split,
+                class: 'not-working',
+                background: true,
+              });
+            }
+          });
+        }
+      });
+      return evts.concat(openingHoursEvents);
+    },
+    range() {
+      return [
+        this.ride.start || null,
+        this.ride.end || null,
+      ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
+    },
+  },
+
+  methods: {
+    toggleModal(newStatus = false) {
+      this.modalOpen = newStatus;
+      if (newStatus && this.ride && !this.ride.departure) {
+        this.autoFocus('rideDeparture');
+      } else {
+        this.isAutoFocus = false;
+      }
+    },
+    initRide() {
+      this.ride = generateEmptyRide();
+      if (this.currentCampus.categories.length > 0) {
+        [this.ride.category] = this.currentCampus.categories;
+      }
+    },
+    onClickAndRelease(event) {
+      this.initRide();
+      const { id, name } = this.drivers[event.split - 1];
+      this.updateDates([getDateTimeFloorFromVueCal(event.start), getDateTimeCeilFromVueCal(event.end)], {
+        id,
+        name,
+      });
+      this.toggleModal(true);
+    },
+    onClickEvent(event) {
+      if (event.ride) {
+        const ride = Object.assign({}, event.ride);
+        ride.start = DateTime.fromISO(event.ride.start);
+        ride.end = DateTime.fromISO(event.ride.end);
+        ride.interval = Interval.fromDateTimes(ride.start, ride.end);
+        this.ride = ride;
+        this.toggleModal(true);
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-
+  @import "~assets/css/head";
+  .calendrier {
+    height: calc(100vh - 100px);
+    background-color: white;
+  }
+  /deep/ .vuecal__time-cell .hours.line:before {border-color: #42b983;}
+  /deep/ .driver-col, /deep/ .driver-col-bis {
+    border-right: 1px solid black;
+    cursor: crosshair;
+  }
+  /deep/ .grey {
+    background-color: rgba(253,156,66,.85);
+    border: 1px solid #e9882e;
+  }
+  /deep/ .ride-event {
+    margin-right: 15px;
+    cursor: pointer;
+  }
+  /deep/ .vuecal__event.not-working {
+    background: repeating-linear-gradient(45deg, white, white 10px, #f2f2f2 10px, #f2f2f2 20px);/* IE 10+ */
+    color: #999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: default;
+  }
+  /deep/ .vuecal__event.not-working .vuecal__event-time {display: none;align-items: center;}
 </style>
