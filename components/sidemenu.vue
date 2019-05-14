@@ -29,6 +29,11 @@
           Historique
         </nuxt-link>
       </li>
+      <li>
+        <nuxt-link :to="campusLink('drivers')">
+          Chauffeurs
+        </nuxt-link>
+      </li>
       <li v-if="hasCampus">
         <nuxt-link :to="campusLink('rides')">
           Courses
@@ -87,6 +92,13 @@
           :to="{ name: 'categories' }"
         >
           Catégories
+        </nuxt-link>
+      </li>
+      <li v-if="$auth.isSuperAdmin()">
+        <nuxt-link
+          :to="{ name: 'logs' }"
+        >
+          Logs
         </nuxt-link>
       </li>
       <li v-if="$auth.isRegulator()">

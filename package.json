@@ -1,6 +1,6 @@
 {
   "name": "e-chauffeur_dashboard",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "e-chauffeur dashboard",
   "author": "Gaël",
   "private": true,
@@ -13,30 +13,21 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
+    "@fabnumdef/e-chauffeur_lib-vue": "0.0.2",
     "@fortawesome/free-solid-svg-icons": "^5.8.1",
     "@nuxtjs/auth": "^4.5.3",
-    "@nuxtjs/axios": "^5.4.1",
-    "@nuxtjs/pwa": "^3.0.0-beta.14",
-    "@nuxtjs/toast": "^3.0.2",
-    "cross-env": "^5.2.0",
     "i18next-client": "^1.11.4",
-    "javascript-state-machine": "^3.1.0",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
     "lodash.range": "^3.2.0",
-    "luxon": "^1.12.0",
-    "moment": "^2.23.0",
-    "node-sass": "^4.11.0",
-    "nuxt": "^2.5.1",
+    "moment": "^2.24.0",
+    "node-sass": "^4.12.0",
+    "nuxt": "^2.6.3",
     "nuxt-leaflet": "0.0.18",
     "opening_hours": "^3.5.0",
-    "qonfucius-nuxt-bulma": "0.0.3",
-    "qonfucius-nuxt-fontawesome": "^1.0.1",
     "sass-loader": "^7.1.0",
-    "socket.io-client": "^2.2.0",
-    "vue-multiselect": "^2.1.4",
+    "vue-multiselect": "^2.1.6",
     "vue-simplemde": "^0.5.1",
-    "vue-socket.io-extended": "^3.2.1",
     "vue2-datepicker": "^2.10.3"
   },
   "devDependencies": {
@@ -52,6 +43,7 @@
     "vue": "2.x",
     "vuex": "3.x",
     "qs": "6.x",
-    "leaflet": "1.x"
+    "leaflet": "1.x",
+    "luxon": "1.x.x"
   }
 }
