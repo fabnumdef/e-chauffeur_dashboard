@@ -88,6 +88,7 @@ module.exports = {
           'faChevronRight',
           'faFileExport',
           'faCommentDots',
+          'faExternalLinkAlt',
         ],
       },
     ],

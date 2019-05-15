@@ -3,11 +3,15 @@
 
 export const state = () => ({
   campus: null,
+  hideMap: false,
 });
 
 export const mutations = {
   setCampus: (s, campus = null) => {
     s.campus = campus;
+  },
+  hideMap: (s, hide) => {
+    s.hideMap = hide;
   },
 };
 
@@ -15,6 +19,7 @@ export const getters = {
   hasCampus: s => s.campus !== null,
   isCampus: s => id => typeof s.campus === 'object' && !!s.campus && s.campus.id === id,
   campus: s => s.campus,
+  hideMap: s => s.hideMap,
 };
 
 export const actions = {
@@ -25,5 +30,8 @@ export const actions = {
     }
     const { data } = await this.$api.campuses.getCampus(campus, 'id,name,location,categories(id,label)');
     commit('setCampus', data);
+  },
+  hideMap({ commit }, hide) {
+    commit('hideMap', hide);
   },
 };
