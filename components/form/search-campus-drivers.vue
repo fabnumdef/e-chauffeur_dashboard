@@ -1,47 +1,28 @@
 <template>
-  <div class="columns">
-    <ec-field
-      class="column is-size-7"
-      label="Choix de la base"
-    >
-      <ec-search-user-campus
-        v-model="campus"
-        @input="onCampusInput"
-      />
-    </ec-field>
-    <ec-field
-      class="column is-size-7"
-      label="Choix du chauffeur"
-    >
-      <vue-multiselect
-        :id="id"
-        v-model="driver"
-        :options="drivers"
-        track-by="id"
-        label="name"
-        :loading="loading"
-        :searchable="false"
-        :show-labels="false"
-        :placeholder="placeholder"
-        @input="onDriverInput"
-      />
-    </ec-field>
-  </div>
+  <vue-multiselect
+    :id="id"
+    v-model="driver"
+    :options="drivers"
+    track-by="id"
+    label="name"
+    :loading="loading"
+    :searchable="false"
+    :show-labels="false"
+    :placeholder="placeholder"
+    @input="onInput"
+  />
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
-import ecSearchUserCampus from '~/components/form/search-user-campus.vue';
-
 export default {
-  components: {
-    ecField,
-    ecSearchUserCampus,
-  },
   props: {
     id: {
       type: String,
       default: '',
+    },
+    campus: {
+      type: Object,
+      default: () => ({}),
     },
     value: {
       type: Object,
@@ -55,65 +36,33 @@ export default {
   data() {
     return {
       drivers: [],
-      driver: {},
-      campus: {},
-      returnData: {},
+      driver: null,
       loading: false,
     };
   },
-
-  async mounted() {
-    if (this.value.id) {
-      this.campus = this.value.campus;
-      this.drivers = await this.getCampusDrivers(this.value.campus.id);
-      this.driver = {
-        id: this.value.id,
-        name: this.value.name,
-      };
-    }
-  },
-
-  methods: {
-    async onCampusInput(campus) {
-      if (campus) {
-        this.driver = {};
-        this.campus = {
-          id: campus.id,
-          name: campus.name,
-        };
-        this.drivers = await this.getCampusDrivers(campus.id);
+  watch: {
+    async campus() {
+      if (this.campus && this.campus.id) {
+        this.drivers = await this.getCampusDrivers();
       } else {
         this.drivers = [];
-        this.driver = {};
-        this.campus = {};
-        this.returnData = {};
-        this.$emit('input', this.returnData);
+        this.driver = null;
       }
     },
-
-    onDriverInput(driver) {
-      if (driver) {
-        Object.assign(this.returnData, {
-          campus: {
-            id: this.campus.id,
-            name: this.campus.name,
-          },
-          id: driver.id,
-          name: driver.name,
-          email: driver.email,
-        });
-      } else {
-        this.driver = {};
-        delete this.returnData.id;
-        delete this.returnData.name;
-        delete this.returnData.email;
-      }
-      this.$emit('input', this.returnData);
+  },
+  async mounted() {
+    if (this.campus && this.campus.id) {
+      this.drivers = await this.getCampusDrivers();
+      this.driver = this.value;
+    }
+  },
+  methods: {
+    onInput() {
+      this.$emit('input', this.driver);
     },
-
-    async getCampusDrivers(campus) {
+    async getCampusDrivers() {
       this.loading = true;
-      const { data } = await this.$api.drivers(campus, 'id,name,email').getDrivers();
+      const { data } = await this.$api.drivers(this.campus.id, 'id,name,email').getDrivers();
       this.loading = false;
       return data;
     },

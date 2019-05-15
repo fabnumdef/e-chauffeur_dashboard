@@ -64,11 +64,11 @@
       </ec-field>
       <ec-field
         label="N° de téléphone"
-        field-id="phone"
+        field-id="number"
       >
         <input
-          id="phone"
-          v-model="phone.phone"
+          id="number"
+          v-model="phone.number"
           type="tel"
           class="input"
         >
@@ -84,12 +84,28 @@
       </ec-field>
       <ec-field
         label="Assigné à"
-        field-id="driver"
       >
-        <ec-search-campus-drivers
-          id="driver"
-          v-model="phone.driver"
-        />
+        <div class="columns">
+          <ec-field
+            class="column is-size-7"
+            label="Choix de la base"
+          >
+            <ec-search-user-campus
+              id="campus"
+              v-model="phone.campus"
+            />
+          </ec-field>
+          <ec-field
+            class="column is-size-7"
+            label="Choix du chauffeur"
+          >
+            <ec-search-campus-drivers
+              id="owner"
+              v-model="phone.owner"
+              :campus="phone.campus"
+            />
+          </ec-field>
+        </div>
       </ec-field>
       <ec-field
         label="Commentaires"
@@ -130,15 +146,18 @@
 <script>
 import ecField from '~/components/form/field.vue';
 import ecSearchPhoneStates from '~/components/form/search-phone-states.vue';
-import ecSearchCampusDrivers from '~/components/form/search-campus-drivers.vue';
 import ecSearchPhoneModels from '~/components/form/search-phone-models.vue';
+import ecSearchCampusDrivers from '~/components/form/search-campus-drivers.vue';
+import ecSearchUserCampus from '~/components/form/search-user-campus.vue';
+
 
 const EDITABLE_FIELDS = [
   'id',
   'imei',
-  'phone',
+  'number',
   'model',
-  'driver',
+  'owner',
+  'campus',
   'state',
   'comments',
 ];
@@ -149,6 +168,7 @@ export default {
     ecSearchPhoneStates,
     ecSearchCampusDrivers,
     ecSearchPhoneModels,
+    ecSearchUserCampus,
   },
   props: {
     phone: {

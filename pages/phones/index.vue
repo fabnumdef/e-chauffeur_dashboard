@@ -18,7 +18,7 @@
       </div>
     </header>
     <ec-list
-      :columns="{id: 'S/N', driverNameEmail: 'Assigné à'}"
+      :columns="{id: 'S/N', assignTo: 'Assigné à'}"
       :data="getPhones"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
@@ -35,12 +35,8 @@ import ecList from '~/components/crud/list.vue';
 
 const FIELDS = [
   'id',
-  'imei',
-  'phone',
-  'model',
-  'driver',
-  'state',
-  'comments',
+  'owner',
+  'campus',
 ];
 
 export default {
@@ -53,9 +49,17 @@ export default {
       return this.phones.map(
         (phone) => {
           const phoneComputed = phone;
-          if (phone.driver && (phone.driver.name && phone.driver.email)) {
-            phoneComputed.driverNameEmail = `${phone.driver.name} (${phone.driver.email})`;
+
+          if (phone.owner && (phone.owner.name && phone.owner.email)) {
+            phoneComputed.assignTo = `${phone.owner.name} (${phone.owner.email})`;
           }
+
+          if (phone.campus && phone.campus.name) {
+            phoneComputed.assignTo = phoneComputed.assignTo
+              ? `${phoneComputed.assignTo} sur ${phone.campus.name}`
+              : phone.campus.name;
+          }
+
           return phoneComputed;
         },
       );
