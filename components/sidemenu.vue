@@ -128,6 +128,12 @@
     </p>
     <ul class="menu-list">
       <li>
+        <nuxt-link
+          :to="{ name: 'account' }">
+          Mon compte
+        </nuxt-link>
+      </li>
+      <li>
         <button
           class="button is-text"
           @click="logout()"
