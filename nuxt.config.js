@@ -43,8 +43,9 @@ module.exports = {
           userEvents: 'user-events',
           users: 'users',
           drivers: 'drivers',
-          phones: 'phones',
-          phoneModels: 'phone-models',
+          // Todo reactivate this
+          // phones: 'phones',
+          // phoneModels: 'phone-models',
         },
         withAuth: true,
         authPlugins: [
@@ -57,7 +58,8 @@ module.exports = {
 
   auth: {
     plugins: [
-      // '~/plugins/auth-renew.js',
+      // Todo if this works with lib, remove
+      '~/plugins/auth-renew.js',
       '~/plugins/socket.js',
     ],
     redirect: {
