@@ -9,7 +9,6 @@ export default function ({ app: { $auth, $api, $axios } }) {
         .split('.');
       const { exp, iat } = JSON.parse(window.atob(payload));
       const cur = Math.floor(Date.now() / 1000);
-
       const duration = exp - iat;
       const renewTrigger = duration / 2;
       const expIn = exp - cur;
