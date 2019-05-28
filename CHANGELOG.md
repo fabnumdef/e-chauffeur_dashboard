@@ -2,6 +2,8 @@
 ## Current
 ### Features
 * Add phone management.
+### Fix
+* Don't filters POI in search list, frontend side
 ## Version 1.2.0
 ### Features
 * Improved driver management.
