@@ -49,6 +49,7 @@ module.exports = {
         withAuth: true,
         authPlugins: [
           'has-right',
+          'auth-renew',
         ],
       },
     ],
@@ -56,7 +57,6 @@ module.exports = {
 
   auth: {
     plugins: [
-      '~/plugins/auth-renew.js',
       '~/plugins/socket.js',
     ],
     redirect: {
