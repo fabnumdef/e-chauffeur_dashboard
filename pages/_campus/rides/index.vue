@@ -404,7 +404,7 @@ export default {
         start,
         end,
       );
-      const { data: rides } = await ridesApi.getRides(start, end);
+      const { data: rides } = await ridesApi.getRides(start, end, { limit: 1000 });
       this.drivers = drivers;
       this.setRides(rides);
     },
@@ -420,7 +420,7 @@ export default {
       start,
       end,
     );
-    const { data: rides } = await ridesApi.getRides(start, end);
+    const { data: rides } = await ridesApi.getRides(start, end, { limit: 1000 });
     store.commit('realtime/setRides', rides);
     return {
       campus: params.campus,
