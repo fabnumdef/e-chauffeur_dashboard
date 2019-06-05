@@ -45,6 +45,13 @@
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
+        <nuxt-link
+          :to="campusLink('phones')"
+        >
+          Téléphones
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus">
         <nuxt-link :to="campusLink('pois')">
           Lieux
         </nuxt-link>

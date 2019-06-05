@@ -83,31 +83,6 @@
         />
       </ec-field>
       <ec-field
-        label="Assigné à"
-      >
-        <div class="columns">
-          <ec-field
-            class="column is-size-7"
-            label="Choix de la base"
-          >
-            <ec-search-user-campus
-              id="campus"
-              v-model="phone.campus"
-            />
-          </ec-field>
-          <ec-field
-            class="column is-size-7"
-            label="Choix du chauffeur"
-          >
-            <ec-search-campus-drivers
-              id="owner"
-              v-model="phone.owner"
-              :campus="phone.campus"
-            />
-          </ec-field>
-        </div>
-      </ec-field>
-      <ec-field
         label="Commentaires"
         field-id="comments"
       >
@@ -144,19 +119,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import ecSearchPhoneStates from '~/components/form/search-phone-states.vue';
 import ecSearchPhoneModels from '~/components/form/search-phone-models.vue';
-import ecSearchCampusDrivers from '~/components/form/search-campus-drivers.vue';
-import ecSearchUserCampus from '~/components/form/search-user-campus.vue';
-
 
 const EDITABLE_FIELDS = [
   'id',
   'imei',
   'number',
   'model',
-  'owner',
   'campus',
   'state',
   'comments',
@@ -166,9 +138,7 @@ export default {
   components: {
     ecField,
     ecSearchPhoneStates,
-    ecSearchCampusDrivers,
     ecSearchPhoneModels,
-    ecSearchUserCampus,
   },
   props: {
     phone: {
@@ -180,19 +150,26 @@ export default {
     return { id: this.phone.id };
   },
 
+  computed: {
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
+    PhonesAPI() {
+      return this.$api.phones(this.campus, EDITABLE_FIELDS.join(','));
+    },
+  },
+
   methods: {
     async edit(phone) {
       let data = {};
       if (this.id) {
-        ({ data } = (await this.$api.phones.patchPhone(phone.id, phone, EDITABLE_FIELDS.join(','))));
+        ({ data } = (await this.PhonesAPI.patchPhone(phone.id, phone)));
       } else {
-        ({ data } = (await this.$api.phones.postPhone(phone, EDITABLE_FIELDS.join(','))));
+        ({ data } = (await this.PhonesAPI.postPhone(phone)));
       }
-
-      this.$router.push({
-        name: 'phones-id-edit',
+      this.$router.push(this.$context.buildCampusLink('phones-id-edit', {
         params: { id: data.id },
-      });
+      }));
     },
   },
 };
