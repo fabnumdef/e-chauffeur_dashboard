@@ -1,5 +1,8 @@
 # Changelog
 ## Current
+## Version 1.2.1
+### Fix
+* Only 30 rides was queried in planning
 ## Version 1.2.0
 ### Features
 * Improved driver management.
