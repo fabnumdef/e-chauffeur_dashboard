@@ -1,7 +1,18 @@
 # Changelog
 ## Current
 ### Features
+* Add phone management.
+### Fix
+* Don't filters POI in search list, frontend side
+## Version 1.2.1
+### Fix
+* Only 30 rides was queried in planning
+## Version 1.2.0
+### Features
+* Improved driver management.
 * Add POIs per base rights (local admin)
+* Use common library
+* Fix CSV export
 ### Fix
 ## Version 1.1.1
 ### Features

@@ -3,25 +3,40 @@
     <h1 class="title">
       Supervision des courses
     </h1>
-    <div class="box today">
-      <date-time
-        v-model="today"
-        lang="fr"
-        append-to-body
-        input-class="input"
-        format="YYYY-MM-DD"
-        :clearable="false"
-      >
-        <template slot="calendar-icon">
-          <fa-icon icon="calendar-alt" />
-        </template>
-      </date-time>
-      <button
-        class="button is-primary"
-        @click="toToday"
-      >
-        Aujourd'hui
-      </button>
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item box today">
+          <date-time
+            v-model="today"
+            lang="fr"
+            append-to-body
+            input-class="input"
+            format="YYYY-MM-DD"
+            :clearable="false"
+          >
+            <template slot="calendar-icon">
+              <fa-icon icon="calendar-alt" />
+            </template>
+          </date-time>
+          <button
+            class="button is-primary"
+            @click="toToday"
+          >
+            Aujourd'hui
+          </button>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item box today">
+          <button
+            class="button is-primary"
+            @click="mapToggle"
+          >
+            <span v-if="hideMap">Montrer la carte</span>
+            <span v-else>Cacher la map</span>
+          </button>
+        </div>
+      </div>
     </div>
     <vue-calendar
       :events="rides"
@@ -291,19 +306,23 @@ import searchCategory from '~/components/form/search-campus-category';
 import searchAvailableCar from '~/components/form/search-available-car';
 import searchAvailableDriver from '~/components/form/search-available-driver';
 import bulmaDropdown from '~/components/dropdown.vue';
-import Status, {
-  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, VALIDATE, CREATED,
-  REJECT_BOUNDARY, REJECT_CAPACITY,
+import Status from '@fabnumdef/e-chauffeur_lib-vue/api/status';
+import {
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, CREATED,
   REJECTED_BOUNDARY, REJECTED_CAPACITY,
-  CANCEL_TECHNICAL,
-  CANCEL_REQUESTED_CUSTOMER,
-  CANCEL_CUSTOMER_OVERLOAD,
-  CANCEL_CUSTOMER_MISSING,
   CANCELED_TECHNICAL,
   CANCELED_REQUESTED_CUSTOMER,
   CANCELED_CUSTOMER_OVERLOAD,
   CANCELED_CUSTOMER_MISSING,
-} from '~/api/status';
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
+import {
+  VALIDATE,
+  REJECT_BOUNDARY, REJECT_CAPACITY,
+  CANCEL_TECHNICAL,
+  CANCEL_REQUESTED_CUSTOMER,
+  CANCEL_CUSTOMER_OVERLOAD,
+  CANCEL_CUSTOMER_MISSING,
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
 
 const EDITABLE_FIELDS = [
   'id',
@@ -376,7 +395,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ rides: 'realtime/rides', currentCampus: 'context/campus' }),
+    ...mapGetters({ rides: 'realtime/rides', currentCampus: 'context/campus', hideMap: 'context/hideMap' }),
     ...Object.keys(actions)
       .map(a => ({ [a]: () => actions[a] }))
       .reduce((acc, curr) => Object.assign(acc, curr), {}),
@@ -400,7 +419,7 @@ export default {
         start,
         end,
       );
-      const { data: rides } = await ridesApi.getRides(start, end);
+      const { data: rides } = await ridesApi.getRides(start, end, { limit: 1000 });
       this.drivers = drivers;
       this.setRides(rides);
     },
@@ -416,7 +435,7 @@ export default {
       start,
       end,
     );
-    const { data: rides } = await ridesApi.getRides(start, end);
+    const { data: rides } = await ridesApi.getRides(start, end, { limit: 1000 });
     store.commit('realtime/setRides', rides);
     return {
       campus: params.campus,
@@ -571,11 +590,14 @@ export default {
         .find(r => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     can: ({ status }, action) => {
-      const state = new Status(status);
+      const state = Status(status);
       return state.can(action);
     },
     toToday() {
       this.today = new Date();
+    },
+    mapToggle() {
+      this.$store.dispatch('context/hideMap', !this.hideMap);
     },
   },
 };
@@ -583,6 +605,7 @@ export default {
 
 <style scoped lang="scss">
   @import "~assets/css/head";
+  @import "~bulma/sass/components/level.sass";
 
   /deep/ .day-title {
     height: 120px;

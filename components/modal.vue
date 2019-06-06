@@ -33,7 +33,10 @@
       <section class="modal-card-body">
         <slot />
       </section>
-      <footer class="modal-card-foot">
+      <footer
+        v-if="$slots.submit"
+        class="modal-card-foot"
+      >
         <slot name="submit">
           <button
             class="button is-success"
