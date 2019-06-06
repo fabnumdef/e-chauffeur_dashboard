@@ -61,7 +61,7 @@ import {
   CANCELED_REQUESTED_CUSTOMER,
   CANCELED_CUSTOMER_OVERLOAD,
   CANCELED_CUSTOMER_MISSING,
-} from '~/api/status';
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
 const STEP = 30;
 const START_DAY_HOUR = 5;
