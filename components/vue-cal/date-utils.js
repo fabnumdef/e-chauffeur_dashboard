@@ -37,7 +37,7 @@ export const getPreviousFirstDayOfWeek = (date = null, weekStartsOnSunday) => {
   return prevFirstDayOfWeek
 }
 
-const nth = (d) => {
+const nth = d => {
   if (d > 3 && d < 21) return 'th'
   switch (d % 10) {
     case 1: return 'st'
@@ -89,4 +89,9 @@ export const formatDate = (date, format = 'yyyy-mm-dd', localizedTexts) => {
     const result = dateObj[contents.replace(/\{|\}/g, '')]
     return result !== undefined ? result : contents
   })
+}
+
+export const stringToDate = string => {
+  const [, y, m, d, h = 0, min = 0] = string.match(/(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}))?/)
+  return new Date(y, parseInt(m) - 1, d, h, min)
 }

@@ -1,29 +1,33 @@
 <template lang="pug">
 .vuecal__header
-  ul.vuecal__flex.vuecal__menu(v-if="!vuecalProps.hideViewSelector")
+  ul.vuecal__flex.vuecal__menu(v-if="!options.hideViewSelector")
     li(
       v-if="v.enabled"
       :class="{ active: viewProps.view.id === id }"
       v-for="(v, id) in viewProps.views"
       @click="$parent.switchView(id, null, true)") {{ v.label }}
-  .vuecal__title(v-if="!vuecalProps.hideTitleBar")
+  .vuecal__title-bar(v-if="!options.hideTitleBar")
     .vuecal__arrow.vuecal__arrow--prev(@click="previous")
       slot(name="arrow-prev")
-    transition(:name="`slide-fade--${transitionDirection}`")
-      div(
-        :class="{ clickable: !!broaderView }"
-        :key="vuecalProps.transitions ? `${viewProps.view.id}${viewProps.view.startDate}` : false"
-        @click="switchToBroaderView"
-        style="display: inline-block")
-        slot(name="title")
+    .vuecal__flex.vuecal__title(grow)
+      transition(:name="`slide-fade--${transitionDirection}`")
+        span(
+          :class="{ clickable: !!broaderView }"
+          :key="options.transitions ? `${viewProps.view.id}${viewProps.view.startDate.toString()}` : false"
+          @click="switchToBroaderView")
+          slot(name="title")
+    .vuecal__today-btn(v-if="options.todayButton" @click="goToToday")
+      slot(name="today-btn")
     .vuecal__arrow.vuecal__arrow--next(@click="next")
       slot(name="arrow-next")
   weekdays-headings(
-    v-if="['month', 'week'].indexOf(viewProps.view.id) > -1 && !(viewProps.hasSplits && viewProps.view.id === 'week')"
+    v-if="viewProps.weekDaysInHeader"
+    :vuecal="$parent"
     :view="viewProps.view"
     :week-days="weekDays"
     :week-days-short="weekDaysShort"
-    :transitions="{ active: vuecalProps.transitions, direction: transitionDirection }"
+    :transition-direction="transitionDirection"
+    :switch-to-narrower-view="switchToNarrowerView"
   )
 </template>
 
@@ -34,13 +38,14 @@ import WeekdaysHeadings from './weekdays-headings'
 export default {
   components: { WeekdaysHeadings },
   props: {
-    vuecalProps: {
+    // Vuecal main component options (props).
+    options: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     viewProps: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     weekDays: {
       type: Array,
@@ -49,60 +54,50 @@ export default {
     weekDaysShort: {
       type: [Array, null],
       default: () => []
+    },
+    switchToNarrowerView: {
+      type: Function,
+      default: () => {}
     }
   },
 
   methods: {
     previous () {
-      this.transitionDirection = 'left'
-
-      switch (this.viewProps.view.id) {
-        case 'years':
-          this.$parent.switchView(this.viewProps.view.id, new Date(this.viewProps.view.startDate.getFullYear() - 25, 0, 1))
-          break
-        case 'year':
-          const firstDayOfYear = new Date(this.viewProps.view.startDate.getFullYear() - 1, 1, 1)
-          this.$parent.switchView(this.viewProps.view.id, firstDayOfYear)
-          break
-        case 'month':
-          const firstDayOfMonth = new Date(this.viewProps.view.startDate.getFullYear(), this.viewProps.view.startDate.getMonth() - 1, 1)
-          this.$parent.switchView(this.viewProps.view.id, firstDayOfMonth)
-          break
-        case 'week':
-          const firstDayOfPrevWeek = getPreviousFirstDayOfWeek(this.viewProps.view.startDate, this.vuecalProps.startWeekOnSunday).subtractDays(7)
-          this.$parent.switchView(this.viewProps.view.id, firstDayOfPrevWeek)
-          break
-        case 'day':
-          const day = this.viewProps.view.startDate.subtractDays(1)
-          this.$parent.switchView(this.viewProps.view.id, day)
-          break
-      }
+      this.onArrowClick(false)
     },
 
     next () {
-      this.transitionDirection = 'right'
+      this.onArrowClick()
+    },
+
+    onArrowClick (next = true) {
+      this.transitionDirection = next ? 'right' : 'left'
+      const modifier = next ? 1 : -1
+      let firstCellDate = null
+      let { startDate, id: viewId } = this.viewProps.view
 
       switch (this.viewProps.view.id) {
         case 'years':
-          this.$parent.switchView(this.viewProps.view.id, new Date(this.viewProps.view.startDate.getFullYear() + 25, 0, 1))
+          firstCellDate = new Date(startDate.getFullYear() + 25 * modifier, 0, 1)
           break
         case 'year':
-          const firstDayOfYear = new Date(this.viewProps.view.startDate.getFullYear() + 1, 0, 1)
-          this.$parent.switchView(this.viewProps.view.id, firstDayOfYear)
+          firstCellDate = new Date(startDate.getFullYear() + 1 * modifier, 1, 1)
           break
         case 'month':
-          const firstDayOfMonth = new Date(this.viewProps.view.startDate.getFullYear(), this.viewProps.view.startDate.getMonth() + 1, 1)
-          this.$parent.switchView(this.viewProps.view.id, firstDayOfMonth)
+          firstCellDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1 * modifier, 1)
           break
         case 'week':
-          const firstDayOfNextWeek = getPreviousFirstDayOfWeek(this.viewProps.view.startDate, this.vuecalProps.startWeekOnSunday).addDays(7)
-          this.$parent.switchView(this.viewProps.view.id, firstDayOfNextWeek)
+          firstCellDate = getPreviousFirstDayOfWeek(startDate, this.options.startWeekOnSunday)[next ? 'addDays' : 'subtractDays'](7)
           break
         case 'day':
-          const day = this.viewProps.view.startDate.addDays(1)
-          this.$parent.switchView(this.viewProps.view.id, day)
+          firstCellDate = startDate[next ? 'addDays' : 'subtractDays'](1)
           break
       }
+      if (firstCellDate) this.$parent.switchView(viewId, firstCellDate)
+    },
+
+    goToToday () {
+      this.$parent.updateSelectedDate(new Date())
     },
 
     switchToBroaderView () {
@@ -156,7 +151,7 @@ export default {
     }
   }
 
-  &__title {
+  &__title-bar {
     background-color: rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
@@ -165,9 +160,27 @@ export default {
     font-size: 1.4em;
     line-height: 1.3;
     min-height: 2em;
-    position: relative;
 
     .vuecal--xsmall & {font-size: 1.3em;}
+  }
+
+  &__title {
+    position: relative;
+    justify-content: center;
+  }
+
+  &__today-btn {
+    position: relative;
+    align-items: center;
+    display: flex;
+    font-size: 0.8em;
+
+    span.default {
+      font-size: 0.8em;
+      padding: 3px 6px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
   }
 
   &__arrow {
