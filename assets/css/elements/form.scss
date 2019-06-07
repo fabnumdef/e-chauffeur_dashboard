@@ -1,6 +1,6 @@
 $input-shadow: none;
 $input-disabled-background-color: rgba($black, 0.05);
-@import "~bulma/sass/elements/form.sass";
+@import "~bulma/sass/form/_all";
 
 .select select {
   border: 0;

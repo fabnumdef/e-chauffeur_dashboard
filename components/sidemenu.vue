@@ -45,6 +45,13 @@
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
+        <nuxt-link
+          :to="campusLink('phones')"
+        >
+          Téléphones
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus">
         <nuxt-link :to="campusLink('pois')">
           Lieux
         </nuxt-link>
@@ -75,14 +82,7 @@
           Utilisateurs
         </nuxt-link>
       </li>
-      <li v-if="$auth.isRegulator()">
-        <nuxt-link
-          :to="{ name: 'phones' }"
-        >
-          Téléphones
-        </nuxt-link>
-      </li>
-      <li v-if="$auth.isRegulator()">
+      <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
           :to="{ name: 'phone-models' }"
         >

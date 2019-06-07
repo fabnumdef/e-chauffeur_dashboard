@@ -6,6 +6,7 @@
     :value="value"
     track-by="id"
     label="label"
+    :loading="loading"
     :show-labels="false"
     @search-change="updateSet"
     @input="onInput"
@@ -32,9 +33,17 @@ export default {
   data: () => ({
     carModels: [],
   }),
+  async mounted() {
+    this.loading = true;
+    const { data } = await this.$api.carModels.getCarModels('id,label');
+    this.loading = false;
+    this.carModels = data;
+  },
   methods: {
     updateSet: debounce(async function updateSet(search) {
+      this.loading = true;
       const { data } = await this.$api.carModels.getCarModels('id,label', { search });
+      this.loading = false;
       this.carModels = data;
     }, 500),
     onInput(data) {
