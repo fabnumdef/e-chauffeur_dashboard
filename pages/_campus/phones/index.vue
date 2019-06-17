@@ -7,7 +7,7 @@
       <div class="options">
         <nuxt-link
           v-if="$auth.isAdmin()"
-          :to="{name: 'phones-new'}"
+          :to="campusLink('phones-new')"
           class="button is-success"
         >
           <span class="icon is-small">
@@ -23,14 +23,37 @@
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
-      :action-edit="'phones-id-edit'"
-      action-remove-confirm="Voulez-vous vraiment supprimer ce téléphone ?"
-      @action-remove="deleteUser"
-    />
+    >
+      <template #actions="{ row }">
+        <nuxt-link
+          v-if="$auth.isAdmin()"
+          :to="campusLink('phones-id-edit', {
+            params: row,
+          })"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'edit']" />
+          </span>
+          <span>Modifier</span>
+        </nuxt-link>
+        <button
+          v-if="$auth.isAdmin()"
+          class="button is-danger"
+          @click="deletePhone(row)"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'trash']" />
+          </span>
+          <span>Supprimer</span>
+        </button>
+      </template>
+    </ec-list>
   </main>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import ecList from '~/components/crud/list.vue';
 
 const FIELDS = [
@@ -45,6 +68,9 @@ export default {
     ecList,
   },
   computed: {
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
     getPhones() {
       return this.phones.map(
         (phone) => {
@@ -65,19 +91,26 @@ export default {
       );
     },
   },
-  async asyncData({ $api }) {
-    const { data, pagination } = await $api.phones.getPhones(FIELDS.join(','));
+  async asyncData({ $api, query, params }) {
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const { data, pagination } = await $api.phones({ id: params.campus }, FIELDS.join(','))
+      .getPhones(offset, limit);
     return {
       phones: data,
       pagination,
     };
   },
   methods: {
-    async deleteUser({ id }) {
-      await this.$api.phones.deletePhone(id);
-      const updatedList = await this.$api.phones.getPhones(FIELDS.join(','));
-      this.phones = updatedList.data;
-      this.pagination = updatedList.pagination;
+    async deletePhone({ id }) {
+      if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce téléphone ?')) {
+        await this.$api.phones(this.campus).deletePhone(id);
+        const offset = parseInt(this.$route.query.offset, 10) || 0;
+        const limit = parseInt(this.$route.query.limit, 10) || 30;
+        const { data, pagination } = await this.$api.phones(this.campus, FIELDS.join(',')).getPhones(offset, limit);
+        this.phones = data;
+        this.pagination = pagination;
+      }
     },
   },
 };

@@ -7,7 +7,12 @@
 <script>
 
 export default {
-  async asyncData({ params, $api, store: { getters } }) {
+  async asyncData({
+    app, params, $api, store: { getters },
+  }) {
+    if (!app.$auth.isRegulator()) {
+      throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'un lieu.');
+    }
     return {
       poi: (await $api.pois(getters['context/campus'], 'id,label,location(coordinates),campus').getPoi(params.id)).data,
     };

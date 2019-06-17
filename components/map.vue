@@ -45,7 +45,6 @@
                   :class="getStatus(driver)"
                 />
                 <text
-                  v-if="driver.currentRide && driver.currentRide.car && driver.currentRide.car.model"
                   :class="getStatus(driver)"
                   class="is-inverted is-uppercase"
                   x="50%"
@@ -53,7 +52,7 @@
                   text-anchor="middle"
                   dy=".3em"
                 >
-                  {{ getInitials(driver.currentRide) }}
+                  {{ getInitials(driver) }}
                 </text>
               </svg>
             </l-icon>
@@ -130,14 +129,14 @@ export default {
           return 'is-success';
       }
     },
-    getInitials(currentRide) {
+    getInitials({ name = '' }) {
       let initials = '';
-      const words = currentRide.driver.name.split(' ');
+      const words = name.split(' ');
       if (words.length > 1) {
         initials = words.map(n => n[0]).join('');
       } else {
-        initials += currentRide.driver.name[0] || '';
-        initials += currentRide.driver.name[1] || '';
+        initials += name[0] || '';
+        initials += name[1] || '';
       }
       return initials;
     },

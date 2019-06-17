@@ -1,9 +1,13 @@
 # Changelog
-## Current
+## Version 1.3.0
 ### Features
 * Add phone management.
+* Split map / Scheduler
+* Let user change his password
 ### Fix
+* Fix initials on map
 * Don't filters POI in search list, frontend side
+* Fix token renew
 ## Version 1.2.1
 ### Fix
 * Only 30 rides was queried in planning
