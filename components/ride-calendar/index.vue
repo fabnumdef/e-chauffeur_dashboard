@@ -31,12 +31,7 @@
         >{{ minutes }}</span>
       </div>
       <template #split-day="{ split }">
-        <div
-          class="split-day"
-          grow
-        >
-          {{ split.label }}
-        </div>
+        <driver-header :driver="split.driver" :ride="getCurrentRide(split.driver.id)"/>
       </template>
       <div
         slot="event-renderer"
@@ -74,8 +69,9 @@ import {
   CANCELED_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 import Modal from './modal';
+import DriverHeader from './driver-header';
 
-const STEP = 20;
+const STEP = 30;
 const START_DAY_HOUR = 5;
 const END_DAY_HOUR = 23;
 
@@ -164,6 +160,7 @@ export default {
   components: {
     VueCal,
     Modal,
+    DriverHeader,
   },
 
   props: {
@@ -205,6 +202,7 @@ export default {
         return {
           class: driverClass,
           label: driver.name,
+          driver,
         };
       });
     },
@@ -316,6 +314,12 @@ export default {
         default:
           return 'event-status-planned';
       }
+    },
+    getCurrentRide(driverId) {
+      const currentTime = DateTime.fromJSDate(new Date());
+      return this.rides
+        .filter(r => r.driver.id === driverId)
+        .find(r => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
   },
 };

@@ -63,7 +63,7 @@ export default {
   @import "~assets/css/head";
 
   .ride-status {
-    padding: 5px;
+    padding: 0 5px;
     width: 100%;
     font-weight: bold;
     display: inline-block;
