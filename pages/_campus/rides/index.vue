@@ -33,7 +33,7 @@
             @click="mapToggle"
           >
             <span v-if="hideMap">Montrer la carte</span>
-            <span v-else>Cacher la map</span>
+            <span v-else>Cacher la carte</span>
           </button>
         </div>
       </div>
