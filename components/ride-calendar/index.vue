@@ -12,6 +12,7 @@
       :split-days="splitDrivers"
       :events="events"
       :on-event-click="onClickEvent"
+      split-days-in-header
       @click-and-release="onClickAndRelease"
       @ready="initRide"
     >
@@ -29,11 +30,22 @@
           style="font-size: 11px"
         >{{ minutes }}</span>
       </div>
+      <template #split-day="{ split }">
+        <div
+          class="split-day"
+          grow
+        >
+          {{ split.label }}
+        </div>
+      </template>
       <div
         slot="event-renderer"
         slot-scope="{ event }"
       >
-        <div v-if="event.ride" class="vuecal__event-title">
+        <div
+          v-if="event.ride"
+          class="vuecal__event-title"
+        >
           {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
         </div>
       </div>
