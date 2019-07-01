@@ -1,8 +1,25 @@
 <template>
   <main>
-    <h1 class="title">
-      Supervision des courses
-    </h1>
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <h1 class="title">
+            Supervision des courses
+          </h1>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item">
+          <button
+            class="button is-primary"
+            @click="mapToggle"
+          >
+            <span v-if="hideMap">Montrer la carte</span>
+            <span v-else>Cacher la carte</span>
+          </button>
+        </div>
+      </div>
+    </div>
     <ride-calendar
       :drivers="drivers"
       :rides="rides"
@@ -42,6 +59,7 @@ export default {
     ...mapGetters({
       rides: 'realtime/rides',
       currentCampus: 'context/campus',
+      hideMap: 'context/hideMap',
     }),
   },
 
@@ -63,9 +81,16 @@ export default {
       today,
     };
   },
+
+  methods: {
+    mapToggle() {
+      this.$store.dispatch('context/hideMap', !this.hideMap);
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
-
+  @import "~assets/css/head";
+  @import "~bulma/sass/components/level.sass";
 </style>
