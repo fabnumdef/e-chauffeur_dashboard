@@ -51,8 +51,7 @@
 <script>
 /* eslint-disable no-plusplus */
 
-import VueCal from '~/components/vue-cal';
-import Modal from './modal';
+import VueCal from '@qonfucius/vue-cal';
 import { DateTime, Interval } from 'luxon';
 import {
   DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, CREATED,
@@ -62,8 +61,9 @@ import {
   CANCELED_CUSTOMER_OVERLOAD,
   CANCELED_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
+import Modal from './modal';
 
-const STEP = 30;
+const STEP = 20;
 const START_DAY_HOUR = 5;
 const END_DAY_HOUR = 23;
 
