@@ -45,12 +45,15 @@ export default {
         return 'available';
       }
       switch (this.ride.status) {
-        case STARTED:
         case WAITING:
-          return 'going';
+          return 'waiting';
+        case STARTED:
         case IN_PROGRESS:
-          return 'coming';
+          return 'driving';
         case ACCEPTED:
+          return 'accepted';
+        case VALIDATED:
+          return 'planned';
         case DELIVERED:
         default:
           return 'available';
@@ -73,16 +76,21 @@ export default {
       color: findColorInvert($success);
     }
     &-planned {
-      background: $dark-gray;
+      background: repeating-linear-gradient(45deg, rgba(195, 195, 195, 0.85), rgba(195, 195, 195, 0.85) 1px,
+        #8192A9 1px, #8192A9 20px);
       color: findColorInvert($dark-gray);
     }
-    &-going {
-      background: $warning;
-      color: findColorInvert($warning);
+    &-accepted {
+      background: #8192A9;
+      color: findColorInvert($primary);
     }
-    &-coming {
+    &-driving {
       background: $primary;
       color: findColorInvert($primary);
+    }
+    &-waiting{
+      background: $warning;
+      color: findColorInvert($warning);
     }
   }
 </style>

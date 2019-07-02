@@ -71,7 +71,16 @@
           v-if="event.ride"
           class="vuecal__event-title"
         >
-          {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
+          <div>
+            {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
+          </div>
+          <div>
+            {{ event.ride.car.model.label }} - {{ event.ride.car.id }}
+          </div>
+          <div>
+            <span>{{event.ride.passengersCount}} passager(s)</span> /
+            <span v-if="event.ride.luggage">Avec</span><span v-else>Sans</span> Bagages
+          </div>
         </div>
       </div>
     </vue-cal>
@@ -91,7 +100,7 @@
 import VueCal from '@qonfucius/vue-cal';
 import { DateTime, Interval } from 'luxon';
 import {
-  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, CREATED,
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, CREATED, VALIDATED,
   REJECTED_BOUNDARY, REJECTED_CAPACITY,
   CANCELED_TECHNICAL,
   CANCELED_REQUESTED_CUSTOMER,
@@ -101,7 +110,7 @@ import {
 import Modal from './modal';
 import DriverHeader from './driver-header';
 
-const STEP = 20;
+const STEP = 30;
 const START_DAY_HOUR = 5;
 const END_DAY_HOUR = 23;
 
@@ -247,13 +256,11 @@ export default {
       return this.rides.map((ride) => {
         const start = getVueCalFloorDateFromISO(ride.start);
         const end = getVueCalCeilDateFromISO(ride.end);
-        const title = `${ride.departure.label} -> ${ride.arrival.label}`;
         const split = this.drivers.findIndex(driver => driver.id === ride.driver.id) + 1;
         const clas = `ride-event ${this.eventStatusClass(ride)}`;
         return {
           start,
           end,
-          title,
           ride,
           split,
           class: clas,
@@ -336,10 +343,10 @@ export default {
         case DELIVERED:
           return 'event-status-done';
         case STARTED:
-        case WAITING:
-          return 'event-status-going';
         case IN_PROGRESS:
-          return 'event-status-coming';
+          return 'event-status-driving';
+        case WAITING:
+          return 'event-status-waiting';
         case REJECTED_CAPACITY:
         case REJECTED_BOUNDARY:
         case CANCELED_TECHNICAL:
@@ -348,6 +355,8 @@ export default {
         case CANCELED_REQUESTED_CUSTOMER:
           return 'event-status-wrong';
         case ACCEPTED:
+          return 'event-status-accepted';
+        case VALIDATED:
         default:
           return 'event-status-planned';
       }
@@ -422,17 +431,23 @@ export default {
       border: 1px solid $black;
     }
     &-planned {
-      background: rgba(129, 146, 169, 0.85);
+      background: repeating-linear-gradient(45deg, rgba(195, 195, 195, 0.85), rgba(195, 195, 195, 0.85) 1px,
+        rgba(129, 146, 169, 0.85) 1px, rgba(129, 146, 169, 0.85) 20px);
       color: findColorInvert($dark-gray);
       border: 1px solid $dark-gray;
     }
-    &-going {
+    &-waiting {
       background: rgba(255, 221, 87, 0.85);
       color: findColorInvert($warning);
       border: 1px solid $warning;
     }
-    &-coming {
+    &-driving {
       background: rgba(0, 83, 179, 0.86);
+      color: findColorInvert($primary);
+      border: 1px solid $primary;
+    }
+    &-accepted {
+      background: rgba(129, 146, 169, 0.85);
       color: findColorInvert($primary);
       border: 1px solid $primary;
     }
