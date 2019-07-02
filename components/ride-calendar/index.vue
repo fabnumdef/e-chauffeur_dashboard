@@ -43,6 +43,12 @@
           </div>
         </div>
       </template>
+      <template #split-day-column>
+        <fa-icon icon="user-circle" />
+      </template>
+      <template #split-day="{ split }">
+        <driver-header :driver="split.driver" :ride="getCurrentRide(split.driver.id)"/>
+      </template>
       <div
         slot="time-cell"
         slot-scope="{ hours, minutes }"
@@ -57,12 +63,6 @@
           style="font-size: 11px"
         >{{ minutes }}</span>
       </div>
-      <template #split-day-column>
-        <fa-icon icon="user-circle" />
-      </template>
-      <template #split-day="{ split }">
-        <driver-header :driver="split.driver" :ride="getCurrentRide(split.driver.id)"/>
-      </template>
       <div
         slot="event-renderer"
         slot-scope="{ event }"
@@ -387,79 +387,86 @@ export default {
     height: calc(100vh - 100px);
     background-color: white;
   }
-  /deep/ .vuecal__split-days-in-header .vuecal__time-column {
-    text-align: center;
-    margin: auto 0;
-    color: $success;
-    vertical-align: middle;
-    line-height: 20px;
-    svg {
-      font-size: 25px;
+  /deep/ {
+    .vuecal {
+      &__split-days-in-header .vuecal__time-column {
+        text-align: center;
+        margin: auto 0;
+        color: $success;
+        vertical-align: middle;
+        line-height: 20px;
+        svg {
+          font-size: 25px;
+        }
+      }
+      &__now-line {
+        z-index: 100;
+      }
+      &--blue-theme &__title-bar {
+        background: $background;
+      }
+      &__time-cell .hours.line:before {border-color: #42b983;}
+      &__event.not-working {
+        background: repeating-linear-gradient(45deg, white, white 10px, #f2f2f2 10px, #f2f2f2 20px);/* IE 10+ */
+        color: #999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: default;
+      }
+      &__event.not-working &__event-time {display: none;align-items: center;}
+      &__event-title {
+        font-size: 0.75rem;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
-  }
-  /deep/ .vuecal--blue-theme .vuecal__title-bar {
-    background: $background;
-  }
-  /deep/ .vuecal__time-cell .hours.line:before {border-color: #42b983;}
-  /deep/ .driver-col, /deep/ .driver-col-bis {
-    border-right: 1px solid black;
-    cursor: crosshair;
-  }
-  /deep/ .ride-event {
-    margin-right: 15px;
-    cursor: pointer;
-  }
-  /deep/ .vuecal__event.not-working {
-    background: repeating-linear-gradient(45deg, white, white 10px, #f2f2f2 10px, #f2f2f2 20px);/* IE 10+ */
-    color: #999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: default;
-  }
-  /deep/ .vuecal__event.not-working .vuecal__event-time {display: none;align-items: center;}
-  /deep/ .vuecal__event-title {
-    font-size: 0.75rem;
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  /deep/ .event-status {
-    &-done {
-      color: $black;
-      border: 1px solid $black;
+    .driver-col, /deep/ .driver-col-bis {
+      border-right: 1px solid black;
+      cursor: crosshair;
     }
-    &-planned {
-      background: repeating-linear-gradient(45deg, rgba(195, 195, 195, 0.85), rgba(195, 195, 195, 0.85) 1px,
-        rgba(129, 146, 169, 0.85) 1px, rgba(129, 146, 169, 0.85) 20px);
-      color: findColorInvert($dark-gray);
-      border: 1px solid $dark-gray;
+    .ride-event {
+      margin-right: 15px;
+      cursor: pointer;
     }
-    &-waiting {
-      background: rgba(255, 221, 87, 0.85);
-      color: findColorInvert($warning);
-      border: 1px solid $warning;
-    }
-    &-driving {
-      background: rgba(0, 83, 179, 0.86);
-      color: findColorInvert($primary);
-      border: 1px solid $primary;
-    }
-    &-accepted {
-      background: rgba(129, 146, 169, 0.85);
-      color: findColorInvert($primary);
-      border: 1px solid $primary;
-    }
-    &-wrong {
-      background: rgba(248, 248, 248, 0.85);
-      color: $danger;
-      border: 1px solid $danger;
-    }
-    p {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .event-status {
+      &-done {
+        color: $black;
+        border: 1px solid $black;
+      }
+      &-planned {
+        background: repeating-linear-gradient(45deg, rgba(195, 195, 195, 0.85), rgba(195, 195, 195, 0.85) 1px,
+          rgba(129, 146, 169, 0.85) 1px, rgba(129, 146, 169, 0.85) 20px);
+        color: findColorInvert($dark-gray);
+        border: 1px solid $dark-gray;
+      }
+      &-waiting {
+        background: rgba(255, 221, 87, 0.85);
+        color: findColorInvert($warning);
+        border: 1px solid $warning;
+      }
+      &-driving {
+        background: rgba(0, 83, 179, 0.86);
+        color: findColorInvert($primary);
+        border: 1px solid $primary;
+      }
+      &-accepted {
+        background: rgba(129, 146, 169, 0.85);
+        color: findColorInvert($primary);
+        border: 1px solid $primary;
+      }
+      &-wrong {
+        background: rgba(248, 248, 248, 0.85);
+        color: $danger;
+        border: 1px solid $danger;
+      }
+      p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
 </style>

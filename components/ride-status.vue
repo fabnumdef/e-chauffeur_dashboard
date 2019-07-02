@@ -18,11 +18,18 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    isAvailable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     badgeTitle() {
       if (!this.ride) {
         return 'Disponible';
+      }
+      if (!this.isAvailable) {
+        return 'Pas en service';
       }
       switch (this.ride.status) {
         case VALIDATED:
@@ -43,6 +50,9 @@ export default {
     badgeClass() {
       if (!this.ride) {
         return 'available';
+      }
+      if (!this.isAvailable) {
+        return 'unavailable';
       }
       switch (this.ride.status) {
         case WAITING:
@@ -74,6 +84,10 @@ export default {
     &-available {
       background: $success;
       color: findColorInvert($success);
+    }
+    &-unavailable {
+      background: $gray;
+      color: findColorInvert($gray);
     }
     &-planned {
       background: repeating-linear-gradient(45deg, rgba(195, 195, 195, 0.85), rgba(195, 195, 195, 0.85) 1px,

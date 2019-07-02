@@ -11,12 +11,13 @@
         </p>
       </div>
     </div>
-    <ride-status class="ride-status" :ride="ride" />
+    <ride-status class="ride-status" :ride="ride" :isAvailable=isAvailable />
   </div>
 </template>
 
 <script>
 import rideStatus from '~/components/ride-status.vue';
+import { DateTime } from 'luxon';
 
 export default {
   components: {
@@ -30,6 +31,17 @@ export default {
     ride: {
       type: Object,
       default: () => {},
+    },
+  },
+  computed: {
+    isAvailable() {
+      let res = false;
+      this.driver.availabilities.forEach((avail) => {
+        if (avail.contains(DateTime.local())) {
+          res = true;
+        }
+      });
+      return res;
     },
   },
 };
