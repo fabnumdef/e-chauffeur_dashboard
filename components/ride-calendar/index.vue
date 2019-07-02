@@ -71,7 +71,7 @@ import {
 import Modal from './modal';
 import DriverHeader from './driver-header';
 
-const STEP = 30;
+const STEP = 20;
 const START_DAY_HOUR = 5;
 const END_DAY_HOUR = 23;
 
@@ -139,10 +139,17 @@ function getVueCalCeilDateFromISO(date) {
 
 function getDateTimeFloorFromVueCal(date) {
   const exactDate = DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
+  const now = DateTime.local();
+  let minute = getFloorMinute(exactDate.minute);
+  if (now.hasSame(exactDate, 'year') && now.hasSame(exactDate, 'month') && now.hasSame(exactDate, 'hour')
+    && getFloorMinute(now.minute) === minute) {
+    // eslint-disable-next-line prefer-destructuring
+    minute = now.minute;
+  }
   return DateTime.fromObject({
     day: exactDate.day,
     hour: exactDate.hour,
-    minute: getFloorMinute(exactDate.minute),
+    minute,
   });
 }
 
