@@ -1,5 +1,5 @@
 <template>
-  <div class="calendrier">
+  <div class="calendar">
     <vue-cal
       class="vuecal--blue-theme"
       :time-from="START_DAY_HOUR * 60"
@@ -13,9 +13,36 @@
       :events="events"
       :on-event-click="onClickEvent"
       split-days-in-header
+      hide-view-selector
       @click-and-release="onClickAndRelease"
       @ready="initRide"
     >
+      <template #title-bar="{ view, switchView, previous, next }">
+        <div class="">
+          <div v-if="view.id === 'day'">
+            <button
+              class="button"
+              @click="switchView('month')"
+            >
+              <fa-icon icon="calendar-alt" />&nbsp; {{ getFormatedDate(view.startDate) }}
+            </button>
+          </div>
+          <div v-else>
+            <button @click="previous()">
+              <fa-icon :icon="['fas', 'chevron-left']" />
+            </button>
+            <button
+              class="button"
+              @click="switchView('day', new Date())"
+            >
+              <fa-icon icon="calendar-alt" />&nbsp; {{ getFormatedDate(view.startDate, 'month') }}
+            </button>
+            <button @click="next()">
+              <fa-icon :icon="['fas', 'chevron-right']" />
+            </button>
+          </div>
+        </div>
+      </template>
       <div
         slot="time-cell"
         slot-scope="{ hours, minutes }"
@@ -30,6 +57,9 @@
           style="font-size: 11px"
         >{{ minutes }}</span>
       </div>
+      <template #split-day-column>
+        <fa-icon icon="user-circle" />
+      </template>
       <template #split-day="{ split }">
         <driver-header :driver="split.driver" :ride="getCurrentRide(split.driver.id)"/>
       </template>
@@ -328,15 +358,38 @@ export default {
         .filter(r => r.driver.id === driverId)
         .find(r => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
+    getFormatedDate(date, unit = 'day') {
+      const dt = DateTime.fromJSDate(date);
+      let formatedDate = '';
+      if (unit === 'day') {
+        formatedDate = dt.setLocale('fr').toFormat('cccc dd LLLL');
+      } else {
+        formatedDate = dt.setLocale('fr').toFormat('LLLL y');
+      }
+      return formatedDate;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
   @import "~assets/css/head";
-  .calendrier {
+  .calendar {
     height: calc(100vh - 100px);
     background-color: white;
+  }
+  /deep/ .vuecal__split-days-in-header .vuecal__time-column {
+    text-align: center;
+    margin: auto 0;
+    color: $success;
+    vertical-align: middle;
+    line-height: 20px;
+    svg {
+      font-size: 25px;
+    }
+  }
+  /deep/ .vuecal--blue-theme .vuecal__title-bar {
+    background: $background;
   }
   /deep/ .vuecal__time-cell .hours.line:before {border-color: #42b983;}
   /deep/ .driver-col, /deep/ .driver-col-bis {
