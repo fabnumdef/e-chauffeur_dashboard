@@ -2,7 +2,7 @@
   <vue-multiselect
     :id="id"
     :placeholder="placeholder"
-    :options="carModels"
+    :options="phoneModels"
     :value="value"
     track-by="id"
     label="label"
@@ -31,20 +31,20 @@ export default {
     },
   },
   data: () => ({
-    carModels: [],
+    phoneModels: [],
   }),
   async mounted() {
     this.loading = true;
-    const { data } = await this.$api.carModels.getCarModels('id,label');
+    const { data } = await this.$api.phoneModels.getPhoneModels('id,label');
     this.loading = false;
-    this.carModels = data;
+    this.phoneModels = data;
   },
   methods: {
     updateSet: debounce(async function updateSet(search) {
       this.loading = true;
-      const { data } = await this.$api.carModels.getCarModels('id,label', { search });
+      const { data } = await this.$api.phoneModels.getPhoneModels('id,label', { search });
       this.loading = false;
-      this.carModels = data;
+      this.phoneModels = data;
     }, 500),
     onInput(data) {
       this.$emit('input', data);

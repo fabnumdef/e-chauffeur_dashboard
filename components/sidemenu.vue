@@ -45,6 +45,13 @@
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
+        <nuxt-link
+          :to="campusLink('phones')"
+        >
+          Téléphones
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus">
         <nuxt-link :to="campusLink('pois')">
           Lieux
         </nuxt-link>
@@ -73,6 +80,13 @@
           :to="{ name: 'users' }"
         >
           Utilisateurs
+        </nuxt-link>
+      </li>
+      <li v-if="$auth.isSuperAdmin()">
+        <nuxt-link
+          :to="{ name: 'phone-models' }"
+        >
+          Modèles de téléphones
         </nuxt-link>
       </li>
       <li v-if="$auth.isSuperAdmin()">
@@ -113,6 +127,12 @@
       {{ $auth.user.name || $auth.user.email }}
     </p>
     <ul class="menu-list">
+      <li>
+        <nuxt-link
+          :to="{ name: 'account' }">
+          Mon compte
+        </nuxt-link>
+      </li>
       <li>
         <button
           class="button is-text"

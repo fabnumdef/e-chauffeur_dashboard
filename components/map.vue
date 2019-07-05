@@ -1,6 +1,26 @@
 <template>
   <div class="fixed is-hidden-mobile is-hidden-tablet-only">
-    <div id="map-wrap">
+    <div
+      id="detach"
+    >
+      <nuxt-link
+        v-if="!isFullscreen"
+        :to="{ name: 'campus-map' }"
+        target="_blank"
+      >
+        <button
+          class="button is-primary"
+          @click="hideMap"
+        >
+          <fa-icon icon="external-link-alt" />&nbsp;
+          Détacher la carte
+        </button>
+      </nuxt-link>
+    </div>
+    <div
+      id="map-wrap"
+      :class="{'fullscreen': isFullscreen}"
+    >
       <no-ssr>
         <l-map
           :zoom="13"
@@ -25,7 +45,6 @@
                   :class="getStatus(driver)"
                 />
                 <text
-                  v-if="driver.currentRide && driver.currentRide.car && driver.currentRide.car.model"
                   :class="getStatus(driver)"
                   class="is-inverted is-uppercase"
                   x="50%"
@@ -33,7 +52,7 @@
                   text-anchor="middle"
                   dy=".3em"
                 >
-                  {{ getInitials(driver.currentRide) }}
+                  {{ getInitials(driver) }}
                 </text>
               </svg>
             </l-icon>
@@ -52,6 +71,12 @@ import {
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
 export default {
+  props: {
+    isFullscreen: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     center() {
       const [lon, lat] = this.campus.location.coordinates;
@@ -76,6 +101,9 @@ export default {
     },
   },
   methods: {
+    hideMap() {
+      this.$store.dispatch('context/hideMap', true);
+    },
     reverse([lon, lat]) {
       return [lat, lon];
     },
@@ -101,14 +129,14 @@ export default {
           return 'is-success';
       }
     },
-    getInitials(currentRide) {
+    getInitials({ name = '' }) {
       let initials = '';
-      const words = currentRide.driver.name.split(' ');
+      const words = name.split(' ');
       if (words.length > 1) {
         initials = words.map(n => n[0]).join('');
       } else {
-        initials += currentRide.driver.name[0] || '';
-        initials += currentRide.driver.name[1] || '';
+        initials += name[0] || '';
+        initials += name[1] || '';
       }
       return initials;
     },
@@ -136,6 +164,16 @@ export default {
     height: 100vh;
     position: fixed;
     width: 45vw;
+  }
+  #detach {
+    z-index: 10;
+    position: fixed;
+    right: 0;
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+  #map-wrap.fullscreen {
+    width: 100vw;
   }
   .fixed {
     height: 100vh;

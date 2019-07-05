@@ -3,25 +3,40 @@
     <h1 class="title">
       Supervision des courses
     </h1>
-    <div class="box today">
-      <date-time
-        v-model="today"
-        lang="fr"
-        append-to-body
-        input-class="input"
-        format="YYYY-MM-DD"
-        :clearable="false"
-      >
-        <template slot="calendar-icon">
-          <fa-icon icon="calendar-alt" />
-        </template>
-      </date-time>
-      <button
-        class="button is-primary"
-        @click="toToday"
-      >
-        Aujourd'hui
-      </button>
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item box today">
+          <date-time
+            v-model="today"
+            lang="fr"
+            append-to-body
+            input-class="input"
+            format="YYYY-MM-DD"
+            :clearable="false"
+          >
+            <template slot="calendar-icon">
+              <fa-icon icon="calendar-alt" />
+            </template>
+          </date-time>
+          <button
+            class="button is-primary"
+            @click="toToday"
+          >
+            Aujourd'hui
+          </button>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item box today">
+          <button
+            class="button is-primary"
+            @click="mapToggle"
+          >
+            <span v-if="hideMap">Montrer la carte</span>
+            <span v-else>Cacher la carte</span>
+          </button>
+        </div>
+      </div>
     </div>
     <vue-calendar
       :events="rides"
@@ -380,7 +395,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ rides: 'realtime/rides', currentCampus: 'context/campus' }),
+    ...mapGetters({ rides: 'realtime/rides', currentCampus: 'context/campus', hideMap: 'context/hideMap' }),
     ...Object.keys(actions)
       .map(a => ({ [a]: () => actions[a] }))
       .reduce((acc, curr) => Object.assign(acc, curr), {}),
@@ -581,12 +596,16 @@ export default {
     toToday() {
       this.today = new Date();
     },
+    mapToggle() {
+      this.$store.dispatch('context/hideMap', !this.hideMap);
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
   @import "~assets/css/head";
+  @import "~bulma/sass/components/level.sass";
 
   /deep/ .day-title {
     height: 120px;

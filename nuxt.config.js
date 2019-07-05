@@ -43,10 +43,13 @@ module.exports = {
           userEvents: 'user-events',
           users: 'users',
           drivers: 'drivers',
+          phones: 'phones',
+          phoneModels: 'phone-models',
         },
         withAuth: true,
         authPlugins: [
           'has-right',
+          'auth-renew',
         ],
       },
     ],
@@ -54,7 +57,6 @@ module.exports = {
 
   auth: {
     plugins: [
-      '~/plugins/auth-renew.js',
       '~/plugins/socket.js',
     ],
     redirect: {
@@ -86,6 +88,7 @@ module.exports = {
           'faChevronRight',
           'faFileExport',
           'faCommentDots',
+          'faExternalLinkAlt',
         ],
       },
     ],

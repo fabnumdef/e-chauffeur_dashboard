@@ -7,6 +7,7 @@
     track-by="id"
     label="label"
     :show-labels="false"
+    :internal-search="false"
     @search-change="updateSet"
     @input="onInput"
     @open="onOpen"

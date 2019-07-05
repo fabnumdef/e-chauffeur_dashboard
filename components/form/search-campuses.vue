@@ -6,6 +6,7 @@
     multiple
     track-by="id"
     label="name"
+    :loading="loading"
     :show-labels="false"
     :placeholder="placeholder"
     @search-change="updateSet"
@@ -35,9 +36,17 @@ export default {
       campuses: this.value || [],
     };
   },
+  async mounted() {
+    this.loading = true;
+    const { data } = await this.$api.campuses.getCampuses('id,name,location');
+    this.loading = false;
+    this.campuses = data;
+  },
   methods: {
     updateSet: debounce(async function updateSet(search) {
+      this.loading = true;
       const { data } = await this.$api.campuses.getCampuses('id,name,location', { search });
+      this.loading = false;
       this.campuses = data;
     }, 500),
     onInput(data) {
