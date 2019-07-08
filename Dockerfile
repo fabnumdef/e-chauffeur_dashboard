@@ -21,7 +21,6 @@ WORKDIR /usr/src/app
 
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY . /usr/src/app/
-COPY ./config.json.dist ./config.json
 
 RUN npm run build
 

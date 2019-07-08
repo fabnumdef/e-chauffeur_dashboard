@@ -1,6 +1,4 @@
 module.exports = {
-  mode: 'spa',
-
   head: {
     title: 'e-Chauffeur - Dashboard',
     link: [
@@ -15,11 +13,10 @@ module.exports = {
   css: [
     { src: '~assets/css/main.scss', lang: 'scss' },
   ],
-
   plugins: [
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
-    '~/plugins/datetime-picker.js',
+    { src: '~/plugins/datetime-picker.js', ssr: false },
     '~/plugins/realtime.js',
   ],
 
