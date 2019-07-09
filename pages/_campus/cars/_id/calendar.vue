@@ -30,38 +30,40 @@
         @modal-toggle="toggleModal"
       >
         <template slot="modal">
-          <ec-field
-            label="Dates"
-            field-id="dates"
-          >
-            <date-time
-              lang="fr"
-              append-to-body
-              input-class="input"
-              type="datetime"
-              range
-              :value="range"
-              :minute-step="5"
-              format="YYYY-MM-DD HH:mm:ss"
-              range-separator="->"
-              @input="updateDates"
+          <no-ssr>
+            <ec-field
+              label="Dates"
+              field-id="dates"
             >
-              <template slot="calendar-icon">
-                <fa-icon icon="calendar" />
-              </template>
-            </date-time>
-          </ec-field>
-          <ec-field
-            label="Label"
-            field-id="label"
-          >
-            <input
-              id="label"
-              v-model="event.title"
-              type="text"
-              class="input"
+              <date-time
+                lang="fr"
+                append-to-body
+                input-class="input"
+                type="datetime"
+                range
+                :value="range"
+                :minute-step="5"
+                format="YYYY-MM-DD HH:mm:ss"
+                range-separator="->"
+                @input="updateDates"
+              >
+                <template slot="calendar-icon">
+                  <fa-icon icon="calendar" />
+                </template>
+              </date-time>
+            </ec-field>
+            <ec-field
+              label="Label"
+              field-id="label"
             >
-          </ec-field>
+              <input
+                id="label"
+                v-model="event.title"
+                type="text"
+                class="input"
+              >
+            </ec-field>
+          </no-ssr>
         </template>
       </vue-calendar>
     </div>
