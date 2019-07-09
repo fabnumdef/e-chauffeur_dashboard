@@ -97,9 +97,9 @@
 </template>
 <script>
 import { DateTime } from 'luxon';
+import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import vueCalendar from '~/components/calendar.vue';
-import { mapGetters } from 'vuex';
 
 const generateEmptyEvent = () => ({
   title: null,

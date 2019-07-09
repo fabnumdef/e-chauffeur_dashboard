@@ -129,7 +129,8 @@
     <ul class="menu-list">
       <li>
         <nuxt-link
-          :to="{ name: 'account' }">
+          :to="{ name: 'account' }"
+        >
           Mon compte
         </nuxt-link>
       </li>

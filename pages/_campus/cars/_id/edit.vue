@@ -97,8 +97,8 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import { mapGetters } from 'vuex';
+import ecField from '~/components/form/field.vue';
 import SearchCarModels from '~/components/form/search-car-models';
 
 const EDITABLE_FIELDS = ['id', 'label', 'model'];
