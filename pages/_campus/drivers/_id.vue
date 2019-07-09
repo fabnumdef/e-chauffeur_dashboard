@@ -8,9 +8,9 @@
 const EDITABLE_FIELDS = ['id', 'email', 'password', 'name', 'workingHours'];
 
 export default {
-  async asyncData({ params, $api, store: { getters } }) {
+  async asyncData({ params, $api }) {
     return {
-      driver: (await $api.drivers(getters['context/campus'].id, EDITABLE_FIELDS.join(',')).getDriver(params.id)).data,
+      driver: (await $api.drivers(params.campus, EDITABLE_FIELDS.join(',')).getDriver(params.id)).data,
     };
   },
 };
