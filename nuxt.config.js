@@ -16,6 +16,7 @@ module.exports = {
   plugins: [
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
+    { src: '~plugins/simplemde-plugin.js', ssr: false },
     { src: '~/plugins/datetime-picker.js', ssr: false },
     '~/plugins/realtime.js',
   ],
