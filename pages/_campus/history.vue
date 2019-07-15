@@ -245,12 +245,6 @@
                       </div>
                       <div class="column">
                         <p class="is-size-7">
-                          Distance de la course
-                        </p>
-                        **
-                      </div>
-                      <div class="column">
-                        <p class="is-size-7">
                           Nombre de passagers
                         </p>
                         {{ ride.passengersCount }}
@@ -261,23 +255,17 @@
                         </p>
                         {{ ride.phone }}
                       </div>
-                      <div class="column">
-                        <p class="is-size-7">
-                          NIA / NID
-                        </p>
-                        **
-                      </div>
                     </div>
                     <div class="columns has-text-left has-text-centered-mobile">
                       <div class="column">
                         <p class="is-size-7">
                           Départ
                         </p>
-                        {{ getFormatDate(ride.start, 'hh:mm' ) }} - Adresse départ
+                        {{ getFormatDate(ride.start, 'hh:mm' ) }} - {{ride.departure.label}}
                         <p class="is-size-7">
                           Arrivée
                         </p>
-                        {{ getFormatDate(ride.end, 'hh:mm' ) }} - Adresse arrivée
+                        {{ getFormatDate(ride.end, 'hh:mm' ) }} - {{ride.arrival.label}}
                       </div>
                     </div>
                   </div>
