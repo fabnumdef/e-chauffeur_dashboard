@@ -61,8 +61,10 @@ export default {
   components: {
     ecList,
   },
-  async asyncData({ $api }) {
-    const { data, pagination } = await $api.users.getUsers('id,email');
+  async asyncData({ $api, query }) {
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const { data, pagination } = await $api.users.getUsers('id,email', offset, limit);
     return {
       users: data,
       pagination,
@@ -71,7 +73,9 @@ export default {
   methods: {
     async deleteUser({ id }) {
       await this.$api.users.deleteUser(id);
-      const updatedList = await this.$api.users.getUsers('id,email');
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.users.getUsers('id,email', offset, limit);
       this.users = updatedList.data;
       this.pagination = updatedList.pagination;
     },
