@@ -1,9 +1,12 @@
 # Changelog
 ## Current
+
+## Version 1.3.1
 ### Features
  * Shift + Clic has been removed
 ### Fix
 * Departure and Arrival in history was not dynamic
+* User pagination fixed
 ## Version 1.3.0
 ### Features
 * Add phone management.
