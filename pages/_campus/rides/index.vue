@@ -272,6 +272,7 @@
           v-if="can(ride, REJECT_BOUNDARY) || can(ride, REJECT_CAPACITY)"
           class="is-danger"
           :options="{[REJECTED_BOUNDARY]: 'Refuser (périmètre)', [REJECTED_CAPACITY]: 'Refuser (capacité)'}"
+          :open="false"
           @click="edit(ride, $event)"
         >
           Refuser la course
@@ -286,6 +287,7 @@
             [CANCEL_CUSTOMER_OVERLOAD]: 'Annuler (surcharge)',
             [CANCEL_CUSTOMER_MISSING]: 'Annuler (passager absent)',
           }"
+          :open="false"
           @click="changeStatus(ride, $event)"
         >
           Annuler la course
@@ -297,15 +299,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex';
-import vueCalendar from '~/components/calendar.vue';
-import rideCalendarHead from '~/components/ride-calendar-head.vue';
-import ecField from '~/components/form/field.vue';
 import { DateTime, Interval } from 'luxon';
-import searchPoi from '~/components/form/search-poi';
-import searchCategory from '~/components/form/search-campus-category';
-import searchAvailableCar from '~/components/form/search-available-car';
-import searchAvailableDriver from '~/components/form/search-available-driver';
-import bulmaDropdown from '~/components/dropdown.vue';
 import Status from '@fabnumdef/e-chauffeur_lib-vue/api/status';
 import {
   DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, CREATED,
@@ -323,6 +317,14 @@ import {
   CANCEL_CUSTOMER_OVERLOAD,
   CANCEL_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
+import vueCalendar from '~/components/calendar.vue';
+import rideCalendarHead from '~/components/ride-calendar-head.vue';
+import ecField from '~/components/form/field.vue';
+import searchPoi from '~/components/form/search-poi';
+import searchCategory from '~/components/form/search-campus-category';
+import searchAvailableCar from '~/components/form/search-available-car';
+import searchAvailableDriver from '~/components/form/search-available-driver';
+import bulmaDropdown from '~/components/dropdown.vue';
 
 const EDITABLE_FIELDS = [
   'id',
