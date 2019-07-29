@@ -42,8 +42,11 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    open: {
+      type: Boolean,
+      default: false,
+    },
   },
-  data: () => ({ open: false }),
   methods: {
     propagate(id) {
       this.$emit('click', id);

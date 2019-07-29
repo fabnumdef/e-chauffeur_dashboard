@@ -261,11 +261,11 @@
                         <p class="is-size-7">
                           Départ
                         </p>
-                        {{ getFormatDate(ride.start, 'hh:mm' ) }} - {{ride.departure.label}}
+                        {{ getFormatDate(ride.start, 'hh:mm' ) }} - {{ ride.departure.label }}
                         <p class="is-size-7">
                           Arrivée
                         </p>
-                        {{ getFormatDate(ride.end, 'hh:mm' ) }} - {{ride.arrival.label}}
+                        {{ getFormatDate(ride.end, 'hh:mm' ) }} - {{ ride.arrival.label }}
                       </div>
                     </div>
                   </div>

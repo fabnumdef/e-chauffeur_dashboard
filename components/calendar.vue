@@ -99,9 +99,9 @@
 </template>
 
 <script>
-import vueModal from '~/components/modal.vue';
 import { DateTime, Interval, Duration } from 'luxon';
 import OpeningHours from 'opening_hours';
+import vueModal from '~/components/modal.vue';
 
 const SECONDS_IN_A_DAY = 60 * 60 * 24;
 const A_DAY = Duration.fromObject({ days: 1 });
