@@ -88,7 +88,7 @@
               }"
               :title="s.start.toLocaleString(DATETIME_FULL)"
               @mousedown="startSelectRange(s.start, col.start ? null : col)"
-              @mouseup="endSelectRange($event, col.start ? null : col)"
+              @mouseup="endSelectRange(col.start ? null : col)"
               @mouseover="updateSelectedRange(s.end)"
             />
           </div>
@@ -99,9 +99,9 @@
 </template>
 
 <script>
-import vueModal from '~/components/modal.vue';
 import { DateTime, Interval, Duration } from 'luxon';
 import OpeningHours from 'opening_hours';
+import vueModal from '~/components/modal.vue';
 
 const SECONDS_IN_A_DAY = 60 * 60 * 24;
 const A_DAY = Duration.fromObject({ days: 1 });
@@ -265,11 +265,11 @@ export default {
       }
     },
 
-    endSelectRange({ shiftKey = false } = {}, col = null) {
+    endSelectRange(col = null) {
       const start = this.currentDateTime.diff(this.rangeStart).valueOf() > 0
       && this.currentDateTime.diff(this.rangeStart).valueOf() < this.SPLIT_MINUTES.valueOf()
         ? this.currentDateTime : this.rangeStart;
-      if (this.openingHoursFeature && shiftKey) {
+      if (this.openingHoursFeature) {
         this.toggleOpeningHours(this.rangeStart, this.rangeEnd);
       } else {
         this.$emit('modal-toggle', true);

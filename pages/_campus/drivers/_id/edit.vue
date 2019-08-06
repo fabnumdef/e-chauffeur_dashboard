@@ -99,8 +99,8 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import { mapGetters } from 'vuex';
+import ecField from '~/components/form/field.vue';
 
 const EDITABLE_FIELDS = ['id', 'email', 'password', 'name'];
 

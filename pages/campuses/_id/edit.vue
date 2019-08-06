@@ -126,10 +126,10 @@
 </template>
 
 <script>
+import markdownEditor from 'vue-simplemde/src/markdown-editor';
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
-import markdownEditor from 'vue-simplemde/src/markdown-editor';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),information';
 export default {
