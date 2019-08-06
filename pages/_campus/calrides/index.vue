@@ -31,8 +31,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import RideCalendar from '~/components/ride-calendar';
 import { DateTime } from 'luxon';
+import RideCalendar from '~/components/ride-calendar';
 
 const EDITABLE_FIELDS = [
   'id',

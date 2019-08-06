@@ -1,8 +1,6 @@
 // We've to disable param reassign, because it's the common behavior of vuex
 /* eslint-disable no-param-reassign */
 
-import { DateTime } from 'luxon';
-
 export const state = () => ({
   drivers: [],
   rides: [],

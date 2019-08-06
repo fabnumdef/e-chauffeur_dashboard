@@ -221,14 +221,7 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import { DateTime } from 'luxon';
-import searchPoi from '~/components/form/search-poi';
-import searchCategory from '~/components/form/search-campus-category';
-import searchAvailableCar from '~/components/form/search-available-car';
-import searchAvailableDriver from '~/components/form/search-available-driver';
-import bulmaDropdown from '~/components/dropdown.vue';
-import vueModal from '~/components/modal.vue';
 import Status from '@fabnumdef/e-chauffeur_lib-vue/api/status';
 import {
   VALIDATED, CREATED,
@@ -242,6 +235,13 @@ import {
   CANCEL_CUSTOMER_OVERLOAD,
   CANCEL_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
+import ecField from '~/components/form/field.vue';
+import searchPoi from '~/components/form/search-poi';
+import searchCategory from '~/components/form/search-campus-category';
+import searchAvailableCar from '~/components/form/search-available-car';
+import searchAvailableDriver from '~/components/form/search-available-driver';
+import bulmaDropdown from '~/components/dropdown.vue';
+import vueModal from '~/components/modal.vue';
 
 const EDITABLE_FIELDS = [
   'id',

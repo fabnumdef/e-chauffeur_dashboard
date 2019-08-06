@@ -11,13 +11,17 @@
         </p>
       </div>
     </div>
-    <ride-status class="ride-status" :ride="ride" :isAvailable=isAvailable />
+    <ride-status
+      class="ride-status"
+      :ride="ride"
+      :is-available="isAvailable"
+    />
   </div>
 </template>
 
 <script>
-import rideStatus from '~/components/ride-status.vue';
 import { DateTime } from 'luxon';
+import rideStatus from '~/components/ride-status.vue';
 
 export default {
   components: {

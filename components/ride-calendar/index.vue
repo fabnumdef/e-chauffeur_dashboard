@@ -47,7 +47,10 @@
         <fa-icon icon="user-circle" />
       </template>
       <template #split-day="{ split }">
-        <driver-header :driver="split.driver" :ride="getCurrentRide(split.driver.id)"/>
+        <driver-header
+          :driver="split.driver"
+          :ride="getCurrentRide(split.driver.id)"
+        />
       </template>
       <div
         slot="time-cell"
@@ -78,7 +81,7 @@
             {{ event.ride.car.model.label }} - {{ event.ride.car.id }}
           </div>
           <div>
-            <span>{{event.ride.passengersCount}} passager(s)</span> /
+            <span>{{ event.ride.passengersCount }} passager(s)</span> /
             <span v-if="event.ride.luggage">Avec</span><span v-else>Sans</span> Bagages
           </div>
         </div>
