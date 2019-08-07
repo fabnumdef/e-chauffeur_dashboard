@@ -59,11 +59,11 @@
       >
         <strong
           v-if="!minutes"
-          style="font-size: 15px"
+          class="hours"
         >{{ hours }}</strong>
         <span
           v-else
-          style="font-size: 11px"
+          class="minutes"
         >{{ minutes }}</span>
       </div>
       <div
@@ -98,7 +98,6 @@
 </template>
 
 <script>
-/* eslint-disable no-plusplus */
 
 import VueCal from '@qonfucius/vue-cal';
 import { DateTime, Interval } from 'luxon';
@@ -135,7 +134,7 @@ function generateEmptyRide() {
 function getFloorMinute(minute) {
   const numberOfStep = Math.floor(60 / STEP);
   let res = 0;
-  for (let i = 1; i <= numberOfStep; i++) {
+  for (let i = 1; i <= numberOfStep; i += 1) {
     const currentStep = STEP * i;
     if (currentStep > minute) {
       break;
@@ -148,7 +147,7 @@ function getFloorMinute(minute) {
 function getCeilMinute(minute) {
   const numberOfStep = Math.floor(60 / STEP);
   let res = 0;
-  for (let i = 0; i <= numberOfStep; i++) {
+  for (let i = 0; i <= numberOfStep; i += 1) {
     const currentStep = STEP * i;
     if (currentStep >= minute) {
       res = currentStep;
@@ -223,7 +222,7 @@ export default {
     },
     currentCampus: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     campus: {
       type: String,
@@ -429,6 +428,12 @@ export default {
     .driver-col, /deep/ .driver-col-bis {
       border-right: 1px solid black;
       cursor: crosshair;
+    }
+    .hours {
+      font-size: 15px;
+    }
+    .minutes {
+      font-size: 11px;
     }
     .ride-event {
       margin-right: 15px;

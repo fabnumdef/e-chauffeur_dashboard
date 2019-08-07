@@ -30,22 +30,16 @@ export default {
   props: {
     driver: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     ride: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
   },
   computed: {
     isAvailable() {
-      let res = false;
-      this.driver.availabilities.forEach((avail) => {
-        if (avail.contains(DateTime.local())) {
-          res = true;
-        }
-      });
-      return res;
+      return this.driver.availabilities.some(avail => (avail.contains(DateTime.local())));
     },
   },
 };

@@ -315,7 +315,7 @@ export default {
     },
     currentCampus: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     campus: {
       type: String,
