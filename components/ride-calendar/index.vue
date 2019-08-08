@@ -184,8 +184,7 @@ function getDateTimeFloorFromVueCal(date) {
   let minute = getFloorMinute(exactDate.minute);
   if (now.hasSame(exactDate, 'year') && now.hasSame(exactDate, 'month') && now.hasSame(exactDate, 'hour')
     && getFloorMinute(now.minute) === minute) {
-    // eslint-disable-next-line prefer-destructuring
-    minute = now.minute;
+    ({ minute } = now);
   }
   return DateTime.fromObject({
     day: exactDate.day,
