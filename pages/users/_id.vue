@@ -11,10 +11,10 @@ export default {
       throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'un utilisateur.');
     }
     return {
-      user: Object.assign(
-        { workingHours: '' },
-        (await $api.users.getUser(params.id, 'id,name,email,roles(role,campuses(id,name)),workingHours')).data,
-      ),
+      user: {
+        workingHours: '',
+        ...(await $api.users.getUser(params.id, 'id,name,email,roles(role,campuses(id,name)),workingHours')).data,
+      },
     };
   },
 };

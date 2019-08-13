@@ -103,7 +103,7 @@ export default {
       return [
         this.event.start || null,
         this.event.end || null,
-      ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
+      ].map((l) => (l && l.toJSDate ? l.toJSDate() : null));
     },
   },
   async asyncData({ params, $api, route } = {}) {

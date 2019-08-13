@@ -403,13 +403,13 @@ export default {
   computed: {
     ...mapGetters({ rides: 'realtime/rides', currentCampus: 'context/campus', hideMap: 'context/hideMap' }),
     ...Object.keys(actions)
-      .map(a => ({ [a]: () => actions[a] }))
+      .map((a) => ({ [a]: () => actions[a] }))
       .reduce((acc, curr) => Object.assign(acc, curr), {}),
     range() {
       return [
         this.ride.start || null,
         this.ride.end || null,
-      ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
+      ].map((l) => (l && l.toJSDate ? l.toJSDate() : null));
     },
   },
 
@@ -493,7 +493,7 @@ export default {
     },
 
     async edit(r, status) {
-      const ride = Object.assign({}, r, status ? { status } : {});
+      const ride = { ...r, ...(status ? { status } : {}) };
 
       try {
         if (ride.id) {
@@ -592,8 +592,8 @@ export default {
     getCurrentRide(driverId) {
       const currentTime = DateTime.fromJSDate(this.currentTime);
       return this.rides
-        .filter(r => r.driver.id === driverId)
-        .find(r => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
+        .filter((r) => r.driver.id === driverId)
+        .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     can: ({ status }, action) => {
       const state = Status(status);

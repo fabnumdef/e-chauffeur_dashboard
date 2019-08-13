@@ -257,7 +257,7 @@ export default {
       return this.rides.map((ride) => {
         const start = getVueCalFloorDateFromISO(ride.start);
         const end = getVueCalCeilDateFromISO(ride.end);
-        const split = this.drivers.findIndex(driver => driver.id === ride.driver.id) + 1;
+        const split = this.drivers.findIndex((driver) => driver.id === ride.driver.id) + 1;
         const clas = `ride-event ${this.eventStatusClass(ride)}`;
         return {
           start,
@@ -331,7 +331,7 @@ export default {
     },
     onClickEvent(event) {
       if (event.ride) {
-        const ride = Object.assign({}, event.ride);
+        const ride = { ...event.ride };
         ride.start = DateTime.fromISO(event.ride.start);
         ride.end = DateTime.fromISO(event.ride.end);
         ride.interval = Interval.fromDateTimes(ride.start, ride.end);
@@ -365,8 +365,8 @@ export default {
     getCurrentRide(driverId) {
       const currentTime = DateTime.fromJSDate(new Date());
       return this.rides
-        .filter(r => r.driver.id === driverId)
-        .find(r => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
+        .filter((r) => r.driver.id === driverId)
+        .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     getFormatedDate(date, unit = 'day') {
       const dt = DateTime.fromJSDate(date);

@@ -30,7 +30,7 @@ export default {
     classes() {
       const component = this.$vnode.tag;
 
-      const child = this.child || (this.$slots.default && !this.$slots.default.find(s => s.tag === component));
+      const child = this.child || (this.$slots.default && !this.$slots.default.find((s) => s.tag === component));
       const flags = {
         tile: true,
         'is-ancestor': this.ancestor,

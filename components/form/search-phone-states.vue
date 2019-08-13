@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     getObjectValue() {
-      return STATES_OPTIONS.find(state => state.id === this.value);
+      return STATES_OPTIONS.find((state) => state.id === this.value);
     },
   },
   methods: {

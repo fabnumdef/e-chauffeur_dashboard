@@ -53,7 +53,7 @@ export default {
         {
           type: 'Point',
           coordinates: ['longitude', 'latitude'].map(
-            k => this.$refs[k].value || null,
+            (k) => this.$refs[k].value || null,
           ),
         },
       );
