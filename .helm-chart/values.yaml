@@ -7,13 +7,13 @@ namespace: e-chauffeur
 image:
   repository: registry.gitlab.com/fabnum-minarm/e-chauffeur/dashboard
   tag: stable
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 env:
-  MONGODB: e-chauffeur-mongodb
+  API_URL: api.localhost
 imageCredentials:
   name: e-chauffeur-dashboard
   registry: registry.gitlab.com

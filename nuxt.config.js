@@ -99,4 +99,7 @@ module.exports = {
     short_name: 'e-Chauffeur',
     description: 'Application régulateur',
   },
+  server: {
+    host: '0.0.0.0',
+  },
 };
