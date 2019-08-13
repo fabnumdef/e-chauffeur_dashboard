@@ -87,6 +87,8 @@ module.exports = {
           'faFileExport',
           'faCommentDots',
           'faExternalLinkAlt',
+          'faChevronLeft',
+          'faUserCircle',
         ],
       },
     ],

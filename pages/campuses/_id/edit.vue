@@ -93,7 +93,7 @@
         field-id="informations"
       >
         <no-ssr>
-          <markdown-editor
+          <vue-simplemde
             ref="markdownEditor"
             v-model="campus.information"
           />

@@ -18,11 +18,18 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    isAvailable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     badgeTitle() {
       if (!this.ride) {
         return 'Disponible';
+      }
+      if (!this.isAvailable) {
+        return 'Pas en service';
       }
       switch (this.ride.status) {
         case VALIDATED:
@@ -44,13 +51,19 @@ export default {
       if (!this.ride) {
         return 'available';
       }
+      if (!this.isAvailable) {
+        return 'unavailable';
+      }
       switch (this.ride.status) {
-        case STARTED:
         case WAITING:
-          return 'going';
+          return 'waiting';
+        case STARTED:
         case IN_PROGRESS:
-          return 'coming';
+          return 'driving';
         case ACCEPTED:
+          return 'accepted';
+        case VALIDATED:
+          return 'planned';
         case DELIVERED:
         default:
           return 'available';
@@ -63,7 +76,7 @@ export default {
   @import "~assets/css/head";
 
   .ride-status {
-    padding: 5px;
+    padding: 0 5px;
     width: 100%;
     font-weight: bold;
     display: inline-block;
@@ -72,17 +85,26 @@ export default {
       background: $success;
       color: findColorInvert($success);
     }
+    &-unavailable {
+      background: $gray;
+      color: findColorInvert($gray);
+    }
     &-planned {
-      background: $dark-gray;
+      background: repeating-linear-gradient(45deg, rgba(195, 195, 195, 0.85), rgba(195, 195, 195, 0.85) 1px,
+        #8192A9 1px, #8192A9 20px);
       color: findColorInvert($dark-gray);
     }
-    &-going {
-      background: $warning;
-      color: findColorInvert($warning);
+    &-accepted {
+      background: #8192A9;
+      color: findColorInvert($primary);
     }
-    &-coming {
+    &-driving {
       background: $primary;
       color: findColorInvert($primary);
+    }
+    &-waiting{
+      background: $warning;
+      color: findColorInvert($warning);
     }
   }
 </style>

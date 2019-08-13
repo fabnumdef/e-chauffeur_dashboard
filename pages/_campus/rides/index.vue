@@ -276,6 +276,7 @@
           v-if="can(ride, REJECT_BOUNDARY) || can(ride, REJECT_CAPACITY)"
           class="is-danger"
           :options="{[REJECTED_BOUNDARY]: 'Refuser (périmètre)', [REJECTED_CAPACITY]: 'Refuser (capacité)'}"
+          :open="false"
           @click="edit(ride, $event)"
         >
           Refuser la course
@@ -290,6 +291,7 @@
             [CANCEL_CUSTOMER_OVERLOAD]: 'Annuler (surcharge)',
             [CANCEL_CUSTOMER_MISSING]: 'Annuler (passager absent)',
           }"
+          :open="false"
           @click="changeStatus(ride, $event)"
         >
           Annuler la course

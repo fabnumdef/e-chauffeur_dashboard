@@ -50,8 +50,11 @@ export default {
       campus: 'context/campus',
     }),
   },
-  async asyncData({ params, $api }) {
-    const { data, pagination } = await $api.drivers(params.campus, Object.keys(columns).join(',')).getDrivers();
+  async asyncData({ params, $api, query }) {
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const { data, pagination } = await $api.drivers(params.campus, Object.keys(columns).join(','))
+      .getDrivers(offset, limit);
     return {
       drivers: data,
       pagination,
@@ -60,7 +63,10 @@ export default {
   methods: {
     async deleteDriver({ id }) {
       await this.$api.drivers(this.campus.id).deleteDriver(id);
-      const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(',')).getDrivers();
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(','))
+        .getDrivers(offset, limit);
       this.drivers = updatedList.data;
       this.pagination = updatedList.pagination;
     },
