@@ -71,7 +71,7 @@ export default {
         this.currentPage - Math.floor(extraPages / 2),
         this.currentPage + Math.floor(extraPages / 2) + 1,
       )
-        .filter(p => p > 0 && p < (this.numberOfPages));
+        .filter((p) => p > 0 && p < (this.numberOfPages));
 
       if (pages[0] && pages[0] > 1) {
         pages.unshift(1);

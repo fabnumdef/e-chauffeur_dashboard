@@ -15,7 +15,7 @@ export default function ({ store, app }) {
     watched.push(store.watch((state, getters) => getters['context/campus'], init));
   });
   ioInstance.on('disconnect', () => {
-    watched.forEach(unwatch => unwatch());
+    watched.forEach((unwatch) => unwatch());
   });
   const autoConnect = (isLogged) => {
     if (isLogged) {

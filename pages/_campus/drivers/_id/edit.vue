@@ -2,7 +2,7 @@
   <main>
     <header>
       <nuxt-link
-        v-if="driver.id"
+        v-if="driver && driver.id"
         :to="campusLink('drivers-id-calendar')"
         class="button is-primary is-pulled-right"
       >
@@ -12,7 +12,7 @@
         <span>Calendrier</span>
       </nuxt-link>
       <h1
-        v-if="id"
+        v-if="driver && id"
         class="title"
       >
         Chauffeur <em class="is-size-6">#{{ driver.id }} : {{ driver.email }}</em>

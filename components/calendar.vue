@@ -200,7 +200,7 @@ export default {
       const current = this.currentTime;
       const startOfDay = this.currentDateTime.startOf('days').toMillis();
       const diff = (current - startOfDay) / 1000;
-      return diff / SECONDS_IN_A_DAY * 100;
+      return (diff / SECONDS_IN_A_DAY) * 100;
     },
   },
   watch: {
@@ -228,7 +228,12 @@ export default {
         if (availabilities.length < 1) {
           return false;
         }
-        return availabilities.reduce((result, interval) => (result || interval.engulfs(d)), false);
+        return availabilities.reduce(
+          (result, interval) => (result
+            || Interval.fromDateTimes(DateTime.fromISO(interval.s), DateTime.fromISO(interval.e)).engulfs(d)
+          ),
+          false,
+        );
       }
       if (!this.parsedOpeningHours) {
         return false;
@@ -287,7 +292,7 @@ export default {
     },
 
     getClonedEvents() {
-      return this.events.map(e => Object.assign({}, e)).map((d) => {
+      return this.events.map((e) => ({ ...e })).map((d) => {
         const date = d;
         date.start = DateTime.fromISO(d.start);
         date.end = DateTime.fromISO(d.end);
@@ -304,7 +309,7 @@ export default {
             event.interval = col.intersection(ev.interval);
             return event;
           })
-          .filter(ev => !!ev.interval);
+          .filter((ev) => !!ev.interval);
       }
       // todo: make this rule generic
       return this.getClonedEvents()
@@ -320,9 +325,9 @@ export default {
       intervals.push(current);
       // @todo: Recursive reduce intervals
       const oh = this.days
-        .splitBy(A_DAY).map(d => intervals
-          .map(i => i.intersection(d))
-          .filter(i => !!i)
+        .splitBy(A_DAY).map((d) => intervals
+          .map((i) => i.intersection(d))
+          .filter((i) => !!i)
           .map((i) => {
             const day = d.start.toFormat('DDDD', { locale: 'en-US' }).substring(0, 2);
             const startTime = i.start.toLocaleString(DateTime.TIME_24_SIMPLE);
@@ -330,14 +335,14 @@ export default {
             return `${day} ${startTime}-${endTime}`;
           })
           .reduce((acc, s) => (acc.length ? [acc, s].join(';') : s), ''))
-        .filter(i => i !== '')
+        .filter((i) => i !== '')
         .reduce((acc, s) => (acc.length ? [acc, s].join(';') : s), '');
       this.$emit('opening-hours-update', oh);
     },
 
     getStyle(e, events) {
       const overlaping = events.filter(({ interval }) => e.interval.overlaps(interval));
-      const overlapingEventIndex = overlaping.findIndex(ev => ev.id === e.id);
+      const overlapingEventIndex = overlaping.findIndex((ev) => ev.id === e.id);
       const rowsToCover = e.interval.splitBy(this.SPLIT_MINUTES);
       const rowsToSkip = Interval
         .fromDateTimes(e.interval.start.startOf('days'), e.interval.start)

@@ -32,10 +32,12 @@
               </div>
               <div class="column filter-title-line" />
             </div>
-            <ec-date-picker
-              :value="filters.date"
-              @dateChange="updateFilterDate"
-            />
+            <no-ssr>
+              <ec-date-picker
+                :value="filters.date"
+                @dateChange="updateFilterDate"
+              />
+            </no-ssr>
           </div>
         </div>
       </div>

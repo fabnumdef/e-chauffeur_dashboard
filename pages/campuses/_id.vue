@@ -13,10 +13,11 @@ export default {
       throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'une base.');
     }
     return {
-      campus: Object.assign(
-        { phone: {}, categories: [] },
-        (await $api.campuses.getCampus(params.id, EDITABLE_FIELDS)).data,
-      ),
+      campus: {
+        phone: {},
+        categories: [],
+        ...(await $api.campuses.getCampus(params.id, EDITABLE_FIELDS)).data,
+      },
     };
   },
 };

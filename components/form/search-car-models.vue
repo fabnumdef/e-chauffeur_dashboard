@@ -32,6 +32,7 @@ export default {
   },
   data: () => ({
     carModels: [],
+    loading: false,
   }),
   async mounted() {
     this.loading = true;

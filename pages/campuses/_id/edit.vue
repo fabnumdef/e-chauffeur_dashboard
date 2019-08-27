@@ -93,7 +93,7 @@
         field-id="informations"
       >
         <no-ssr>
-          <markdown-editor
+          <vue-simplemde
             ref="markdownEditor"
             v-model="campus.information"
           />
@@ -126,7 +126,6 @@
 </template>
 
 <script>
-import markdownEditor from 'vue-simplemde/src/markdown-editor';
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
@@ -137,7 +136,6 @@ export default {
     ecField,
     ecGpsPoint,
     searchCategories,
-    markdownEditor,
   },
   props: {
     campus: {

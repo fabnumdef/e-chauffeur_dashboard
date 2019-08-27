@@ -1,6 +1,6 @@
 <template>
   <div>
-    <date-picker
+    <date-time
       v-model="value"
       range
       confirm
@@ -16,10 +16,7 @@
 </template>
 
 <script>
-import DatePicker from 'vue2-datepicker';
-
 export default {
-  components: { DatePicker },
   props: {
     value: {
       type: Array,

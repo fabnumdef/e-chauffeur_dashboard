@@ -3,41 +3,43 @@
     <h1 class="title">
       Supervision des courses
     </h1>
-    <div class="level">
-      <div class="level-left">
-        <div class="level-item box today">
-          <date-time
-            v-model="today"
-            lang="fr"
-            append-to-body
-            input-class="input"
-            format="YYYY-MM-DD"
-            :clearable="false"
-          >
-            <template slot="calendar-icon">
-              <fa-icon icon="calendar-alt" />
-            </template>
-          </date-time>
-          <button
-            class="button is-primary"
-            @click="toToday"
-          >
-            Aujourd'hui
-          </button>
+    <no-ssr>
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item box today">
+            <date-time
+              v-model="today"
+              lang="fr"
+              append-to-body
+              input-class="input"
+              format="YYYY-MM-DD"
+              :clearable="false"
+            >
+              <template slot="calendar-icon">
+                <fa-icon icon="calendar-alt" />
+              </template>
+            </date-time>
+            <button
+              class="button is-primary"
+              @click="toToday"
+            >
+              Aujourd'hui
+            </button>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item box today">
+            <button
+              class="button is-primary"
+              @click="mapToggle"
+            >
+              <span v-if="hideMap">Montrer la carte</span>
+              <span v-else>Cacher la carte</span>
+            </button>
+          </div>
         </div>
       </div>
-      <div class="level-right">
-        <div class="level-item box today">
-          <button
-            class="button is-primary"
-            @click="mapToggle"
-          >
-            <span v-if="hideMap">Montrer la carte</span>
-            <span v-else>Cacher la carte</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    </no-ssr>
     <vue-calendar
       :events="rides"
       with-current-time
@@ -89,166 +91,168 @@
         slot="modal"
         class="white-background"
       >
-        <ec-field
-          label="Type de course"
-          field-id="departure"
-        >
-          <search-category v-model="ride.category" />
-        </ec-field>
-        <ec-field
-          label="Dates"
-          field-id="dates"
-        >
-          <date-time
-            lang="fr"
-            append-to-body
-            input-class="input"
-            type="datetime"
-            range
-            :value="range"
-            :minute-step="5"
-            format="YYYY-MM-DD HH:mm"
-            range-separator="->"
-            @input="updateDates"
-          >
-            <template slot="calendar-icon">
-              <fa-icon icon="calendar" />
-            </template>
-          </date-time>
-        </ec-field>
-
-        <div class="columns">
+        <no-ssr>
           <ec-field
-            class="column"
-            label="Départ"
+            label="Type de course"
             field-id="departure"
           >
-            <search-poi
-              v-model="ride.departure"
-              v-autofocus="{
-                hasBeenFocused: hasBeenFocused,
-                focus: focusState.rideDeparture,
-                input: ride.departure,
-                inputName: 'rideDeparture',
-                cb: focusNext
-              }"
-              :current-campus="currentCampus"
-            />
+            <search-category v-model="ride.category" />
           </ec-field>
-
           <ec-field
-            class="column"
-            label="Arrivée"
-            field-id="arrival"
+            label="Dates"
+            field-id="dates"
           >
-            <search-poi
-              v-model="ride.arrival"
-              v-autofocus="{
-                hasBeenFocused: hasBeenFocused,
-                focus: focusState.rideArrival,
-                input: ride.arrival,
-                inputName: 'rideArrival',
-                cb: focusNext
-              }"
-              :current-campus="currentCampus"
-            />
-          </ec-field>
-        </div>
-
-        <div class="columns">
-          <ec-field
-            label="Nombre de passagers"
-            class="column"
-            field-id="passengers-count"
-          >
-            <div class="select">
-              <select
-                id="passengers-count"
-                v-model="ride.passengersCount"
-              >
-                <option
-                  v-for="i in 8"
-                  :key="i"
-                  :value="i"
-                >
-                  {{ i }}
-                </option>
-              </select>
-            </div>
-          </ec-field>
-
-          <ec-field
-            label="Téléphone"
-            class="column"
-            field-id="phone"
-          >
-            <input
-              id="phone"
-              v-model="ride.phone"
-              v-autofocus="{
-                hasBeenFocused: hasBeenFocused,
-                focus: focusState.phone,
-                input: ride.phone,
-                inputName: 'phone',
-                cb: focusNext
-              }"
-              class="input"
+            <date-time
+              lang="fr"
+              append-to-body
+              input-class="input"
+              type="datetime"
+              range
+              :value="range"
+              :minute-step="5"
+              format="YYYY-MM-DD HH:mm"
+              range-separator="->"
+              @input="updateDates"
             >
+              <template slot="calendar-icon">
+                <fa-icon icon="calendar" />
+              </template>
+            </date-time>
           </ec-field>
-        </div>
 
-        <div class="columns">
-          <div class="column">
-            <div class="control">
-              <label class="checkbox">
-                <input
-                  v-model="ride.luggage"
-                  type="checkbox"
+          <div class="columns">
+            <ec-field
+              class="column"
+              label="Départ"
+              field-id="departure"
+            >
+              <search-poi
+                v-model="ride.departure"
+                v-autofocus="{
+                  hasBeenFocused: hasBeenFocused,
+                  focus: focusState.rideDeparture,
+                  input: ride.departure,
+                  inputName: 'rideDeparture',
+                  cb: focusNext
+                }"
+                :current-campus="currentCampus"
+              />
+            </ec-field>
+
+            <ec-field
+              class="column"
+              label="Arrivée"
+              field-id="arrival"
+            >
+              <search-poi
+                v-model="ride.arrival"
+                v-autofocus="{
+                  hasBeenFocused: hasBeenFocused,
+                  focus: focusState.rideArrival,
+                  input: ride.arrival,
+                  inputName: 'rideArrival',
+                  cb: focusNext
+                }"
+                :current-campus="currentCampus"
+              />
+            </ec-field>
+          </div>
+
+          <div class="columns">
+            <ec-field
+              label="Nombre de passagers"
+              class="column"
+              field-id="passengers-count"
+            >
+              <div class="select">
+                <select
+                  id="passengers-count"
+                  v-model="ride.passengersCount"
                 >
-                Présence de bagages.
-              </label>
+                  <option
+                    v-for="i in 8"
+                    :key="i"
+                    :value="i"
+                  >
+                    {{ i }}
+                  </option>
+                </select>
+              </div>
+            </ec-field>
+
+            <ec-field
+              label="Téléphone"
+              class="column"
+              field-id="phone"
+            >
+              <input
+                id="phone"
+                v-model="ride.phone"
+                v-autofocus="{
+                  hasBeenFocused: hasBeenFocused,
+                  focus: focusState.phone,
+                  input: ride.phone,
+                  inputName: 'phone',
+                  cb: focusNext
+                }"
+                class="input"
+              >
+            </ec-field>
+          </div>
+
+          <div class="columns">
+            <div class="column">
+              <div class="control">
+                <label class="checkbox">
+                  <input
+                    v-model="ride.luggage"
+                    type="checkbox"
+                  >
+                  Présence de bagages.
+                </label>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="columns">
+          <div class="columns">
+            <ec-field
+              class="column"
+              label="Chauffeur"
+              field-id="driver"
+            >
+              <search-available-driver
+                v-model="ride.driver"
+                :start="ride.start"
+                :end="ride.end"
+                :campus="campus"
+              />
+            </ec-field>
+            <ec-field
+              class="column only-one-scroll"
+              label="Véhicule"
+              field-id="car"
+            >
+              <search-available-car
+                v-model="ride.car"
+                :start="ride.start"
+                :end="ride.end"
+                :campus="campus"
+                :driver="ride.driver"
+              />
+            </ec-field>
+          </div>
+
           <ec-field
-            class="column"
-            label="Chauffeur"
-            field-id="driver"
+            label="Commentaires"
+            field-id="comments"
           >
-            <search-available-driver
-              v-model="ride.driver"
-              :start="ride.start"
-              :end="ride.end"
-              :campus="campus"
+            <textarea
+              id="comments"
+              v-model="ride.comments"
+              class="textarea"
             />
           </ec-field>
-          <ec-field
-            class="column only-one-scroll"
-            label="Véhicule"
-            field-id="car"
-          >
-            <search-available-car
-              v-model="ride.car"
-              :start="ride.start"
-              :end="ride.end"
-              :campus="campus"
-              :driver="ride.driver"
-            />
-          </ec-field>
-        </div>
-
-        <ec-field
-          label="Commentaires"
-          field-id="comments"
-        >
-          <textarea
-            id="comments"
-            v-model="ride.comments"
-            class="textarea"
-          />
-        </ec-field>
+        </no-ssr>
       </template>
       <template slot="modal-submit">
         <button
@@ -399,13 +403,13 @@ export default {
   computed: {
     ...mapGetters({ rides: 'realtime/rides', currentCampus: 'context/campus', hideMap: 'context/hideMap' }),
     ...Object.keys(actions)
-      .map(a => ({ [a]: () => actions[a] }))
+      .map((a) => ({ [a]: () => actions[a] }))
       .reduce((acc, curr) => Object.assign(acc, curr), {}),
     range() {
       return [
         this.ride.start || null,
         this.ride.end || null,
-      ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
+      ].map((l) => (l && l.toJSDate ? l.toJSDate() : null));
     },
   },
 
@@ -489,7 +493,7 @@ export default {
     },
 
     async edit(r, status) {
-      const ride = Object.assign({}, r, status ? { status } : {});
+      const ride = { ...r, ...(status ? { status } : {}) };
 
       try {
         if (ride.id) {
@@ -588,8 +592,8 @@ export default {
     getCurrentRide(driverId) {
       const currentTime = DateTime.fromJSDate(this.currentTime);
       return this.rides
-        .filter(r => r.driver.id === driverId)
-        .find(r => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
+        .filter((r) => r.driver.id === driverId)
+        .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     can: ({ status }, action) => {
       const state = Status(status);

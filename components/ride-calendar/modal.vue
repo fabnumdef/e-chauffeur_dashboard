@@ -329,7 +329,7 @@ export default {
 
   data() {
     return {
-      ride: Object.assign({}, this.currentRide),
+      ride: { ...this.currentRide },
       focusState: {
         rideDeparture: 'unwatch',
         rideArrival: 'unwatch',
@@ -349,16 +349,16 @@ export default {
       return [
         this.ride.start || null,
         this.ride.end || null,
-      ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
+      ].map((l) => (l && l.toJSDate ? l.toJSDate() : null));
     },
     ...Object.keys(actions)
-      .map(a => ({ [a]: () => actions[a] }))
+      .map((a) => ({ [a]: () => actions[a] }))
       .reduce((acc, curr) => Object.assign(acc, curr), {}),
   },
 
   watch: {
     currentRide() {
-      this.ride = Object.assign({}, this.currentRide);
+      this.ride = { ...this.currentRide };
     },
     modalOpen() {
       if (this.modalOpen && this.ride && !this.ride.departure) {
@@ -405,7 +405,7 @@ export default {
     },
 
     async edit(r, status) {
-      const ride = Object.assign({}, r, status ? { status } : {});
+      const ride = { ...r, ...(status ? { status } : {}) };
 
       try {
         if (ride.id) {
