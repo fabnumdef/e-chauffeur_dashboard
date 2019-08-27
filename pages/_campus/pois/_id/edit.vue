@@ -89,9 +89,9 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
-import { mapGetters } from 'vuex';
 
 export default {
   components: {

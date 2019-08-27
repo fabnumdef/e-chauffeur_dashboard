@@ -97,9 +97,9 @@
 </template>
 <script>
 import { DateTime } from 'luxon';
+import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import vueCalendar from '~/components/calendar.vue';
-import { mapGetters } from 'vuex';
 
 const generateEmptyEvent = () => ({
   title: null,
@@ -130,7 +130,7 @@ export default {
       return [
         this.event.start || null,
         this.event.end || null,
-      ].map(l => (l && l.toJSDate ? l.toJSDate() : null));
+      ].map((l) => (l && l.toJSDate ? l.toJSDate() : null));
     },
     ...mapGetters({
       campus: 'context/campus',

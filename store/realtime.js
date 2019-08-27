@@ -19,7 +19,7 @@ export const mutations = {
     if (!driver.id) {
       throw new Error('User id is required');
     }
-    const i = s.drivers.findIndex(d => driver.id === d.id);
+    const i = s.drivers.findIndex((d) => driver.id === d.id);
 
     if (i === -1) {
       s.drivers.push(driver);
@@ -42,8 +42,8 @@ export const mutations = {
 };
 
 export const getters = {
-  drivers: s => s.drivers,
-  rides: s => s.rides,
+  drivers: (s) => s.drivers,
+  rides: (s) => s.rides,
 };
 
 export const actions = {

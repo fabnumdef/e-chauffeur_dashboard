@@ -110,8 +110,8 @@ export default {
     getCurrentRide({ date, id } = {}) {
       const currentTime = DateTime.fromISO(date);
       return this.rides
-        .filter(r => r.driver.id === id)
-        .find(r => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
+        .filter((r) => r.driver.id === id)
+        .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     getStatus(driver) {
       if (!driver.currentRide || !driver.currentRide.status) {
@@ -133,7 +133,7 @@ export default {
       let initials = '';
       const words = name.split(' ');
       if (words.length > 1) {
-        initials = words.map(n => n[0]).join('');
+        initials = words.map((n) => n[0]).join('');
       } else {
         initials += name[0] || '';
         initials += name[1] || '';

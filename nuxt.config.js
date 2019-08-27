@@ -1,6 +1,4 @@
 module.exports = {
-  mode: 'spa',
-
   head: {
     title: 'e-Chauffeur - Dashboard',
     link: [
@@ -15,11 +13,11 @@ module.exports = {
   css: [
     { src: '~assets/css/main.scss', lang: 'scss' },
   ],
-
   plugins: [
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
-    '~/plugins/datetime-picker.js',
+    { src: '~plugins/simplemde-plugin.js', ssr: false },
+    { src: '~/plugins/datetime-picker.js', ssr: false },
     '~/plugins/realtime.js',
   ],
 
@@ -89,6 +87,8 @@ module.exports = {
           'faFileExport',
           'faCommentDots',
           'faExternalLinkAlt',
+          'faChevronLeft',
+          'faUserCircle',
         ],
       },
     ],
@@ -98,5 +98,8 @@ module.exports = {
     name: 'e-Chauffeur - Régulateur',
     short_name: 'e-Chauffeur',
     description: 'Application régulateur',
+  },
+  server: {
+    host: '0.0.0.0',
   },
 };

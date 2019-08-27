@@ -40,7 +40,7 @@
         >
       </ec-field>
       <ec-field
-        label="Code secret"
+        label="Mot de passe"
         field-id="password"
       >
         <input

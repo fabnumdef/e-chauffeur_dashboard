@@ -34,6 +34,7 @@ export default {
   data() {
     return {
       campuses: this.value || [],
+      loading: false,
     };
   },
   async mounted() {

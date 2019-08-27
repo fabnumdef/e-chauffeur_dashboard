@@ -16,10 +16,10 @@ export const mutations = {
 };
 
 export const getters = {
-  hasCampus: s => s.campus !== null,
-  isCampus: s => id => typeof s.campus === 'object' && !!s.campus && s.campus.id === id,
-  campus: s => s.campus,
-  hideMap: s => s.hideMap,
+  hasCampus: (s) => s.campus !== null,
+  isCampus: (s) => (id) => typeof s.campus === 'object' && !!s.campus && s.campus.id === id,
+  campus: (s) => s.campus,
+  hideMap: (s) => s.hideMap,
 };
 
 export const actions = {
