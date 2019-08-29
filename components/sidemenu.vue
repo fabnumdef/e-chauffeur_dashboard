@@ -1,5 +1,6 @@
 <template>
   <nav class="menu">
+    <reconnecting-hero />
     <p class="menu-label">
       <nuxt-link :to="{ name: 'index' }">
         <img
@@ -154,10 +155,12 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import searchUserCampus from '~/components/form/search-user-campus.vue';
+import reconnectingHero from '~/components/reconnecting-hero.vue';
 
 export default {
   components: {
     searchUserCampus,
+    reconnectingHero,
   },
   computed: {
     ...mapGetters({ campus: 'context/campus' }),

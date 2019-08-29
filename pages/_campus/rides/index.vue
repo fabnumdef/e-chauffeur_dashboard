@@ -401,7 +401,12 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ rides: 'realtime/rides', currentCampus: 'context/campus', hideMap: 'context/hideMap' }),
+    ...mapGetters({
+      rides: 'realtime/rides',
+      currentCampus: 'context/campus',
+      hideMap: 'context/hideMap',
+      isReconnecting: 'isReconnecting',
+    }),
     ...Object.keys(actions)
       .map((a) => ({ [a]: () => actions[a] }))
       .reduce((acc, curr) => Object.assign(acc, curr), {}),
@@ -428,6 +433,17 @@ export default {
       const { data: rides } = await ridesApi.getRides(start, end, { limit: 1000 });
       this.drivers = drivers;
       this.setRides(rides);
+    },
+    async isReconnecting(v) {
+      if (!v) {
+        const today = DateTime.fromJSDate(this.today);
+        const start = today.startOf('days').toJSDate();
+        const end = today.endOf('days').toJSDate();
+        const ridesApi = this.$api.rides(this.campus, EDITABLE_FIELDS);
+
+        const { data: rides } = await ridesApi.getRides(start, end, { limit: 1000 });
+        this.setRides(rides);
+      }
     },
   },
 
