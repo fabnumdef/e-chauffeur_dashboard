@@ -21,7 +21,7 @@ build:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - cat package.json | head -10
+    - cat package.json
     - /kaniko/executor
       --context $CI_PROJECT_DIR
       --dockerfile $CI_PROJECT_DIR/Dockerfile
@@ -41,7 +41,7 @@ deploy_review:
     - helm upgrade
       --install
       --namespace e-chauffeur
-      --set image.tag="${CI_COMMIT_REF_SLUG}"
+      --set image.tag="${CI_COMMIT_SHA}"
       --set ingress.host="${URL_REVIEW}"
       --set imageCredentials.username="${DOCKER_REGISTRY_USER}"
       --set imageCredentials.password="${DOCKER_REGISTRY_PASSWORD}"
@@ -69,7 +69,7 @@ deploy_staging:
     - helm upgrade
       --install
       --namespace e-chauffeur
-      --set image.tag="${CI_COMMIT_REF_SLUG}"
+      --set image.tag="${CI_COMMIT_SHA}"
       --set ingress.host="${STAGING_DOMAIN}"
       --set imageCredentials.username="${DOCKER_REGISTRY_USER}"
       --set imageCredentials.password="${DOCKER_REGISTRY_PASSWORD}"
@@ -96,7 +96,7 @@ deploy_prod:
     - helm upgrade
       --install
       --namespace e-chauffeur
-      --set image.tag="${CI_COMMIT_REF_SLUG}"
+      --set image.tag="${CI_COMMIT_SHA}"
       --set ingress.host="${PRODUCTION_DOMAIN}"
       --set imageCredentials.username="${DOCKER_REGISTRY_USER}"
       --set imageCredentials.password="${DOCKER_REGISTRY_PASSWORD}"
