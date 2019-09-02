@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     isAvailable() {
-      return this.driver.availabilities.some((avail) => (avail.contains(DateTime.local())));
+      return this.driver.availabilities.some((avail) => (avail.contains && avail.contains(DateTime.local())));
     },
   },
 };
