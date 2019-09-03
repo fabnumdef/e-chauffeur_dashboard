@@ -31,6 +31,7 @@ module.exports = {
           campuses: 'campuses',
           carEvents: 'car-events',
           carModels: 'car-models',
+          timeSlot: 'time-slots',
           cars: 'cars',
           categories: 'categories',
           feedback: 'feedback',

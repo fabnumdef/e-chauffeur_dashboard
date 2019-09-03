@@ -35,6 +35,11 @@
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
+        <nuxt-link :to="campusLink('planning')">
+          Planning
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus">
         <nuxt-link :to="campusLink('rides')">
           Courses
         </nuxt-link>
