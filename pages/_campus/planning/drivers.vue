@@ -138,6 +138,7 @@
             :events="calEvents"
             @cell-click="openCreate"
             @event-focus="openEdit"
+            @view-change="viewChange"
           >
             <template #event-renderer="{ event: {content}, view }">
               <header>
@@ -233,6 +234,11 @@ export default {
     };
   },
   methods: {
+    async viewChange({ startDate, endDate }) {
+      const { data, pagination } = await this.$api.timeSlot(TIMESLOT_DATA, this.campusId)
+        .getTimeSlotsBetween(startDate, endDate);
+      this.events = { data, pagination };
+    },
     toggleModal(val) {
       this.isModalOpen = typeof val !== 'undefined' ? val : this.modalOpen;
     },
