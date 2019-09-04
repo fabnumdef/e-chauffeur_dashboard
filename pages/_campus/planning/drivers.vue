@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="box">
+      <div class="title">Planning</div>
       <client-only>
         <ec-modal
           :active="isModalOpen"
@@ -99,7 +100,7 @@
               v-for="driver of drivers.data"
               :key="driver.id"
             >
-              {{ driver.id }}
+              {{ driver.firstname }} {{driver.lastname}}
             </li>
           </ul>
         </aside>
@@ -249,3 +250,9 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss">
+  @import "~assets/css/head";
+  .box .title {
+    color: $black;
+  }
+</style>

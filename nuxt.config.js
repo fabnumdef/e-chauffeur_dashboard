@@ -39,7 +39,6 @@ module.exports = {
           logs: 'logs',
           pois: 'pois',
           rides: 'rides',
-          userEvents: 'user-events',
           users: 'users',
           drivers: 'drivers',
           phones: 'phones',
