@@ -3,7 +3,7 @@
     <h1 class="title">
       Supervision des courses
     </h1>
-    <no-ssr>
+    <client-only>
       <div class="level">
         <div class="level-left">
           <div class="level-item box today">
@@ -39,7 +39,7 @@
           </div>
         </div>
       </div>
-    </no-ssr>
+    </client-only>
     <vue-calendar
       :events="rides"
       with-current-time
@@ -91,7 +91,7 @@
         slot="modal"
         class="white-background"
       >
-        <no-ssr>
+        <client-only>
           <ec-field
             label="Type de course"
             field-id="departure"
@@ -252,7 +252,7 @@
               class="textarea"
             />
           </ec-field>
-        </no-ssr>
+        </client-only>
       </template>
       <template slot="modal-submit">
         <button
