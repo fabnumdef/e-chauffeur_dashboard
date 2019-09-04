@@ -421,7 +421,7 @@ export default {
       const ridesApi = this.$api.rides(this.campus, EDITABLE_FIELDS);
       // todo: Should be able to trigger queries in the same time.
       const { data: drivers } = await ridesApi.getAvailableDrivers(
-        'id,name,availabilities(s,e)',
+        'id,name,availabilities(start,end)',
         start,
         end,
       );
@@ -437,7 +437,7 @@ export default {
     const end = DateTime.local().endOf('days').toJSDate();
     const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
     const { data: drivers } = await ridesApi.getAvailableDrivers(
-      'id,name,availabilities(s,e)',
+      'id,name,availabilities(start,end)',
       start,
       end,
     );
