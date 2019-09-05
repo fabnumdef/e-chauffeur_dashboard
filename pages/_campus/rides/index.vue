@@ -45,6 +45,7 @@
       with-current-time
       :schedule-with="drivers"
       :current-date="today"
+      with-empty-col
       without-default-event-style
       :modal-status="modalOpen"
       @modal-submit="edit(ride)"
@@ -545,7 +546,7 @@ export default {
     },
 
     onClickEvent(ride) {
-      this.ride = ride;
+      this.ride = Object.assign(generateEmptyRide(), ride);
       this.toggleModal(true);
     },
 
@@ -592,7 +593,7 @@ export default {
     getCurrentRide(driverId) {
       const currentTime = DateTime.fromJSDate(this.currentTime);
       return this.rides
-        .filter((r) => r.driver.id === driverId)
+        .filter((r) => r.driver && r.driver.id === driverId)
         .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     can: ({ status }, action) => {

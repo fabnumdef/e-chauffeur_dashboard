@@ -42,6 +42,40 @@
         </div>
       </div>
       <div
+        v-if="withEmptyCol"
+        class="column"
+      >
+        <div class="day-title">
+          Requêtes utilisateur {{eventsToday(null)}}
+        </div>
+        <div class="hour-slots">
+          <div
+            v-for="(e, i) of eventsToday(null)"
+            :key="i"
+            class="event"
+            :class="{ 'event-default': !withoutDefaultEventStyle }"
+            :style="getStyle(e, eventsToday(null))"
+            @click="clickEvent(e)"
+          >
+            <slot
+              name="event-card"
+              :event="e"
+            >
+              <p>Du {{ e.start.toLocaleString(DATETIME_FULL) }} au {{ e.end.toLocaleString(DATETIME_FULL) }}.</p>
+              <p>{{ e.title }}</p>
+            </slot>
+          </div>
+          <div>
+            <div
+              v-for="s of currentDay.splitBy(SPLIT_MINUTES)"
+              :key="s.start.toISO()"
+              class="hour-slot"
+              :title="s.start.toLocaleString(DATETIME_FULL)"
+            />
+          </div>
+        </div>
+      </div>
+      <div
         v-for="col of columns"
         :key="col.id"
         class="column"
@@ -111,6 +145,10 @@ export default {
     vueModal,
   },
   props: {
+    withEmptyCol: {
+      type: Boolean,
+      default: false,
+    },
     withoutDefaultEventStyle: {
       type: Boolean,
       default: false,
@@ -311,11 +349,15 @@ export default {
           })
           .filter((ev) => !!ev.interval);
       }
+      if (col === null) {
+        return this.getClonedEvents()
+          .filter((ev) => typeof ev.driver === 'undefined' || ev.driver === null || ev.driver.id === null);
+      }
       // todo: make this rule generic
       return this.getClonedEvents()
         .filter((ev) => {
           const end = DateTime.fromISO(ev.end);
-          return ev.driver.id === col.id && end.hasSame(this.currentDateTime, 'day');
+          return ev.driver && ev.driver.id === col.id && end.hasSame(this.currentDateTime, 'day');
         });
     },
 
