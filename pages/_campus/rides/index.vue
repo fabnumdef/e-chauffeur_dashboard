@@ -41,7 +41,7 @@
       </div>
     </no-ssr>
     <vue-calendar
-      :events="rides"
+      :events="events"
       with-current-time
       :schedule-with="drivers"
       :current-date="today"
@@ -307,6 +307,7 @@ import { mapGetters, mapMutations } from 'vuex';
 import { DateTime, Interval } from 'luxon';
 import Status from '@fabnumdef/e-chauffeur_lib-vue/api/status';
 import {
+  DRAFTED,
   DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, CREATED,
   REJECTED_BOUNDARY, REJECTED_CAPACITY,
   CANCELED_TECHNICAL,
@@ -411,6 +412,9 @@ export default {
         this.ride.start || null,
         this.ride.end || null,
       ].map((l) => (l && l.toJSDate ? l.toJSDate() : null));
+    },
+    events() {
+      return this.rides.filter(({ status }) => status !== DRAFTED);
     },
   },
 

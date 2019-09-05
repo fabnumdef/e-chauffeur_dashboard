@@ -46,7 +46,7 @@
         class="column"
       >
         <div class="day-title">
-          Requêtes utilisateur {{eventsToday(null)}}
+          Requêtes utilisateur
         </div>
         <div class="hour-slots">
           <div
