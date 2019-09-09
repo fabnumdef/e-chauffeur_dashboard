@@ -92,12 +92,12 @@
         label="Informations"
         field-id="informations"
       >
-        <no-ssr>
+        <client-only>
           <vue-simplemde
             ref="markdownEditor"
             v-model="campus.information"
           />
-        </no-ssr>
+        </client-only>
       </ec-field>
 
       <button

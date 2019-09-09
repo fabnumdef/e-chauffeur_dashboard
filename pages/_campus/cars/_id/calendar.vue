@@ -30,7 +30,7 @@
         @modal-toggle="toggleModal"
       >
         <template slot="modal">
-          <no-ssr>
+          <client-only>
             <ec-field
               label="Dates"
               field-id="dates"
@@ -63,7 +63,7 @@
                 class="input"
               >
             </ec-field>
-          </no-ssr>
+          </client-only>
         </template>
       </vue-calendar>
     </div>

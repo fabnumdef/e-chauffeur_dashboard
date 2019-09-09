@@ -274,7 +274,7 @@ export default {
       this.drivers.forEach((driver, index) => {
         if (driver.availabilities && driver.availabilities.length > 0) {
           driver.availabilities.forEach((avail) => {
-            if (avail.start.hour > START_DAY_HOUR) {
+            if (avail.start && avail.start.hour > START_DAY_HOUR) {
               const start = getVueCalFloorDateFromISO(DateTime.fromObject({ hour: START_DAY_HOUR }).toISO());
               const end = getVueCalCeilDateFromISO(avail.start.toISO());
               const split = index + 1;
@@ -286,7 +286,7 @@ export default {
                 background: true,
               });
             }
-            if (avail.end.hour < END_DAY_HOUR) {
+            if (avail.end && avail.end.hour < END_DAY_HOUR) {
               const start = getVueCalFloorDateFromISO(avail.end.toISO());
               const end = getVueCalCeilDateFromISO(DateTime.fromObject({ hour: END_DAY_HOUR }).toISO());
               const split = index + 1;

@@ -3,7 +3,7 @@
     <h1 class="title">
       Supervision des courses
     </h1>
-    <no-ssr>
+    <client-only>
       <div class="level">
         <div class="level-left">
           <div class="level-item box today">
@@ -39,7 +39,7 @@
           </div>
         </div>
       </div>
-    </no-ssr>
+    </client-only>
     <vue-calendar
       :events="events"
       with-current-time
@@ -92,7 +92,7 @@
         slot="modal"
         class="white-background"
       >
-        <no-ssr>
+        <client-only>
           <ec-field
             label="Type de course"
             field-id="departure"
@@ -253,7 +253,7 @@
               class="textarea"
             />
           </ec-field>
-        </no-ssr>
+        </client-only>
       </template>
       <template slot="modal-submit">
         <button
@@ -431,7 +431,7 @@ export default {
       const ridesApi = this.$api.rides(this.campus, EDITABLE_FIELDS);
       // todo: Should be able to trigger queries in the same time.
       const { data: drivers } = await ridesApi.getAvailableDrivers(
-        'id,name,availabilities(s,e)',
+        'id,name,availabilities(start,end)',
         start,
         end,
       );
@@ -458,7 +458,7 @@ export default {
     const end = DateTime.local().endOf('days').toJSDate();
     const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
     const { data: drivers } = await ridesApi.getAvailableDrivers(
-      'id,name,availabilities(s,e)',
+      'id,name,availabilities(start,end)',
       start,
       end,
     );

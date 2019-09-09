@@ -32,12 +32,12 @@
               </div>
               <div class="column filter-title-line" />
             </div>
-            <no-ssr>
+            <client-only>
               <ec-date-picker
                 :value="filters.date"
                 @dateChange="updateFilterDate"
               />
-            </no-ssr>
+            </client-only>
           </div>
         </div>
       </div>
@@ -196,7 +196,7 @@
               >
                 <div class="columns">
                   <div class="column is-one-quarter">
-                    <no-ssr>
+                    <client-only>
                       <l-map
                         :zoom="13"
                         :center="center"
@@ -223,7 +223,7 @@
                           </l-icon>
                         </l-marker>
                       </l-map>
-                    </no-ssr>
+                    </client-only>
                   </div>
                   <div class="column">
                     <div class="columns">

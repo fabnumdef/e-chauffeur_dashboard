@@ -21,7 +21,7 @@
       id="map-wrap"
       :class="{'fullscreen': isFullscreen}"
     >
-      <no-ssr>
+      <client-only>
         <l-map
           :zoom="13"
           :center="center"
@@ -58,7 +58,7 @@
             </l-icon>
           </l-marker>
         </l-map>
-      </no-ssr>
+      </client-only>
     </div>
   </div>
 </template>
