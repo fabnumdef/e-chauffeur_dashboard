@@ -89,6 +89,7 @@ module.exports = {
           'faExternalLinkAlt',
           'faChevronLeft',
           'faUserCircle',
+          'faSpinner',
         ],
       },
     ],

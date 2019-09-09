@@ -13,8 +13,13 @@ export default function ({ store, app }) {
     };
     init(store.getters['context/campus']);
     watched.push(store.watch((state, getters) => getters['context/campus'], init));
+    store.dispatch('reconnecting', false);
+  });
+  ioInstance.on('reconnecting', () => {
+    store.dispatch('reconnecting', true);
   });
   ioInstance.on('disconnect', () => {
+    store.dispatch('reconnecting', true);
     watched.forEach((unwatch) => unwatch());
   });
   const autoConnect = (isLogged) => {
