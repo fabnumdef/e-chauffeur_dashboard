@@ -41,10 +41,11 @@
       </div>
     </no-ssr>
     <vue-calendar
-      :events="rides"
+      :events="events"
       with-current-time
       :schedule-with="drivers"
       :current-date="today"
+      with-empty-col
       without-default-event-style
       :modal-status="modalOpen"
       @modal-submit="edit(ride)"
@@ -306,6 +307,7 @@ import { mapGetters, mapMutations } from 'vuex';
 import { DateTime, Interval } from 'luxon';
 import Status from '@fabnumdef/e-chauffeur_lib-vue/api/status';
 import {
+  DRAFTED,
   DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED, CREATED,
   REJECTED_BOUNDARY, REJECTED_CAPACITY,
   CANCELED_TECHNICAL,
@@ -415,6 +417,9 @@ export default {
         this.ride.start || null,
         this.ride.end || null,
       ].map((l) => (l && l.toJSDate ? l.toJSDate() : null));
+    },
+    events() {
+      return this.rides.filter(({ status }) => status !== DRAFTED);
     },
   },
 
@@ -561,7 +566,7 @@ export default {
     },
 
     onClickEvent(ride) {
-      this.ride = ride;
+      this.ride = Object.assign(generateEmptyRide(), ride);
       this.toggleModal(true);
     },
 
@@ -608,7 +613,7 @@ export default {
     getCurrentRide(driverId) {
       const currentTime = DateTime.fromJSDate(this.currentTime);
       return this.rides
-        .filter((r) => r.driver.id === driverId)
+        .filter((r) => r.driver && r.driver.id === driverId)
         .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     can: ({ status }, action) => {
