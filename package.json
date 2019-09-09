@@ -15,7 +15,7 @@
   "dependencies": {
     "@fabnumdef/e-chauffeur_lib-vue": "0.0.13",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
-    "@nuxtjs/auth": "^4.8.1",
+    "@nuxtjs/auth": "^4.8.2",
     "@qonfucius/vue-cal": "~1.59.6",
     "i18next-client": "^1.11.4",
     "lodash.debounce": "^4.0.8",

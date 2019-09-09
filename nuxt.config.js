@@ -90,6 +90,7 @@ module.exports = {
           'faChevronLeft',
           'faUserCircle',
           'faCog',
+          'faSpinner',
         ],
       },
     ],
