@@ -61,8 +61,10 @@ export default {
   components: {
     ecList,
   },
-  async asyncData({ $api }) {
-    const { data, pagination } = await $api.categories('id,label').getCategories();
+  async asyncData({ $api, query }) {
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const { data, pagination } = await $api.categories('id,label').getCategories(offset, limit);
     return {
       categories: data,
       pagination,
@@ -73,7 +75,9 @@ export default {
       if (window && window.confirm('Voulez vous vraiment supprimer cette catégorie ?')) {
         const categoryAPI = this.$api.categories('id,label');
         await categoryAPI.deleteCategory(id);
-        const updatedList = await categoryAPI.getCategories();
+        const offset = parseInt(this.$route.query.offset, 10) || 0;
+        const limit = parseInt(this.$route.query.limit, 10) || 30;
+        const updatedList = await categoryAPI.getCategories(offset, limit);
         this.categories = updatedList.data;
         this.pagination = updatedList.pagination;
       }
