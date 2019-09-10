@@ -57,7 +57,7 @@
 import ecList from '~/components/crud/list.vue';
 
 export default {
-  watchQuery: ['offset'],
+  watchQuery: ['offset', 'limit'],
   components: {
     ecList,
   },

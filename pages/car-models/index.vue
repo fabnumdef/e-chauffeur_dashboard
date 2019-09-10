@@ -62,7 +62,7 @@ function getCarModels() {
 }
 
 export default {
-  watchQuery: ['offset'],
+  watchQuery: ['offset', 'limit'],
   components: {
     ecList,
   },

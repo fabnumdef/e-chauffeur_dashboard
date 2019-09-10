@@ -63,7 +63,7 @@ const FIELDS = [
 ];
 
 export default {
-  watchQuery: ['offset'],
+  watchQuery: ['offset', 'limit'],
   components: {
     ecList,
   },

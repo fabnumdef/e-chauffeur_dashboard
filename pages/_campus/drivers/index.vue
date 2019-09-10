@@ -40,7 +40,7 @@ import ecList from '~/components/crud/list.vue';
 const columns = { id: 'ID', email: 'E-mail' };
 
 export default {
-  watchQuery: ['offset'],
+  watchQuery: ['offset', 'limit'],
   components: {
     ecList,
   },
