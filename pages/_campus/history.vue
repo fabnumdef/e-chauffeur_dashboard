@@ -174,10 +174,14 @@
                 {{ getFormatDate(ride.start, 'T') }}
               </div>
               <div class="column">
-                {{ ride.driver.name }}
+                <template v-if="ride.driver">
+                  {{ ride.driver.name }}
+                </template>
               </div>
               <div class="column">
+                <template v-if="ride.category">
                 {{ ride.category.label }}
+                </template>
               </div>
               <div class="column">
                 <span
