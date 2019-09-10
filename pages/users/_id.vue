@@ -10,11 +10,10 @@ export default {
     if (!app.$auth.isRegulator()) {
       throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'un utilisateur.');
     }
+    const { data: user } = await $api.users
+      .getUser(params.id, 'id,firstname,lastname,name,email,roles(role,campuses(id,name))');
     return {
-      user: {
-        workingHours: '',
-        ...(await $api.users.getUser(params.id, 'id,name,email,roles(role,campuses(id,name)),workingHours')).data,
-      },
+      user,
     };
   },
 };
