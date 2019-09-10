@@ -78,7 +78,7 @@
             <div>
               {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
             </div>
-            <div>
+            <div v-if="event.ride.car">
               {{ event.ride.car.model.label }} - {{ event.ride.car.id }}
             </div>
             <div>
@@ -257,7 +257,7 @@ export default {
       return this.rides.map((ride) => {
         const start = getVueCalFloorDateFromISO(ride.start);
         const end = getVueCalCeilDateFromISO(ride.end);
-        const split = this.drivers.findIndex((driver) => driver.id === ride.driver.id) + 1;
+        const split = ride.driver ? this.drivers.findIndex((driver) => driver.id === ride.driver.id) + 1 : 1;
         const clas = `ride-event ${this.eventStatusClass(ride)}`;
         return {
           start,
@@ -271,6 +271,7 @@ export default {
     events() {
       const evts = this.ridesCalendar;
       const openingHoursEvents = [];
+      // @todo Attention ici les boucles ne marchent pas en SSR, on n'a donc pas les heures non travaillees
       this.drivers.forEach((driver, index) => {
         if (driver.availabilities && driver.availabilities.length > 0) {
           driver.availabilities.forEach((avail) => {
@@ -321,13 +322,15 @@ export default {
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
     onClickAndRelease(event) {
-      this.initRide();
-      const { id, name } = this.drivers[event.split - 1];
-      this.updateDates([getDateTimeFloorFromVueCal(event.start), getDateTimeCeilFromVueCal(event.end)], {
-        id,
-        name,
-      });
-      this.toggleModal(true);
+      if (event.split > 1) {
+        this.initRide();
+        const { id, name } = this.drivers[event.split - 1];
+        this.updateDates([getDateTimeFloorFromVueCal(event.start), getDateTimeCeilFromVueCal(event.end)], {
+          id,
+          name,
+        });
+        this.toggleModal(true);
+      }
     },
     onClickEvent(event) {
       if (event.ride) {
@@ -363,9 +366,12 @@ export default {
       }
     },
     getCurrentRide(driverId) {
+      if (driverId === 'userRequest') {
+        return null;
+      }
       const currentTime = DateTime.fromJSDate(new Date());
       return this.rides
-        .filter((r) => r.driver.id === driverId)
+        .filter((r) => r.driver && r.driver.id === driverId)
         .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     getFormatedDate(date, unit = 'day') {

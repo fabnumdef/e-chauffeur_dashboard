@@ -5,7 +5,7 @@
 export default {
   layout: ({ route: { name } }) => {
     let layout = 'default';
-    if (name === 'campus-rides' || name === 'campus-calrides') {
+    if (name === 'campus-rides' || name === 'campus-rides-planning') {
       layout = 'with-map';
     } else if (name === 'campus-map') {
       layout = 'simple';
