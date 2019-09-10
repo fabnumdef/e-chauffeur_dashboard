@@ -31,15 +31,42 @@
       @submit.prevent="edit(user)"
     >
       <ec-field
-        label="Nom"
+        label="Nom (obsolète)"
         field-id="name"
       >
         <input
           id="name"
-          v-model="user.name"
+          :value="user.name"
           class="input"
+          disabled
         >
       </ec-field>
+      <div class="columns">
+        <div class="column">
+          <ec-field
+            label="Prénom"
+            field-id="firstname"
+          >
+            <input
+              id="firstname"
+              v-model="user.firstname"
+              class="input"
+            >
+          </ec-field>
+        </div>
+        <div class="column">
+          <ec-field
+            label="Nom de famille"
+            field-id="lastname"
+          >
+            <input
+              id="lastname"
+              v-model="user.lastname"
+              class="input"
+            >
+          </ec-field>
+        </div>
+      </div>
       <ec-field
         label="Email"
         field-id="email"
