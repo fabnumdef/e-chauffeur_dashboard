@@ -57,8 +57,8 @@ import ecList from '~/components/crud/list.vue';
 
 const columns = { id: 'ID', label: 'Label' };
 
-function getCarModels() {
-  return this.carModels.getCarModels(Object.keys(columns).join(','));
+function getCarModels(offset, limit) {
+  return this.carModels.getCarModels(Object.keys(columns).join(','), {}, offset, limit);
 }
 
 export default {
@@ -69,8 +69,10 @@ export default {
   computed: {
     columns() { return columns; },
   },
-  async asyncData({ $api }) {
-    const { data, pagination } = await getCarModels.call($api);
+  async asyncData({ $api, query }) {
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const { data, pagination } = await getCarModels.call($api, offset, limit);
     return {
       carModels: data,
       pagination,
@@ -79,7 +81,9 @@ export default {
   methods: {
     async deleteCarModel({ id }) {
       await this.$api.carModels.deleteCarModel(id);
-      const updatedList = await getCarModels.call(this.$api);
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await getCarModels.call(this.$api, offset, limit);
       this.carModels = updatedList.data;
       this.pagination = updatedList.pagination;
     },
