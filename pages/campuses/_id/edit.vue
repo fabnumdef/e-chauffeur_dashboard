@@ -88,18 +88,6 @@
         />
       </ec-field>
 
-      <ec-field
-        label="Informations"
-        field-id="informations"
-      >
-        <client-only>
-          <vue-simplemde
-            ref="markdownEditor"
-            v-model="campus.information"
-          />
-        </client-only>
-      </ec-field>
-
       <button
         v-if="id"
         type="submit"
@@ -163,7 +151,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-  @import 'simplemde/dist/simplemde.min.css';
-</style>
