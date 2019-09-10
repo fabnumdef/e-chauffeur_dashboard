@@ -61,8 +61,10 @@ export default {
   components: {
     ecList,
   },
-  async asyncData({ $api }) {
-    const { data, pagination } = await $api.campuses.getCampuses('id,name');
+  async asyncData({ $api, query }) {
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const { data, pagination } = await $api.campuses.getCampuses('id,name', {}, offset, limit);
     return {
       campuses: data,
       pagination,
@@ -71,7 +73,9 @@ export default {
   methods: {
     async deleteCampus({ id }) {
       await this.$api.campuses.deleteCampus(id);
-      const updatedList = await this.$api.campuses.getCampuses('id,name');
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.campuses.getCampuses('id,name', {}, offset, limit);
       this.campuses = updatedList.data;
       this.pagination = updatedList.pagination;
     },
