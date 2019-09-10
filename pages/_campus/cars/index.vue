@@ -36,7 +36,7 @@ import ecList from '~/components/crud/list.vue';
 const columns = { id: 'ID', label: 'Label' };
 
 export default {
-  watchQuery: ['offset'],
+  watchQuery: ['offset', 'limit'],
   components: {
     ecList,
   },
@@ -49,8 +49,12 @@ export default {
       return this.$api.cars(this.campus, Object.keys(columns).join(','));
     },
   },
-  async asyncData({ params, $api }) {
-    const { data, pagination } = await $api.cars({ id: params.campus }, Object.keys(columns).join(',')).getCars();
+  async asyncData({ params, $api, query }) {
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const { data, pagination } = await $api
+      .cars({ id: params.campus }, Object.keys(columns).join(','))
+      .getCars(offset, limit);
     return {
       cars: data,
       pagination,
@@ -59,7 +63,10 @@ export default {
   methods: {
     async deleteCar({ id }) {
       await this.CarsAPI.deleteCar(id);
-      const updatedList = await this.CarsAPI.getCars();
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      console.log(offset, limit);
+      const updatedList = await this.CarsAPI.getCars(offset, limit);
       this.cars = updatedList.data;
       this.pagination = updatedList.pagination;
     },
