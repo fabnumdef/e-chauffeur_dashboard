@@ -53,23 +53,22 @@
             :ride="getCurrentRide(split.driver.id)"
           />
         </template>
-        <div
-          slot="time-cell"
-          slot-scope="{ hours, minutes }"
-          :class="{ line: true, hours: !minutes }"
+        <template
+          #time-cell="{ hours, minutes }"
         >
-          <strong
-            v-if="!minutes"
-            class="hours"
-          >{{ hours }}</strong>
-          <span
-            v-else
-            class="minutes"
-          >{{ minutes }}</span>
-        </div>
-        <div
-          slot="event-renderer"
-          slot-scope="{ event }"
+          <div :class="{ line: true, hours: !minutes }">
+            <strong
+              v-if="!minutes"
+              class="hours"
+            >{{ hours }}</strong>
+            <span
+              v-else
+              class="minutes"
+            >{{ minutes }}</span>
+          </div>
+        </template>
+        <template
+          #event-renderer="{ event }"
         >
           <div
             v-if="event.ride"
@@ -86,7 +85,7 @@
               <span v-if="event.ride.luggage">Avec</span><span v-else>Sans</span> Bagages
             </div>
           </div>
-        </div>
+        </template>
       </vue-cal>
       <modal
         :current-ride="ride"
@@ -271,7 +270,7 @@ export default {
     events() {
       const evts = this.ridesCalendar;
       const openingHoursEvents = [];
-      // @todo Attention ici les boucles ne marchent pas en SSR, on n'a donc pas les heures non travaillees
+      // @todo Warning, loops arent working with SSR, so it misses boundaries time-slot
       this.drivers.forEach((driver, index) => {
         if (driver.availabilities && driver.availabilities.length > 0) {
           driver.availabilities.forEach((avail) => {
@@ -366,7 +365,7 @@ export default {
       }
     },
     getCurrentRide(driverId) {
-      if (driverId === 'userRequest') {
+      if (driverId === null) {
         return null;
       }
       const currentTime = DateTime.fromJSDate(new Date());

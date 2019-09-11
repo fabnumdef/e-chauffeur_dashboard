@@ -73,7 +73,7 @@ export default {
       start,
       end,
     );
-    drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: 'userRequest', availabilities: [] });
+    drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
     const { data: rides } = await ridesApi.getRides(start, end);
     store.commit('realtime/setRides', rides);
     return {
