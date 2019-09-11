@@ -46,8 +46,8 @@
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
-        <nuxt-link :to="campusLink('calrides')">
-          [α] Planificateur
+        <nuxt-link :to="campusLink('rides-planning')">
+          Planificateur
         </nuxt-link>
       </li>
       <li v-if="hasCampus">

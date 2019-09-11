@@ -10,6 +10,11 @@ module.exports = {
     middleware: ['auth'],
   },
 
+  build: {
+    parallel: true,
+    transpile: ['@qonfucius/vue-cal'],
+  },
+
   css: [
     { src: '~assets/css/main.scss', lang: 'scss' },
   ],
@@ -17,6 +22,7 @@ module.exports = {
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
     { src: '~/plugins/datetime-picker.js', ssr: false },
+    { src: '~/plugins/vuecal.js', ssr: false },
     '~/plugins/realtime.js',
   ],
 

@@ -69,10 +69,11 @@ export default {
     const end = DateTime.local().endOf('days').toJSDate();
     const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
     const { data: drivers } = await ridesApi.getAvailableDrivers(
-      'id,name,availabilities(s,e)',
+      'id,name,availabilities(start,end)',
       start,
       end,
     );
+    drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
     const { data: rides } = await ridesApi.getRides(start, end);
     store.commit('realtime/setRides', rides);
     return {
