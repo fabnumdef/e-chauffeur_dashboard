@@ -16,7 +16,7 @@
         <aside class="column is-one-quarter">
           <button
             class="button create-timeslot is-expanded"
-            @click="openCreate()"
+            @click="openCreate({})"
           >
             <fa-icon icon="user-circle" /> Configurer un nouveau créneau
           </button>
@@ -42,8 +42,8 @@
         <planning-calendar
           :events="calEvents"
           :drivers="drivers"
-          @cell-click="openCreate"
           @open-edit="openEdit"
+          @open-create="openCreate"
           @view-change="viewChange"
         />
       </main>
@@ -135,11 +135,13 @@ export default {
       this.timeSlot.start = start;
       this.timeSlot.end = end;
     },
-    openCreate(date = new Date()) {
-      const d = DateTime.fromJSDate(date);
+    openCreate({
+      start = DateTime.fromJSDate(new Date()).startOf('hour').toJSDate(),
+      end = DateTime.fromJSDate(new Date()).endOf('hour').toJSDate(),
+    }) {
       this.timeSlot = Object.assign(
         newTimeSlot(),
-        { start: d.startOf('hour').toJSDate(), end: d.endOf('hour').toJSDate() },
+        { start, end },
       );
       this.toggleModal(true);
     },
@@ -179,7 +181,6 @@ export default {
   }
   .create-timeslot {
     border-radius: $gap;
-    padding: $size-small;
     width: 100%;
     position: relative;
     /deep/ .fa-user-circle {

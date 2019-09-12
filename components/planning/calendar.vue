@@ -8,11 +8,12 @@
         :time-step="STEP"
         :time-cell-height="35"
         hide-view-selector
-        :hide-weekdays="[6, 7]"
+        hideWeekends
         :events="events"
         locale="fr"
         :disable-views="['years', 'year', 'month', 'day']"
         :on-event-click="openEdit"
+        @click-and-release="openCreate"
         @view-change="viewChange"
       >
         <template #event-renderer="{ event: { content }, view }">
@@ -72,8 +73,11 @@ export default {
       .reduce((acc, cur) => Object.assign(acc, cur), {}),
   },
   methods: {
-    openCreate(date = new Date()) {
-      this.$emit('open-create', date);
+    openCreate(event) {
+      this.$emit('open-create', {
+        start: this.$vuecal(STEP).getDateTimeFloorFromVueCal(event.start).toJSDate(),
+        end: this.$vuecal(STEP).getDateTimeCeilFromVueCal(event.end).toJSDate(),
+      });
     },
     openEdit(content) {
       this.$emit('open-edit', content);
@@ -96,6 +100,9 @@ export default {
   }
   /deep/ {
     .vuecal {
+      &__no-event {
+        display: none;
+      }
       &__cell-content {
         cursor: crosshair;
       }
