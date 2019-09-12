@@ -3,13 +3,16 @@
     <client-only>
       <vue-cal
         default-view="week"
+        :time-from="START_DAY_HOUR * 60"
+        :time-to="END_DAY_HOUR * 60"
+        :time-step="STEP"
+        :time-cell-height="35"
         hide-view-selector
         :hide-weekdays="[6, 7]"
         :events="events"
         locale="fr"
         :disable-views="['years', 'year', 'month', 'day']"
         :on-event-click="openEdit"
-        @cell-click="openCreate"
         @view-change="viewChange"
       >
         <template #event-renderer="{ event: { content }, view }">
@@ -39,6 +42,10 @@
 <script>
 import { DateTime } from 'luxon';
 
+const STEP = 60;
+const START_DAY_HOUR = 4;
+const END_DAY_HOUR = 24;
+
 export default {
   props: {
     events: {
@@ -50,6 +57,15 @@ export default {
       default: () => ({}),
     },
   },
+
+  data() {
+    return {
+      STEP,
+      START_DAY_HOUR,
+      END_DAY_HOUR,
+    };
+  },
+
   computed: {
     ...['TIME_SIMPLE']
       .map((f) => ({ [f]: () => DateTime[f] }))
@@ -78,21 +94,28 @@ export default {
     height: calc(100vh - 100px);
     background-color: white;
   }
-  /deep/ .vuecal__cell-hover:hover {
-    background-color: rgba(0, 83, 179, 0.4);
-  }
-  /deep/ .vuecal__event {
-    background: $success;
-    color: $white;
-    padding: 8px;
-    header {
-      text-align: left;
-      .hours {
-        font-weight: bold;
+  /deep/ {
+    .vuecal {
+      &__cell-content {
+        cursor: crosshair;
       }
-    }
-    .drivers-list {
-      font-weight: bold;
+      &__cell-hover:hover {
+        background-color: rgba(0, 83, 179, 0.4);
+      }
+      &__event {
+        background: $success;
+        color: $white;
+        padding: 8px;
+        header {
+          text-align: left;
+          .hours {
+            font-weight: bold;
+          }
+        }
+        .drivers-list {
+          font-weight: bold;
+        }
+      }
     }
   }
 </style>
