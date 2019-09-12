@@ -17,6 +17,7 @@
         hide-view-selector
         @click-and-release="onClickAndRelease"
         @ready="initRide"
+        @view-change="viewChange"
       >
         <template #title-bar="{ view, switchView, previous, next }">
           <div class="">
@@ -162,6 +163,7 @@ export default {
       STEP,
       START_DAY_HOUR,
       END_DAY_HOUR,
+      day: new Date(),
       modalOpen: false,
     };
   },
@@ -203,8 +205,9 @@ export default {
         if (driver.availabilities && driver.availabilities.length > 0) {
           driver.availabilities.forEach((avail) => {
             if (avail.start && avail.start.hour > START_DAY_HOUR) {
+              const datetimeStart = DateTime.fromJSDate(this.day).set({ hour: START_DAY_HOUR, minute: 0, second: 0 });
               const start = this.$vuecal(STEP)
-                .getVueCalFloorDateFromISO(DateTime.fromObject({ hour: START_DAY_HOUR }).toISO());
+                .getVueCalFloorDateFromISO(datetimeStart.toISO());
               const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.start.toISO());
               const split = index + 1;
               openingHoursEvents.push({
@@ -216,9 +219,9 @@ export default {
               });
             }
             if (avail.end && avail.end.hour < END_DAY_HOUR) {
+              const datetimeEnd = DateTime.fromJSDate(this.day).set({ hour: END_DAY_HOUR, minute: 0, second: 0 });
               const start = this.$vuecal(STEP).getVueCalFloorDateFromISO(avail.end.toISO());
-              const end = this.$vuecal(STEP)
-                .getVueCalCeilDateFromISO(DateTime.fromObject({ hour: END_DAY_HOUR }).toISO());
+              const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(datetimeEnd.toISO());
               const split = index + 1;
               openingHoursEvents.push({
                 start,
@@ -315,6 +318,12 @@ export default {
       }
       return formatedDate;
     },
+    viewChange(obj) {
+      if (obj.view === 'day') {
+        this.day = obj.startDate;
+      }
+      this.$emit('view-change', obj);
+    },
   },
 };
 </script>
@@ -327,6 +336,9 @@ export default {
   }
   /deep/ {
     .vuecal {
+      &__no-event {
+        display: none;
+      }
       &__cell-hover:hover {
         background-color: rgba(0, 83, 179, 0.4);
       }

@@ -25,6 +25,7 @@
       :rides="rides"
       :current-campus="currentCampus"
       :campus="campus"
+      @view-change="viewChange"
     />
   </main>
 </template>
@@ -64,7 +65,6 @@ export default {
   },
 
   async asyncData({ params, $api, store }) {
-    const today = new Date();
     const start = DateTime.local().startOf('days').toJSDate();
     const end = DateTime.local().endOf('days').toJSDate();
     const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
@@ -79,13 +79,26 @@ export default {
     return {
       campus: params.campus,
       drivers,
-      today,
     };
   },
 
   methods: {
     mapToggle() {
       this.$store.dispatch('context/hideMap', !this.hideMap);
+    },
+    async viewChange(obj) {
+      const start = DateTime.fromJSDate(obj.startDate).startOf('days').toJSDate();
+      const end = DateTime.fromJSDate(obj.endDate).endOf('days').toJSDate();
+      const ridesApi = this.$api.rides(this.campus, EDITABLE_FIELDS);
+      const { data: drivers } = await ridesApi.getAvailableDrivers(
+        'id,name,availabilities(start,end)',
+        start,
+        end,
+      );
+      drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
+      const { data: rides } = await ridesApi.getRides(start, end);
+      this.$store.commit('realtime/setRides', rides);
+      this.drivers = drivers;
     },
   },
 };
