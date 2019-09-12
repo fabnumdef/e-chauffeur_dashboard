@@ -1,38 +1,39 @@
 <template>
-  <client-only>
-    <vue-cal
-      class="column"
-      default-view="week"
-      hide-view-selector
-      :hide-weekdays="[6, 7]"
-      :events="events"
-      locale="fr"
-      :disable-views="['years', 'year', 'month', 'day']"
-      @cell-click="openCreate"
-      :on-event-click="openEdit"
-      @view-change="viewChange"
-    >
-      <template #event-renderer="{ event: { content }, view }">
-        <header>
-          <span class="hours">
-            {{ content.start.toLocaleString(TIME_SIMPLE) }} - {{ content.end.toLocaleString(TIME_SIMPLE) }}
-          </span>
-          <span class="is-pulled-right">
-            <fa-icon icon="user-circle" /> {{ content.drivers.length }}({{ drivers.data.length }})
-          </span>
-        </header>
-        <ul class="drivers-list">
-          <li
-            v-for="driver of content.drivers"
-            :key="driver.id"
-          >
-            <span v-if="driver.firstname || driver.lastname">{{ driver.firstname }} {{ driver.lastname }}</span>
-            <span v-else>{{ driver.id }}</span>
-          </li>
-        </ul>
-      </template>
-    </vue-cal>
-  </client-only>
+  <div class="calendar column">
+    <client-only>
+      <vue-cal
+        default-view="week"
+        hide-view-selector
+        :hide-weekdays="[6, 7]"
+        :events="events"
+        locale="fr"
+        :disable-views="['years', 'year', 'month', 'day']"
+        :on-event-click="openEdit"
+        @cell-click="openCreate"
+        @view-change="viewChange"
+      >
+        <template #event-renderer="{ event: { content }, view }">
+          <header>
+            <span class="hours">
+              {{ content.start.toLocaleString(TIME_SIMPLE) }} - {{ content.end.toLocaleString(TIME_SIMPLE) }}
+            </span>
+            <span class="is-pulled-right">
+              <fa-icon icon="user-circle" /> {{ content.drivers.length }}({{ drivers.data.length }})
+            </span>
+          </header>
+          <ul class="drivers-list">
+            <li
+              v-for="driver of content.drivers"
+              :key="driver.id"
+            >
+              <span v-if="driver.firstname || driver.lastname">{{ driver.firstname }} {{ driver.lastname }}</span>
+              <span v-else>{{ driver.id }}</span>
+            </li>
+          </ul>
+        </template>
+      </vue-cal>
+    </client-only>
+  </div>
 </template>
 
 <script>
@@ -73,6 +74,13 @@ export default {
 
 <style scoped lang="scss">
   @import "~assets/css/head";
+  .calendar {
+    height: calc(100vh - 100px);
+    background-color: white;
+  }
+  /deep/ .vuecal__cell-hover:hover {
+    background-color: rgba(0, 83, 179, 0.4);
+  }
   /deep/ .vuecal__event {
     background: $success;
     color: $white;

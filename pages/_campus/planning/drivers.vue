@@ -71,10 +71,8 @@ export default {
         const start = DateTime.fromISO(event.start);
         const end = DateTime.fromISO(event.end);
         return {
-          start: start.setLocale('fr')
-            .toFormat('yyyy-LL-dd HH:mm'),
-          end: end.setLocale('fr')
-            .toFormat('yyyy-LL-dd HH:mm'),
+          start: this.$vuecal().getVueCalFromDatetime(start),
+          end: this.$vuecal().getVueCalFromDatetime(end),
           content: {
             ...event,
             start,
