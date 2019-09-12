@@ -17,6 +17,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@nuxtjs/auth": "^4.8.2",
     "@qonfucius/vue-cal": "~1.59.6",
+    "chart.js": "^2.8.0",
     "i18next-client": "^1.11.4",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.2",
@@ -28,6 +29,7 @@
     "opening_hours": "^3.5.0",
     "sass-loader": "^7.3.1",
     "vue-cal": "^2.4.0",
+    "vue-chartjs": "^3.4.2",
     "vue-multiselect": "^2.1.6",
     "vue2-datepicker": "^2.12.0"
   },
