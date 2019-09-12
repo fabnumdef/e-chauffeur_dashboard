@@ -67,6 +67,13 @@
           Lieux
         </nuxt-link>
       </li>
+      <li v-if="hasCampus && $auth.isSuperAdmin()">
+        <nuxt-link
+          :to="campusLink('map-vision')"
+        >
+          Map vision
+        </nuxt-link>
+      </li>
     </ul>
     <search-user-campus
       class="search-campus"

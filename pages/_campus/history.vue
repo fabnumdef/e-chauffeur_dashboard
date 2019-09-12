@@ -180,7 +180,7 @@
               </div>
               <div class="column">
                 <template v-if="ride.category">
-                {{ ride.category.label }}
+                  {{ ride.category.label }}
                 </template>
               </div>
               <div class="column">
