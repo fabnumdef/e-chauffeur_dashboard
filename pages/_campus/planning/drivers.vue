@@ -78,6 +78,7 @@ export default {
             start,
             end,
           },
+          class: 'slot-event',
         };
       });
     },

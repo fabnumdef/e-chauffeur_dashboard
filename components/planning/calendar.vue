@@ -99,6 +99,10 @@ export default {
     background-color: white;
   }
   /deep/ {
+    .slot-event {
+      margin-right: 15px;
+      cursor: pointer;
+    }
     .vuecal {
       &__no-event {
         display: none;
