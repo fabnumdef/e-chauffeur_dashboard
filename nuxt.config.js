@@ -96,6 +96,8 @@ module.exports = {
           'faUserCircle',
           'faCog',
           'faSpinner',
+          'faList',
+          'faChartPie',
         ],
       },
     ],
