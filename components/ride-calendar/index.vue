@@ -200,10 +200,13 @@ export default {
     events() {
       const evts = this.ridesCalendar;
       const openingHoursEvents = [];
-      // @todo Warning, loops arent working with SSR, so it misses boundaries time-slot
       this.drivers.forEach((driver, index) => {
         if (driver.availabilities && driver.availabilities.length > 0) {
           driver.availabilities.forEach((avail) => {
+            if (typeof avail.s === 'string') {
+              // eslint-disable-next-line no-param-reassign
+              avail = Interval.fromDateTimes(DateTime.fromISO(avail.s), DateTime.fromISO(avail.e));
+            }
             if (avail.start && avail.start.hour > START_DAY_HOUR) {
               const datetimeStart = DateTime.fromJSDate(this.day).set({ hour: START_DAY_HOUR, minute: 0, second: 0 });
               const start = this.$vuecal(STEP)
