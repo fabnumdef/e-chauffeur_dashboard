@@ -1,7 +1,6 @@
 <template>
   <fragmented-tile
     v-if="drivers && drivers.length"
-    class="box"
     title="Chauffeurs les plus solicités"
   >
     <template #TEXT>

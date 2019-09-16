@@ -1,7 +1,6 @@
 <template>
   <fragmented-tile
     v-if="data.true || data.false"
-    class="box"
     title="Proportion de numéro de téléphone"
     default-fragment="PIE"
   >

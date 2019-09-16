@@ -28,55 +28,43 @@
       </div>
     </header>
     <bulma-tile ancestor>
-      <bulma-tile parent>
-        <bulma-tile class="box">
-          <header class="title">
-            Total de courses
-          </header>
-          <ul class="content is-large">
-            <li><strong>{{ stats.total }}</strong> course(s)</li>
-            <li v-if="stats[REQUESTABLE.carModels] && stats[REQUESTABLE.carModels].length">
-              Dont <strong>{{ stats[REQUESTABLE.carModels].length }}</strong> type(s) de véhicule(s)
-            </li>
-            <li v-if="stats[REQUESTABLE.drivers] && stats[REQUESTABLE.drivers].length">
-              Dont <strong>{{ stats[REQUESTABLE.drivers].length }}</strong> chauffeur(s) différent(s)
-            </li>
-          </ul>
+      <bulma-tile vertical>
+        <bulma-tile parent>
+          <bulma-tile class="box">
+            <header class="title">
+              Total de courses
+            </header>
+            <ul class="content is-large">
+              <li><strong>{{ stats.total }}</strong> course(s)</li>
+              <li v-if="stats[REQUESTABLE.carModels] && stats[REQUESTABLE.carModels].length">
+                Dont <strong>{{ stats[REQUESTABLE.carModels].length }}</strong> type(s) de véhicule(s)
+              </li>
+              <li v-if="stats[REQUESTABLE.drivers] && stats[REQUESTABLE.drivers].length">
+                Dont <strong>{{ stats[REQUESTABLE.drivers].length }}</strong> chauffeur(s) différent(s)
+              </li>
+            </ul>
+          </bulma-tile>
         </bulma-tile>
-      </bulma-tile>
-      <bulma-tile
-        parent
-      >
         <categories-tile :categories="stats[REQUESTABLE.categories]" />
-      </bulma-tile>
-      <bulma-tile parent>
         <car-models-tile :models="stats[REQUESTABLE.carModels]" />
-      </bulma-tile>
-    </bulma-tile>
-    <bulma-tile ancestor>
-      <bulma-tile parent>
         <drivers-tile :drivers="stats[REQUESTABLE.drivers]" />
       </bulma-tile>
-      <bulma-tile parent>
+      <bulma-tile vertical>
+        <has-phone-tile :data="stats[REQUESTABLE.hasPhone]" />
+      </bulma-tile>
+      <bulma-tile vertical>
         <pois-tile
           :pois="stats[REQUESTABLE.poisDeparture]"
           title="Lieux de départ les plus utilisés"
           sub-key="departure"
           :map-center="campus.location.coordinates"
         />
-      </bulma-tile>
-      <bulma-tile parent>
         <pois-tile
           :pois="stats[REQUESTABLE.poisArrival]"
           title="Lieux d'arrivée les plus utilisés"
           sub-key="arrival"
           :map-center="campus.location.coordinates"
         />
-      </bulma-tile>
-    </bulma-tile>
-    <bulma-tile ancestor>
-      <bulma-tile parent>
-        <has-phone-tile :data="stats[REQUESTABLE.hasPhone]" />
       </bulma-tile>
     </bulma-tile>
   </main>

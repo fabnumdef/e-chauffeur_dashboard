@@ -1,7 +1,6 @@
 <template>
   <fragmented-tile
     v-if="models && models.length"
-    class="box"
     title="Modèles de véhicules les plus utilisés"
   >
     <template #TEXT>

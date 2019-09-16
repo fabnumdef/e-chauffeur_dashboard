@@ -1,7 +1,6 @@
 <template>
   <fragmented-tile
     v-if="categories && categories.length"
-    class="box"
     title="Catégories les plus demandées"
   >
     <template #TEXT>

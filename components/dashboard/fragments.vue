@@ -1,36 +1,38 @@
 <template>
-  <bulma-tile
-    class="box"
-  >
-    <header class="title">
-      <div class="is-pulled-right" v-if="Object.keys($slots).length > 1">
-        <template
-          v-for="k of Object.keys(types)"
-        >
-          <button
-            v-if="$slots[k]"
-            :key="k"
-            class="button is-text"
-            :class="{'is-active': isSwitch(types[k])}"
-            @click="switchTo(types[k])"
-          >
-            <fa-icon :icon="types[k]" />
-          </button>
-        </template>
-      </div>
-      {{ title }}
-    </header>
-    <template
-      v-for="k of Object.keys(types)"
+  <bulma-tile parent>
+    <bulma-tile
+      class="box"
     >
-      <div
-        v-if="$slots[k] && isSwitch(types[k])"
-        :key="k"
-        class="content is-large"
+      <header class="title">
+        <div class="is-pulled-right" v-if="Object.keys($slots).length > 1">
+          <template
+            v-for="k of Object.keys(types)"
+          >
+            <button
+              v-if="$slots[k]"
+              :key="k"
+              class="button is-text"
+              :class="{'is-active': isSwitch(types[k])}"
+              @click="switchTo(types[k])"
+            >
+              <fa-icon :icon="types[k]" />
+            </button>
+          </template>
+        </div>
+        {{ title }}
+      </header>
+      <template
+        v-for="k of Object.keys(types)"
       >
-        <slot :name="k" />
-      </div>
-    </template>
+        <div
+          v-if="$slots[k] && isSwitch(types[k])"
+          :key="k"
+          class="content is-large"
+        >
+          <slot :name="k" />
+        </div>
+      </template>
+    </bulma-tile>
   </bulma-tile>
 </template>
 <script>

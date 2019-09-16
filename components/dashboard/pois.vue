@@ -1,7 +1,6 @@
 <template>
   <fragmented-tile
     v-if="pois && pois.length"
-    class="box"
     :title="title"
   >
     <template #TEXT>
