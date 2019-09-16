@@ -33,9 +33,15 @@
           <header class="title">
             Total de courses
           </header>
-          <div class="content is-large">
-            <strong>{{ stats.total }}</strong> course(s)
-          </div>
+          <ul class="content is-large">
+            <li><strong>{{ stats.total }}</strong> course(s)</li>
+            <li v-if="stats[REQUESTABLE.carModels] && stats[REQUESTABLE.carModels].length">
+              Dont <strong>{{stats[REQUESTABLE.carModels].length}}</strong> type(s) de véhicule(s)
+            </li>
+            <li v-if="stats[REQUESTABLE.drivers] && stats[REQUESTABLE.drivers].length">
+              Dont <strong>{{stats[REQUESTABLE.drivers].length}}</strong> chauffeur(s) différent(s)
+            </li>
+          </ul>
         </bulma-tile>
       </bulma-tile>
         <bulma-tile
@@ -132,6 +138,51 @@
       </bulma-tile>
     </bulma-tile>
     <bulma-tile ancestor>
+      <bulma-tile parent>
+        <bulma-tile
+          v-if="stats[REQUESTABLE.drivers] && stats[REQUESTABLE.drivers].length"
+          class="box"
+        >
+          <header class="title">
+            <div class="is-pulled-right">
+              <button
+                class="button is-text"
+                :class="{'is-active': isText(REQUESTABLE.drivers)}"
+                @click="switchToText(REQUESTABLE.drivers)"
+              >
+                <fa-icon icon="list" />
+              </button>
+              <button
+                class="button is-text"
+                :class="{'is-active': isPieChart(REQUESTABLE.drivers)}"
+                @click="switchToPieChart(REQUESTABLE.drivers)"
+              >
+                <fa-icon icon="chart-pie" />
+              </button>
+            </div>
+            Chauffeurs les plus solicités
+          </header>
+          <div
+            v-if="isText(REQUESTABLE.drivers)"
+            class="content is-large"
+          >
+            <ol>
+              <li
+                v-for="{total, driver, id} of stats[REQUESTABLE.drivers].slice(0, 3)"
+                :key="id"
+              >
+                {{ driver ? (driver.name || `${driver.firstname} ${driver.lastname}`) : 'NC' }} (<strong>{{ total }}</strong> course(s))
+              </li>
+            </ol>
+          </div>
+          <div
+            v-if="isPieChart(REQUESTABLE.drivers)"
+            class="content is-large"
+          >
+            <pie-chart :chart-data="transformDriversData(stats[REQUESTABLE.drivers])" />
+          </div>
+        </bulma-tile>
+      </bulma-tile>
       <bulma-tile parent>
         <bulma-tile
           v-if="stats[REQUESTABLE.poisArrival] && stats[REQUESTABLE.poisArrival].length"
@@ -241,6 +292,7 @@ const REQUESTABLE = {
   categories: 'categories',
   carModels: 'car-models',
   statuses: 'statuses',
+  drivers: 'drivers',
 };
 
 export default {
@@ -286,6 +338,7 @@ export default {
         REQUESTABLE.total, REQUESTABLE.categories, REQUESTABLE.carModels,
         `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
         `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
+        `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
       ].join(','),
       start,
       end,
@@ -301,6 +354,7 @@ export default {
         [REQUESTABLE.carModels]: TEXT,
         [REQUESTABLE.poisArrival]: TEXT,
         [REQUESTABLE.poisDeparture]: TEXT,
+        [REQUESTABLE.drivers]: TEXT,
       },
     };
   },
@@ -347,6 +401,12 @@ export default {
       return {
         labels: pois.map(({ departure }) => (departure ? departure.label : 'NC')),
         datasets: [{ ...this.backgroundColors, data: pois.map(({ total }) => total) }],
+      };
+    },
+    transformDriversData(drivers) {
+      return {
+        labels: drivers.map(({ driver }) => (driver ? (driver.name || `${driver.firstname} ${driver.lastname}`) : 'NC')),
+        datasets: [{ ...this.backgroundColors, data: drivers.map(({ total }) => total) }],
       };
     },
   },
