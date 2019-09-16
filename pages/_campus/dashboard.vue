@@ -36,61 +36,61 @@
           <ul class="content is-large">
             <li><strong>{{ stats.total }}</strong> course(s)</li>
             <li v-if="stats[REQUESTABLE.carModels] && stats[REQUESTABLE.carModels].length">
-              Dont <strong>{{stats[REQUESTABLE.carModels].length}}</strong> type(s) de véhicule(s)
+              Dont <strong>{{ stats[REQUESTABLE.carModels].length }}</strong> type(s) de véhicule(s)
             </li>
             <li v-if="stats[REQUESTABLE.drivers] && stats[REQUESTABLE.drivers].length">
-              Dont <strong>{{stats[REQUESTABLE.drivers].length}}</strong> chauffeur(s) différent(s)
+              Dont <strong>{{ stats[REQUESTABLE.drivers].length }}</strong> chauffeur(s) différent(s)
             </li>
           </ul>
         </bulma-tile>
       </bulma-tile>
+      <bulma-tile
+        v-if="stats.categories && stats.categories.length"
+        parent
+      >
         <bulma-tile
-          v-if="stats.categories && stats.categories.length"
-          parent
+          class="box"
         >
-          <bulma-tile
-            class="box"
+          <header class="title">
+            <div class="is-pulled-right">
+              <button
+                class="button is-text"
+                :class="{'is-active': isText(REQUESTABLE.categories)}"
+                @click="switchToText(REQUESTABLE.categories)"
+              >
+                <fa-icon icon="list" />
+              </button>
+              <button
+                class="button is-text"
+                :class="{'is-active': isPieChart(REQUESTABLE.categories)}"
+                @click="switchToPieChart(REQUESTABLE.categories)"
+              >
+                <fa-icon icon="chart-pie" />
+              </button>
+            </div>
+            Catégories les plus demandées
+          </header>
+          <div
+            v-if="isText(REQUESTABLE.categories)"
+            class="content is-large"
           >
-            <header class="title">
-              <div class="is-pulled-right">
-                <button
-                  class="button is-text"
-                  :class="{'is-active': isText(REQUESTABLE.categories)}"
-                  @click="switchToText(REQUESTABLE.categories)"
-                >
-                  <fa-icon icon="list" />
-                </button>
-                <button
-                  class="button is-text"
-                  :class="{'is-active': isPieChart(REQUESTABLE.categories)}"
-                  @click="switchToPieChart(REQUESTABLE.categories)"
-                >
-                  <fa-icon icon="chart-pie" />
-                </button>
-              </div>
-              Catégories les plus demandées
-            </header>
-            <div
-              v-if="isText(REQUESTABLE.categories)"
-              class="content is-large"
-            >
-              <ol>
-                <li
-                  v-for="{total, category, id} of stats.categories.slice(0, 3)"
-                  :key="id"
-                >
-                  {{ category ? category.label : 'NC' }} (<strong>{{ total }}</strong> course(s))
-                </li>
-              </ol>
-            </div>
-            <div
-              v-if="isPieChart(REQUESTABLE.categories)"
-              class="content is-large"
-            >
-              <pie-chart :chart-data="transformCategoriesData(stats.categories)" />
-            </div>
-          </bulma-tile>
+            <ol>
+              <li
+                v-for="{total, category, id} of stats.categories.slice(0, 3)"
+                :key="id"
+              >
+                {{ category ? category.label : 'NC' }} (<strong>{{ total }}</strong> course(s))
+              </li>
+            </ol>
+          </div>
+          <div
+            v-if="isPieChart(REQUESTABLE.categories)"
+            class="content is-large"
+          >
+            <pie-chart :chart-data="transformCategoriesData(stats.categories)" />
+          </div>
         </bulma-tile>
+      </bulma-tile>
       <bulma-tile parent>
         <bulma-tile
           v-if="stats[REQUESTABLE.carModels] && stats[REQUESTABLE.carModels].length"
@@ -171,7 +171,8 @@
                 v-for="{total, driver, id} of stats[REQUESTABLE.drivers].slice(0, 3)"
                 :key="id"
               >
-                {{ driver ? (driver.name || `${driver.firstname} ${driver.lastname}`) : 'NC' }} (<strong>{{ total }}</strong> course(s))
+                {{ driver ? (driver.name || `${driver.firstname} ${driver.lastname}`) : 'NC' }}
+                (<strong>{{ total }}</strong> course(s))
               </li>
             </ol>
           </div>
@@ -204,6 +205,13 @@
               >
                 <fa-icon icon="chart-pie" />
               </button>
+              <button
+                class="button is-text"
+                :class="{'is-active': isMap(REQUESTABLE.poisArrival)}"
+                @click="switchToMap(REQUESTABLE.poisArrival)"
+              >
+                <fa-icon icon="map" />
+              </button>
             </div>
             Lieux d'arrivée les plus utilisés
           </header>
@@ -225,6 +233,64 @@
             class="content is-large"
           >
             <pie-chart :chart-data="transformPoisArrivalData(stats[REQUESTABLE.poisArrival])" />
+          </div>
+          <div
+            v-if="isMap(REQUESTABLE.poisArrival)"
+            class="content is-large"
+          >
+            <client-only>
+              <l-map
+                :zoom="13"
+                :center="center"
+                class="small-map"
+              >
+                <l-tile-layer url="//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <l-marker
+                  v-for="{arrival, total, id} in stats[REQUESTABLE.poisArrival]"
+                  :key="id"
+                  :lat-lng="reverse(arrival.location.coordinates)"
+                >
+                  <l-icon
+                    :icon-size="[40,40]"
+                    :icon-anchor="[20,20]"
+                  >
+                    <svg
+                      width="40"
+                      height="40"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        cx="20"
+                        cy="20"
+                        r="20"
+                        class="poi-circle"
+                      />
+                      <text
+                        class="poi-text"
+                        x="50%"
+                        y="50%"
+                        text-anchor="middle"
+                        dy=".3em"
+                      >
+                        {{ total }}
+                      </text>
+                    </svg>
+                  </l-icon>
+                  <l-tooltip class="content">
+                    <dl>
+                      <dt>ID</dt>
+                      <dd>
+                        {{ id }}
+                      </dd>
+                      <dt>Label</dt>
+                      <dd>
+                        {{ arrival.label }}
+                      </dd>
+                    </dl>
+                  </l-tooltip>
+                </l-marker>
+              </l-map>
+            </client-only>
           </div>
         </bulma-tile>
       </bulma-tile>
@@ -249,6 +315,13 @@
               >
                 <fa-icon icon="chart-pie" />
               </button>
+              <button
+                class="button is-text"
+                :class="{'is-active': isMap(REQUESTABLE.poisDeparture)}"
+                @click="switchToMap(REQUESTABLE.poisDeparture)"
+              >
+                <fa-icon icon="map" />
+              </button>
             </div>
             Lieux de départ les plus utilisés
           </header>
@@ -271,6 +344,64 @@
           >
             <pie-chart :chart-data="transformPoisDepartureData(stats[REQUESTABLE.poisDeparture])" />
           </div>
+          <div
+            v-if="isMap(REQUESTABLE.poisDeparture)"
+            class="content is-large"
+          >
+            <client-only>
+              <l-map
+                :zoom="13"
+                :center="center"
+                class="small-map"
+              >
+                <l-tile-layer url="//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <l-marker
+                  v-for="{departure, total, id} in stats[REQUESTABLE.poisDeparture]"
+                  :key="id"
+                  :lat-lng="reverse(departure.location.coordinates)"
+                >
+                  <l-icon
+                    :icon-size="[40,40]"
+                    :icon-anchor="[20,20]"
+                  >
+                    <svg
+                      width="40"
+                      height="40"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        cx="20"
+                        cy="20"
+                        r="20"
+                        class="poi-circle"
+                      />
+                      <text
+                        class="poi-text"
+                        x="50%"
+                        y="50%"
+                        text-anchor="middle"
+                        dy=".3em"
+                      >
+                        {{ total }}
+                      </text>
+                    </svg>
+                  </l-icon>
+                  <l-tooltip class="content">
+                    <dl>
+                      <dt>ID</dt>
+                      <dd>
+                        {{ id }}
+                      </dd>
+                      <dt>Label</dt>
+                      <dd>
+                        {{ departure.label }}
+                      </dd>
+                    </dl>
+                  </l-tooltip>
+                </l-marker>
+              </l-map>
+            </client-only>
+          </div>
         </bulma-tile>
       </bulma-tile>
     </bulma-tile>
@@ -279,10 +410,12 @@
 
 <script>
 import { DateTime } from 'luxon';
+import lGet from 'lodash.get';
 import bulmaTile from '~/components/tile.vue';
 import pieChart from '~/components/charts/pie';
 
 const TEXT = 'txt';
+const MAP = 'map';
 const PIE = 'pie';
 
 const REQUESTABLE = {
@@ -296,11 +429,17 @@ const REQUESTABLE = {
 };
 
 export default {
-  watchQuery: ['before', 'after'],
   components: {
     bulmaTile,
     pieChart,
   },
+  props: {
+    campus: {
+      type: Object,
+      default: null,
+    },
+  },
+  watchQuery: ['before', 'after'],
   computed: {
     range() {
       return [
@@ -320,6 +459,9 @@ export default {
     },
     REQUESTABLE() {
       return REQUESTABLE;
+    },
+    center() {
+      return this.reverse(lGet(this.campus, 'location.coordinates', []));
     },
   },
   watch: {
@@ -359,6 +501,9 @@ export default {
     };
   },
   methods: {
+    reverse([lon, lat]) {
+      return [lat, lon];
+    },
     updateDates([start, end]) {
       this.request.start = start;
       this.request.end = end;
@@ -373,8 +518,14 @@ export default {
     switchToText(d) {
       this.switches[d] = TEXT;
     },
+    switchToMap(d) {
+      this.switches[d] = MAP;
+    },
     isPieChart(d) {
       return this.switches[d] === PIE;
+    },
+    isMap(d) {
+      return this.switches[d] === MAP;
     },
     isText(d) {
       return this.switches[d] === TEXT;
@@ -405,7 +556,9 @@ export default {
     },
     transformDriversData(drivers) {
       return {
-        labels: drivers.map(({ driver }) => (driver ? (driver.name || `${driver.firstname} ${driver.lastname}`) : 'NC')),
+        labels: drivers.map(
+          ({ driver }) => (driver ? (driver.name || `${driver.firstname} ${driver.lastname}`) : 'NC')
+        ),
         datasets: [{ ...this.backgroundColors, data: drivers.map(({ total }) => total) }],
       };
     },
@@ -439,6 +592,16 @@ export default {
     }
     .content {
       margin-top: $box-padding * 2;
+    }
+  }
+  .small-map {
+    min-height: 300px;
+    .poi-circle {
+      fill: rgba($primary, 0.8);
+    }
+    .poi-text {
+      fill: $white;
+      font-weight: bold;
     }
   }
 </style>
