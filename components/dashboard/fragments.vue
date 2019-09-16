@@ -3,7 +3,7 @@
     class="box"
   >
     <header class="title">
-      <div class="is-pulled-right">
+      <div class="is-pulled-right" v-if="Object.keys($slots).length > 1">
         <template
           v-for="k of Object.keys(types)"
         >
@@ -54,12 +54,12 @@ export default {
     },
     defaultFragment: {
       type: String,
-      default: TEXT,
+      default: 'TEXT',
     },
   },
   data() {
     return {
-      switch: this.defaultFragment,
+      switch: types[this.defaultFragment],
     };
   },
   computed: {

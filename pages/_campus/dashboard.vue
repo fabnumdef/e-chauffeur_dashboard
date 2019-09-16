@@ -74,6 +74,11 @@
         />
       </bulma-tile>
     </bulma-tile>
+    <bulma-tile ancestor>
+      <bulma-tile parent>
+        <has-phone-tile :data="stats[REQUESTABLE.hasPhone]" />
+      </bulma-tile>
+    </bulma-tile>
   </main>
 </template>
 
@@ -83,6 +88,7 @@ import bulmaTile from '~/components/tile.vue';
 import carModelsTile from '~/components/dashboard/car-models.vue';
 import categoriesTile from '~/components/dashboard/categories.vue';
 import driversTile from '~/components/dashboard/drivers.vue';
+import hasPhoneTile from '~/components/dashboard/has-phone.vue';
 import poisTile from '~/components/dashboard/pois.vue';
 
 const REQUESTABLE = {
@@ -93,6 +99,7 @@ const REQUESTABLE = {
   carModels: 'car-models',
   statuses: 'statuses',
   drivers: 'drivers',
+  hasPhone: 'has-phone',
 };
 
 export default {
@@ -102,6 +109,7 @@ export default {
     driversTile,
     bulmaTile,
     poisTile,
+    hasPhoneTile,
   },
   props: {
     campus: {
@@ -135,6 +143,7 @@ export default {
     const { data: stats } = await $api.rides(params.campus).getStats(
       [
         REQUESTABLE.total, REQUESTABLE.categories, REQUESTABLE.carModels,
+        REQUESTABLE.hasPhone,
         `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
         `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
         `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
