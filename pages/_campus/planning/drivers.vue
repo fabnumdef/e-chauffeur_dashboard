@@ -4,107 +4,19 @@
       <div class="title">
         Planning
       </div>
-      <client-only>
-        <ec-modal
-          :active="isModalOpen"
-          :with-background="false"
-          @toggle-modal="toggleModal"
-          @submit="editTimeSlot(timeSlot)"
-        >
-          <template
-            v-if="timeSlot.id"
-            #title
-          >
-            Edition du slot #{{ timeSlot.id }}
-          </template>
-          <template
-            v-else
-            #title
-          >
-            Créer un nouveau slot
-          </template>
-          <ec-field label="Dates">
-            <date-time
-              lang="fr"
-              append-to-body
-              input-class="input"
-              type="datetime"
-              range
-              :value="range"
-              :minute-step="5"
-              format="YYYY-MM-DD HH:mm"
-              range-separator="->"
-              @input="updateDates"
-            >
-              <template #calendar-icon>
-                <fa-icon icon="calendar" />
-              </template>
-            </date-time>
-          </ec-field>
-          <ec-field label="Chauffeurs">
-            <vue-multiselect
-              v-model="timeSlot.drivers"
-              :options="drivers.data"
-              track-by="id"
-              multiple
-              label="name"
-              :show-labels="false"
-            >
-              <template #option="{option}">
-                {{ option.firstname }} {{ option.lastname }}
-              </template>
-              <template #tag="{option, search, remove}">
-                <span class="multiselect__tag">
-                  <span v-if="option.firstname || option.lastname">{{ option.firstname }} {{ option.lastname }}</span>
-                  <span v-else>{{ option.id }}</span>
-                  <i
-                    aria-hidden="true"
-                    tabindex="1"
-                    class="multiselect__tag-icon"
-                    @keypress.enter.prevent="remove(option)"
-                    @mousedown.prevent="remove(option)"
-                  />
-                </span>
-                <span class="multiselect-tag" />
-              </template>
-            </vue-multiselect>
-          </ec-field>
-          <template
-            v-if="timeSlot.id"
-            #submit
-          >
-            <button
-              type="submit"
-              class="button is-primary"
-            >
-              Modifier
-            </button>
-            <button
-              type="button"
-              class="button is-danger"
-              @click="removeTimeSlot(timeSlot)"
-            >
-              Supprimer
-            </button>
-          </template>
-          <template
-            v-else
-            #submit
-          >
-            <button
-              type="submit"
-              class="button is-success"
-            >
-              Créer
-            </button>
-          </template>
-        </ec-modal>
-      </client-only>
+      <planning-modal
+        :active="isModalOpen"
+        :time-slot="timeSlot"
+        :drivers="drivers"
+        @toggle-modal="toggleModal"
+        @edit-time-slot="editTimeSlot(timeSlot)"
+        @remove-time-slot="removeTimeSlot(timeSlot)"
+      />
       <main class="columns">
         <aside class="column is-one-quarter">
           <button
             class="button create-timeslot is-expanded"
-            @click="openCreate()"
+            @click="openCreate({})"
           >
             <fa-icon icon="user-circle" /> Configurer un nouveau créneau
           </button>
@@ -127,52 +39,22 @@
             </li>
           </ul>
         </aside>
-        <client-only>
-          <vue-cal
-            class="column"
-            default-view="week"
-            hide-view-selector
-            :hide-weekdays="[6, 7]"
-            locale="fr"
-            :disable-views="['years', 'year', 'month', 'day']"
-            :events="calEvents"
-            @cell-click="openCreate"
-            @event-focus="openEdit"
-            @view-change="viewChange"
-          >
-            <template #event-renderer="{ event: {content}, view }">
-              <header>
-                <span class="hours">
-                  {{ content.start.toLocaleString(TIME_SIMPLE) }} - {{ content.end.toLocaleString(TIME_SIMPLE) }}
-                </span>
-                <span class="is-pulled-right">
-                  <fa-icon icon="user-circle" /> {{ content.drivers.length }}({{ drivers.data.length }})
-                </span>
-              </header>
-              <ul class="drivers-list">
-                <li
-                  v-for="driver of content.drivers"
-                  :key="driver.id"
-                >
-                  <span v-if="driver.firstname || driver.lastname">{{ driver.firstname }} {{ driver.lastname }}</span>
-                  <span v-else>{{ driver.id }}</span>
-                </li>
-              </ul>
-            </template>
-          </vue-cal>
-        </client-only>
+        <planning-calendar
+          :events="calEvents"
+          :drivers="drivers"
+          @open-edit="openEdit"
+          @open-create="openCreate"
+          @view-change="viewChange"
+        />
       </main>
     </div>
   </div>
 </template>
 <script>
 // @todo : refactor to use our fork
-import vueCal from 'vue-cal';
-import 'vue-cal/dist/vuecal.css';
-import 'vue-cal/dist/i18n/fr';
 import { DateTime } from 'luxon';
-import ecModal from '~/components/modal.vue';
-import ecField from '~/components/form/field.vue';
+import planningModal from '~/components/planning/modal.vue';
+import planningCalendar from '~/components/planning/calendar.vue';
 
 const DRIVER_DATA = 'id,firstname,lastname';
 const TIMESLOT_DATA = `id,start,end,drivers(${DRIVER_DATA})`;
@@ -182,29 +64,21 @@ const newTimeSlot = () => ({
   drivers: [],
 });
 export default {
-  components: { ecModal, ecField, vueCal },
+  components: { planningModal, planningCalendar },
   computed: {
-    ...['TIME_SIMPLE']
-      .map((f) => ({ [f]: () => DateTime[f] }))
-      .reduce((acc, cur) => Object.assign(acc, cur), {}),
-    range() {
-      return [
-        this.timeSlot.start || null,
-        this.timeSlot.end || null,
-      ];
-    },
     calEvents() {
       return this.events.data.map((event) => {
         const start = DateTime.fromISO(event.start);
         const end = DateTime.fromISO(event.end);
         return {
-          startDate: start.toJSDate(),
-          endDate: end.toJSDate(),
+          start: this.$vuecal().getVueCalFromDatetime(start),
+          end: this.$vuecal().getVueCalFromDatetime(end),
           content: {
             ...event,
             start,
             end,
           },
+          class: 'slot-event',
         };
       });
     },
@@ -262,11 +136,13 @@ export default {
       this.timeSlot.start = start;
       this.timeSlot.end = end;
     },
-    openCreate(date = new Date()) {
-      const d = DateTime.fromJSDate(date);
+    openCreate({
+      start = DateTime.fromJSDate(new Date()).startOf('hour').toJSDate(),
+      end = DateTime.fromJSDate(new Date()).endOf('hour').toJSDate(),
+    }) {
       this.timeSlot = Object.assign(
         newTimeSlot(),
-        { start: d.startOf('hour').toJSDate(), end: d.endOf('hour').toJSDate() },
+        { start, end },
       );
       this.toggleModal(true);
     },
@@ -306,7 +182,6 @@ export default {
   }
   .create-timeslot {
     border-radius: $gap;
-    padding: $size-small;
     width: 100%;
     position: relative;
     /deep/ .fa-user-circle {
@@ -341,20 +216,6 @@ export default {
       right: 0;
       position: absolute;
       z-index: 0;
-    }
-  }
-  /deep/ .vuecal__event {
-    background: $success;
-    color: $white;
-    padding: 8px;
-    header {
-      text-align: left;
-      .hours {
-        font-weight: bold;
-      }
-    }
-    .drivers-list {
-      font-weight: bold;
     }
   }
 </style>

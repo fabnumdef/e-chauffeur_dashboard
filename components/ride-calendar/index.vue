@@ -17,6 +17,7 @@
         hide-view-selector
         @click-and-release="onClickAndRelease"
         @ready="initRide"
+        @view-change="viewChange"
       >
         <template #title-bar="{ view, switchView, previous, next }">
           <div class="">
@@ -131,78 +132,6 @@ function generateEmptyRide() {
   };
 }
 
-function getFloorMinute(minute) {
-  const numberOfStep = Math.floor(60 / STEP);
-  let res = 0;
-  for (let i = 1; i <= numberOfStep; i += 1) {
-    const currentStep = STEP * i;
-    if (currentStep > minute) {
-      break;
-    }
-    res = currentStep;
-  }
-  return res;
-}
-
-function getCeilMinute(minute) {
-  const numberOfStep = Math.floor(60 / STEP);
-  let res = 0;
-  for (let i = 0; i <= numberOfStep; i += 1) {
-    const currentStep = STEP * i;
-    if (currentStep >= minute) {
-      res = currentStep;
-      break;
-    }
-  }
-  return res;
-}
-
-function getVueCalFloorDateFromISO(date) {
-  const exactDate = DateTime.fromISO(date);
-  return DateTime.fromObject({
-    day: exactDate.day,
-    hour: exactDate.hour,
-    minute: getFloorMinute(exactDate.minute),
-  }).setLocale('fr')
-    .toFormat('yyyy-LL-dd HH:mm');
-}
-
-function getVueCalCeilDateFromISO(date) {
-  const exactDate = DateTime.fromISO(date);
-  const minute = getCeilMinute(exactDate.minute);
-  return DateTime.fromObject({
-    day: exactDate.day,
-    hour: minute === 60 ? exactDate.hour + 1 : exactDate.hour,
-    minute: minute === 60 ? 0 : minute,
-  }).setLocale('fr')
-    .toFormat('yyyy-LL-dd HH:mm');
-}
-
-function getDateTimeFloorFromVueCal(date) {
-  const exactDate = DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
-  const now = DateTime.local();
-  let minute = getFloorMinute(exactDate.minute);
-  if (now.hasSame(exactDate, 'year') && now.hasSame(exactDate, 'month') && now.hasSame(exactDate, 'hour')
-    && getFloorMinute(now.minute) === minute) {
-    ({ minute } = now);
-  }
-  return DateTime.fromObject({
-    day: exactDate.day,
-    hour: exactDate.hour,
-    minute,
-  });
-}
-
-function getDateTimeCeilFromVueCal(date) {
-  const exactDate = DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
-  const minute = getCeilMinute(exactDate.minute);
-  return DateTime.fromObject({
-    day: exactDate.day,
-    hour: minute === 60 ? exactDate.hour + 1 : exactDate.hour,
-    minute: minute === 60 ? 0 : minute,
-  });
-}
-
 export default {
   components: {
     Modal,
@@ -234,6 +163,7 @@ export default {
       STEP,
       START_DAY_HOUR,
       END_DAY_HOUR,
+      day: new Date(),
       modalOpen: false,
     };
   },
@@ -254,8 +184,8 @@ export default {
     },
     ridesCalendar() {
       return this.rides.map((ride) => {
-        const start = getVueCalFloorDateFromISO(ride.start);
-        const end = getVueCalCeilDateFromISO(ride.end);
+        const start = this.$vuecal(STEP).getVueCalFloorDateFromISO(ride.start);
+        const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(ride.end);
         const split = ride.driver ? this.drivers.findIndex((driver) => driver.id === ride.driver.id) + 1 : 1;
         const clas = `ride-event ${this.eventStatusClass(ride)}`;
         return {
@@ -275,8 +205,10 @@ export default {
         if (driver.availabilities && driver.availabilities.length > 0) {
           driver.availabilities.forEach((avail) => {
             if (avail.start && avail.start.hour > START_DAY_HOUR) {
-              const start = getVueCalFloorDateFromISO(DateTime.fromObject({ hour: START_DAY_HOUR }).toISO());
-              const end = getVueCalCeilDateFromISO(avail.start.toISO());
+              const datetimeStart = DateTime.fromJSDate(this.day).set({ hour: START_DAY_HOUR, minute: 0, second: 0 });
+              const start = this.$vuecal(STEP)
+                .getVueCalFloorDateFromISO(datetimeStart.toISO());
+              const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.start.toISO());
               const split = index + 1;
               openingHoursEvents.push({
                 start,
@@ -287,8 +219,9 @@ export default {
               });
             }
             if (avail.end && avail.end.hour < END_DAY_HOUR) {
-              const start = getVueCalFloorDateFromISO(avail.end.toISO());
-              const end = getVueCalCeilDateFromISO(DateTime.fromObject({ hour: END_DAY_HOUR }).toISO());
+              const datetimeEnd = DateTime.fromJSDate(this.day).set({ hour: END_DAY_HOUR, minute: 0, second: 0 });
+              const start = this.$vuecal(STEP).getVueCalFloorDateFromISO(avail.end.toISO());
+              const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(datetimeEnd.toISO());
               const split = index + 1;
               openingHoursEvents.push({
                 start,
@@ -324,7 +257,9 @@ export default {
       if (event.split > 1) {
         this.initRide();
         const { id, name } = this.drivers[event.split - 1];
-        this.updateDates([getDateTimeFloorFromVueCal(event.start), getDateTimeCeilFromVueCal(event.end)], {
+        this.updateDates([
+          this.$vuecal(STEP).getDateTimeFloorFromVueCal(event.start),
+          this.$vuecal(STEP).getDateTimeCeilFromVueCal(event.end)], {
           id,
           name,
         });
@@ -383,6 +318,12 @@ export default {
       }
       return formatedDate;
     },
+    viewChange(obj) {
+      if (obj.view === 'day') {
+        this.day = obj.startDate;
+      }
+      this.$emit('view-change', obj);
+    },
   },
 };
 </script>
@@ -395,6 +336,12 @@ export default {
   }
   /deep/ {
     .vuecal {
+      &__no-event {
+        display: none;
+      }
+      &__cell-hover:hover {
+        background-color: rgba(0, 83, 179, 0.4);
+      }
       &__split-days-in-header .vuecal__time-column {
         text-align: center;
         margin: auto 0;
