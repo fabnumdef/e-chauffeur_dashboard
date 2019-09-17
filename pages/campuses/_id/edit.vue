@@ -52,25 +52,40 @@
           class="input"
         >
       </ec-field>
+      <div class="columns">
+        <div class="column">
+          <ec-field
+            label="Numéro de téléphone (chauffeurs)"
+            field-id="phone-drivers"
+          >
+            <input
+              id="phone-drivers"
+              v-model="campus.phone.drivers"
+              class="input"
+            >
+          </ec-field>
+        </div>
+        <div class="column">
+          <ec-field
+            label="Numéro de téléphone (public)"
+            field-id="phone-everybody"
+          >
+            <input
+              id="phone-everybody"
+              v-model="campus.phone.everybody"
+              class="input"
+            >
+          </ec-field>
+        </div>
+      </div>
       <ec-field
-        label="Numéro de téléphone (chauffeurs)"
-        field-id="phone-drivers"
+        label="Jours ouvrés"
+        field-id="workedDays"
       >
-        <input
-          id="phone-drivers"
-          v-model="campus.phone.drivers"
-          class="input"
-        >
-      </ec-field>
-      <ec-field
-        label="Numéro de téléphone (public)"
-        field-id="phone-everybody"
-      >
-        <input
-          id="phone-everybody"
-          v-model="campus.phone.everybody"
-          class="input"
-        >
+        <weekdays-select
+          id="workedDays"
+          v-model="campus.workedDays"
+        />
       </ec-field>
       <ec-field
         label="Catégories"
@@ -117,6 +132,7 @@
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
+import weekdaysSelect from '~/components/form/weekdays.vue';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),information';
 export default {
@@ -124,6 +140,7 @@ export default {
     ecField,
     ecGpsPoint,
     searchCategories,
+    weekdaysSelect,
   },
   props: {
     campus: {

@@ -4,7 +4,10 @@
       class="box"
     >
       <header class="title">
-        <div class="is-pulled-right" v-if="Object.keys($slots).length > 1">
+        <div
+          v-if="Object.keys($slots).length > 1"
+          class="is-pulled-right"
+        >
           <template
             v-for="k of Object.keys(types)"
           >

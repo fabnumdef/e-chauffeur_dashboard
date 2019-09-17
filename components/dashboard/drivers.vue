@@ -41,7 +41,7 @@ export default {
     pieDrivers() {
       return {
         labels: this.drivers.map(
-          ({ driver }) => (driver ? (driver.name || `${driver.firstname} ${driver.lastname}`) : 'NC')
+          ({ driver }) => (driver ? (driver.name || `${driver.firstname} ${driver.lastname}`) : 'NC'),
         ),
         datasets: [{ ...this.backgroundColors, data: this.drivers.map(({ total }) => total) }],
 

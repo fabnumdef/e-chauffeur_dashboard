@@ -6,9 +6,9 @@
     <template #TEXT>
       <ul>
         <li>{{ ridesInProgress.total }}/{{ ridesTotal }} courses en cours ({{ ridesInProgress.percent }}%)</li>
-        <li>{{ ridesCanceled.total }}/{{ ridesTotal }} courses annulées ({{ridesCanceled.percent}}%)</li>
-        <li>{{ ridesSucceed.total }}/{{ ridesTotal }} courses honorées ({{ridesSucceed.percent}}%)</li>
-        <li>{{ ridesFailed.total }}/{{ ridesTotal }} courses non-honorées ({{ridesFailed.percent}}%)</li>
+        <li>{{ ridesCanceled.total }}/{{ ridesTotal }} courses annulées ({{ ridesCanceled.percent }}%)</li>
+        <li>{{ ridesSucceed.total }}/{{ ridesTotal }} courses honorées ({{ ridesSucceed.percent }}%)</li>
+        <li>{{ ridesFailed.total }}/{{ ridesTotal }} courses non-honorées ({{ ridesFailed.percent }}%)</li>
         <li>
           <span>Détail</span>
           <ul>
@@ -40,10 +40,11 @@ import bgColorsMixin from '~/components/dashboard/mixins/background-colors';
 
 const IN_PROGRESS_STATUSES = [DRAFTED, CREATED, VALIDATED, ACCEPTED, STARTED, WAITING, IN_PROGRESS];
 const SUCCEED_STATUSES = [DELIVERED];
-const CANCELED_STATUSES = [CANCELED, CANCELED_CUSTOMER_MISSING,
-  CANCELED_CUSTOMER_OVERLOAD, CANCELED_REQUESTED_CUSTOMER];
+const CANCELED_STATUSES = [
+  CANCELED, CANCELED_CUSTOMER_MISSING, CANCELED_CUSTOMER_OVERLOAD, CANCELED_REQUESTED_CUSTOMER,
+];
 const FAILED_STATUSES = [
-  REJECTED_BOUNDARY, REJECTED_CAPACITY, DECLINED, CANCELED_TECHNICAL
+  REJECTED_BOUNDARY, REJECTED_CAPACITY, DECLINED, CANCELED_TECHNICAL,
 ];
 export default {
   components: {
