@@ -51,6 +51,7 @@
       </bulma-tile>
       <bulma-tile vertical>
         <has-phone-tile :data="stats[REQUESTABLE.hasPhone]" />
+        <statuses-tile :statuses="stats[REQUESTABLE.statuses]" />
       </bulma-tile>
       <bulma-tile vertical>
         <pois-tile
@@ -78,6 +79,7 @@ import categoriesTile from '~/components/dashboard/categories.vue';
 import driversTile from '~/components/dashboard/drivers.vue';
 import hasPhoneTile from '~/components/dashboard/has-phone.vue';
 import poisTile from '~/components/dashboard/pois.vue';
+import statusesTile from '~/components/dashboard/statuses.vue';
 
 const REQUESTABLE = {
   total: 'total',
@@ -98,6 +100,7 @@ export default {
     bulmaTile,
     poisTile,
     hasPhoneTile,
+    statusesTile,
   },
   props: {
     campus: {
@@ -132,6 +135,7 @@ export default {
       [
         REQUESTABLE.total, REQUESTABLE.categories, REQUESTABLE.carModels,
         REQUESTABLE.hasPhone,
+        REQUESTABLE.statuses,
         `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
         `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
         `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
