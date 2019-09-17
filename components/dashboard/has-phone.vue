@@ -1,10 +1,13 @@
 <template>
   <fragmented-tile
-    v-if="data.true || data.false"
+    v-if="data"
     title="Proportion de numéro de téléphone"
     default-fragment="PIE"
   >
-    <template #PIE>
+    <template
+      v-if="data.true || data.false"
+      #PIE
+    >
       <pie-chart :chart-data="pieCategories" />
     </template>
   </fragmented-tile>

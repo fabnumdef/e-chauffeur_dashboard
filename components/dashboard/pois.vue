@@ -1,9 +1,12 @@
 <template>
   <fragmented-tile
-    v-if="pois && pois.length"
+    v-if="pois"
     :title="title"
   >
-    <template #TEXT>
+    <template
+      v-if="pois.length"
+      #TEXT
+    >
       <ol>
         <li
           v-for="poi of pois.slice(0, 3)"
@@ -13,10 +16,16 @@
         </li>
       </ol>
     </template>
-    <template #PIE>
+    <template
+      v-if="pois.length"
+      #PIE
+    >
       <pie-chart :chart-data="piePois" />
     </template>
-    <template #MAP>
+    <template
+      v-if="pois.length"
+      #MAP
+    >
       <client-only placeholder="Chargement...">
         <l-map
           :zoom="13"

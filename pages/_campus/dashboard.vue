@@ -66,6 +66,12 @@
           sub-key="arrival"
           :map-center="campus.location.coordinates"
         />
+        <over-time-tile
+          :data="stats[REQUESTABLE.period]"
+          :time-unit="request.timeUnit"
+          :time-scope="request.timeScope"
+          @input="changeTimeConfig"
+        />
       </bulma-tile>
     </bulma-tile>
   </main>
@@ -78,6 +84,7 @@ import carModelsTile from '~/components/dashboard/car-models.vue';
 import categoriesTile from '~/components/dashboard/categories.vue';
 import driversTile from '~/components/dashboard/drivers.vue';
 import hasPhoneTile from '~/components/dashboard/has-phone.vue';
+import overTimeTile from '~/components/dashboard/over-time.vue';
 import poisTile from '~/components/dashboard/pois.vue';
 import statusesTile from '~/components/dashboard/statuses.vue';
 
@@ -90,6 +97,7 @@ const REQUESTABLE = {
   statuses: 'statuses',
   drivers: 'drivers',
   hasPhone: 'has-phone',
+  period: 'period',
 };
 
 export default {
@@ -101,6 +109,7 @@ export default {
     poisTile,
     hasPhoneTile,
     statusesTile,
+    overTimeTile,
   },
   props: {
     campus: {
@@ -108,7 +117,7 @@ export default {
       default: null,
     },
   },
-  watchQuery: ['before', 'after'],
+  watchQuery: ['before', 'after', 'time-scope', 'time-unit'],
   computed: {
     range() {
       return [
@@ -127,19 +136,32 @@ export default {
     'request.end': function watchRequestEnd() {
       this.updateRoute();
     },
+    'request.timeScope': function watchRequestTimeScope() {
+      this.updateRoute();
+    },
+    'request.timeUnit': function watchRequestTimeUnit() {
+      this.updateRoute();
+    },
   },
   async asyncData({ $api, params, query }) {
     const start = (query.after ? DateTime.fromISO(query.after) : DateTime.local().startOf('weeks')).toJSDate();
     const end = (query.before ? DateTime.fromISO(query.before) : DateTime.local().endOf('weeks')).toJSDate();
+    const timeScope = (query['time-scope'] ? query['time-scope'] : 'week');
+    const timeUnit = (query['time-unit'] ? query['time-unit'] : 'day');
     const { data: stats } = await $api.rides(params.campus).getStats(
-      [
-        REQUESTABLE.total, REQUESTABLE.categories, REQUESTABLE.carModels,
-        REQUESTABLE.hasPhone,
-        REQUESTABLE.statuses,
-        `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
-        `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
-        `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
-      ].join(','),
+      {
+        timeScope,
+        timeUnit,
+        mask: [
+          REQUESTABLE.total, REQUESTABLE.categories, REQUESTABLE.carModels,
+          REQUESTABLE.hasPhone,
+          REQUESTABLE.statuses,
+          `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
+          `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
+          `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
+          REQUESTABLE.period,
+        ].join(','),
+      },
       start,
       end,
     );
@@ -148,6 +170,8 @@ export default {
       request: {
         start,
         end,
+        timeScope,
+        timeUnit,
       },
     };
   },
@@ -156,8 +180,17 @@ export default {
       this.request.start = start;
       this.request.end = end;
     },
+    changeTimeConfig({ timeScope, timeUnit } = {}) {
+      this.request.timeScope = timeScope;
+      this.request.timeUnit = timeUnit;
+    },
     updateRoute() {
-      const query = { before: this.request.end.toISOString(), after: this.request.start.toISOString() };
+      const query = {
+        before: this.request.end.toISOString(),
+        after: this.request.start.toISOString(),
+        'time-scope': this.request.timeScope,
+        'time-unit': this.request.timeUnit,
+      };
       this.$router.push(this.campusLink('dashboard', { query }));
     },
   },

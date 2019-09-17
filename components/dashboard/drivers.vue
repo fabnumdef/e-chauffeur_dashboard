@@ -1,9 +1,12 @@
 <template>
   <fragmented-tile
-    v-if="drivers && drivers.length"
+    v-if="drivers"
     title="Chauffeurs les plus solicités"
   >
-    <template #TEXT>
+    <template
+      v-if="drivers.length"
+      #TEXT
+    >
       <ol>
         <li
           v-for="{total, driver, id} of drivers.slice(0, 3)"
@@ -14,7 +17,10 @@
         </li>
       </ol>
     </template>
-    <template #PIE>
+    <template
+      v-if="drivers.length"
+      #PIE
+    >
       <pie-chart :chart-data="pieDrivers" />
     </template>
   </fragmented-tile>

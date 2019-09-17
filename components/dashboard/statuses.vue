@@ -1,9 +1,12 @@
 <template>
   <fragmented-tile
-    v-if="statuses && statuses.length"
+    v-if="statuses"
     title="Statuts"
   >
-    <template #TEXT>
+    <template
+      v-if="statuses.length"
+      #TEXT
+    >
       <ul>
         <li>{{ ridesInProgress.total }}/{{ ridesTotal }} courses en cours ({{ ridesInProgress.percent }}%)</li>
         <li>{{ ridesCanceled.total }}/{{ ridesTotal }} courses annulées ({{ ridesCanceled.percent }}%)</li>
@@ -22,7 +25,10 @@
         </li>
       </ul>
     </template>
-    <template #PIE>
+    <template
+      v-if="statuses.length"
+      #PIE
+    >
       <pie-chart :chart-data="pieStatuses" />
     </template>
   </fragmented-tile>

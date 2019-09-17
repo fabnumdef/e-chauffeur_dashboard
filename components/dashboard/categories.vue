@@ -1,9 +1,12 @@
 <template>
   <fragmented-tile
-    v-if="categories && categories.length"
+    v-if="categories"
     title="Catégories les plus demandées"
   >
-    <template #TEXT>
+    <template
+      v-if="categories.length"
+      #TEXT
+    >
       <ol>
         <li
           v-for="{total, category, id} of categories.slice(0, 3)"
@@ -13,7 +16,10 @@
         </li>
       </ol>
     </template>
-    <template #PIE>
+    <template
+      v-if="categories.length"
+      #PIE
+    >
       <pie-chart :chart-data="pieCategories" />
     </template>
   </fragmented-tile>

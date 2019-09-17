@@ -99,6 +99,7 @@ module.exports = {
           'faSpinner',
           'faList',
           'faChartPie',
+          'faChartBar',
         ],
       },
     ],

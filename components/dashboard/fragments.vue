@@ -44,8 +44,9 @@ import bulmaTile from '~/components/tile.vue';
 const TEXT = 'list';
 const MAP = 'map';
 const PIE = 'chart-pie';
+const BAR = 'chart-bar';
 export const types = {
-  TEXT, PIE, MAP,
+  TEXT, PIE, MAP, BAR,
 };
 
 export default {

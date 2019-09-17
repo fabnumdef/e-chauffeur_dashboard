@@ -1,9 +1,12 @@
 <template>
   <fragmented-tile
-    v-if="models && models.length"
+    v-if="models"
     title="Modèles de véhicules les plus utilisés"
   >
-    <template #TEXT>
+    <template
+      v-if="models.length"
+      #TEXT
+    >
       <ol>
         <li
           v-for="{total, model, id} of models.slice(0, 3)"
@@ -13,7 +16,10 @@
         </li>
       </ol>
     </template>
-    <template #PIE>
+    <template
+      v-if="models.length"
+      #PIE
+    >
       <pie-chart :chart-data="pieModels" />
     </template>
   </fragmented-tile>
