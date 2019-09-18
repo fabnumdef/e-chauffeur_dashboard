@@ -28,6 +28,9 @@
               v-for="driver of drivers.data"
               :key="driver.id"
               class="box driver-box"
+              draggable="true"
+              @dragstart="dragstart($event, driver)"
+              @dragend="dragend"
             >
               {{ driver.firstname }} {{ driver.lastname }}
               <nuxt-link
@@ -40,8 +43,10 @@
           </ul>
         </aside>
         <planning-calendar
+          :is-grabbing="isGrabbing"
           :events="calEvents"
           :drivers="drivers"
+          @edit-time-slot="editTimeSlot"
           @open-edit="openEdit"
           @open-create="openCreate"
           @view-change="viewChange"
@@ -105,6 +110,7 @@ export default {
       },
       isModalOpen: false,
       campusId: params.campus,
+      isGrabbing: false,
     };
   },
   methods: {
@@ -146,6 +152,21 @@ export default {
       );
       this.toggleModal(true);
     },
+    dragstart(event, driver) {
+      this.isGrabbing = true;
+      event.dataTransfer.setData('application/json', JSON.stringify(driver));
+      // eslint-disable-next-line no-param-reassign
+      event.currentTarget.style.backgroundColor = 'rgba(0, 83, 179, 0.4)';
+      // eslint-disable-next-line no-param-reassign
+      event.currentTarget.style.cursor = 'grabbing';
+    },
+    dragend(event) {
+      this.isGrabbing = false;
+      // eslint-disable-next-line no-param-reassign
+      event.currentTarget.style.cursor = 'grab';
+      // eslint-disable-next-line no-param-reassign
+      event.currentTarget.style.backgroundColor = '';
+    },
     openEdit({ content: timeSlot }) {
       this.timeSlot = timeSlot;
       this.toggleModal(true);
@@ -169,6 +190,7 @@ export default {
       color: $black;
     }
     &.driver-box {
+      cursor: grab;
       border-radius: $gap;
       padding: $size-small;
       font-weight: bold;
