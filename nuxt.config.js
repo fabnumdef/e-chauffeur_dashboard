@@ -75,6 +75,7 @@ module.exports = {
       {
         package: '@fortawesome/free-solid-svg-icons',
         icons: [
+          'faMap',
           'faMapMarkerAlt',
           'faFlag',
           'faEdit',
@@ -96,6 +97,9 @@ module.exports = {
           'faUserCircle',
           'faCog',
           'faSpinner',
+          'faList',
+          'faChartPie',
+          'faChartBar',
         ],
       },
     ],

@@ -34,7 +34,8 @@
           >
             <l-icon
               :icon-size="[40,40]"
-              :icon-anchor="[20,20]">
+              :icon-anchor="[20,20]"
+            >
               <svg
                 width="40"
                 height="40"

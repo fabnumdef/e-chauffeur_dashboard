@@ -65,7 +65,6 @@ export default {
       await this.CarsAPI.deleteCar(id);
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
-      console.log(offset, limit);
       const updatedList = await this.CarsAPI.getCars(offset, limit);
       this.cars = updatedList.data;
       this.pagination = updatedList.pagination;
