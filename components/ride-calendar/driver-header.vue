@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { DateTime } from 'luxon';
+import { DateTime, Interval } from 'luxon';
 import rideStatus from '~/components/ride-status.vue';
 
 export default {
@@ -39,7 +39,13 @@ export default {
   },
   computed: {
     isAvailable() {
-      return this.driver.availabilities.some((avail) => (avail.contains && avail.contains(DateTime.local())));
+      return this.driver.availabilities.some((avail) => {
+        if (typeof avail.s === 'string') {
+          // eslint-disable-next-line no-param-reassign
+          avail = Interval.fromDateTimes(DateTime.fromISO(avail.s), DateTime.fromISO(avail.e));
+        }
+        return avail.contains && avail.contains(DateTime.local());
+      });
     },
   },
 };
