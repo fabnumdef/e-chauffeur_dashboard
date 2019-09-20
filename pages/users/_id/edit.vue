@@ -138,9 +138,18 @@ export default {
     async edit(user) {
       let data = {};
       if (user.id) {
-        ({ data } = (await this.$api.users.patchUser(user.id, user, 'id,name,email,roles(role,campuses(id,name)')));
+        ({ data } = (await this.$api.users.patchUser(
+          user.id,
+          user,
+          'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
+          {},
+        )));
       } else {
-        ({ data } = (await this.$api.users.postUser(user, 'id,name,email,roles(role,campuses(id,name)')));
+        ({ data } = (await this.$api.users.postUser(
+          user,
+          'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
+          {},
+        )));
       }
 
       this.$router.push({
