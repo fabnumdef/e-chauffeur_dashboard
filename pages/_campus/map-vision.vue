@@ -21,6 +21,7 @@
               input-class="input"
               format="YYYY-MM-DD HH:mm:ss"
               :clearable="false"
+              :first-day-of-week="1"
             >
               <template slot="calendar-icon">
                 <fa-icon icon="calendar-alt" />

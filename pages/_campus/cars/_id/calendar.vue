@@ -38,6 +38,7 @@
               <date-time
                 lang="fr"
                 append-to-body
+                :first-day-of-week="1"
                 input-class="input"
                 type="datetime"
                 range

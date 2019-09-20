@@ -32,6 +32,7 @@
         range
         :value="range"
         :minute-step="5"
+        :first-day-of-week="1"
         format="YYYY-MM-DD HH:mm"
         range-separator="->"
         @input="updateDates"
