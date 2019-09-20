@@ -2,6 +2,7 @@
   <vue-modal
     :active="modalOpen"
     :with-background="false"
+    minimizable
     @toggle-modal="toggleModal"
     @submit="edit(ride)"
   >
