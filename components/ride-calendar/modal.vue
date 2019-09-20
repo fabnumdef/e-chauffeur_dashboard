@@ -165,7 +165,22 @@
         />
       </ec-field>
     </div>
-
+    <ec-field
+      v-if="ride.userComments"
+      label="Commentaires client"
+      field-id="userComments"
+    >
+      <p>
+        {{ ride.userComments }}
+      </p>
+      <button
+        class="button is-small is-primary"
+        type="button"
+        @click="copyToComments(ride.userComments)"
+      >
+        Copier vers les commentaires
+      </button>
+    </ec-field>
     <ec-field
       label="Commentaires"
       field-id="comments"
@@ -448,6 +463,12 @@ export default {
     can: ({ status }, action) => {
       const state = Status(status);
       return state.can(action);
+    },
+    copyToComments(content) {
+      this.ride.comments = `\
+${content}
+---
+${this.ride.comments || ''}`;
     },
   },
 };
