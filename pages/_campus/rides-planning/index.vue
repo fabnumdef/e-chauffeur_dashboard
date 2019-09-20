@@ -22,7 +22,7 @@
     </div>
     <ride-calendar
       :drivers="drivers"
-      :rides="rides"
+      :rides="flavoredRides"
       :current-campus="currentCampus"
       :campus="campus"
       @view-change="viewChange"
@@ -33,6 +33,9 @@
 <script>
 import { mapGetters } from 'vuex';
 import { DateTime } from 'luxon';
+import {
+  DRAFTED,
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 import RideCalendar from '~/components/ride-calendar';
 
 const EDITABLE_FIELDS = [
@@ -62,6 +65,9 @@ export default {
       currentCampus: 'context/campus',
       hideMap: 'context/hideMap',
     }),
+    flavoredRides() {
+      return this.rides.filter(({ status }) => status !== DRAFTED);
+    },
   },
 
   async asyncData({ params, $api, store }) {
