@@ -113,7 +113,7 @@ export default {
     getCurrentRide({ date, id } = {}) {
       const currentTime = DateTime.fromISO(date);
       return this.rides
-        .filter((r) => r.driver.id === id)
+        .filter((r) => r.driver && r.driver.id === id)
         .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     getStatus(driver) {
