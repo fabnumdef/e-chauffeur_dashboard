@@ -11,6 +11,7 @@
               v-model="today"
               lang="fr"
               append-to-body
+              :first-day-of-week="1"
               input-class="input"
               format="YYYY-MM-DD"
               :clearable="false"

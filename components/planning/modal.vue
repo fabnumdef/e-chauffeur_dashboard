@@ -29,6 +29,7 @@
           :minute-step="5"
           format="YYYY-MM-DD HH:mm"
           range-separator="->"
+          :first-day-of-week="1"
           @input="updateDates"
         >
           <template #calendar-icon>

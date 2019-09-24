@@ -11,6 +11,7 @@
       @click="toggleModal"
     />
     <form
+      v-if="!minimized"
       class="modal-card"
       @submit.prevent="modalSubmit"
     >
@@ -21,6 +22,15 @@
         <p class="modal-card-title">
           <slot name="title" />
         </p>
+        <button
+          v-if="minimizable"
+          class="button is-text is-rounded"
+          type="button"
+          aria-label="close"
+          @click="toggleMinimize(true)"
+        >
+          <fa-icon icon="window-minimize" />
+        </button>
         <button
           class="button is-text is-rounded"
           type="button"
@@ -54,6 +64,16 @@
         </slot>
       </footer>
     </form>
+    <div
+      v-else
+      class="modal-minimized"
+      @click="toggleMinimize(false)"
+    >
+      <slot name="title" /> <fa-icon
+        class="is-pulled-right"
+        icon="window-minimize"
+      />
+    </div>
   </div>
 </template>
 <script>
@@ -67,15 +87,23 @@ export default {
       type: Boolean,
       default: true,
     },
+    minimizable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-
+      minimized: false,
     };
   },
   methods: {
     toggleModal() {
+      this.toggleMinimize(false);
       this.$emit('toggle-modal', !this.active);
+    },
+    toggleMinimize(v) {
+      this.minimized = typeof v === 'undefined' ? !this.minimized : v;
     },
     modalSubmit(...rest) {
       this.$emit('submit', ...rest);
@@ -96,6 +124,25 @@ export default {
     }
     &-head button, &-head button:hover {
       color: findColorInvert($modal-card-head-background-color);
+    }
+  }
+  @keyframes highlight {
+    0% {background-color: $primary;}
+    50% {background-color: $danger;}
+    100% {background-color: $primary;}
+  }
+  .modal-minimized {
+    position: absolute;
+    bottom: 0;
+    right: $gap;
+    background: $primary;
+    color: $white;
+    padding: $size-7;
+    border-radius: $radius-small $radius-small 0 0;
+    animation-name: highlight;
+    animation-duration: 1s;
+    /deep/ svg {
+      margin-left: $size-7;
     }
   }
 </style>

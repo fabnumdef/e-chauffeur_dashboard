@@ -100,6 +100,7 @@ module.exports = {
           'faList',
           'faChartPie',
           'faChartBar',
+          'faWindowMinimize',
         ],
       },
     ],
