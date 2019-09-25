@@ -267,7 +267,7 @@ const EDITABLE_FIELDS = [
   'departure(id,label)',
   'arrival(id,label)',
   'car(id,label,model(id,label))',
-  'driver(id,name)',
+  'driver(id,name,firstname,lastname)',
   'phone',
   'status',
   'comments',
@@ -415,8 +415,12 @@ export default {
       this.focusState[input] = 'focused';
     },
 
-    updateDates([start, end], { id, name } = {}) {
-      this.ride.driver = { id, name };
+    updateDates([start, end], {
+      id, name, firstname, lastname,
+    } = {}) {
+      this.ride.driver = {
+        id, name, firstname, lastname,
+      };
       this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },

@@ -6,6 +6,7 @@
     :value="value"
     track-by="id"
     label="name"
+    :custom-label="customLabel"
     :show-labels="false"
     @search-change="updateSet"
     @input="onInput"
@@ -15,7 +16,7 @@
 <script>
 import debounce from 'lodash.debounce';
 
-const FIELDS = 'id,name';
+const FIELDS = 'id,name,firstname,lastname';
 export default {
   props: {
     campus: {
@@ -66,6 +67,12 @@ export default {
     },
     onInput(data) {
       this.$emit('input', data);
+    },
+    customLabel(driver) {
+      if (driver.name) {
+        return driver.name;
+      }
+      return !driver.firstname ? '' : `${driver.firstname} ${driver.lastname}`;
     },
   },
 };
