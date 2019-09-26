@@ -323,8 +323,8 @@ export default {
       },
       filters: {
         date: [
-          DateTime.local().minus({ months: 1 }).toJSDate(),
-          DateTime.local().toJSDate(),
+          DateTime.local().minus({ months: 1 }).startOf('day').toJSDate(),
+          DateTime.local().endOf('day').toJSDate(),
         ],
       },
       fields: ['id', 'start', 'end', 'phone', 'departure', 'arrival', 'driver', 'passengersCount', 'car',
@@ -382,8 +382,8 @@ export default {
                 csv,
               },
             );
-          const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${response.data}`);
-          if (window && window.document) {
+          if (window && window.document && window.btoa) {
+            const encodedUri = encodeURI(`data:text/csv;base64,${window.btoa(response.data)}`);
             const link = window.document
               .createElement('a');
             link.setAttribute('href', encodedUri);
@@ -412,8 +412,11 @@ export default {
       this.show = Array(this.rides.length).fill(false);
     },
 
-    updateFilterDate(date) {
-      this.filters.date = date;
+    updateFilterDate([from, to]) {
+      this.filters.date = [
+        DateTime.fromJSDate(from).startOf('day').toJSDate(),
+        DateTime.fromJSDate(to).endOf('day').toJSDate(),
+      ];
       this.getRides();
     },
 
