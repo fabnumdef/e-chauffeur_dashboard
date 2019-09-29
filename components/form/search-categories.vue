@@ -7,9 +7,9 @@
     track-by="id"
     label="label"
     :show-labels="false"
+    :loading="loading"
     @search-change="updateSet"
     @input="onInput"
-    :loading="loading"
   />
 </template>
 <script>
