@@ -15,12 +15,33 @@
       </template>
     </template>
 
-    <ec-field
-      label="Type de course"
-      field-id="departure"
-    >
-      <search-category v-model="ride.category" />
-    </ec-field>
+    <div class="columns">
+      <div class="column">
+        <ec-field
+          label="Type de course"
+          field-id="departure"
+        >
+          <search-category v-model="ride.category" />
+        </ec-field>
+      </div>
+      <div class="column">
+        <ec-field
+          label="Informations"
+        >
+          <div class="tags has-addons">
+            <span class="tag is-dark">Créée par</span>
+            <span
+              v-if="ride.owner"
+              class="tag is-warning"
+            >Utilisateur</span>
+            <span
+              v-else
+              class="tag is-info"
+            >Régulation</span>
+          </div>
+        </ec-field>
+      </div>
+    </div>
     <ec-field
       label="Dates"
       field-id="dates"
@@ -182,9 +203,21 @@
       </button>
     </ec-field>
     <ec-field
-      label="Commentaires"
       field-id="comments"
     >
+      <template #label>
+        <div class="columns">
+          <div class="column">
+            Commentaires
+          </div>
+          <div class="column is-narrow">
+            <div class="tags has-addons">
+              <span class="tag is-dark"><fa-icon icon="exclamation-triangle" /></span>
+              <span class="tag is-danger">Ne pas communiquer d'informations sensibles</span>
+            </div>
+          </div>
+        </div>
+      </template>
       <textarea
         id="comments"
         v-model="ride.comments"
@@ -328,6 +361,7 @@ export default {
         category: null,
         passengersCount: 1,
         luggage: false,
+        comments: '',
       }),
     },
     currentCampus: {
@@ -469,6 +503,7 @@ export default {
       return state.can(action);
     },
     copyToComments(content) {
+      console.log(content, this.ride.comments);
       this.ride.comments = `\
 ${content}
 ---

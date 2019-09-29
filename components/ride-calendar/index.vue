@@ -129,6 +129,7 @@ function generateEmptyRide() {
     category: null,
     passengersCount: 1,
     luggage: false,
+    comments: '',
   };
 }
 
@@ -275,7 +276,7 @@ export default {
         ride.start = DateTime.fromISO(event.ride.start);
         ride.end = DateTime.fromISO(event.ride.end);
         ride.interval = Interval.fromDateTimes(ride.start, ride.end);
-        this.ride = ride;
+        this.ride = Object.assign(generateEmptyRide(), ride);
         this.toggleModal(true);
       }
     },
