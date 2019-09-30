@@ -503,7 +503,6 @@ export default {
       return state.can(action);
     },
     copyToComments(content) {
-      console.log(content, this.ride.comments);
       this.ride.comments = `\
 ${content}
 ---
