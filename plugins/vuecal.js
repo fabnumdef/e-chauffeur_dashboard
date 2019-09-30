@@ -31,6 +31,8 @@ Vue.prototype.$vuecal = (STEP = 60) => ({
   getVueCalFloorDateFromISO(date) {
     const exactDate = DateTime.fromISO(date);
     return this.getVueCalFromDatetime(DateTime.fromObject({
+      year: exactDate.year,
+      month: exactDate.month,
       day: exactDate.day,
       hour: exactDate.hour,
       minute: this.getFloorMinute(exactDate.minute),
@@ -40,6 +42,8 @@ Vue.prototype.$vuecal = (STEP = 60) => ({
     const exactDate = DateTime.fromISO(date);
     const minute = this.getCeilMinute(exactDate.minute);
     return this.getVueCalFromDatetime(DateTime.fromObject({
+      year: exactDate.year,
+      month: exactDate.month,
       day: exactDate.day,
       hour: minute === 60 ? exactDate.hour + 1 : exactDate.hour,
       minute: minute === 60 ? 0 : minute,
@@ -54,6 +58,8 @@ Vue.prototype.$vuecal = (STEP = 60) => ({
       ({ minute } = now);
     }
     return DateTime.fromObject({
+      year: exactDate.year,
+      month: exactDate.month,
       day: exactDate.day,
       hour: exactDate.hour,
       minute,
@@ -63,6 +69,8 @@ Vue.prototype.$vuecal = (STEP = 60) => ({
     const exactDate = this.getDatetimeFromVueCal(date);
     const minute = this.getCeilMinute(exactDate.minute);
     return DateTime.fromObject({
+      year: exactDate.year,
+      month: exactDate.month,
       day: exactDate.day,
       hour: minute === 60 ? exactDate.hour + 1 : exactDate.hour,
       minute: minute === 60 ? 0 : minute,

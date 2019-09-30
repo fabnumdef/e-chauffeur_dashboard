@@ -3,14 +3,16 @@
     class="field"
   >
     <div
-      v-if="label"
+      v-if="label || $slots.label"
       class="field-label is-normal"
     >
       <label
         :for="fieldId"
         class="label"
       >
-        {{ label }}
+        <slot name="label">
+          {{ label }}
+        </slot>
       </label>
     </div>
     <div class="field-body">

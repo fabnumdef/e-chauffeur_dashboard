@@ -101,6 +101,7 @@ module.exports = {
           'faChartPie',
           'faChartBar',
           'faWindowMinimize',
+          'faExclamationTriangle',
         ],
       },
     ],
