@@ -340,6 +340,9 @@ export default {
   }
   /deep/ {
     .vuecal {
+      &__cell-events-count {
+        display: none;
+      }
       &__no-event {
         display: none;
       }
