@@ -7,6 +7,7 @@
     track-by="id"
     label="label"
     :show-labels="false"
+    :loading="loading"
     @input="onInput"
     @open="onOpen"
   >
@@ -60,6 +61,7 @@ export default {
   },
   data: () => ({
     cars: [],
+    loading: false,
   }),
   watch: {
     async driver() {
@@ -68,13 +70,20 @@ export default {
         sort = {
           'last-driver-ride': this.driver.id,
         };
-        const { data } = await this.$api.rides(this.campus).getAvailableCars(
-          FIELDS,
-          this.start.toISO(),
-          this.end.toISO(),
-          sort,
-        );
-        this.$emit('input', data[0]);
+        this.loading = true;
+        try {
+          const { data } = await this.$api.rides(this.campus).getAvailableCars(
+            FIELDS,
+            this.start.toISO(),
+            this.end.toISO(),
+            sort,
+          );
+          this.$emit('input', data[0]);
+        } catch (e) {
+          this.$toast.error('Une erreur est survenue lors de la récupération des données.');
+        } finally {
+          this.loading = false;
+        }
       }
     },
   },
@@ -86,13 +95,20 @@ export default {
           'last-driver-ride': this.driver.id,
         };
       }
-      const { data } = await this.$api.rides(this.campus).getAvailableCars(
-        FIELDS,
-        this.start.toISO(),
-        this.end.toISO(),
-        sort,
-      );
-      this.cars = data;
+      this.loading = true;
+      try {
+        const { data } = await this.$api.rides(this.campus).getAvailableCars(
+          FIELDS,
+          this.start.toISO(),
+          this.end.toISO(),
+          sort,
+        );
+        this.cars = data;
+      } catch (e) {
+        this.$toast.error('Une erreur est survenue lors de la récupération des données.');
+      } finally {
+        this.loading = false;
+      }
     },
     onInput(data) {
       this.$emit('input', data);

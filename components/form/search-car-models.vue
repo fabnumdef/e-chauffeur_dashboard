@@ -36,16 +36,26 @@ export default {
   }),
   async mounted() {
     this.loading = true;
-    const { data } = await this.$api.carModels.getCarModels('id,label');
-    this.loading = false;
-    this.carModels = data;
+    try {
+      const { data } = await this.$api.carModels.getCarModels('id,label');
+      this.carModels = data;
+    } catch (e) {
+      this.$toast.error('Une erreur est survenue lors de la récupération des données.');
+    } finally {
+      this.loading = false;
+    }
   },
   methods: {
     updateSet: debounce(async function updateSet(search) {
       this.loading = true;
-      const { data } = await this.$api.carModels.getCarModels('id,label', { search });
-      this.loading = false;
-      this.carModels = data;
+      try {
+        const { data } = await this.$api.carModels.getCarModels('id,label', { search });
+        this.carModels = data;
+      } catch (e) {
+        this.$toast.error('Une erreur est survenue lors de la récupération des données.');
+      } finally {
+        this.loading = false;
+      }
     }, 500),
     onInput(data) {
       this.$emit('input', data);
