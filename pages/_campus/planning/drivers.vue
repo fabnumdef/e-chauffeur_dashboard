@@ -123,7 +123,7 @@ export default {
       this.isModalOpen = typeof val !== 'undefined' ? val : this.modalOpen;
     },
     async editTimeSlot(timeSlot) {
-      const api = this.$api.timeSlot(TIMESLOT_DATA, { id: this.campusId });
+      const api = this.$api.timeSlot(TIMESLOT_DATA, this.campusId);
       if (timeSlot.id) {
         const i = this.events.data.findIndex(({ id }) => id === timeSlot.id);
         const { data } = await api.editTimeSlot(timeSlot.id, timeSlot);
@@ -172,7 +172,7 @@ export default {
       this.toggleModal(true);
     },
     async removeTimeSlot({ id }) {
-      const api = this.$api.timeSlot(TIMESLOT_DATA, { id: this.campusId });
+      const api = this.$api.timeSlot(TIMESLOT_DATA, this.campusId);
       if (window && window.confirm('Voulez vous vraiment supprimer cette plage horaire ?')) {
         await api.deleteTimeSlot(id);
         const i = this.events.data.findIndex((e) => e.id === id);
