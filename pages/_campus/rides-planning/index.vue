@@ -22,9 +22,10 @@
     </div>
     <ride-calendar
       :drivers="drivers"
-      :rides="rides"
+      :rides="flavoredRides"
       :current-campus="currentCampus"
       :campus="campus"
+      @view-change="viewChange"
     />
   </main>
 </template>
@@ -32,6 +33,9 @@
 <script>
 import { mapGetters } from 'vuex';
 import { DateTime } from 'luxon';
+import {
+  DRAFTED,
+} from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 import RideCalendar from '~/components/ride-calendar';
 
 const EDITABLE_FIELDS = [
@@ -41,9 +45,11 @@ const EDITABLE_FIELDS = [
   'departure(id,label)',
   'arrival(id,label)',
   'car(id,label,model(id,label))',
-  'driver(id,name)',
+  'driver(id,name,firstname,lastname)',
+  'owner(id)',
   'phone',
   'status',
+  'userComments',
   'comments',
   'passengersCount',
   'category(id,label)',
@@ -61,30 +67,46 @@ export default {
       currentCampus: 'context/campus',
       hideMap: 'context/hideMap',
     }),
+    flavoredRides() {
+      return this.rides.filter(({ status }) => status !== DRAFTED);
+    },
   },
 
   async asyncData({ params, $api, store }) {
-    const today = new Date();
     const start = DateTime.local().startOf('days').toJSDate();
     const end = DateTime.local().endOf('days').toJSDate();
     const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
     const { data: drivers } = await ridesApi.getAvailableDrivers(
-      'id,name,availabilities(s,e)',
+      'id,name,availabilities(start,end),firstname,lastname',
       start,
       end,
     );
+    drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
     const { data: rides } = await ridesApi.getRides(start, end);
     store.commit('realtime/setRides', rides);
     return {
       campus: params.campus,
       drivers,
-      today,
     };
   },
 
   methods: {
     mapToggle() {
       this.$store.dispatch('context/hideMap', !this.hideMap);
+    },
+    async viewChange(obj) {
+      const start = DateTime.fromJSDate(obj.startDate).startOf('days').toJSDate();
+      const end = DateTime.fromJSDate(obj.endDate).endOf('days').toJSDate();
+      const ridesApi = this.$api.rides(this.campus, EDITABLE_FIELDS);
+      const { data: drivers } = await ridesApi.getAvailableDrivers(
+        'id,name,availabilities(start,end),firstname,lastname',
+        start,
+        end,
+      );
+      drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
+      const { data: rides } = await ridesApi.getRides(start, end);
+      this.$store.commit('realtime/setRides', rides);
+      this.drivers = drivers;
     },
   },
 };

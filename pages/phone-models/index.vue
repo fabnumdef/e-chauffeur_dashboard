@@ -39,12 +39,14 @@ const FIELDS = [
 ];
 
 export default {
-  watchQuery: ['offset'],
+  watchQuery: ['offset', 'limit'],
   components: {
     ecList,
   },
-  async asyncData({ $api }) {
-    const { data, pagination } = await $api.phoneModels.getPhoneModels(FIELDS.join(','));
+  async asyncData({ $api, query }) {
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const { data, pagination } = await $api.phoneModels.getPhoneModels(FIELDS.join(','), {}, offset, limit);
     return {
       phoneModels: data,
       pagination,
@@ -53,7 +55,9 @@ export default {
   methods: {
     async deletePhoneModel({ id }) {
       await this.$api.phoneModels.deletePhoneModel(id);
-      const updatedList = await this.$api.phoneModels.getPhoneModels(FIELDS.join(','));
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.phoneModels.getPhoneModels(FIELDS.join(','), {}, offset, limit);
       this.phoneModels = updatedList.data;
       this.pagination = updatedList.pagination;
     },

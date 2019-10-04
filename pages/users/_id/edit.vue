@@ -1,16 +1,6 @@
 <template>
   <main>
     <header>
-      <nuxt-link
-        v-if="user.id"
-        :to="{name: 'users-id-calendar'}"
-        class="button is-primary is-pulled-right"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'calendar-alt']" />
-        </span>
-        <span>Calendrier</span>
-      </nuxt-link>
       <h1
         v-if="user.id"
         class="title"
@@ -41,15 +31,42 @@
       @submit.prevent="edit(user)"
     >
       <ec-field
-        label="Nom"
+        label="Nom (obsolète)"
         field-id="name"
       >
         <input
           id="name"
-          v-model="user.name"
+          :value="user.name"
           class="input"
+          disabled
         >
       </ec-field>
+      <div class="columns">
+        <div class="column">
+          <ec-field
+            label="Prénom"
+            field-id="firstname"
+          >
+            <input
+              id="firstname"
+              v-model="user.firstname"
+              class="input"
+            >
+          </ec-field>
+        </div>
+        <div class="column">
+          <ec-field
+            label="Nom de famille"
+            field-id="lastname"
+          >
+            <input
+              id="lastname"
+              v-model="user.lastname"
+              class="input"
+            >
+          </ec-field>
+        </div>
+      </div>
       <ec-field
         label="Email"
         field-id="email"
@@ -121,9 +138,18 @@ export default {
     async edit(user) {
       let data = {};
       if (user.id) {
-        ({ data } = (await this.$api.users.patchUser(user.id, user, 'id,name,email,roles(role,campuses(id,name)')));
+        ({ data } = (await this.$api.users.patchUser(
+          user.id,
+          user,
+          'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
+          {},
+        )));
       } else {
-        ({ data } = (await this.$api.users.postUser(user, 'id,name,email,roles(role,campuses(id,name)')));
+        ({ data } = (await this.$api.users.postUser(
+          user,
+          'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
+          {},
+        )));
       }
 
       this.$router.push({

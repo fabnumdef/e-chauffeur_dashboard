@@ -30,7 +30,7 @@
         @modal-toggle="toggleModal"
       >
         <template slot="modal">
-          <no-ssr>
+          <client-only>
             <ec-field
               label="Dates"
               field-id="dates"
@@ -38,6 +38,7 @@
               <date-time
                 lang="fr"
                 append-to-body
+                :first-day-of-week="1"
                 input-class="input"
                 type="datetime"
                 range
@@ -63,7 +64,7 @@
                 class="input"
               >
             </ec-field>
-          </no-ssr>
+          </client-only>
         </template>
       </vue-calendar>
     </div>

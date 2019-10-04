@@ -1,6 +1,15 @@
 # Changelog
-## Current
-
+## Version 1.4.0
+### Features
+* Calendar dependency changed to vue-cal
+* Planning for drivers
+* Interface for map viz in anterious dates
+* Know when API is logged out
+* Minimize of the ride creation
+### Fix
+* Fix map marker
+* Fix paginators
+* Fix full text search for POI
 ## Version 1.3.1
 ### Features
  * Shift + Clic has been removed

@@ -1,105 +1,106 @@
 <template>
   <div class="calendar">
-    <vue-cal
-      class="vuecal--blue-theme"
-      :time-from="START_DAY_HOUR * 60"
-      :time-to="END_DAY_HOUR * 60"
-      :time-step="STEP"
-      :time-cell-height="20"
-      default-view="day"
-      locale="fr"
-      :disable-views="['years', 'year', 'week']"
-      :split-days="splitDrivers"
-      :events="events"
-      :on-event-click="onClickEvent"
-      split-days-in-header
-      hide-view-selector
-      @click-and-release="onClickAndRelease"
-      @ready="initRide"
-    >
-      <template #title-bar="{ view, switchView, previous, next }">
-        <div class="">
-          <div v-if="view.id === 'day'">
-            <button
-              class="button"
-              @click="switchView('month')"
-            >
-              <fa-icon icon="calendar-alt" />&nbsp; {{ getFormatedDate(view.startDate) }}
-            </button>
-          </div>
-          <div v-else>
-            <button @click="previous()">
-              <fa-icon :icon="['fas', 'chevron-left']" />
-            </button>
-            <button
-              class="button"
-              @click="switchView('day', new Date())"
-            >
-              <fa-icon icon="calendar-alt" />&nbsp; {{ getFormatedDate(view.startDate, 'month') }}
-            </button>
-            <button @click="next()">
-              <fa-icon :icon="['fas', 'chevron-right']" />
-            </button>
-          </div>
-        </div>
-      </template>
-      <template #split-day-column>
-        <fa-icon icon="user-circle" />
-      </template>
-      <template #split-day="{ split }">
-        <driver-header
-          :driver="split.driver"
-          :ride="getCurrentRide(split.driver.id)"
-        />
-      </template>
-      <div
-        slot="time-cell"
-        slot-scope="{ hours, minutes }"
-        :class="{ line: true, hours: !minutes }"
+    <client-only>
+      <vue-cal
+        class="vuecal--blue-theme"
+        :time-from="START_DAY_HOUR * 60"
+        :time-to="END_DAY_HOUR * 60"
+        :time-step="STEP"
+        :time-cell-height="20"
+        default-view="day"
+        locale="fr"
+        :disable-views="['years', 'year', 'week']"
+        :split-days="splitDrivers"
+        :events="events"
+        :on-event-click="onClickEvent"
+        split-days-in-header
+        hide-view-selector
+        @click-and-release="onClickAndRelease"
+        @ready="initRide"
+        @view-change="viewChange"
       >
-        <strong
-          v-if="!minutes"
-          class="hours"
-        >{{ hours }}</strong>
-        <span
-          v-else
-          class="minutes"
-        >{{ minutes }}</span>
-      </div>
-      <div
-        slot="event-renderer"
-        slot-scope="{ event }"
-      >
-        <div
-          v-if="event.ride"
-          class="vuecal__event-title"
+        <template #title-bar="{ view, switchView, previous, next }">
+          <div class="">
+            <div v-if="view.id === 'day'">
+              <button
+                class="button"
+                @click="switchView('month')"
+              >
+                <fa-icon icon="calendar-alt" />&nbsp; {{ getFormatedDate(view.startDate) }}
+              </button>
+            </div>
+            <div v-else>
+              <button @click="previous()">
+                <fa-icon :icon="['fas', 'chevron-left']" />
+              </button>
+              <button
+                class="button"
+                @click="switchView('day', new Date())"
+              >
+                <fa-icon icon="calendar-alt" />&nbsp; {{ getFormatedDate(view.startDate, 'month') }}
+              </button>
+              <button @click="next()">
+                <fa-icon :icon="['fas', 'chevron-right']" />
+              </button>
+            </div>
+          </div>
+        </template>
+        <template #split-day-column>
+          <fa-icon icon="user-circle" />
+        </template>
+        <template #split-day="{ split }">
+          <driver-header
+            :driver="split.driver"
+            :ride="getCurrentRide(split.driver.id)"
+          />
+        </template>
+        <template
+          #time-cell="{ hours, minutes }"
         >
-          <div>
-            {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
+          <div :class="{ line: true, hours: !minutes }">
+            <strong
+              v-if="!minutes"
+              class="hours"
+            >{{ hours }}</strong>
+            <span
+              v-else
+              class="minutes"
+            >{{ minutes }}</span>
           </div>
-          <div>
-            {{ event.ride.car.model.label }} - {{ event.ride.car.id }}
+        </template>
+        <template
+          #event-renderer="{ event }"
+        >
+          <div
+            v-if="event.ride"
+            class="vuecal__event-title"
+          >
+            <div>
+              {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
+            </div>
+            <div v-if="event.ride.car">
+              {{ event.ride.car.model.label }} - {{ event.ride.car.id }}
+            </div>
+            <div>
+              <span>{{ event.ride.passengersCount }} passager(s)</span> /
+              <span v-if="event.ride.luggage">Avec</span><span v-else>Sans</span> Bagages
+            </div>
           </div>
-          <div>
-            <span>{{ event.ride.passengersCount }} passager(s)</span> /
-            <span v-if="event.ride.luggage">Avec</span><span v-else>Sans</span> Bagages
-          </div>
-        </div>
-      </div>
-    </vue-cal>
-    <modal
-      :current-ride="ride"
-      :current-campus="currentCampus"
-      :campus="campus"
-      :modal-open="modalOpen"
-      @toggle-modal="toggleModal"
-    />
+        </template>
+      </vue-cal>
+      <modal
+        :current-ride="ride"
+        :current-campus="currentCampus"
+        :campus="campus"
+        :modal-open="modalOpen"
+        @toggle-modal="toggleModal"
+      />
+    </client-only>
   </div>
 </template>
 
 <script>
 
-import VueCal from '@qonfucius/vue-cal';
 import { DateTime, Interval } from 'luxon';
 import {
   DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, CREATED, VALIDATED,
@@ -128,84 +129,12 @@ function generateEmptyRide() {
     category: null,
     passengersCount: 1,
     luggage: false,
+    comments: '',
   };
-}
-
-function getFloorMinute(minute) {
-  const numberOfStep = Math.floor(60 / STEP);
-  let res = 0;
-  for (let i = 1; i <= numberOfStep; i += 1) {
-    const currentStep = STEP * i;
-    if (currentStep > minute) {
-      break;
-    }
-    res = currentStep;
-  }
-  return res;
-}
-
-function getCeilMinute(minute) {
-  const numberOfStep = Math.floor(60 / STEP);
-  let res = 0;
-  for (let i = 0; i <= numberOfStep; i += 1) {
-    const currentStep = STEP * i;
-    if (currentStep >= minute) {
-      res = currentStep;
-      break;
-    }
-  }
-  return res;
-}
-
-function getVueCalFloorDateFromISO(date) {
-  const exactDate = DateTime.fromISO(date);
-  return DateTime.fromObject({
-    day: exactDate.day,
-    hour: exactDate.hour,
-    minute: getFloorMinute(exactDate.minute),
-  }).setLocale('fr')
-    .toFormat('yyyy-LL-dd HH:mm');
-}
-
-function getVueCalCeilDateFromISO(date) {
-  const exactDate = DateTime.fromISO(date);
-  const minute = getCeilMinute(exactDate.minute);
-  return DateTime.fromObject({
-    day: exactDate.day,
-    hour: minute === 60 ? exactDate.hour + 1 : exactDate.hour,
-    minute: minute === 60 ? 0 : minute,
-  }).setLocale('fr')
-    .toFormat('yyyy-LL-dd HH:mm');
-}
-
-function getDateTimeFloorFromVueCal(date) {
-  const exactDate = DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
-  const now = DateTime.local();
-  let minute = getFloorMinute(exactDate.minute);
-  if (now.hasSame(exactDate, 'year') && now.hasSame(exactDate, 'month') && now.hasSame(exactDate, 'hour')
-    && getFloorMinute(now.minute) === minute) {
-    ({ minute } = now);
-  }
-  return DateTime.fromObject({
-    day: exactDate.day,
-    hour: exactDate.hour,
-    minute,
-  });
-}
-
-function getDateTimeCeilFromVueCal(date) {
-  const exactDate = DateTime.fromFormat(date, 'yyyy-LL-dd HH:mm');
-  const minute = getCeilMinute(exactDate.minute);
-  return DateTime.fromObject({
-    day: exactDate.day,
-    hour: minute === 60 ? exactDate.hour + 1 : exactDate.hour,
-    minute: minute === 60 ? 0 : minute,
-  });
 }
 
 export default {
   components: {
-    VueCal,
     Modal,
     DriverHeader,
   },
@@ -235,6 +164,7 @@ export default {
       STEP,
       START_DAY_HOUR,
       END_DAY_HOUR,
+      day: new Date(),
       modalOpen: false,
     };
   },
@@ -255,9 +185,9 @@ export default {
     },
     ridesCalendar() {
       return this.rides.map((ride) => {
-        const start = getVueCalFloorDateFromISO(ride.start);
-        const end = getVueCalCeilDateFromISO(ride.end);
-        const split = this.drivers.findIndex((driver) => driver.id === ride.driver.id) + 1;
+        const start = this.$vuecal(STEP).getVueCalFloorDateFromISO(ride.start);
+        const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(ride.end);
+        const split = ride.driver ? this.drivers.findIndex((driver) => driver.id === ride.driver.id) + 1 : 1;
         const clas = `ride-event ${this.eventStatusClass(ride)}`;
         return {
           start,
@@ -274,9 +204,15 @@ export default {
       this.drivers.forEach((driver, index) => {
         if (driver.availabilities && driver.availabilities.length > 0) {
           driver.availabilities.forEach((avail) => {
-            if (avail.start.hour > START_DAY_HOUR) {
-              const start = getVueCalFloorDateFromISO(DateTime.fromObject({ hour: START_DAY_HOUR }).toISO());
-              const end = getVueCalCeilDateFromISO(avail.start.toISO());
+            if (typeof avail.s === 'string') {
+              // eslint-disable-next-line no-param-reassign
+              avail = Interval.fromDateTimes(DateTime.fromISO(avail.s), DateTime.fromISO(avail.e));
+            }
+            if (avail.start && avail.start.hour > START_DAY_HOUR) {
+              const datetimeStart = DateTime.fromJSDate(this.day).set({ hour: START_DAY_HOUR, minute: 0, second: 0 });
+              const start = this.$vuecal(STEP)
+                .getVueCalFloorDateFromISO(datetimeStart.toISO());
+              const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.start.toISO());
               const split = index + 1;
               openingHoursEvents.push({
                 start,
@@ -286,9 +222,10 @@ export default {
                 background: true,
               });
             }
-            if (avail.end.hour < END_DAY_HOUR) {
-              const start = getVueCalFloorDateFromISO(avail.end.toISO());
-              const end = getVueCalCeilDateFromISO(DateTime.fromObject({ hour: END_DAY_HOUR }).toISO());
+            if (avail.end && avail.end.hour < END_DAY_HOUR) {
+              const datetimeEnd = DateTime.fromJSDate(this.day).set({ hour: END_DAY_HOUR, minute: 0, second: 0 });
+              const start = this.$vuecal(STEP).getVueCalFloorDateFromISO(avail.end.toISO());
+              const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(datetimeEnd.toISO());
               const split = index + 1;
               openingHoursEvents.push({
                 start,
@@ -321,13 +258,17 @@ export default {
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
     onClickAndRelease(event) {
-      this.initRide();
-      const { id, name } = this.drivers[event.split - 1];
-      this.updateDates([getDateTimeFloorFromVueCal(event.start), getDateTimeCeilFromVueCal(event.end)], {
-        id,
-        name,
-      });
-      this.toggleModal(true);
+      if (event.split > 1) {
+        this.initRide();
+        const { id, name } = this.drivers[event.split - 1];
+        this.updateDates([
+          this.$vuecal(STEP).getDateTimeFloorFromVueCal(event.start),
+          this.$vuecal(STEP).getDateTimeCeilFromVueCal(event.end)], {
+          id,
+          name,
+        });
+        this.toggleModal(true);
+      }
     },
     onClickEvent(event) {
       if (event.ride) {
@@ -335,7 +276,7 @@ export default {
         ride.start = DateTime.fromISO(event.ride.start);
         ride.end = DateTime.fromISO(event.ride.end);
         ride.interval = Interval.fromDateTimes(ride.start, ride.end);
-        this.ride = ride;
+        this.ride = Object.assign(generateEmptyRide(), ride);
         this.toggleModal(true);
       }
     },
@@ -363,9 +304,12 @@ export default {
       }
     },
     getCurrentRide(driverId) {
+      if (driverId === null) {
+        return null;
+      }
       const currentTime = DateTime.fromJSDate(new Date());
       return this.rides
-        .filter((r) => r.driver.id === driverId)
+        .filter((r) => r.driver && r.driver.id === driverId)
         .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     getFormatedDate(date, unit = 'day') {
@@ -377,6 +321,12 @@ export default {
         formatedDate = dt.setLocale('fr').toFormat('LLLL y');
       }
       return formatedDate;
+    },
+    viewChange(obj) {
+      if (obj.view === 'day') {
+        this.day = obj.startDate;
+      }
+      this.$emit('view-change', obj);
     },
   },
 };
@@ -390,6 +340,12 @@ export default {
   }
   /deep/ {
     .vuecal {
+      &__no-event {
+        display: none;
+      }
+      &__cell-hover:hover {
+        background-color: rgba(0, 83, 179, 0.4);
+      }
       &__split-days-in-header .vuecal__time-column {
         text-align: center;
         margin: auto 0;

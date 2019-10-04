@@ -1,16 +1,6 @@
 <template>
   <main>
     <header>
-      <nuxt-link
-        v-if="driver && driver.id"
-        :to="campusLink('drivers-id-calendar')"
-        class="button is-primary is-pulled-right"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'calendar-alt']" />
-        </span>
-        <span>Calendrier</span>
-      </nuxt-link>
       <h1
         v-if="driver && id"
         class="title"
@@ -41,16 +31,42 @@
       @submit.prevent="edit(driver)"
     >
       <ec-field
-        label="Nom"
+        label="Nom (obsolète)"
         field-id="name"
       >
         <input
           id="name"
-          v-model="driver.name"
-          type="text"
+          :value="driver.name"
           class="input"
+          disabled
         >
       </ec-field>
+      <div class="columns">
+        <div class="column">
+          <ec-field
+            label="Prénom"
+            field-id="firstname"
+          >
+            <input
+              id="firstname"
+              v-model="driver.firstname"
+              class="input"
+            >
+          </ec-field>
+        </div>
+        <div class="column">
+          <ec-field
+            label="Nom de famille"
+            field-id="lastname"
+          >
+            <input
+              id="lastname"
+              v-model="driver.lastname"
+              class="input"
+            >
+          </ec-field>
+        </div>
+      </div>
       <ec-field
         label="Email"
         field-id="email"

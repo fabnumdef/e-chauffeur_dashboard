@@ -10,14 +10,19 @@ module.exports = {
     middleware: ['auth'],
   },
 
+  build: {
+    parallel: true,
+    transpile: ['@qonfucius/vue-cal'],
+  },
+
   css: [
     { src: '~assets/css/main.scss', lang: 'scss' },
   ],
   plugins: [
     '~/plugins/multiselect.js',
     '~/plugins/context.js',
-    { src: '~plugins/simplemde-plugin.js', ssr: false },
     { src: '~/plugins/datetime-picker.js', ssr: false },
+    { src: '~/plugins/vuecal.js', ssr: true },
     '~/plugins/realtime.js',
   ],
 
@@ -31,6 +36,7 @@ module.exports = {
           campuses: 'campuses',
           carEvents: 'car-events',
           carModels: 'car-models',
+          timeSlot: 'time-slots',
           cars: 'cars',
           categories: 'categories',
           feedback: 'feedback',
@@ -38,7 +44,6 @@ module.exports = {
           logs: 'logs',
           pois: 'pois',
           rides: 'rides',
-          userEvents: 'user-events',
           users: 'users',
           drivers: 'drivers',
           phones: 'phones',
@@ -70,6 +75,7 @@ module.exports = {
       {
         package: '@fortawesome/free-solid-svg-icons',
         icons: [
+          'faMap',
           'faMapMarkerAlt',
           'faFlag',
           'faEdit',
@@ -89,6 +95,13 @@ module.exports = {
           'faExternalLinkAlt',
           'faChevronLeft',
           'faUserCircle',
+          'faCog',
+          'faSpinner',
+          'faList',
+          'faChartPie',
+          'faChartBar',
+          'faWindowMinimize',
+          'faExclamationTriangle',
         ],
       },
     ],

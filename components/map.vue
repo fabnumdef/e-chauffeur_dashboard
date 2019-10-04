@@ -21,7 +21,7 @@
       id="map-wrap"
       :class="{'fullscreen': isFullscreen}"
     >
-      <no-ssr>
+      <client-only>
         <l-map
           :zoom="13"
           :center="center"
@@ -32,7 +32,10 @@
             :key="driver.id"
             :lat-lng="reverse(driver.position.coordinates)"
           >
-            <l-icon>
+            <l-icon
+              :icon-size="[40,40]"
+              :icon-anchor="[20,20]"
+            >
               <svg
                 width="40"
                 height="40"
@@ -58,7 +61,7 @@
             </l-icon>
           </l-marker>
         </l-map>
-      </no-ssr>
+      </client-only>
     </div>
   </div>
 </template>
@@ -110,7 +113,7 @@ export default {
     getCurrentRide({ date, id } = {}) {
       const currentTime = DateTime.fromISO(date);
       return this.rides
-        .filter((r) => r.driver.id === id)
+        .filter((r) => r.driver && r.driver.id === id)
         .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
     },
     getStatus(driver) {

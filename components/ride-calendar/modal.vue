@@ -2,6 +2,7 @@
   <vue-modal
     :active="modalOpen"
     :with-background="false"
+    minimizable
     @toggle-modal="toggleModal"
     @submit="edit(ride)"
   >
@@ -14,12 +15,33 @@
       </template>
     </template>
 
-    <ec-field
-      label="Type de course"
-      field-id="departure"
-    >
-      <search-category v-model="ride.category" />
-    </ec-field>
+    <div class="columns">
+      <div class="column">
+        <ec-field
+          label="Type de course"
+          field-id="departure"
+        >
+          <search-category v-model="ride.category" />
+        </ec-field>
+      </div>
+      <div class="column">
+        <ec-field
+          label="Informations"
+        >
+          <div class="tags has-addons">
+            <span class="tag is-dark">Créée par</span>
+            <span
+              v-if="ride.owner"
+              class="tag is-warning"
+            >Utilisateur</span>
+            <span
+              v-else
+              class="tag is-info"
+            >Régulation</span>
+          </div>
+        </ec-field>
+      </div>
+    </div>
     <ec-field
       label="Dates"
       field-id="dates"
@@ -32,6 +54,7 @@
         range
         :value="range"
         :minute-step="5"
+        :first-day-of-week="1"
         format="YYYY-MM-DD HH:mm"
         range-separator="->"
         @input="updateDates"
@@ -163,11 +186,38 @@
         />
       </ec-field>
     </div>
-
     <ec-field
-      label="Commentaires"
+      v-if="ride.userComments"
+      label="Commentaires client"
+      field-id="userComments"
+    >
+      <p>
+        {{ ride.userComments }}
+      </p>
+      <button
+        class="button is-small is-primary"
+        type="button"
+        @click="copyToComments(ride.userComments)"
+      >
+        Copier vers les commentaires
+      </button>
+    </ec-field>
+    <ec-field
       field-id="comments"
     >
+      <template #label>
+        <div class="columns">
+          <div class="column">
+            Commentaires
+          </div>
+          <div class="column is-narrow">
+            <div class="tags has-addons">
+              <span class="tag is-dark"><fa-icon icon="exclamation-triangle" /></span>
+              <span class="tag is-danger">Ne pas communiquer d'informations sensibles</span>
+            </div>
+          </div>
+        </div>
+      </template>
       <textarea
         id="comments"
         v-model="ride.comments"
@@ -250,7 +300,7 @@ const EDITABLE_FIELDS = [
   'departure(id,label)',
   'arrival(id,label)',
   'car(id,label,model(id,label))',
-  'driver(id,name)',
+  'driver(id,name,firstname,lastname)',
   'phone',
   'status',
   'comments',
@@ -311,6 +361,7 @@ export default {
         category: null,
         passengersCount: 1,
         luggage: false,
+        comments: '',
       }),
     },
     currentCampus: {
@@ -398,8 +449,12 @@ export default {
       this.focusState[input] = 'focused';
     },
 
-    updateDates([start, end], { id, name } = {}) {
-      this.ride.driver = { id, name };
+    updateDates([start, end], {
+      id, name, firstname, lastname,
+    } = {}) {
+      this.ride.driver = {
+        id, name, firstname, lastname,
+      };
       this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
@@ -446,6 +501,12 @@ export default {
     can: ({ status }, action) => {
       const state = Status(status);
       return state.can(action);
+    },
+    copyToComments(content) {
+      this.ride.comments = `\
+${content}
+---
+${this.ride.comments || ''}`;
     },
   },
 };

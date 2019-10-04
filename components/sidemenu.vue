@@ -1,5 +1,6 @@
 <template>
   <nav class="menu">
+    <reconnecting-hero />
     <p class="menu-label">
       <nuxt-link :to="{ name: 'index' }">
         <img
@@ -35,13 +36,13 @@
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
-        <nuxt-link :to="campusLink('rides')">
-          Courses
+        <nuxt-link :to="campusLink('planning')">
+          Planning
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
-        <nuxt-link :to="campusLink('calrides')">
-          Courses Cal
+        <nuxt-link :to="campusLink('rides-planning')">
+          Planificateur
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
@@ -59,6 +60,13 @@
       <li v-if="hasCampus">
         <nuxt-link :to="campusLink('pois')">
           Lieux
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus && $auth.isSuperAdmin()">
+        <nuxt-link
+          :to="campusLink('map-vision')"
+        >
+          Map vision
         </nuxt-link>
       </li>
     </ul>
@@ -154,10 +162,12 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import searchUserCampus from '~/components/form/search-user-campus.vue';
+import reconnectingHero from '~/components/reconnecting-hero.vue';
 
 export default {
   components: {
     searchUserCampus,
+    reconnectingHero,
   },
   computed: {
     ...mapGetters({ campus: 'context/campus' }),

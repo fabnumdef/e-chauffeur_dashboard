@@ -76,7 +76,7 @@ export default {
   methods: {
     async update() {
       try {
-        const { data: user } = await this.$api.users.patchUser(this.user.id, this.user, FIELDS);
+        const { data: user } = await this.$api.users.patchUser(this.user.id, this.user, FIELDS, {});
         this.user = user;
         this.$toast.success('Votre compte utilisateur a bien été mis à jour.');
       } catch (e) {
