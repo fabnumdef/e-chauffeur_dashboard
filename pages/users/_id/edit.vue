@@ -26,6 +26,16 @@
         Créer
       </h2>
     </header>
+    <div class="box">
+      <ul>
+        <li v-if="gprd">
+          Consentement RGPD recueilli le {{ gprd }}
+        </li>
+        <li v-else>
+          Consentement RGPD <strong>non</strong> recueilli.
+        </li>
+      </ul>
+    </div>
     <form
       class="box"
       @submit.prevent="edit(user)"
@@ -120,6 +130,7 @@
 </template>
 
 <script>
+import { DateTime } from 'luxon';
 import ecField from '~/components/form/field.vue';
 import RoleRules from '~/components/form/role-rules';
 
@@ -132,6 +143,11 @@ export default {
     user: {
       type: Object,
       default: () => ({}),
+    },
+  },
+  computed: {
+    gprd() {
+      return this.user && this.user.gprd && DateTime.fromISO(this.user.gprd).toLocaleString(DateTime.DATETIME_MED);
     },
   },
   methods: {
