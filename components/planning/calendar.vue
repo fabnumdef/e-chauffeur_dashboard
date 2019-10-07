@@ -129,6 +129,9 @@ export default {
       height: 100%;
     }
     .vuecal {
+      &__cell-events-count {
+        display: none;
+      }
       &__no-event {
         display: none;
       }

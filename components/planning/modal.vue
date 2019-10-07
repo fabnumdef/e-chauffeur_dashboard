@@ -147,6 +147,16 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  /deep/ {
+    .modal-card {
+      min-height: 400px;
+    }
+    .multiselect__content-wrapper {
+      position: initial;
+    }
+    .multiselect__content {
+      position: absolute;
+    }
+  }
 </style>
