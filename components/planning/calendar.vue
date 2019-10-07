@@ -141,6 +141,9 @@ export default {
       &__cell-hover:hover {
         background-color: rgba(0, 83, 179, 0.4);
       }
+      &__time-cell-clicked-hover, &__cell-clicked-hover {
+        background-color: rgba(0, 83, 179, 0.4);
+      }
       &__event {
         background: $success;
         color: $white;
