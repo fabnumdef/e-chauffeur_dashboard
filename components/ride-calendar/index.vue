@@ -87,6 +87,17 @@
             </div>
           </div>
         </template>
+        <template #cell-content="{ cell, view, events }">
+          <div class="vuecal__cell-date">
+            {{ cell.content }}
+          </div>
+          <div
+            v-if="view.id === 'month' && customEventsCount(events)"
+            class="vuecal__cell-events-count"
+          >
+            {{ customEventsCount(events) }}
+          </div>
+        </template>
       </vue-cal>
       <modal
         :current-ride="ride"
@@ -328,6 +339,9 @@ export default {
       }
       this.$emit('view-change', obj);
     },
+    customEventsCount(events) {
+      return events ? events.filter((e) => e.class !== 'not-working').length : 0;
+    },
   },
 };
 </script>
@@ -340,9 +354,6 @@ export default {
   }
   /deep/ {
     .vuecal {
-      &__cell-events-count {
-        display: none;
-      }
       &__no-event {
         display: none;
       }
