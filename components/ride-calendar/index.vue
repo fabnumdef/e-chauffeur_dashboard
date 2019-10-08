@@ -214,38 +214,30 @@ export default {
       const openingHoursEvents = [];
       this.drivers.forEach((driver, index) => {
         if (driver.availabilities && driver.availabilities.length > 0) {
-          driver.availabilities.forEach((avail) => {
-            if (typeof avail.s === 'string') {
-              // eslint-disable-next-line no-param-reassign
-              avail = Interval.fromDateTimes(DateTime.fromISO(avail.s), DateTime.fromISO(avail.e));
-            }
-            if (avail.start && avail.start.hour > START_DAY_HOUR) {
-              const datetimeStart = DateTime.fromJSDate(this.day).set({ hour: START_DAY_HOUR, minute: 0, second: 0 });
-              const start = this.$vuecal(STEP)
-                .getVueCalFloorDateFromISO(datetimeStart.toISO());
-              const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.start.toISO());
-              const split = index + 1;
-              openingHoursEvents.push({
-                start,
-                end,
-                split,
-                class: 'not-working',
-                background: true,
-              });
-            }
-            if (avail.end && avail.end.hour < END_DAY_HOUR) {
-              const datetimeEnd = DateTime.fromJSDate(this.day).set({ hour: END_DAY_HOUR, minute: 0, second: 0 });
-              const start = this.$vuecal(STEP).getVueCalFloorDateFromISO(avail.end.toISO());
-              const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(datetimeEnd.toISO());
-              const split = index + 1;
-              openingHoursEvents.push({
-                start,
-                end,
-                split,
-                class: 'not-working',
-                background: true,
-              });
-            }
+          const availibilites = driver.availabilities.map((a) => (typeof a.s === 'string'
+            ? Interval.fromDateTimes(DateTime.fromISO(a.s), DateTime.fromISO(a.e)) : a));
+          const todayInterval = Interval.fromDateTimes(DateTime.fromJSDate(this.day).set({
+            hour: START_DAY_HOUR,
+            minute: 0,
+            second: 0,
+          }),
+          DateTime.fromJSDate(this.day).set({
+            hour: END_DAY_HOUR,
+            minute: 0,
+            second: 0,
+          }));
+          const notWorkingIntervals = todayInterval.difference(...Interval.merge(availibilites));
+          notWorkingIntervals.forEach((avail) => {
+            const start = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.start.toISO());
+            const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.end.toISO());
+            const split = index + 1;
+            openingHoursEvents.push({
+              start,
+              end,
+              split,
+              class: 'not-working',
+              background: true,
+            });
           });
         }
       });
