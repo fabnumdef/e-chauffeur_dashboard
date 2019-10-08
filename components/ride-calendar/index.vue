@@ -218,14 +218,10 @@ export default {
             ? Interval.fromDateTimes(DateTime.fromISO(a.s), DateTime.fromISO(a.e)) : a));
           const todayInterval = Interval.fromDateTimes(DateTime.fromJSDate(this.day).set({
             hour: START_DAY_HOUR,
-            minute: 0,
-            second: 0,
-          }),
+          }).startOf('hour'),
           DateTime.fromJSDate(this.day).set({
             hour: END_DAY_HOUR,
-            minute: 0,
-            second: 0,
-          }));
+          }).startOf('hour'));
           const notWorkingIntervals = todayInterval.difference(...Interval.merge(availibilites));
           notWorkingIntervals.forEach((avail) => {
             const start = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.start.toISO());
