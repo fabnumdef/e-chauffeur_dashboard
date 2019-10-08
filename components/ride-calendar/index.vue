@@ -360,6 +360,9 @@ export default {
       &__cell-hover:hover {
         background-color: rgba(0, 83, 179, 0.4);
       }
+      &__time-cell-clicked-hover, &__cell-clicked-hover {
+        background-color: rgba(0, 83, 179, 0.4);
+      }
       &__split-days-in-header .vuecal__time-column {
         text-align: center;
         margin: auto 0;
