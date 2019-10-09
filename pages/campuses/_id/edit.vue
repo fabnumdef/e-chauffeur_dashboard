@@ -27,103 +27,124 @@
       </h2>
     </header>
     <form
-      class="box"
       @submit.prevent="edit(campus)"
     >
-      <ec-field
-        label="ID"
-        field-id="id"
-      >
-        <input
-          id="id"
-          v-model="campus.id"
-          :disabled="!!id"
-          class="input"
+      <fieldset class="box">
+        <legend class="subtitle">
+          Configuration basique
+        </legend>
+        <ec-field
+          label="ID"
+          field-id="id"
         >
-      </ec-field>
+          <input
+            id="id"
+            v-model="campus.id"
+            :disabled="!!id"
+            class="input"
+          >
+        </ec-field>
 
-      <ec-field
-        label="Nom"
-        field-id="name"
-      >
-        <input
-          id="name"
-          v-model="campus.name"
-          class="input"
+        <ec-field
+          label="Nom"
+          field-id="name"
         >
-      </ec-field>
-      <div class="columns">
-        <div class="column">
-          <ec-field
-            label="Numéro de téléphone (chauffeurs)"
-            field-id="phone-drivers"
+          <input
+            id="name"
+            v-model="campus.name"
+            class="input"
           >
-            <input
-              id="phone-drivers"
-              v-model="campus.phone.drivers"
-              class="input"
+        </ec-field>
+        <div class="columns">
+          <div class="column">
+            <ec-field
+              label="Numéro de téléphone (chauffeurs)"
+              field-id="phone-drivers"
             >
-          </ec-field>
+              <input
+                id="phone-drivers"
+                v-model="campus.phone.drivers"
+                class="input"
+              >
+            </ec-field>
+          </div>
+          <div class="column">
+            <ec-field
+              label="Numéro de téléphone (public)"
+              field-id="phone-everybody"
+            >
+              <input
+                id="phone-everybody"
+                v-model="campus.phone.everybody"
+                class="input"
+              >
+            </ec-field>
+          </div>
         </div>
-        <div class="column">
-          <ec-field
-            label="Numéro de téléphone (public)"
-            field-id="phone-everybody"
+        <ec-field
+          label="Jours ouvrés"
+          field-id="workedDays"
+        >
+          <weekdays-select
+            id="workedDays"
+            v-model="campus.workedDays"
+          />
+        </ec-field>
+        <ec-field
+          label="Catégories"
+          field-id="categories"
+        >
+          <search-categories v-model="campus.categories" />
+        </ec-field>
+        <ec-field
+          label="Coordonnées GPS"
+          field-id="location"
+        >
+          <ec-gps-point
+            id="location"
+            v-model="campus.location"
+          />
+        </ec-field>
+      </fieldset>
+      <fieldset class="box">
+        <legend class="subtitle">
+          Configuration avancée
+        </legend>
+        <p>Ne modifiez cette rubrique uniquement en connaissance de cause.</p>
+        <ec-field
+          label="Timezone"
+          field-id="timezone"
+        >
+          <input
+            id="timezone"
+            v-model="campus.timezone"
+            class="input"
           >
-            <input
-              id="phone-everybody"
-              v-model="campus.phone.everybody"
-              class="input"
-            >
-          </ec-field>
-        </div>
-      </div>
-      <ec-field
-        label="Jours ouvrés"
-        field-id="workedDays"
-      >
-        <weekdays-select
-          id="workedDays"
-          v-model="campus.workedDays"
-        />
-      </ec-field>
-      <ec-field
-        label="Catégories"
-        field-id="categories"
-      >
-        <search-categories v-model="campus.categories" />
-      </ec-field>
-      <ec-field
-        label="Coordonnées GPS"
-        field-id="location"
-      >
-        <ec-gps-point
-          id="location"
-          v-model="campus.location"
-        />
-      </ec-field>
+        </ec-field>
+      </fieldset>
+      <fieldset class="box">
+        <button
+          v-if="id"
+          type="submit"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'save']" />
+          </span>
+          <span>Modifier</span>
+        </button>
 
-      <button
-        v-if="id"
-        type="submit"
-        class="button is-primary"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
-        </span>
-        <span>Modifier</span>
-      </button>
-
-      <button
-        v-else
-        type="submit"
-        class="button is-primary"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
-        </span>
-        <span>Créer</span>
-      </button>
+        <button
+          v-else
+          type="submit"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'plus']" />
+          </span>
+          <span>Créer</span>
+        </button>
+      </fieldset>
     </form>
   </main>
 </template>
@@ -134,7 +155,7 @@ import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 import weekdaysSelect from '~/components/form/weekdays.vue';
 
-const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),information';
+const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),information,timezone';
 export default {
   components: {
     ecField,
@@ -168,3 +189,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+@import "~assets/css/head";
+.box legend.subtitle {
+  color: $text;
+  background: $white;
+  padding: $size-small/2 $size-small;
+  margin: 0;
+  border-radius: $radius-small;
+}
+</style>
