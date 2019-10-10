@@ -372,7 +372,7 @@ export default {
       &__now-line {
         z-index: 100;
       }
-      &--blue-theme &__title-bar {
+      &__title-bar {
         background: $background;
       }
       &__time-cell .hours.line:before {border-color: #42b983;}
@@ -384,7 +384,10 @@ export default {
         align-items: center;
         cursor: default;
       }
-      &__event.not-working &__event-time {display: none;align-items: center;}
+      &__event.not-working &__event-time {
+        align-items: center;
+      }
+      
       &__event-title {
         font-size: 0.75rem;
         font-weight: bold;
@@ -393,7 +396,7 @@ export default {
         text-overflow: ellipsis;
       }
     }
-    .driver-col, /deep/ .driver-col-bis {
+    .driver-col, .driver-col-bis {
       border-right: 1px solid black;
       cursor: crosshair;
     }
