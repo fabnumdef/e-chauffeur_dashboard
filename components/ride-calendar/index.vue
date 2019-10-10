@@ -3,6 +3,7 @@
     <client-only>
       <vue-cal
         class="vuecal--blue-theme"
+        :class="{'overflowY': overflowBg}"
         :time-from="START_DAY_HOUR * 60"
         :time-to="END_DAY_HOUR * 60"
         :time-step="STEP"
@@ -177,6 +178,7 @@ export default {
       END_DAY_HOUR,
       day: new Date(),
       modalOpen: false,
+      overflowBg: false,
     };
   },
 
@@ -239,6 +241,16 @@ export default {
       });
       return evts.concat(openingHoursEvents);
     },
+  },
+
+  mounted() {
+    // Todo: its not pretty at all, we can somehow do this with an other idea
+    this.$nextTick(() => {
+      setTimeout(() => {
+        const vuecalBg = this.$el.querySelector('.vuecal__bg');
+        this.overflowBg = vuecalBg.clientHeight < vuecalBg.scrollHeight;
+      }, 500);
+    });
   },
 
   methods: {
@@ -349,7 +361,14 @@ export default {
     background-color: white;
   }
   /deep/ {
+    .vuecal.overflowY .vuecal__split-days-in-header {
+      overflow-y: scroll;
+      padding-right: 1px;
+    }
     .vuecal {
+      &__split-days-in-header {
+        padding: 0;
+      }
       &__no-event {
         display: none;
       }
