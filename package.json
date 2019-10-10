@@ -16,7 +16,7 @@
     "@fabnumdef/e-chauffeur_lib-vue": "0.0.21",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@nuxtjs/auth": "^4.8.4",
-    "@qonfucius/vue-cal": "^1.59.11",
+    "@qonfucius/vue-cal": "^1.59.12",
     "chart.js": "^2.8.0",
     "i18next-client": "^1.11.4",
     "lodash.debounce": "^4.0.8",

@@ -251,20 +251,28 @@ export default {
         [this.ride.category] = this.currentCampus.categories;
       }
     },
-    updateDates([start, end], { id, name } = {}) {
-      this.ride.driver = { id, name };
+    updateDates([start, end], {
+      id, name, firstname, lastname,
+    } = {}) {
+      this.ride.driver = {
+        id, name, firstname, lastname,
+      };
       this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
     onClickAndRelease(event) {
       if (event.split > 1) {
         this.initRide();
-        const { id, name } = this.drivers[event.split - 1];
+        const {
+          id, name, firstname, lastname,
+        } = this.drivers[event.split - 1];
         this.updateDates([
           this.$vuecal(STEP).getDateTimeFloorFromVueCal(event.start),
           this.$vuecal(STEP).getDateTimeCeilFromVueCal(event.end)], {
           id,
           name,
+          firstname,
+          lastname,
         });
         this.toggleModal(true);
       }
@@ -364,7 +372,7 @@ export default {
       &__now-line {
         z-index: 100;
       }
-      &--blue-theme &__title-bar {
+      &__title-bar {
         background: $background;
       }
       &__time-cell .hours.line:before {border-color: #42b983;}
@@ -376,7 +384,10 @@ export default {
         align-items: center;
         cursor: default;
       }
-      &__event.not-working &__event-time {display: none;align-items: center;}
+      &__event.not-working &__event-time {
+        align-items: center;
+      }
+
       &__event-title {
         font-size: 0.75rem;
         font-weight: bold;
@@ -385,7 +396,7 @@ export default {
         text-overflow: ellipsis;
       }
     }
-    .driver-col, /deep/ .driver-col-bis {
+    .driver-col, .driver-col-bis {
       border-right: 1px solid black;
       cursor: crosshair;
     }
