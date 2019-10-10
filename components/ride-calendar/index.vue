@@ -387,7 +387,7 @@ export default {
       &__event.not-working &__event-time {
         align-items: center;
       }
-      
+
       &__event-title {
         font-size: 0.75rem;
         font-weight: bold;
