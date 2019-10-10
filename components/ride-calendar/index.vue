@@ -251,20 +251,28 @@ export default {
         [this.ride.category] = this.currentCampus.categories;
       }
     },
-    updateDates([start, end], { id, name } = {}) {
-      this.ride.driver = { id, name };
+    updateDates([start, end], {
+      id, name, firstname, lastname,
+    } = {}) {
+      this.ride.driver = {
+        id, name, firstname, lastname,
+      };
       this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
     onClickAndRelease(event) {
       if (event.split > 1) {
         this.initRide();
-        const { id, name } = this.drivers[event.split - 1];
+        const {
+          id, name, firstname, lastname,
+        } = this.drivers[event.split - 1];
         this.updateDates([
           this.$vuecal(STEP).getDateTimeFloorFromVueCal(event.start),
           this.$vuecal(STEP).getDateTimeCeilFromVueCal(event.end)], {
           id,
           name,
+          firstname,
+          lastname,
         });
         this.toggleModal(true);
       }
