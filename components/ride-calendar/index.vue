@@ -244,6 +244,7 @@ export default {
   },
 
   mounted() {
+    // Todo: its not pretty at all, we can somehow do this with an other idea
     this.$nextTick(() => {
       setTimeout(() => {
         const vuecalBg = this.$el.querySelector('.vuecal__bg');
