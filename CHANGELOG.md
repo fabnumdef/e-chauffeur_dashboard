@@ -1,4 +1,17 @@
 # Changelog
+## Current
+### Features
+### Fix
+## Version 1.4.1
+### Features
+* Add timezone inside campus entity
+* Add loaders where it was missing on select elements
+* Remove bubbles in vue cal
+* Add css on clic & release on vue cal
+* Add bubbles on month view to show number of rides
+### Fix
+* Fix multiples time slots overlapping
+* Fix driver selection on time slot creation
 ## Version 1.4.0
 ### Features
 * Calendar dependency changed to vue-cal
