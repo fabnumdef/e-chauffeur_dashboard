@@ -129,6 +129,9 @@ export default {
       height: 100%;
     }
     .vuecal {
+      &__cell-events-count {
+        display: none;
+      }
       &__no-event {
         display: none;
       }
@@ -138,8 +141,12 @@ export default {
       &__cell-hover:hover {
         background-color: rgba(0, 83, 179, 0.4);
       }
+      &__time-cell-clicked-hover, &__cell-clicked-hover {
+        background-color: rgba(0, 83, 179, 0.4);
+      }
       &__event {
-        background: $success;
+        background: rgba(62, 170, 40, 0.85);
+        border: 1px solid rgb(62, 170, 40);
         color: $white;
         padding: 8px;
         header {

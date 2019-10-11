@@ -39,16 +39,25 @@ export default {
   },
   async mounted() {
     this.loading = true;
-    const { data } = await this.$api.campuses.getCampuses('id,name,location');
-    this.loading = false;
-    this.campuses = data;
+    try {
+      const { data } = await this.$api.campuses.getCampuses('id,name,location');
+      this.campuses = data;
+    } catch (e) {
+      this.$toast.error('Une erreur est survenue lors de la récupération des données.');
+    } finally {
+      this.loading = false;
+    }
   },
   methods: {
     updateSet: debounce(async function updateSet(search) {
-      this.loading = true;
-      const { data } = await this.$api.campuses.getCampuses('id,name,location', { search });
-      this.loading = false;
-      this.campuses = data;
+      try {
+        const { data } = await this.$api.campuses.getCampuses('id,name,location', { search });
+        this.campuses = data;
+      } catch (e) {
+        this.$toast.error('Une erreur est survenue lors de la récupération des données.');
+      } finally {
+        this.loading = false;
+      }
     }, 500),
     onInput(data) {
       this.$emit('input', data);

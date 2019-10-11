@@ -32,19 +32,30 @@ export default {
   },
   data: () => ({
     phoneModels: [],
+    loading: false,
   }),
   async mounted() {
     this.loading = true;
-    const { data } = await this.$api.phoneModels.getPhoneModels('id,label');
-    this.loading = false;
-    this.phoneModels = data;
+    try {
+      const { data } = await this.$api.phoneModels.getPhoneModels('id,label');
+      this.phoneModels = data;
+    } catch (e) {
+      this.$toast.error('Une erreur est survenue lors de la récupération des données.');
+    } finally {
+      this.loading = false;
+    }
   },
   methods: {
     updateSet: debounce(async function updateSet(search) {
       this.loading = true;
-      const { data } = await this.$api.phoneModels.getPhoneModels('id,label', { search });
-      this.loading = false;
-      this.phoneModels = data;
+      try {
+        const { data } = await this.$api.phoneModels.getPhoneModels('id,label', { search });
+        this.phoneModels = data;
+      } catch (e) {
+        this.$toast.error('Une erreur est survenue lors de la récupération des données.');
+      } finally {
+        this.loading = false;
+      }
     }, 500),
     onInput(data) {
       this.$emit('input', data);

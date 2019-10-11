@@ -3,6 +3,7 @@
     <client-only>
       <vue-cal
         class="vuecal--blue-theme"
+        :class="{'overflowY': overflowBg}"
         :time-from="START_DAY_HOUR * 60"
         :time-to="END_DAY_HOUR * 60"
         :time-step="STEP"
@@ -87,6 +88,17 @@
             </div>
           </div>
         </template>
+        <template #cell-content="{ cell, view, events }">
+          <div class="vuecal__cell-date">
+            {{ cell.content }}
+          </div>
+          <div
+            v-if="view.id === 'month' && customEventsCount(events)"
+            class="vuecal__cell-events-count"
+          >
+            {{ customEventsCount(events) }}
+          </div>
+        </template>
       </vue-cal>
       <modal
         :current-ride="ride"
@@ -166,6 +178,7 @@ export default {
       END_DAY_HOUR,
       day: new Date(),
       modalOpen: false,
+      overflowBg: false,
     };
   },
 
@@ -203,43 +216,41 @@ export default {
       const openingHoursEvents = [];
       this.drivers.forEach((driver, index) => {
         if (driver.availabilities && driver.availabilities.length > 0) {
-          driver.availabilities.forEach((avail) => {
-            if (typeof avail.s === 'string') {
-              // eslint-disable-next-line no-param-reassign
-              avail = Interval.fromDateTimes(DateTime.fromISO(avail.s), DateTime.fromISO(avail.e));
-            }
-            if (avail.start && avail.start.hour > START_DAY_HOUR) {
-              const datetimeStart = DateTime.fromJSDate(this.day).set({ hour: START_DAY_HOUR, minute: 0, second: 0 });
-              const start = this.$vuecal(STEP)
-                .getVueCalFloorDateFromISO(datetimeStart.toISO());
-              const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.start.toISO());
-              const split = index + 1;
-              openingHoursEvents.push({
-                start,
-                end,
-                split,
-                class: 'not-working',
-                background: true,
-              });
-            }
-            if (avail.end && avail.end.hour < END_DAY_HOUR) {
-              const datetimeEnd = DateTime.fromJSDate(this.day).set({ hour: END_DAY_HOUR, minute: 0, second: 0 });
-              const start = this.$vuecal(STEP).getVueCalFloorDateFromISO(avail.end.toISO());
-              const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(datetimeEnd.toISO());
-              const split = index + 1;
-              openingHoursEvents.push({
-                start,
-                end,
-                split,
-                class: 'not-working',
-                background: true,
-              });
-            }
+          const availibilites = driver.availabilities.map((a) => (typeof a.s === 'string'
+            ? Interval.fromDateTimes(DateTime.fromISO(a.s), DateTime.fromISO(a.e)) : a));
+          const todayInterval = Interval.fromDateTimes(DateTime.fromJSDate(this.day).set({
+            hour: START_DAY_HOUR,
+          }).startOf('hour'),
+          DateTime.fromJSDate(this.day).set({
+            hour: END_DAY_HOUR,
+          }).startOf('hour'));
+          const notWorkingIntervals = todayInterval.difference(...Interval.merge(availibilites));
+          notWorkingIntervals.forEach((avail) => {
+            const start = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.start.toISO());
+            const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.end.toISO());
+            const split = index + 1;
+            openingHoursEvents.push({
+              start,
+              end,
+              split,
+              class: 'not-working',
+              background: true,
+            });
           });
         }
       });
       return evts.concat(openingHoursEvents);
     },
+  },
+
+  mounted() {
+    // Todo: its not pretty at all, we can somehow do this with an other idea
+    this.$nextTick(() => {
+      setTimeout(() => {
+        const vuecalBg = this.$el.querySelector('.vuecal__bg');
+        this.overflowBg = vuecalBg.clientHeight < vuecalBg.scrollHeight;
+      }, 500);
+    });
   },
 
   methods: {
@@ -252,20 +263,28 @@ export default {
         [this.ride.category] = this.currentCampus.categories;
       }
     },
-    updateDates([start, end], { id, name } = {}) {
-      this.ride.driver = { id, name };
+    updateDates([start, end], {
+      id, name, firstname, lastname,
+    } = {}) {
+      this.ride.driver = {
+        id, name, firstname, lastname,
+      };
       this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
     onClickAndRelease(event) {
       if (event.split > 1) {
         this.initRide();
-        const { id, name } = this.drivers[event.split - 1];
+        const {
+          id, name, firstname, lastname,
+        } = this.drivers[event.split - 1];
         this.updateDates([
           this.$vuecal(STEP).getDateTimeFloorFromVueCal(event.start),
           this.$vuecal(STEP).getDateTimeCeilFromVueCal(event.end)], {
           id,
           name,
+          firstname,
+          lastname,
         });
         this.toggleModal(true);
       }
@@ -328,6 +347,9 @@ export default {
       }
       this.$emit('view-change', obj);
     },
+    customEventsCount(events) {
+      return events ? events.filter((e) => e.class !== 'not-working').length : 0;
+    },
   },
 };
 </script>
@@ -339,11 +361,21 @@ export default {
     background-color: white;
   }
   /deep/ {
+    .vuecal.overflowY .vuecal__split-days-in-header {
+      overflow-y: scroll;
+      padding-right: 1px;
+    }
     .vuecal {
+      &__split-days-in-header {
+        padding: 0;
+      }
       &__no-event {
         display: none;
       }
       &__cell-hover:hover {
+        background-color: rgba(0, 83, 179, 0.4);
+      }
+      &__time-cell-clicked-hover, &__cell-clicked-hover {
         background-color: rgba(0, 83, 179, 0.4);
       }
       &__split-days-in-header .vuecal__time-column {
@@ -359,7 +391,7 @@ export default {
       &__now-line {
         z-index: 100;
       }
-      &--blue-theme &__title-bar {
+      &__title-bar {
         background: $background;
       }
       &__time-cell .hours.line:before {border-color: #42b983;}
@@ -371,7 +403,10 @@ export default {
         align-items: center;
         cursor: default;
       }
-      &__event.not-working &__event-time {display: none;align-items: center;}
+      &__event.not-working &__event-time {
+        align-items: center;
+      }
+
       &__event-title {
         font-size: 0.75rem;
         font-weight: bold;
@@ -380,7 +415,7 @@ export default {
         text-overflow: ellipsis;
       }
     }
-    .driver-col, /deep/ .driver-col-bis {
+    .driver-col, .driver-col-bis {
       border-right: 1px solid black;
       cursor: crosshair;
     }
