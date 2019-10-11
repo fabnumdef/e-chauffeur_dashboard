@@ -3,19 +3,22 @@
     <client-only>
       <vue-cal
         class="vuecal--blue-theme"
+        default-view="day"
+        locale="fr"
+        split-days-in-header
+        hide-view-selector
+        watch-real-time
+        dom-cells
         :class="{'overflowY': overflowBg}"
         :time-from="START_DAY_HOUR * 60"
         :time-to="END_DAY_HOUR * 60"
         :time-step="STEP"
         :time-cell-height="20"
-        default-view="day"
-        locale="fr"
         :disable-views="['years', 'year', 'week']"
         :split-days="splitDrivers"
         :events="events"
         :on-event-click="onClickEvent"
-        split-days-in-header
-        hide-view-selector
+        :min-event-width="75"
         @click-and-release="onClickAndRelease"
         @ready="initRide"
         @view-change="viewChange"
@@ -366,17 +369,21 @@ export default {
       padding-right: 1px;
     }
     .vuecal {
+      &__header button {
+        background-color: #fff;
+        font-size: 1rem ;
+      }
       &__split-days-in-header {
         padding: 0;
       }
       &__no-event {
         display: none;
       }
-      &__cell-hover:hover {
-        background-color: rgba(0, 83, 179, 0.4);
+      &__dom-cell:hover {
+        background-color: rgba(0, 98, 195, 0.2);
       }
-      &__time-cell-clicked-hover, &__cell-clicked-hover {
-        background-color: rgba(0, 83, 179, 0.4);
+      &__time-cell-clicked-hover, &__dom-cell-clicking-hovered {
+        background-color: rgba(0, 98, 195, 0.2);
       }
       &__split-days-in-header .vuecal__time-column {
         text-align: center;
@@ -402,6 +409,7 @@ export default {
         justify-content: center;
         align-items: center;
         cursor: default;
+        width: calc(100% + 15px) !important;
       }
       &__event.not-working &__event-time {
         align-items: center;
@@ -413,6 +421,10 @@ export default {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+      &__cell-events {
+        width: calc(100% - 15px);
+        position: relative;
       }
     }
     .driver-col, .driver-col-bis {
@@ -426,7 +438,6 @@ export default {
       font-size: 11px;
     }
     .ride-event {
-      margin-right: 15px;
       cursor: pointer;
     }
     .event-status {

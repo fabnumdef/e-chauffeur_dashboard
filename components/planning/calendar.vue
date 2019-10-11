@@ -3,16 +3,19 @@
     <client-only>
       <vue-cal
         default-view="week"
+        locale="fr"
+        hide-view-selector
+        hide-weekends
+        watch-real-time
+        dom-cells
         :time-from="START_DAY_HOUR * 60"
         :time-to="END_DAY_HOUR * 60"
         :time-step="STEP"
         :time-cell-height="35"
-        hide-view-selector
-        hide-weekends
         :events="events"
-        locale="fr"
         :disable-views="['years', 'year', 'month', 'day']"
         :on-event-click="openEdit"
+        :min-event-width="75"
         @click-and-release="openCreate"
         @view-change="viewChange"
       >
@@ -122,13 +125,16 @@ export default {
   }
   /deep/ {
     .slot-event {
-      margin-right: 15px;
       cursor: pointer;
     }
     .slot-event div {
       height: 100%;
     }
     .vuecal {
+      &__cell-events {
+        width: calc(100% - 15px);
+        position: relative;
+      }
       &__cell-events-count {
         display: none;
       }
@@ -138,11 +144,11 @@ export default {
       &__cell-content {
         cursor: crosshair;
       }
-      &__cell-hover:hover {
-        background-color: rgba(0, 83, 179, 0.4);
+      &__dom-cell:hover {
+        background-color: rgba(0, 98, 195, 0.2);
       }
-      &__time-cell-clicked-hover, &__cell-clicked-hover {
-        background-color: rgba(0, 83, 179, 0.4);
+      &__time-cell-clicked-hover, &__dom-cell-clicking-hovered {
+        background-color: rgba(0, 98, 195, 0.2);
       }
       &__event {
         background: rgba(62, 170, 40, 0.85);
