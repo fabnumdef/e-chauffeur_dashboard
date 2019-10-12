@@ -115,10 +115,7 @@ export default {
 
 <style scoped lang="scss">
   @import "~assets/css/head";
-  .calendar {
-    height: calc(100vh - 100px);
-    background-color: white;
-  }
+  @import "~assets/css/elements/vue-cal.scss";
   .dropzone {
     outline: 2px dashed white;
     outline-offset: 4px;
@@ -131,24 +128,8 @@ export default {
       height: 100%;
     }
     .vuecal {
-      &__cell-events {
-        width: calc(100% - 15px);
-        position: relative;
-      }
       &__cell-events-count {
         display: none;
-      }
-      &__no-event {
-        display: none;
-      }
-      &__cell-content {
-        cursor: crosshair;
-      }
-      &__dom-cell:hover {
-        background-color: rgba(0, 98, 195, 0.2);
-      }
-      &__time-cell-clicked-hover, &__dom-cell-clicking-hovered {
-        background-color: rgba(0, 98, 195, 0.2);
       }
       &__event {
         background: rgba(62, 170, 40, 0.85);

@@ -187,17 +187,11 @@ export default {
 
   computed: {
     splitDrivers() {
-      return this.drivers.map((driver, index) => {
-        let driverClass = 'driver-col';
-        if (index % 2 !== 0) {
-          driverClass = 'driver-col-bis';
-        }
-        return {
-          class: driverClass,
-          label: driver.name,
-          driver,
-        };
-      });
+      return this.drivers.map((driver) => ({
+        class: 'driver-col',
+        label: driver.name,
+        driver,
+      }));
     },
     ridesCalendar() {
       return this.rides.map((ride) => {
@@ -359,31 +353,16 @@ export default {
 
 <style lang="scss" scoped>
   @import "~assets/css/head";
-  .calendar {
-    height: calc(100vh - 100px);
-    background-color: white;
-  }
+  @import "~assets/css/elements/vue-cal.scss";
+
   /deep/ {
     .vuecal.overflowY .vuecal__split-days-in-header {
       overflow-y: scroll;
       padding-right: 1px;
     }
     .vuecal {
-      &__header button {
-        background-color: #fff;
-        font-size: 1rem ;
-      }
       &__split-days-in-header {
         padding: 0;
-      }
-      &__no-event {
-        display: none;
-      }
-      &__dom-cell:hover {
-        background-color: rgba(0, 98, 195, 0.2);
-      }
-      &__time-cell-clicked-hover, &__dom-cell-clicking-hovered {
-        background-color: rgba(0, 98, 195, 0.2);
       }
       &__split-days-in-header .vuecal__time-column {
         text-align: center;
@@ -394,12 +373,6 @@ export default {
         svg {
           font-size: 25px;
         }
-      }
-      &__now-line {
-        z-index: 100;
-      }
-      &__title-bar {
-        background: $background;
       }
       &__time-cell .hours.line:before {border-color: #42b983;}
       &__event.not-working {
@@ -414,22 +387,9 @@ export default {
       &__event.not-working &__event-time {
         align-items: center;
       }
-
-      &__event-title {
-        font-size: 0.75rem;
-        font-weight: bold;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      &__cell-events {
-        width: calc(100% - 15px);
-        position: relative;
-      }
     }
-    .driver-col, .driver-col-bis {
+    .driver-col {
       border-right: 1px solid black;
-      cursor: crosshair;
     }
     .hours {
       font-size: 15px;
