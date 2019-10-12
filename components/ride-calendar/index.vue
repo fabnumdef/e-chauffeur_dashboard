@@ -9,7 +9,6 @@
         hide-view-selector
         watch-real-time
         dom-cells
-        :class="{'overflowY': overflowBg}"
         :time-from="START_DAY_HOUR * 60"
         :time-to="END_DAY_HOUR * 60"
         :time-step="STEP"
@@ -181,7 +180,6 @@ export default {
       END_DAY_HOUR,
       day: new Date(),
       modalOpen: false,
-      overflowBg: false,
     };
   },
 
@@ -238,16 +236,6 @@ export default {
       });
       return evts.concat(openingHoursEvents);
     },
-  },
-
-  mounted() {
-    // Todo: its not pretty at all, we can somehow do this with an other idea
-    this.$nextTick(() => {
-      setTimeout(() => {
-        const vuecalBg = this.$el.querySelector('.vuecal__bg');
-        this.overflowBg = vuecalBg.clientHeight < vuecalBg.scrollHeight;
-      }, 500);
-    });
   },
 
   methods: {
@@ -356,13 +344,21 @@ export default {
   @import "~assets/css/elements/vue-cal.scss";
 
   /deep/ {
-    .vuecal.overflowY .vuecal__split-days-in-header {
-      overflow-y: scroll;
-      padding-right: 1px;
-    }
     .vuecal {
+      &__title-bar {
+        background: $background;
+      }
+      &__header button {
+        background-color: #fff;
+        font-size: 1rem;
+      }
+      &__bg {
+        overflow-y: scroll;
+      }
       &__split-days-in-header {
         padding: 0;
+        overflow-y: scroll;
+        padding-right: 1px;
       }
       &__split-days-in-header .vuecal__time-column {
         text-align: center;

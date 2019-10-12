@@ -4,10 +4,6 @@
 }
 /deep/ {
   .vuecal {
-    &__header button {
-      background-color: #fff;
-      font-size: 1rem;
-    }
 
     &__no-event {
       display: none;
@@ -23,10 +19,6 @@
 
     &__now-line {
       z-index: 100;
-    }
-
-    &__title-bar {
-      background: $background;
     }
 
     &__event-title {
