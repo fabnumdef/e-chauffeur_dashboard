@@ -9,6 +9,18 @@
       display: none;
     }
 
+    &__event--focus {
+      z-index: 1;
+    }
+
+    &__event {
+      opacity: 0.6;
+    }
+
+    &__event:hover, &__event--overlapping {
+      opacity: 1;
+    }
+
     &__dom-cell:hover {
       background-color: rgba(0, 98, 195, 0.2);
     }

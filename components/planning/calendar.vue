@@ -132,7 +132,7 @@ export default {
         display: none;
       }
       &__event {
-        background: rgba(62, 170, 40, 0.85);
+        background: rgba(62, 170, 40, 1);
         border: 1px solid rgb(62, 170, 40);
         color: $white;
         padding: 8px;

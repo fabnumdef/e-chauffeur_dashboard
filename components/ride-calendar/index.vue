@@ -379,6 +379,7 @@ export default {
         align-items: center;
         cursor: default;
         width: calc(100% + 15px) !important;
+        opacity: 1;
       }
       &__event.not-working &__event-time {
         align-items: center;
@@ -402,28 +403,28 @@ export default {
         border: 1px solid $black;
       }
       &-planned {
-        background: repeating-linear-gradient(45deg, rgba(195, 195, 195, 0.85), rgba(195, 195, 195, 0.85) 1px,
-          rgba(129, 146, 169, 0.85) 1px, rgba(129, 146, 169, 0.85) 20px);
+        background: repeating-linear-gradient(45deg, rgba(195, 195, 195, 1), rgba(195, 195, 195, 1) 1px,
+          rgba(129, 146, 169, 1) 1px, rgba(129, 146, 169, 1) 20px);
         color: findColorInvert($dark-gray);
         border: 1px solid $dark-gray;
       }
       &-waiting {
-        background: rgba(255, 221, 87, 0.85);
+        background: rgba(255, 221, 87, 1);
         color: findColorInvert($warning);
         border: 1px solid $warning;
       }
       &-driving {
-        background: rgba(0, 83, 179, 0.86);
+        background: rgba(0, 83, 179, 1);
         color: findColorInvert($primary);
         border: 1px solid $primary;
       }
       &-accepted {
-        background: rgba(129, 146, 169, 0.85);
+        background: rgba(129, 146, 169, 1);
         color: findColorInvert($primary);
         border: 1px solid $primary;
       }
       &-wrong {
-        background: rgba(248, 248, 248, 0.85);
+        background: rgba(248, 248, 248, 1);
         color: $danger;
         border: 1px solid $danger;
       }
