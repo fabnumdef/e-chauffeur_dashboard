@@ -1,0 +1,53 @@
+.calendar {
+  height: calc(100vh - 100px);
+  background-color: white;
+}
+/deep/ {
+  .vuecal {
+
+    &__no-event {
+      display: none;
+    }
+
+    &__event--focus {
+      z-index: 1;
+    }
+
+    &__event {
+      opacity: 0.6;
+    }
+
+    &__event:hover, &__event--overlapping {
+      opacity: 1;
+    }
+
+    &__dom-cell:hover {
+      background-color: rgba(0, 98, 195, 0.2);
+    }
+
+    &__time-cell-clicked-hover, &__dom-cell-clicking-hovered {
+      background-color: rgba(0, 98, 195, 0.2);
+    }
+
+    &__now-line {
+      z-index: 100;
+    }
+
+    &__event-title {
+      font-size: 0.75rem;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &__cell-events {
+      width: calc(100% - 15px);
+      position: relative;
+    }
+
+    &__cell-content {
+      cursor: crosshair;
+    }
+  }
+}

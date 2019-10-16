@@ -3,16 +3,19 @@
     <client-only>
       <vue-cal
         default-view="week"
+        locale="fr"
+        hide-view-selector
+        hide-weekends
+        watch-real-time
+        dom-cells
         :time-from="START_DAY_HOUR * 60"
         :time-to="END_DAY_HOUR * 60"
         :time-step="STEP"
         :time-cell-height="35"
-        hide-view-selector
-        hide-weekends
         :events="events"
-        locale="fr"
         :disable-views="['years', 'year', 'month', 'day']"
         :on-event-click="openEdit"
+        :min-event-width="75"
         @click-and-release="openCreate"
         @view-change="viewChange"
       >
@@ -112,17 +115,13 @@ export default {
 
 <style scoped lang="scss">
   @import "~assets/css/head";
-  .calendar {
-    height: calc(100vh - 100px);
-    background-color: white;
-  }
+  @import "~assets/css/elements/vue-cal.scss";
   .dropzone {
     outline: 2px dashed white;
     outline-offset: 4px;
   }
   /deep/ {
     .slot-event {
-      margin-right: 15px;
       cursor: pointer;
     }
     .slot-event div {
@@ -132,20 +131,8 @@ export default {
       &__cell-events-count {
         display: none;
       }
-      &__no-event {
-        display: none;
-      }
-      &__cell-content {
-        cursor: crosshair;
-      }
-      &__cell-hover:hover {
-        background-color: rgba(0, 83, 179, 0.4);
-      }
-      &__time-cell-clicked-hover, &__cell-clicked-hover {
-        background-color: rgba(0, 83, 179, 0.4);
-      }
       &__event {
-        background: rgba(62, 170, 40, 0.85);
+        background: rgba(62, 170, 40, 1);
         border: 1px solid rgb(62, 170, 40);
         color: $white;
         padding: 8px;
