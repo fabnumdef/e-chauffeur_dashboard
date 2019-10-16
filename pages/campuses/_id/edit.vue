@@ -200,7 +200,7 @@ import weekdaysSelect from '~/components/form/weekdays.vue';
 import rideDuration from '~/components/form/ride-duration.vue';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
-  + 'information,timezone,workedHours,defaultRideDuration';
+  + 'information,timezone,workedDays,workedHours,defaultRideDuration';
 export default {
   components: {
     ecField,
