@@ -6,7 +6,7 @@
 
 <script>
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),'
-    + 'categories(id,label),information,workedDays,timezone';
+    + 'categories(id,label),information,workedDays,timezone,workedHours,defaultRideDuration';
 
 export default {
   async asyncData({ app, params, $api }) {

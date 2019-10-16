@@ -5,9 +5,9 @@
         default-view="week"
         locale="fr"
         hide-view-selector
-        hide-weekends
         watch-real-time
         dom-cells
+        :hide-weekdays="hideWeekDays"
         :time-from="START_DAY_HOUR * 60"
         :time-to="END_DAY_HOUR * 60"
         :time-step="STEP"
@@ -54,7 +54,7 @@
 import { DateTime } from 'luxon';
 
 const STEP = 60;
-const START_DAY_HOUR = 4;
+const START_DAY_HOUR = 0;
 const END_DAY_HOUR = 24;
 
 export default {
@@ -76,8 +76,6 @@ export default {
   data() {
     return {
       STEP,
-      START_DAY_HOUR,
-      END_DAY_HOUR,
     };
   },
 
@@ -85,6 +83,20 @@ export default {
     ...['TIME_SIMPLE']
       .map((f) => ({ [f]: () => DateTime[f] }))
       .reduce((acc, cur) => Object.assign(acc, cur), {}),
+    hideWeekDays() {
+      return this.$store.state.context.campus && this.$store.state.context.campus.workedDays
+        ? [...(new Array(7)).keys()].map((a) => a + 1)
+          .filter((d) => !this.$store.state.context.campus.workedDays.includes(d))
+        : [6, 7];
+    },
+    START_DAY_HOUR() {
+      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
+        ? this.$store.state.context.campus.workedHours.start : START_DAY_HOUR;
+    },
+    END_DAY_HOUR() {
+      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
+        ? this.$store.state.context.campus.workedHours.end : END_DAY_HOUR;
+    },
   },
   methods: {
     openCreate(event) {
