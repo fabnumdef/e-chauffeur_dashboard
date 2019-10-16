@@ -128,8 +128,8 @@ import Modal from './modal';
 import DriverHeader from './driver-header';
 
 const STEP = 30;
-const START_DAY_HOUR = 5;
-const END_DAY_HOUR = 23;
+const START_DAY_HOUR = 0;
+const END_DAY_HOUR = 24;
 
 function generateEmptyRide() {
   return {
@@ -175,15 +175,24 @@ export default {
   data() {
     return {
       ride: generateEmptyRide(),
-      STEP,
-      START_DAY_HOUR,
-      END_DAY_HOUR,
       day: new Date(),
       modalOpen: false,
     };
   },
 
   computed: {
+    START_DAY_HOUR() {
+      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
+        ? this.$store.state.context.campus.workedHours.start : START_DAY_HOUR;
+    },
+    END_DAY_HOUR() {
+      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
+        ? this.$store.state.context.campus.workedHours.end : END_DAY_HOUR;
+    },
+    STEP() {
+      return (this.$store.state.context.campus && this.$store.state.context.campus.defaultRideDuration)
+        ? this.$store.state.context.campus.defaultRideDuration : STEP;
+    },
     splitDrivers() {
       return this.drivers.map((driver) => ({
         class: 'driver-col',
@@ -214,15 +223,15 @@ export default {
           const availibilites = driver.availabilities.map((a) => (typeof a.s === 'string'
             ? Interval.fromDateTimes(DateTime.fromISO(a.s), DateTime.fromISO(a.e)) : a));
           const todayInterval = Interval.fromDateTimes(DateTime.fromJSDate(this.day).set({
-            hour: START_DAY_HOUR,
+            hour: this.START_DAY_HOUR,
           }).startOf('hour'),
           DateTime.fromJSDate(this.day).set({
-            hour: END_DAY_HOUR,
+            hour: this.END_DAY_HOUR,
           }).startOf('hour'));
           const notWorkingIntervals = todayInterval.difference(...Interval.merge(availibilites));
           notWorkingIntervals.forEach((avail) => {
-            const start = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.start.toISO());
-            const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.end.toISO());
+            const start = this.$vuecal(this.STEP).getVueCalCeilDateFromISO(avail.start.toISO());
+            const end = this.$vuecal(this.STEP).getVueCalCeilDateFromISO(avail.end.toISO());
             const split = index + 1;
             openingHoursEvents.push({
               start,
@@ -264,8 +273,8 @@ export default {
           id, name, firstname, lastname,
         } = this.drivers[event.split - 1];
         this.updateDates([
-          this.$vuecal(STEP).getDateTimeFloorFromVueCal(event.start),
-          this.$vuecal(STEP).getDateTimeCeilFromVueCal(event.end)], {
+          this.$vuecal(this.STEP).getDateTimeFloorFromVueCal(event.start),
+          this.$vuecal(this.STEP).getDateTimeCeilFromVueCal(event.end)], {
           id,
           name,
           firstname,

@@ -28,7 +28,8 @@ export const actions = {
       commit('setCampus', null);
       return;
     }
-    const { data } = await this.$api.campuses.getCampus(campus, 'id,name,location,categories(id,label),workedDays');
+    const { data } = await this.$api.campuses.getCampus(campus,
+      'id,name,location,categories(id,label),workedDays,workedHours,defaultRideDuration');
     commit('setCampus', data);
   },
   hideMap({ commit }, hide) {

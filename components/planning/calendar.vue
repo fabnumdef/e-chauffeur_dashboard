@@ -54,7 +54,7 @@
 import { DateTime } from 'luxon';
 
 const STEP = 60;
-const START_DAY_HOUR = 4;
+const START_DAY_HOUR = 0;
 const END_DAY_HOUR = 24;
 
 export default {
@@ -76,8 +76,6 @@ export default {
   data() {
     return {
       STEP,
-      START_DAY_HOUR,
-      END_DAY_HOUR,
     };
   },
 
