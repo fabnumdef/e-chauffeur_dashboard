@@ -607,4 +607,7 @@ export default {
       margin-bottom: 0;
     }
   }
+  /deep/ .modal {
+    z-index: 1001; // Max leaflet z-index is 1000
+  }
 </style>
