@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Add pins for POIs on the regulator map
 ### Fix
 ## Version 1.4.1
 ### Features
