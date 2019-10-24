@@ -23,18 +23,18 @@
     "lodash.merge": "^4.6.2",
     "lodash.range": "^3.2.0",
     "moment": "^2.24.0",
-    "node-sass": "^4.12.0",
-    "nuxt": "^2.9.2",
+    "node-sass": "^4.13.0",
+    "nuxt": "^2.10.2",
     "nuxt-leaflet": "0.0.19",
     "opening_hours": "^3.5.0",
     "sass-loader": "^7.3.1",
     "vue-chartjs": "^3.4.2",
     "vue-multiselect": "^2.1.6",
-    "vue2-datepicker": "^2.12.0"
+    "vue2-datepicker": "^2.13.2"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
-    "eslint": "^6.5.0",
+    "eslint": "^6.5.1",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-import-resolver-webpack": "^0.11.0",
     "eslint-plugin-import": "^2.18.2",

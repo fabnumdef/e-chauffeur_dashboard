@@ -185,7 +185,7 @@
               </div>
               <div class="column">
                 <span
-                  class="tag is-medium"
+                  class="status-tag is-medium"
                   :class="getStatusInfos(ride.status, 'class')"
                 >
                   {{ getStatusInfos(ride.status, 'text') }}
@@ -273,6 +273,19 @@
                         </p>
                         {{ getFormatDate(ride.end, 'hh:mm' ) }} - {{ ride.arrival.label }}
                       </div>
+                      <div class="column is-narrow">
+                        <div class="tags has-addons">
+                          <span class="tag is-dark">Créée par</span>
+                          <span
+                            v-if="ride.owner"
+                            class="tag is-warning"
+                          >Utilisateur</span>
+                          <span
+                            v-else
+                            class="tag is-info"
+                          >Régulation</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -319,7 +332,7 @@ export default {
         flatten: true,
         mask: 'id,departure(id,label,location),arrival(id,label,location),car(id,label,model(id,label)),'
           + 'campus(id,phone(drivers,everybody)),status(*),start,end,phone,driver(id,name),category(id,label),'
-          + 'passengersCount,luggage,comments,createdAt',
+          + 'passengersCount,luggage,comments,createdAt,owner(id)',
       },
       filters: {
         date: [
@@ -328,7 +341,7 @@ export default {
         ],
       },
       fields: ['id', 'start', 'end', 'phone', 'departure', 'arrival', 'driver', 'passengersCount', 'car',
-        'campus', 'status', 'category'],
+        'campus', 'status', 'category', 'owner(id)'],
       show: [],
     };
   },
@@ -550,7 +563,7 @@ export default {
         transform: rotate(90deg);
       }
 
-      .tag {
+      .status-tag {
         width: 100%;
         color: white;
         text-transform: uppercase;
