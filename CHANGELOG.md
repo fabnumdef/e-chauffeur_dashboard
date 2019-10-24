@@ -2,6 +2,15 @@
 ## Current
 ### Features
 ### Fix
+## Version 1.4.2
+### Features
+* Improve reliability, k8s side
+* Update Vue-cal 
+* Many improvements of CSS of calendars
+* Make hours of calendar configurable
+* Show origin or the ride in export / history
+### Fix
+* Fix z-index on modal in history
 ## Version 1.4.1
 ### Features
 * Add timezone inside campus entity
