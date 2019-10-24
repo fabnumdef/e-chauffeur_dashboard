@@ -3,19 +3,21 @@
     <client-only>
       <vue-cal
         class="vuecal--blue-theme"
-        :class="{'overflowY': overflowBg}"
+        default-view="day"
+        locale="fr"
+        split-days-in-header
+        hide-view-selector
+        watch-real-time
+        dom-cells
         :time-from="START_DAY_HOUR * 60"
         :time-to="END_DAY_HOUR * 60"
         :time-step="STEP"
         :time-cell-height="20"
-        default-view="day"
-        locale="fr"
         :disable-views="['years', 'year', 'week']"
         :split-days="splitDrivers"
         :events="events"
         :on-event-click="onClickEvent"
-        split-days-in-header
-        hide-view-selector
+        :min-event-width="75"
         @click-and-release="onClickAndRelease"
         @ready="initRide"
         @view-change="viewChange"
@@ -126,8 +128,8 @@ import Modal from './modal';
 import DriverHeader from './driver-header';
 
 const STEP = 30;
-const START_DAY_HOUR = 5;
-const END_DAY_HOUR = 23;
+const START_DAY_HOUR = 0;
+const END_DAY_HOUR = 24;
 
 function generateEmptyRide() {
   return {
@@ -173,28 +175,30 @@ export default {
   data() {
     return {
       ride: generateEmptyRide(),
-      STEP,
-      START_DAY_HOUR,
-      END_DAY_HOUR,
       day: new Date(),
       modalOpen: false,
-      overflowBg: false,
     };
   },
 
   computed: {
+    START_DAY_HOUR() {
+      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
+        ? this.$store.state.context.campus.workedHours.start : START_DAY_HOUR;
+    },
+    END_DAY_HOUR() {
+      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
+        ? this.$store.state.context.campus.workedHours.end : END_DAY_HOUR;
+    },
+    STEP() {
+      return (this.$store.state.context.campus && this.$store.state.context.campus.defaultRideDuration)
+        ? this.$store.state.context.campus.defaultRideDuration : STEP;
+    },
     splitDrivers() {
-      return this.drivers.map((driver, index) => {
-        let driverClass = 'driver-col';
-        if (index % 2 !== 0) {
-          driverClass = 'driver-col-bis';
-        }
-        return {
-          class: driverClass,
-          label: driver.name,
-          driver,
-        };
-      });
+      return this.drivers.map((driver) => ({
+        class: 'driver-col',
+        label: driver.name,
+        driver,
+      }));
     },
     ridesCalendar() {
       return this.rides.map((ride) => {
@@ -219,15 +223,15 @@ export default {
           const availibilites = driver.availabilities.map((a) => (typeof a.s === 'string'
             ? Interval.fromDateTimes(DateTime.fromISO(a.s), DateTime.fromISO(a.e)) : a));
           const todayInterval = Interval.fromDateTimes(DateTime.fromJSDate(this.day).set({
-            hour: START_DAY_HOUR,
+            hour: this.START_DAY_HOUR,
           }).startOf('hour'),
           DateTime.fromJSDate(this.day).set({
-            hour: END_DAY_HOUR,
+            hour: this.END_DAY_HOUR,
           }).startOf('hour'));
           const notWorkingIntervals = todayInterval.difference(...Interval.merge(availibilites));
           notWorkingIntervals.forEach((avail) => {
-            const start = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.start.toISO());
-            const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(avail.end.toISO());
+            const start = this.$vuecal(this.STEP).getVueCalCeilDateFromISO(avail.start.toISO());
+            const end = this.$vuecal(this.STEP).getVueCalCeilDateFromISO(avail.end.toISO());
             const split = index + 1;
             openingHoursEvents.push({
               start,
@@ -241,16 +245,6 @@ export default {
       });
       return evts.concat(openingHoursEvents);
     },
-  },
-
-  mounted() {
-    // Todo: its not pretty at all, we can somehow do this with an other idea
-    this.$nextTick(() => {
-      setTimeout(() => {
-        const vuecalBg = this.$el.querySelector('.vuecal__bg');
-        this.overflowBg = vuecalBg.clientHeight < vuecalBg.scrollHeight;
-      }, 500);
-    });
   },
 
   methods: {
@@ -279,8 +273,8 @@ export default {
           id, name, firstname, lastname,
         } = this.drivers[event.split - 1];
         this.updateDates([
-          this.$vuecal(STEP).getDateTimeFloorFromVueCal(event.start),
-          this.$vuecal(STEP).getDateTimeCeilFromVueCal(event.end)], {
+          this.$vuecal(this.STEP).getDateTimeFloorFromVueCal(event.start),
+          this.$vuecal(this.STEP).getDateTimeCeilFromVueCal(event.end)], {
           id,
           name,
           firstname,
@@ -356,27 +350,24 @@ export default {
 
 <style lang="scss" scoped>
   @import "~assets/css/head";
-  .calendar {
-    height: calc(100vh - 100px);
-    background-color: white;
-  }
+  @import "~assets/css/elements/vue-cal.scss";
+
   /deep/ {
-    .vuecal.overflowY .vuecal__split-days-in-header {
-      overflow-y: scroll;
-      padding-right: 1px;
-    }
     .vuecal {
+      &__title-bar {
+        background: $background;
+      }
+      &__header button {
+        background-color: #fff;
+        font-size: 1rem;
+      }
+      &__bg {
+        overflow-y: scroll;
+      }
       &__split-days-in-header {
         padding: 0;
-      }
-      &__no-event {
-        display: none;
-      }
-      &__cell-hover:hover {
-        background-color: rgba(0, 83, 179, 0.4);
-      }
-      &__time-cell-clicked-hover, &__cell-clicked-hover {
-        background-color: rgba(0, 83, 179, 0.4);
+        overflow-y: scroll;
+        padding-right: 1px;
       }
       &__split-days-in-header .vuecal__time-column {
         text-align: center;
@@ -388,12 +379,6 @@ export default {
           font-size: 25px;
         }
       }
-      &__now-line {
-        z-index: 100;
-      }
-      &__title-bar {
-        background: $background;
-      }
       &__time-cell .hours.line:before {border-color: #42b983;}
       &__event.not-working {
         background: repeating-linear-gradient(45deg, white, white 10px, #f2f2f2 10px, #f2f2f2 20px);/* IE 10+ */
@@ -402,22 +387,15 @@ export default {
         justify-content: center;
         align-items: center;
         cursor: default;
+        width: calc(100% + 15px) !important;
+        opacity: 1;
       }
       &__event.not-working &__event-time {
         align-items: center;
       }
-
-      &__event-title {
-        font-size: 0.75rem;
-        font-weight: bold;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
     }
-    .driver-col, .driver-col-bis {
+    .driver-col {
       border-right: 1px solid black;
-      cursor: crosshair;
     }
     .hours {
       font-size: 15px;
@@ -426,7 +404,6 @@ export default {
       font-size: 11px;
     }
     .ride-event {
-      margin-right: 15px;
       cursor: pointer;
     }
     .event-status {
@@ -435,28 +412,28 @@ export default {
         border: 1px solid $black;
       }
       &-planned {
-        background: repeating-linear-gradient(45deg, rgba(195, 195, 195, 0.85), rgba(195, 195, 195, 0.85) 1px,
-          rgba(129, 146, 169, 0.85) 1px, rgba(129, 146, 169, 0.85) 20px);
+        background: repeating-linear-gradient(45deg, rgba(195, 195, 195, 1), rgba(195, 195, 195, 1) 1px,
+          rgba(129, 146, 169, 1) 1px, rgba(129, 146, 169, 1) 20px);
         color: findColorInvert($dark-gray);
         border: 1px solid $dark-gray;
       }
       &-waiting {
-        background: rgba(255, 221, 87, 0.85);
+        background: rgba(255, 221, 87, 1);
         color: findColorInvert($warning);
         border: 1px solid $warning;
       }
       &-driving {
-        background: rgba(0, 83, 179, 0.86);
+        background: rgba(0, 83, 179, 1);
         color: findColorInvert($primary);
         border: 1px solid $primary;
       }
       &-accepted {
-        background: rgba(129, 146, 169, 0.85);
+        background: rgba(129, 146, 169, 1);
         color: findColorInvert($primary);
         border: 1px solid $primary;
       }
       &-wrong {
-        background: rgba(248, 248, 248, 0.85);
+        background: rgba(248, 248, 248, 1);
         color: $danger;
         border: 1px solid $danger;
       }

@@ -3,16 +3,19 @@
     <client-only>
       <vue-cal
         default-view="week"
+        locale="fr"
+        hide-view-selector
+        watch-real-time
+        dom-cells
+        :hide-weekdays="hideWeekDays"
         :time-from="START_DAY_HOUR * 60"
         :time-to="END_DAY_HOUR * 60"
         :time-step="STEP"
         :time-cell-height="35"
-        hide-view-selector
-        hide-weekends
         :events="events"
-        locale="fr"
         :disable-views="['years', 'year', 'month', 'day']"
         :on-event-click="openEdit"
+        :min-event-width="75"
         @click-and-release="openCreate"
         @view-change="viewChange"
       >
@@ -51,7 +54,7 @@
 import { DateTime } from 'luxon';
 
 const STEP = 60;
-const START_DAY_HOUR = 4;
+const START_DAY_HOUR = 0;
 const END_DAY_HOUR = 24;
 
 export default {
@@ -73,8 +76,6 @@ export default {
   data() {
     return {
       STEP,
-      START_DAY_HOUR,
-      END_DAY_HOUR,
     };
   },
 
@@ -82,6 +83,20 @@ export default {
     ...['TIME_SIMPLE']
       .map((f) => ({ [f]: () => DateTime[f] }))
       .reduce((acc, cur) => Object.assign(acc, cur), {}),
+    hideWeekDays() {
+      return this.$store.state.context.campus && this.$store.state.context.campus.workedDays
+        ? [...(new Array(7)).keys()].map((a) => a + 1)
+          .filter((d) => !this.$store.state.context.campus.workedDays.includes(d))
+        : [6, 7];
+    },
+    START_DAY_HOUR() {
+      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
+        ? this.$store.state.context.campus.workedHours.start : START_DAY_HOUR;
+    },
+    END_DAY_HOUR() {
+      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
+        ? this.$store.state.context.campus.workedHours.end : END_DAY_HOUR;
+    },
   },
   methods: {
     openCreate(event) {
@@ -112,17 +127,13 @@ export default {
 
 <style scoped lang="scss">
   @import "~assets/css/head";
-  .calendar {
-    height: calc(100vh - 100px);
-    background-color: white;
-  }
+  @import "~assets/css/elements/vue-cal.scss";
   .dropzone {
     outline: 2px dashed white;
     outline-offset: 4px;
   }
   /deep/ {
     .slot-event {
-      margin-right: 15px;
       cursor: pointer;
     }
     .slot-event div {
@@ -132,20 +143,8 @@ export default {
       &__cell-events-count {
         display: none;
       }
-      &__no-event {
-        display: none;
-      }
-      &__cell-content {
-        cursor: crosshair;
-      }
-      &__cell-hover:hover {
-        background-color: rgba(0, 83, 179, 0.4);
-      }
-      &__time-cell-clicked-hover, &__cell-clicked-hover {
-        background-color: rgba(0, 83, 179, 0.4);
-      }
       &__event {
-        background: rgba(62, 170, 40, 0.85);
+        background: rgba(62, 170, 40, 1);
         border: 1px solid rgb(62, 170, 40);
         color: $white;
         padding: 8px;

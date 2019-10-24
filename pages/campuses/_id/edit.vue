@@ -90,6 +90,49 @@
             v-model="campus.workedDays"
           />
         </ec-field>
+        <div class="columns">
+          <div class="column">
+            <ec-field
+              label="Heure d'embauche"
+              field-id="min-worked-hours"
+            >
+              <input
+                id="min-worked-hours"
+                v-model="campus.workedHours.start"
+                class="input"
+                type="number"
+                min="0"
+                max="24"
+              >
+            </ec-field>
+          </div>
+          <div class="column">
+            <ec-field
+              label="Heure de débauche"
+              field-id="max-worked-hours"
+            >
+              <input
+                id="max-worked-hours"
+                v-model="campus.workedHours.end"
+                class="input"
+                type="number"
+                min="0"
+                max="24"
+              >
+            </ec-field>
+          </div>
+          <div class="column">
+            <ec-field
+              label="Durée d'une course par défaut"
+              field-id="ride-duration"
+            >
+              <ride-duration
+                id="ride-duration"
+                v-model="campus.defaultRideDuration"
+              />
+            </ec-field>
+          </div>
+        </div>
         <ec-field
           label="Catégories"
           field-id="categories"
@@ -154,19 +197,22 @@ import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 import weekdaysSelect from '~/components/form/weekdays.vue';
+import rideDuration from '~/components/form/ride-duration.vue';
 
-const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),information,timezone';
+const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
+  + 'information,timezone,workedDays,workedHours,defaultRideDuration';
 export default {
   components: {
     ecField,
     ecGpsPoint,
     searchCategories,
     weekdaysSelect,
+    rideDuration,
   },
   props: {
     campus: {
       type: Object,
-      default: () => ({ phone: {}, categories: [] }),
+      default: () => ({ phone: {}, categories: [], workedHours: { start: 5, end: 23 } }),
     },
   },
   data() {
@@ -180,6 +226,7 @@ export default {
       } else {
         ({ data } = (await this.$api.campuses.postCampus(campus, EDITABLE_FIELDS)));
       }
+      this.$store.commit('context/setCampus', data);
 
       this.$router.push({
         name: 'campuses-id-edit',
