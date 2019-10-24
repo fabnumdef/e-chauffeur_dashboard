@@ -230,7 +230,7 @@
         v-if="can(ride, VALIDATE)"
         class="button is-success"
         type="button"
-        @click="edit(ride, VALIDATED)"
+        @click="edit(ride, VALIDATE)"
       >
         Accepter la course
       </button>
@@ -246,7 +246,7 @@
       <bulma-dropdown
         v-if="can(ride, REJECT_BOUNDARY) || can(ride, REJECT_CAPACITY)"
         class="is-danger"
-        :options="{[REJECTED_BOUNDARY]: 'Refuser (périmètre)', [REJECTED_CAPACITY]: 'Refuser (capacité)'}"
+        :options="{[REJECT_BOUNDARY]: 'Refuser (périmètre)', [REJECT_CAPACITY]: 'Refuser (capacité)'}"
         :open="false"
         @click="edit(ride, $event)"
       >
@@ -459,8 +459,8 @@ export default {
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
 
-    async edit(r, status) {
-      const ride = { ...r, ...(status ? { status } : {}) };
+    async edit(r, action) {
+      const ride = r;
 
       try {
         if (ride.id) {
@@ -468,12 +468,24 @@ export default {
             this.campus,
             EDITABLE_FIELDS,
           ).patchRide(ride.id, ride);
+          if (action) {
+            await this.$api.rides(
+              this.campus,
+              EDITABLE_FIELDS,
+            ).mutateRide(ride, action);
+          }
           this.$toasted.success('La course a bien été mise à jour.');
         } else {
-          await this.$api.rides(
+          const { data: newRide } = await this.$api.rides(
             this.campus,
             EDITABLE_FIELDS,
           ).postRide(ride);
+          if (action) {
+            await this.$api.rides(
+              this.campus,
+              EDITABLE_FIELDS,
+            ).mutateRide(newRide, action);
+          }
           this.$toasted.success('La course a bien été créée.');
         }
         this.toggleModal(false);
@@ -482,7 +494,7 @@ export default {
       }
     },
 
-    async changeStatus(ride, status) {
+    async changeStatus(ride, action) {
       if (!ride.id) {
         this.$toasted.error('Changement de status possible uniquement pour une course sauvegardée');
       }
@@ -490,7 +502,7 @@ export default {
         await this.$api.rides(
           this.campus,
           EDITABLE_FIELDS,
-        ).mutateRide(ride, status);
+        ).mutateRide(ride, action);
         this.$toasted.success('Status modifié.');
         this.toggleModal(false);
       } catch (e) {
