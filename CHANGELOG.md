@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Add logic of automatic static validation
 ### Fix
 ## Version 1.4.2
 ### Features
