@@ -31,16 +31,17 @@
                 {{ content.start.toLocaleString(TIME_SIMPLE) }} - {{ content.end.toLocaleString(TIME_SIMPLE) }}
               </span>
               <span class="is-pulled-right">
-                <fa-icon icon="user-circle" /> {{ content.drivers.length }}({{ drivers.data.length }})
+                <fa-icon icon="car" /> <span v-if="content.cars">
+                  {{ content.cars.length }}({{ cars.data.length }})
+                </span>
               </span>
             </header>
             <ul class="drivers-list">
               <li
-                v-for="driver of content.drivers"
-                :key="driver.id"
+                v-for="car of content.cars"
+                :key="car.id"
               >
-                <span v-if="driver.firstname || driver.lastname">{{ driver.firstname }} {{ driver.lastname }}</span>
-                <span v-else>{{ driver.id }}</span>
+                <span>{{ car.id }} {{ car.label }}</span>
               </li>
             </ul>
           </div>
@@ -63,7 +64,7 @@ export default {
       type: Array,
       default: () => ([]),
     },
-    drivers: {
+    cars: {
       type: Object,
       default: () => ({}),
     },
@@ -115,9 +116,9 @@ export default {
       });
     },
     drop(event, content) {
-      const driver = JSON.parse(event.dataTransfer.getData('application/json'));
-      if (driver.id && content.drivers && !content.drivers.find(({ id }) => id === driver.id)) {
-        content.drivers.push(driver);
+      const car = JSON.parse(event.dataTransfer.getData('application/json'));
+      if (car.id && content.cars && !content.cars.find(({ id }) => id === car.id)) {
+        content.cars.push(car);
         this.$emit('edit-time-slot', content);
       }
     },
@@ -144,8 +145,8 @@ export default {
         display: none;
       }
       &__event {
-        background: rgba(62, 170, 40, 1);
-        border: 1px solid rgb(62, 170, 40);
+        background: $orange;
+        border: 1px solid $orange;
         color: $white;
         padding: 8px;
         header {
