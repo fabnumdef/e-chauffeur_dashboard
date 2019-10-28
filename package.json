@@ -20,6 +20,7 @@
     "chart.js": "^2.8.0",
     "i18next-client": "^1.11.4",
     "lodash.debounce": "^4.0.8",
+    "lodash.get": "^4.4.2",
     "lodash.merge": "^4.6.2",
     "lodash.range": "^3.2.0",
     "moment": "^2.24.0",
