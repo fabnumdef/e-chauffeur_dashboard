@@ -45,6 +45,7 @@
     "vuex": "3.x",
     "qs": "6.x",
     "leaflet": "1.x",
-    "luxon": "1.x.x"
+    "luxon": "1.x.x",
+    "vue-phone-number-input": "0.2.x"
   }
 }
