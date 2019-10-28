@@ -1,16 +1,6 @@
 <template>
   <main>
     <header>
-      <nuxt-link
-        v-if="id"
-        :to="campusLink('cars-id-calendar', { params: { campus: campus.id } })"
-        class="button is-primary is-pulled-right"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'calendar-alt']" />
-        </span>
-        <span>Calendrier</span>
-      </nuxt-link>
       <h1
         v-if="id"
         class="title"

@@ -34,7 +34,6 @@ module.exports = {
         components: {},
         api: {
           campuses: 'campuses',
-          carEvents: 'car-events',
           carModels: 'car-models',
           timeSlot: 'time-slots',
           cars: 'cars',
@@ -103,6 +102,7 @@ module.exports = {
           'faWindowMinimize',
           'faExclamationTriangle',
           'faMapPin',
+          'faCar',
         ],
       },
     ],
