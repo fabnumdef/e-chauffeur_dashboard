@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Add pins for POIs on the regulator map
 * Add logic of automatic static validation
 ### Fix
 ## Version 1.4.2

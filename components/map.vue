@@ -17,6 +17,15 @@
         </button>
       </nuxt-link>
     </div>
+    <div class="actions">
+      <button
+        class="button"
+        :class="hasPOI ? 'is-success' : 'is-danger'"
+        @click="togglePOI()"
+      >
+        Lieux
+      </button>
+    </div>
     <div
       id="map-wrap"
       :class="{'fullscreen': isFullscreen}"
@@ -27,6 +36,28 @@
           :center="center"
         >
           <l-tile-layer url="//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <template v-if="hasPOI">
+            <l-marker
+              v-for="poi in flavoredPois"
+              :key="poi.id"
+              :lat-lng="poi.position"
+            >
+              <l-icon
+                :icon-size="[12, 12]"
+                :icon-anchor="[6, 12]"
+                class="icon"
+              >
+                <fa-icon
+                  :icon="['fas', 'map-pin']"
+                  class="is-primary"
+                  size="1x"
+                />
+              </l-icon>
+              <l-tooltip class="content">
+                {{ poi.label }}
+              </l-tooltip>
+            </l-marker>
+          </template>
           <l-marker
             v-for="driver in drivers"
             :key="driver.id"
@@ -69,6 +100,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import { DateTime, Interval } from 'luxon';
+import lGet from 'lodash.get';
 import {
   DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
@@ -80,7 +112,17 @@ export default {
       default: false,
     },
   },
+  data: () => ({
+    hasPOI: true,
+    pois: [],
+  }),
   computed: {
+    flavoredPois() {
+      return this.pois.map((poi) => ({
+        ...poi,
+        position: lGet(poi, 'location.coordinates', []).reverse(),
+      })).filter((poi) => poi.position.length > 0);
+    },
     center() {
       const [lon, lat] = this.campus.location.coordinates;
       return [lat, lon];
@@ -102,6 +144,9 @@ export default {
         return acc;
       }, []);
     },
+  },
+  async mounted() {
+    this.pois = (await this.$api.pois(this.campus, 'label,location(coordinates),id').getPois(0, 1000)).data;
   },
   methods: {
     hideMap() {
@@ -143,6 +188,9 @@ export default {
       }
       return initials;
     },
+    togglePOI(bool) {
+      this.hasPOI = typeof bool === 'undefined' ? !this.hasPOI : bool;
+    },
   },
 };
 </script>
@@ -174,6 +222,13 @@ export default {
     right: 0;
     margin-top: 10px;
     margin-right: 10px;
+  }
+  .actions {
+    z-index: 10;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: $size-small;
   }
   #map-wrap.fullscreen {
     width: 100vw;

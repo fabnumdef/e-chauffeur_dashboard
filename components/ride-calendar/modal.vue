@@ -130,7 +130,7 @@
         class="column"
         field-id="phone"
       >
-        <input
+        <phone-number-input
           id="phone"
           v-model="ride.phone"
           v-autofocus="{
@@ -140,8 +140,18 @@
             inputName: 'phone',
             cb: focusNext
           }"
-          class="input"
-        >
+          default-country-code="FR"
+          :preferred-countries="['FR', 'BE', 'DE']"
+          :translations="{
+            countrySelectorLabel: 'Prefix',
+            countrySelectorError: 'Choisir un pays',
+            phoneNumberLabel: '',
+            example: 'Exemple :'
+          }"
+          color="transparent"
+          valid-color="transparent"
+          class="input input-phone"
+        />
       </ec-field>
     </div>
 
@@ -272,6 +282,7 @@
 
 <script>
 import { DateTime } from 'luxon';
+import phoneNumberInput from 'vue-phone-number-input';
 import Status from '@fabnumdef/e-chauffeur_lib-vue/api/status';
 import {
   VALIDATED, CREATED,
@@ -331,13 +342,21 @@ export default {
     searchCategory,
     bulmaDropdown,
     vueModal,
+    phoneNumberInput,
   },
 
   directives: {
     autofocus: {
       update(el, binding) {
         if (binding.value.focus === 'watch' && binding.value.input === binding.oldValue.input) {
-          el.focus();
+          if (el.tagName.toLowerCase() === 'div') {
+            const inputs = el.getElementsByTagName('input');
+            if (inputs.length) {
+              inputs[inputs.length - 1].focus();
+            }
+          } else {
+            el.focus();
+          }
           binding.value.hasBeenFocused(binding.value.inputName);
         } else if (binding.value.focus === 'focused' && binding.value.cb
           && binding.value.input !== binding.oldValue.input) {
@@ -529,6 +548,32 @@ ${this.ride.comments || ''}`;
     }
     /deep/ .multiselect__content {
       position: absolute;
+    }
+  }
+  .input-phone /deep/ {
+    .select-country-container {
+      min-width: 80px;
+      width: 80px;
+      max-width: 80px;
+      flex: 0 0 80px;
+    }
+    .country-selector {
+      .field-input {
+        border: none !important;
+      }
+      .field-country-flag {
+        left: 0;
+      }
+      &.has-value .field-input {
+        padding-left: 25px;
+      }
+      .field-label {
+        display: none;
+      }
+    }
+
+    .field.vue-input-ui .field-input {
+      border: none !important;
     }
   }
 </style>

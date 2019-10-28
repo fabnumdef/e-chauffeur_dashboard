@@ -13,20 +13,20 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
-    "@fabnumdef/e-chauffeur_lib-vue": "0.0.21",
+    "@fabnumdef/e-chauffeur_lib-vue": "0.0.24",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@nuxtjs/auth": "^4.8.4",
     "@qonfucius/vue-cal": "^2.10.5",
     "chart.js": "^2.8.0",
     "i18next-client": "^1.11.4",
     "lodash.debounce": "^4.0.8",
+    "lodash.get": "^4.4.2",
     "lodash.merge": "^4.6.2",
     "lodash.range": "^3.2.0",
     "moment": "^2.24.0",
     "node-sass": "^4.13.0",
     "nuxt": "^2.10.2",
     "nuxt-leaflet": "0.0.19",
-    "opening_hours": "^3.5.0",
     "sass-loader": "^7.3.1",
     "vue-chartjs": "^3.4.2",
     "vue-multiselect": "^2.1.6",
@@ -45,6 +45,7 @@
     "vuex": "3.x",
     "qs": "6.x",
     "leaflet": "1.x",
-    "luxon": "1.x.x"
+    "luxon": "1.x.x",
+    "vue-phone-number-input": "0.2.x"
   }
 }
