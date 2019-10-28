@@ -13,7 +13,7 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
-    "@fabnumdef/e-chauffeur_lib-vue": "0.0.21",
+    "@fabnumdef/e-chauffeur_lib-vue": "0.0.24",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@nuxtjs/auth": "^4.8.4",
     "@qonfucius/vue-cal": "^2.10.5",
@@ -26,7 +26,6 @@
     "node-sass": "^4.13.0",
     "nuxt": "^2.10.2",
     "nuxt-leaflet": "0.0.19",
-    "opening_hours": "^3.5.0",
     "sass-loader": "^7.3.1",
     "vue-chartjs": "^3.4.2",
     "vue-multiselect": "^2.1.6",

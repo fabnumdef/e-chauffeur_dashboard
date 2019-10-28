@@ -3,12 +3,12 @@
     <div class="box">
       <div class="title columns">
         <div class="column aside is-one-quarter">
-          Planning Chauffeurs
+          Indisponibilité Véhicules
         </div>
         <div class="column">
           <nuxt-link
             class="button switch-planning"
-            :to="campusLink('planning-cars')"
+            :to="campusLink('planning-drivers')"
           >
             <fa-icon icon="user-circle" /> <fa-icon icon="car" />
           </nuxt-link>
@@ -17,7 +17,7 @@
       <planning-modal
         :active="isModalOpen"
         :time-slot="timeSlot"
-        :drivers="drivers"
+        :cars="cars"
         @toggle-modal="toggleModal"
         @edit-time-slot="editTimeSlot(timeSlot)"
         @remove-time-slot="removeTimeSlot(timeSlot)"
@@ -28,24 +28,24 @@
             class="button create-timeslot is-expanded"
             @click="openCreate({})"
           >
-            <fa-icon icon="user-circle" /> Configurer un nouveau créneau
+            <fa-icon icon="car" /> Configurer un nouveau créneau
           </button>
           <div class="drivers-expander">
-            <span>Chauffeurs</span>
+            <span>Véhicules</span>
           </div>
           <ul>
             <li
-              v-for="driver of drivers.data"
-              :key="driver.id"
+              v-for="car of cars.data"
+              :key="car.id"
               class="box driver-box"
               draggable="true"
-              @dragstart="dragstart($event, driver)"
+              @dragstart="dragstart($event, car)"
               @dragend="dragend"
             >
-              {{ driver.firstname }} {{ driver.lastname }}
+              {{ car.id }} {{ car.label }} {{ car.model.label }}
               <nuxt-link
                 class="config-button is-pulled-right"
-                :to="campusLink('drivers-id-edit', {params:{id: driver.id}})"
+                :to="campusLink('cars-id-edit', {params:{id: car.id}})"
               >
                 <fa-icon icon="cog" />
               </nuxt-link>
@@ -55,7 +55,7 @@
         <planning-calendar
           :is-grabbing="isGrabbing"
           :events="calEvents"
-          :drivers="drivers"
+          :cars="cars"
           @edit-time-slot="editTimeSlot"
           @open-edit="openEdit"
           @open-create="openCreate"
@@ -67,16 +67,16 @@
 </template>
 <script>
 import { DateTime } from 'luxon';
-import planningModal from '~/components/planning/drivers/modal.vue';
-import planningCalendar from '~/components/planning/drivers/calendar.vue';
+import planningModal from '~/components/planning/cars/modal.vue';
+import planningCalendar from '~/components/planning/cars/calendar.vue';
 
-const DRIVER_DATA = 'id,firstname,lastname';
-const TIMESLOT_DATA = `id,start,end,drivers(${DRIVER_DATA})`;
+const CARS_DATA = 'id,label,model(label)';
+const TIMESLOT_DATA = `id,start,end,cars(${CARS_DATA})`;
 const newTimeSlot = () => ({
   start: null,
   end: null,
-  drivers: [],
-  cars: null,
+  cars: [],
+  drivers: null,
 });
 export default {
   components: { planningModal, planningCalendar },
@@ -100,19 +100,19 @@ export default {
   },
   async asyncData({ $api, params, query }) {
     // @todo: paginate
-    const offset = parseInt(query.driver_offset, 10) || 0;
-    const limit = parseInt(query.driver_limit, 10) || 30;
     const week = query.week ? DateTime.fromISO(query.week) : DateTime.local();
     const after = week.startOf('week').toJSDate();
     const before = week.endOf('week').toJSDate();
-    const drivers = await $api.drivers(params.campus, DRIVER_DATA).getDrivers(offset, limit);
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const cars = await $api.cars({ id: params.campus }, CARS_DATA).getCars(offset, limit);
     const events = await $api.timeSlot(TIMESLOT_DATA, params.campus)
-      .getDriversTimeSlotsBetween(after, before);
+      .getCarsTimeSlotsBetween(after, before);
     return {
       timeSlot: newTimeSlot(),
-      drivers: {
-        data: drivers.data,
-        pagination: drivers.pagination,
+      cars: {
+        data: cars.data,
+        pagination: cars.pagination,
       },
       events: {
         data: events.data,
@@ -126,7 +126,7 @@ export default {
   methods: {
     async viewChange({ startDate, endDate }) {
       const { data, pagination } = await this.$api.timeSlot(TIMESLOT_DATA, this.campusId)
-        .getDriversTimeSlotsBetween(startDate, endDate);
+        .getCarsTimeSlotsBetween(startDate, endDate);
       this.events = { data, pagination };
     },
     toggleModal(val) {
@@ -162,9 +162,9 @@ export default {
       );
       this.toggleModal(true);
     },
-    dragstart(event, driver) {
+    dragstart(event, car) {
       this.isGrabbing = true;
-      event.dataTransfer.setData('application/json', JSON.stringify(driver));
+      event.dataTransfer.setData('application/json', JSON.stringify(car));
       // eslint-disable-next-line no-param-reassign
       event.currentTarget.style.backgroundColor = 'rgba(0, 83, 179, 0.4)';
       // eslint-disable-next-line no-param-reassign
@@ -216,11 +216,11 @@ export default {
     border-radius: $gap;
     width: 100%;
     position: relative;
-    /deep/ .fa-user-circle {
+    /deep/ .fa-car {
       position: absolute;
       left: 4px;
       color: $white;
-      background: $success;
+      background: $orange;
       padding: 5px;
       box-sizing: initial;
       border-radius: $gap;
@@ -238,16 +238,16 @@ export default {
     /deep/ .fa-user-circle {
       position: absolute;
       left: 0px;
-      color: $white;
-      background: $success;
+      color: $grey;
       padding: 7px;
       box-sizing: initial;
       border-radius: $gap;
     }
     /deep/ .fa-car {
       position: absolute;
+      background: $orange;
       right: 0px;
-      color: $grey;
+      color: $white;
       padding: 7px;
       box-sizing: initial;
       border-radius: $gap;
