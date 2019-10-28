@@ -9,9 +9,9 @@
         hide-view-selector
         watch-real-time
         dom-cells
-        :time-from="START_DAY_HOUR * 60"
-        :time-to="END_DAY_HOUR * 60"
-        :time-step="STEP"
+        :time-from="startDayHour * 60"
+        :time-to="endDayHour * 60"
+        :time-step="step"
         :time-cell-height="20"
         :disable-views="['years', 'year', 'week']"
         :split-days="splitDrivers"
@@ -124,6 +124,7 @@ import {
   CANCELED_CUSTOMER_OVERLOAD,
   CANCELED_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
+import { mapGetters } from 'vuex';
 import Modal from './modal';
 import DriverHeader from './driver-header';
 
@@ -181,17 +182,20 @@ export default {
   },
 
   computed: {
-    START_DAY_HOUR() {
-      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
-        ? this.$store.state.context.campus.workedHours.start : START_DAY_HOUR;
+    ...mapGetters({
+      campusContext: 'context/campus',
+    }),
+    startDayHour() {
+      return (this.campusContext && this.campusContext.workedHours)
+        ? this.campusContext.workedHours.start : START_DAY_HOUR;
     },
-    END_DAY_HOUR() {
-      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
-        ? this.$store.state.context.campus.workedHours.end : END_DAY_HOUR;
+    endDayHour() {
+      return (this.campusContext && this.campusContext.workedHours)
+        ? this.campusContext.workedHours.end : END_DAY_HOUR;
     },
-    STEP() {
-      return (this.$store.state.context.campus && this.$store.state.context.campus.defaultRideDuration)
-        ? this.$store.state.context.campus.defaultRideDuration : STEP;
+    step() {
+      return (this.campusContext && this.campusContext.defaultRideDuration)
+        ? this.campusContext.defaultRideDuration : STEP;
     },
     splitDrivers() {
       return this.drivers.map((driver) => ({
@@ -202,8 +206,8 @@ export default {
     },
     ridesCalendar() {
       return this.rides.map((ride) => {
-        const start = this.$vuecal(STEP).getVueCalFloorDateFromISO(ride.start);
-        const end = this.$vuecal(STEP).getVueCalCeilDateFromISO(ride.end);
+        const start = this.$vuecal(this.step).getVueCalFloorDateFromISO(ride.start);
+        const end = this.$vuecal(this.step).getVueCalCeilDateFromISO(ride.end);
         const split = ride.driver ? this.drivers.findIndex((driver) => driver.id === ride.driver.id) + 1 : 1;
         const clas = `ride-event ${this.eventStatusClass(ride)}`;
         return {
@@ -223,15 +227,15 @@ export default {
           const availibilites = driver.availabilities.map((a) => (typeof a.s === 'string'
             ? Interval.fromDateTimes(DateTime.fromISO(a.s), DateTime.fromISO(a.e)) : a));
           const todayInterval = Interval.fromDateTimes(DateTime.fromJSDate(this.day).set({
-            hour: this.START_DAY_HOUR,
+            hour: this.startDayHour,
           }).startOf('hour'),
           DateTime.fromJSDate(this.day).set({
-            hour: this.END_DAY_HOUR,
+            hour: this.endDayHour,
           }).startOf('hour'));
           const notWorkingIntervals = todayInterval.difference(...Interval.merge(availibilites));
           notWorkingIntervals.forEach((avail) => {
-            const start = this.$vuecal(this.STEP).getVueCalCeilDateFromISO(avail.start.toISO());
-            const end = this.$vuecal(this.STEP).getVueCalCeilDateFromISO(avail.end.toISO());
+            const start = this.$vuecal(this.step).getVueCalCeilDateFromISO(avail.start.toISO());
+            const end = this.$vuecal(this.step).getVueCalCeilDateFromISO(avail.end.toISO());
             const split = index + 1;
             openingHoursEvents.push({
               start,
@@ -273,8 +277,8 @@ export default {
           id, name, firstname, lastname,
         } = this.drivers[event.split - 1];
         this.updateDates([
-          this.$vuecal(this.STEP).getDateTimeFloorFromVueCal(event.start),
-          this.$vuecal(this.STEP).getDateTimeCeilFromVueCal(event.end)], {
+          this.$vuecal(this.step).getDateTimeFloorFromVueCal(event.start),
+          this.$vuecal(this.step).getDateTimeCeilFromVueCal(event.end)], {
           id,
           name,
           firstname,

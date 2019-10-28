@@ -8,8 +8,8 @@
         watch-real-time
         dom-cells
         :hide-weekdays="hideWeekDays"
-        :time-from="START_DAY_HOUR * 60"
-        :time-to="END_DAY_HOUR * 60"
+        :time-from="startDayHour * 60"
+        :time-to="endDayHour * 60"
         :time-step="STEP"
         :time-cell-height="35"
         :events="events"
@@ -53,6 +53,7 @@
 
 <script>
 import { DateTime } from 'luxon';
+import { mapGetters } from 'vuex';
 
 const STEP = 60;
 const START_DAY_HOUR = 0;
@@ -81,22 +82,25 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
     ...['TIME_SIMPLE']
       .map((f) => ({ [f]: () => DateTime[f] }))
       .reduce((acc, cur) => Object.assign(acc, cur), {}),
     hideWeekDays() {
       return this.$store.state.context.campus && this.$store.state.context.campus.workedDays
         ? [...(new Array(7)).keys()].map((a) => a + 1)
-          .filter((d) => !this.$store.state.context.campus.workedDays.includes(d))
+          .filter((d) => !this.campus.workedDays.includes(d))
         : [6, 7];
     },
-    START_DAY_HOUR() {
-      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
-        ? this.$store.state.context.campus.workedHours.start : START_DAY_HOUR;
+    startDayHour() {
+      return (this.campus && this.campus.workedHours)
+        ? this.campus.workedHours.start : START_DAY_HOUR;
     },
-    END_DAY_HOUR() {
-      return (this.$store.state.context.campus && this.$store.state.context.campus.workedHours)
-        ? this.$store.state.context.campus.workedHours.end : END_DAY_HOUR;
+    endDayHour() {
+      return (this.campus && this.campus.workedHours)
+        ? this.campus.workedHours.end : END_DAY_HOUR;
     },
   },
   methods: {

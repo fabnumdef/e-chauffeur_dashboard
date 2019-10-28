@@ -34,7 +34,6 @@ module.exports = {
         components: {},
         api: {
           campuses: 'campuses',
-          carEvents: 'car-events',
           carModels: 'car-models',
           timeSlot: 'time-slots',
           cars: 'cars',
