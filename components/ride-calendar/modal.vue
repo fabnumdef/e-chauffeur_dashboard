@@ -459,9 +459,7 @@ export default {
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
 
-    async edit(r, action) {
-      const ride = r;
-
+    async edit(ride, action) {
       try {
         if (ride.id) {
           await this.$api.rides(
