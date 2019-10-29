@@ -2,6 +2,7 @@
 ## Current
 ### Features
 * Add pins for POIs on the regulator map
+* Add logic of automatic static validation
 * Add planning vehicule and remove old system
 ### Fix
 * Add horizontal scroll in planificator when there is too much driver
