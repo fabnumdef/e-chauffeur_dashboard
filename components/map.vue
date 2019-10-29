@@ -269,7 +269,7 @@ export default {
   }
   .actions {
     z-index: 10;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     right: 0;
     padding: $size-small;
