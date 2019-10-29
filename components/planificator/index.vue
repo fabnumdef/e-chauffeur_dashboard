@@ -333,7 +333,11 @@ export default {
       const currentTime = DateTime.fromJSDate(new Date());
       return this.rides
         .filter((r) => r.driver && r.driver.id === driverId)
-        .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
+        .sort((a, b) => (DateTime.fromISO(a.start) < DateTime.fromISO(b.start) ? -1 : 1))
+        .find((r) => (
+          Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime)
+          || currentTime < DateTime.fromISO(r.start)
+        ));
     },
     getFormatedDate(date, unit = 'day') {
       const dt = DateTime.fromJSDate(date);

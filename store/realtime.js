@@ -1,5 +1,6 @@
 // We've to disable param reassign, because it's the common behavior of vuex
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-param-reassign,no-shadow */
+import { DateTime } from 'luxon';
 
 export const state = () => ({
   drivers: [],
@@ -44,6 +45,11 @@ export const mutations = {
 export const getters = {
   drivers: (s) => s.drivers,
   rides: (s) => s.rides,
+  todayRides: ({ rides }) => {
+    const currentTime = DateTime.local();
+    return rides.filter((r) => DateTime.fromISO(r.start).hasSame(currentTime, 'day')
+      || DateTime.fromISO(r.end).hasSame(currentTime, 'day'));
+  },
 };
 
 export const actions = {
@@ -55,6 +61,31 @@ export const actions = {
       commit('setDrivers', data);
     } catch (e) {
       throw new Error('Drivers fetching failed');
+    }
+  },
+  async setRides({ commit, getters }, { campus, start, end }) {
+    const EDITABLE_FIELDS = [
+      'id',
+      'start',
+      'end',
+      'departure(id,label)',
+      'arrival(id,label)',
+      'car(id,label,model(id,label))',
+      'driver(id,name,firstname,lastname)',
+      'owner(id)',
+      'phone',
+      'status',
+      'userComments',
+      'comments',
+      'passengersCount',
+      'category(id,label)',
+      'luggage',
+    ].join(',');
+    const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
+    if (getters.rides.length === 0) {
+      commit('setRides', rides);
+    } else {
+      rides.forEach((r) => commit('pushRide', r));
     }
   },
 };

@@ -39,7 +39,7 @@ import { DateTime } from 'luxon';
 import {
   DRAFTED,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
-import RideCalendar from '~/components/ride-calendar';
+import RideCalendar from '~/components/planificator';
 
 const EDITABLE_FIELDS = [
   'id',
@@ -75,7 +75,7 @@ export default {
     },
   },
 
-  async asyncData({ params, $api, store }) {
+  async asyncData({ params, $api }) {
     const start = DateTime.local().startOf('days').toJSDate();
     const end = DateTime.local().endOf('days').toJSDate();
     const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
@@ -85,8 +85,6 @@ export default {
       end,
     );
     drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
-    const { data: rides } = await ridesApi.getRides(start, end);
-    store.commit('realtime/setRides', rides);
     return {
       campus: params.campus,
       drivers,
@@ -107,8 +105,7 @@ export default {
         end,
       );
       drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
-      const { data: rides } = await ridesApi.getRides(start, end);
-      this.$store.commit('realtime/setRides', rides);
+      await this.$store.dispatch('realtime/setRides', { campus: this.campus, start, end });
       this.drivers = drivers;
     },
   },
