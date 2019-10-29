@@ -6,6 +6,7 @@
 * Add planning vehicule and remove old system
 ### Fix
 * Add horizontal scroll in planificator when there is too much driver
+* Fix map driver's marker color
 ## Version 1.4.2
 ### Features
 * Improve reliability, k8s side
