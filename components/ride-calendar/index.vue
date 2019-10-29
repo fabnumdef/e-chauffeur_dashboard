@@ -18,12 +18,16 @@
         :events="events"
         :on-event-click="onClickEvent"
         :min-event-width="75"
+        :min-split-width="MIN_SPLIT_WIDTH"
         @click-and-release="onClickAndRelease"
         @ready="initRide"
         @view-change="viewChange"
       >
         <template #title-bar="{ view, switchView, previous, next }">
-          <div class="">
+          <div
+            class="control-width"
+            :style="{width: `calc(${MIN_SPLIT_WIDTH * splitDrivers.length}px + 3em)`, color: 'red'}"
+          >
             <div v-if="view.id === 'day'">
               <button
                 class="button"
@@ -131,6 +135,7 @@ import DriverHeader from './driver-header';
 const STEP = 30;
 const START_DAY_HOUR = 0;
 const END_DAY_HOUR = 24;
+const MIN_SPLIT_WIDTH = 200;
 
 function generateEmptyRide() {
   return {
@@ -178,6 +183,7 @@ export default {
       ride: generateEmptyRide(),
       day: new Date(),
       modalOpen: false,
+      MIN_SPLIT_WIDTH,
     };
   },
 
@@ -357,6 +363,15 @@ export default {
   @import "~assets/css/elements/vue-cal.scss";
 
   /deep/ {
+    .control-width {
+      text-align: left;
+    }
+    .vuecal--overflow-x.vuecal--day-view .vuecal__cells, .vuecal--overflow-x.vuecal--week-view .vuecal__cells {
+      overflow-x: hidden;
+    }
+    .vuecal.vuecal--overflow-x {
+      overflow-x: auto;
+    }
     .vuecal {
       &__title-bar {
         background: $background;
@@ -364,6 +379,9 @@ export default {
       &__header button {
         background-color: #fff;
         font-size: 1rem;
+      }
+      &__body, &__header {
+        min-width: fit-content;
       }
       &__bg {
         overflow-y: scroll;
