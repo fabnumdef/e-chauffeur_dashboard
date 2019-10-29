@@ -1,5 +1,8 @@
 <template>
-  <main>
+  <main
+    class="planificator"
+    :class="{'planificator-max-width': !hideMap}"
+  >
     <div class="level">
       <div class="level-left">
         <div class="level-item">
@@ -115,4 +118,13 @@ export default {
 <style scoped lang="scss">
   @import "~assets/css/head";
   @import "~bulma/sass/components/level.sass";
+
+  @media screen and (min-width: 768px) {
+    .planificator {
+      max-width: calc(100% - 240px);
+    }
+    .planificator-max-width {
+      max-width: 50%;
+    }
+  }
 </style>
