@@ -23,7 +23,7 @@ module.exports = {
     '~/plugins/context.js',
     { src: '~/plugins/datetime-picker.js', ssr: false },
     { src: '~/plugins/vuecal.js', ssr: true },
-    '~/plugins/realtime.js',
+    { src: '~/plugins/realtime.js', ssr: false },
   ],
 
   modules: [

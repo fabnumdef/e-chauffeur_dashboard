@@ -76,10 +76,10 @@
                   cx="20"
                   cy="20"
                   r="20"
-                  :class="getStatus(driver)"
+                  :class="`ride-status-${getStatus(driver)}`"
                 />
                 <text
-                  :class="getStatus(driver)"
+                  :class="`ride-status-${getStatus(driver)}`"
                   class="is-inverted is-uppercase"
                   x="50%"
                   y="50%"
@@ -102,7 +102,7 @@ import { mapGetters } from 'vuex';
 import { DateTime, Interval } from 'luxon';
 import lGet from 'lodash.get';
 import {
-  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED,
+  DELIVERED, IN_PROGRESS, WAITING, STARTED, ACCEPTED, VALIDATED,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
 export default {
@@ -129,7 +129,7 @@ export default {
     },
     ...mapGetters({
       realTimeDrivers: 'realtime/drivers',
-      rides: 'realtime/rides',
+      rides: 'realtime/todayRides',
       campus: 'context/campus',
     }),
     drivers() {
@@ -155,26 +155,33 @@ export default {
     reverse([lon, lat]) {
       return [lat, lon];
     },
-    getCurrentRide({ date, id } = {}) {
-      const currentTime = DateTime.fromISO(date);
+    getCurrentRide({ id } = {}) {
+      const currentTime = DateTime.local();
       return this.rides
         .filter((r) => r.driver && r.driver.id === id)
-        .find((r) => Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime));
+        .sort((a, b) => (DateTime.fromISO(a.start) < DateTime.fromISO(b.start) ? -1 : 1))
+        .find((r) => (
+          Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime)
+          || currentTime < DateTime.fromISO(r.start)
+        ));
     },
     getStatus(driver) {
       if (!driver.currentRide || !driver.currentRide.status) {
-        return 'is-success';
+        return 'available';
       }
       switch (driver.currentRide.status) {
-        case STARTED:
         case WAITING:
-          return 'is-warning';
+          return 'waiting';
+        case STARTED:
         case IN_PROGRESS:
-          return 'is-primary';
+          return 'driving';
         case ACCEPTED:
+          return 'accepted';
+        case VALIDATED:
+          return 'planned';
         case DELIVERED:
         default:
-          return 'is-success';
+          return 'available';
       }
     },
     getInitials({ name = '' }) {
@@ -198,18 +205,55 @@ export default {
 <style scoped lang="scss">
   @import "~assets/css/head";
 
-  @each $name, $pair in $colors {
-    $color: nth($pair, 1);
-    $color-invert: nth($pair, 2);
-    circle.is-#{$name} {
-      fill: $color;
+  .ride-status {
+    padding: 0 5px;
+    width: 100%;
+    font-weight: bold;
+    display: inline-block;
+    text-transform: uppercase;
+    &-available {
+      fill: $success;
     }
-    text.is-inverted.is-#{$name} {
-      fill: $color-invert;
-      font-weight: bold;
-      font-size: $size-6;
+    &-unavailable {
+      fill: $gray;
+    }
+    &-planned {
+      fill: $dark-gray;
+    }
+    &-accepted {
+      fill: #8192A9;
+    }
+    &-driving {
+      fill: $primary;
+    }
+    &-waiting{
+      fill: $warning;
+    }
+    &-available.is-inverted {
+      fill: findColorInvert($success);
+    }
+    &-unavailable.is-inverted {
+      fill: findColorInvert($gray);
+    }
+    &-planned.is-inverted {
+      fill: findColorInvert($dark-gray);
+    }
+    &-accepted.is-inverted {
+      fill: findColorInvert(#8192A9);
+    }
+    &-driving.is-inverted {
+      fill: findColorInvert($primary);
+    }
+    &-waiting.is-inverted {
+      fill: findColorInvert($warning);
     }
   }
+
+  text.is-inverted {
+    font-weight: bold;
+    font-size: $size-6;
+  }
+
   #map-wrap {
     z-index: 0;
     height: 100vh;
