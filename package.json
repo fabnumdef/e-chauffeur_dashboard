@@ -10,8 +10,7 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "precommit": "npm run lint",
-    "debug": "nuxt --nolazy --inspect-brk=9229"
+    "precommit": "npm run lint"
   },
   "dependencies": {
     "@fabnumdef/e-chauffeur_lib-vue": "0.0.24",
