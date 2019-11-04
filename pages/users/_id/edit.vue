@@ -132,11 +132,11 @@
 <script>
 import { DateTime } from 'luxon';
 import ecField from '~/components/form/field.vue';
-import RoleRules from '~/components/form/role-rules';
+import roleRules from '~/components/form/role-rules';
 
 export default {
   components: {
-    RoleRules,
+    roleRules,
     ecField,
   },
   props: {
