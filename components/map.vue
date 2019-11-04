@@ -95,6 +95,9 @@
               <div v-if="driver.currentRide">
                 {{ driver.currentRide.departure.label }} -> {{ driver.currentRide.arrival.label }}<br>
                 {{ driver.currentRide.timeString }}
+                <div v-if="driver.currentRide.car">
+                  {{ driver.currentRide.car.model.label }} - {{ driver.currentRide.car.id }}
+                </div>
               </div>
             </l-tooltip>
           </l-marker>
