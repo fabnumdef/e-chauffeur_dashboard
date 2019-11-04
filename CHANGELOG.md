@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Add new campus users interface when admin
 * Add pins for POIs on the regulator map
 * Add logic of automatic static validation
 * Add planning vehicule and remove old system

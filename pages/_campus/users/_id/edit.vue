@@ -2,10 +2,10 @@
   <main>
     <header>
       <h1
-        v-if="user.id"
+        v-if="user && id"
         class="title"
       >
-        Utilisateur <em class="is-size-6">#{{ user.id }} : {{ user.email }}</em>
+        Chauffeur <em class="is-size-6">#{{ user.id }} : {{ user.email }}</em>
       </h1>
       <h1
         v-else
@@ -14,28 +14,18 @@
         Utilisateur
       </h1>
       <h2
-        v-if="user.id"
+        v-if="id"
         class="subtitle"
       >
-        Modifier
+        Modification
       </h2>
       <h2
         v-else
         class="subtitle"
       >
-        Créer
+        Création
       </h2>
     </header>
-    <div class="box">
-      <ul>
-        <li v-if="gprd">
-          Consentement RGPD recueilli le {{ gprd }}
-        </li>
-        <li v-else>
-          Consentement RGPD <strong>non</strong> recueilli.
-        </li>
-      </ul>
-    </div>
     <form
       class="box"
       @submit.prevent="edit(user)"
@@ -84,10 +74,10 @@
         <input
           id="email"
           v-model="user.email"
+          type="text"
           class="input"
         >
       </ec-field>
-
       <ec-field
         label="Mot de passe"
         field-id="password"
@@ -99,13 +89,11 @@
           class="input"
         >
       </ec-field>
-
       <ec-field label="Rôles">
         <role-rules v-model="user.roles" />
       </ec-field>
-
       <button
-        v-if="user.id"
+        v-if="id"
         type="submit"
         class="button is-primary"
       >
@@ -130,14 +118,16 @@
 </template>
 
 <script>
-import { DateTime } from 'luxon';
+import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
-import roleRules from '~/components/form/role-rules';
+import roleRules from '~/components/form/role-only';
+
+const EDITABLE_FIELDS = ['id', 'email', 'password', 'name', 'firstname', 'lastname', 'roles(role)'];
 
 export default {
   components: {
-    roleRules,
     ecField,
+    roleRules,
   },
   props: {
     user: {
@@ -145,33 +135,30 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return { id: this.user.id };
+  },
   computed: {
-    gprd() {
-      return this.user && this.user.gprd && DateTime.fromISO(this.user.gprd).toLocaleString(DateTime.DATETIME_MED);
-    },
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
   },
   methods: {
     async edit(user) {
       let data = {};
       if (user.id) {
-        ({ data } = (await this.$api.users.patchUser(
-          user.id,
-          user,
-          'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
-          {},
-        )));
+        ({ data } = (await this.$api
+          .campusUsers(this.campus.id, EDITABLE_FIELDS.join(','))
+          .patchUser(user.id, user)));
       } else {
-        ({ data } = (await this.$api.users.postUser(
-          user,
-          'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
-          {},
-        )));
+        ({ data } = (await this.$api.campusUsers(this.campus.id, EDITABLE_FIELDS.join(',')).postUser(user)));
       }
 
-      this.$router.push({
-        name: 'users-id-edit',
-        params: { id: data.id },
-      });
+      this.$router.push(
+        this.$context.buildCampusLink('users-id-edit', {
+          params: { id: data.id },
+        }),
+      );
     },
   },
 };
