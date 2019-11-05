@@ -22,6 +22,8 @@
         @click-and-release="onClickAndRelease"
         @ready="initRide"
         @view-change="viewChange"
+        @event-mouse-enter="eventMouseEnter"
+        @event-mouse-leave="eventMouseLeave"
       >
         <template #title-bar="{ view, switchView, previous, next }">
           <div
@@ -82,15 +84,37 @@
             v-if="event.ride"
             class="vuecal__event-title"
           >
-            <div>
-              {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
+            <div class="event-hover-wrapper">
+              <div class="event-hover" v-show="eventHovered[event.index]">
+                <div>
+                  {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
+                </div>
+                <div>
+                  {{ event.timeString }}
+                </div>
+                <div v-if="event.ride.car">
+                  {{ event.ride.car.model.label }} - {{ event.ride.car.id }}
+                </div>
+                <div>
+                  <span>{{ event.ride.passengersCount }} passager(s)</span> /
+                  <span v-if="event.ride.luggage">Avec</span><span v-else>Sans</span> Bagages
+                </div>
+                <div v-if="event.ride.phone">
+                  {{ event.ride.phone }}
+                </div>
+              </div>
             </div>
-            <div v-if="event.ride.car">
-              {{ event.ride.car.model.label }} - {{ event.ride.car.id }}
-            </div>
-            <div>
-              <span>{{ event.ride.passengersCount }} passager(s)</span> /
-              <span v-if="event.ride.luggage">Avec</span><span v-else>Sans</span> Bagages
+            <div class="overflow-hidden">
+              <div>
+                {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
+              </div>
+              <div v-if="event.ride.car">
+                {{ event.ride.car.model.label }} - {{ event.ride.car.id }}
+              </div>
+              <div>
+                <span>{{ event.ride.passengersCount }} passager(s)</span> /
+                <span v-if="event.ride.luggage">Avec</span><span v-else>Sans</span> Bagages
+              </div>
             </div>
           </div>
         </template>
@@ -184,6 +208,7 @@ export default {
       day: new Date(),
       modalOpen: false,
       MIN_SPLIT_WIDTH,
+      eventHovered: [],
     };
   },
 
@@ -211,17 +236,21 @@ export default {
       }));
     },
     ridesCalendar() {
-      return this.rides.map((ride) => {
+      return this.rides.map((ride, index) => {
         const start = this.$vuecal(this.step).getVueCalFloorDateFromISO(ride.start);
         const end = this.$vuecal(this.step).getVueCalCeilDateFromISO(ride.end);
         const split = ride.driver ? this.drivers.findIndex((driver) => driver.id === ride.driver.id) + 1 : 1;
         const clas = `ride-event ${this.eventStatusClass(ride)}`;
+        const timeString = `${DateTime.fromISO(ride.start).toLocaleString(DateTime.TIME_SIMPLE)} à `
+          + `${DateTime.fromISO(ride.end).toLocaleString(DateTime.TIME_SIMPLE)}`;
         return {
           start,
           end,
           ride,
           split,
           class: clas,
+          index,
+          timeString,
         };
       });
     },
@@ -358,6 +387,16 @@ export default {
     customEventsCount(events) {
       return events ? events.filter((e) => e.class !== 'not-working').length : 0;
     },
+    eventMouseEnter(e) {
+      if (!e.background) {
+        this.eventHovered[e.index] = true;
+      }
+    },
+    eventMouseLeave(e) {
+      if (!e.background) {
+        this.eventHovered.splice(e.index, 1);
+      }
+    },
   },
 };
 </script>
@@ -419,6 +458,51 @@ export default {
       &__event.not-working &__event-time {
         align-items: center;
       }
+      &__event-title{
+        overflow: visible;
+        height: 100%;
+        .event-hover-wrapper {
+          position: relative;
+          overflow: visible;
+          .event-hover {
+            font-weight: normal;
+            font-size: 0.90rem;
+            background-color: white;
+            border: 1px solid black;
+            padding: 10px;
+            position: absolute;
+            color: black;
+            bottom: 5px;
+            left: 0;
+          }
+          .event-hover:after, .event-hover:before {
+            top: 100%;
+            left: 50%;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+          }
+          .event-hover:after {
+            border-color: rgba(255, 255, 255, 0);
+            border-top-color: #ffffff;
+            border-width: 5px;
+            margin-left: -5px;
+          }
+          .event-hover:before {
+            border-color: rgba(0, 0, 0, 0);
+            border-top-color: #000000;
+            border-width: 6px;
+            margin-left: -6px;
+          }
+        }
+        .overflow-hidden {
+          height: 100%;
+          overflow: hidden;
+        }
+      }
     }
     .driver-col {
       border-right: 1px solid black;
@@ -431,6 +515,7 @@ export default {
     }
     .ride-event {
       cursor: pointer;
+      overflow: visible;
     }
     .event-status {
       &-done {
