@@ -34,7 +34,6 @@ export default {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data: ratings, pagination } = await $api.ratings('*').getRatings(offset, limit);
-    console.log(ratings);
     return {
       ratings,
       pagination,
