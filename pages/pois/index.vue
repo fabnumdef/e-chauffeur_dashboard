@@ -45,6 +45,7 @@ export default {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api.pois(null, Object.keys(columns).join(',')).getPois(offset, limit);
+    console.log(data);
     return {
       pois: data,
       pagination,

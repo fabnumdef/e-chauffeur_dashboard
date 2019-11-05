@@ -47,6 +47,7 @@ module.exports = {
           drivers: 'drivers',
           phones: 'phones',
           phoneModels: 'phone-models',
+          ratings: 'ratings',
         },
         withAuth: true,
         authPlugins: [
