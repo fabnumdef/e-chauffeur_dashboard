@@ -7,7 +7,7 @@
     </header>
     <ec-list
       :columns="columns"
-      :data="ratings"
+      :data="ratingsToDisplay"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
@@ -19,7 +19,12 @@
 import ecList from '~/components/crud/list.vue';
 
 const columns = {
-  createdAt: 'Timestamp', uxGrade: 'Note UX', recommandationGrade: 'Recommandation', message: 'Message',
+  createdAt: 'Timestamp',
+  uxGrade: 'Note UX',
+  recommandationGrade: 'Recommandation',
+  message: 'Message',
+  ride: 'Ride',
+  campus: 'Campus',
 };
 
 export default {
@@ -34,8 +39,13 @@ export default {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data: ratings, pagination } = await $api.ratings('*').getRatings(offset, limit);
+    const ratingsToDisplay = ratings.map((rating) => ({
+      ...rating,
+      ride: rating.ride.id,
+      campus: rating.ride.campus.id,
+    }));
     return {
-      ratings,
+      ratingsToDisplay,
       pagination,
     };
   },
