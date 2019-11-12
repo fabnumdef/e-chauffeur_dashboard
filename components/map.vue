@@ -90,6 +90,16 @@
                 </text>
               </svg>
             </l-icon>
+            <l-tooltip class="content">
+              <div>{{ driver.name }}</div>
+              <div v-if="driver.currentRide">
+                {{ driver.currentRide.departure.label }} -> {{ driver.currentRide.arrival.label }}<br>
+                {{ driver.currentRide.timeString }}
+                <div v-if="driver.currentRide.car">
+                  {{ driver.currentRide.car.model.label }} - {{ driver.currentRide.car.id }}
+                </div>
+              </div>
+            </l-tooltip>
           </l-marker>
         </l-map>
       </client-only>
@@ -157,13 +167,18 @@ export default {
     },
     getCurrentRide({ id } = {}) {
       const currentTime = DateTime.local();
-      return this.rides
+      const ride = this.rides
         .filter((r) => r.driver && r.driver.id === id)
         .sort((a, b) => (DateTime.fromISO(a.start) < DateTime.fromISO(b.start) ? -1 : 1))
         .find((r) => (
           Interval.fromDateTimes(DateTime.fromISO(r.start), DateTime.fromISO(r.end)).contains(currentTime)
           || currentTime < DateTime.fromISO(r.start)
         ));
+      if (ride) {
+        ride.timeString = `${DateTime.fromISO(ride.start).toLocaleString(DateTime.TIME_SIMPLE)} à `
+          + `${DateTime.fromISO(ride.end).toLocaleString(DateTime.TIME_SIMPLE)}`;
+      }
+      return ride;
     },
     getStatus(driver) {
       if (!driver.currentRide || !driver.currentRide.status) {

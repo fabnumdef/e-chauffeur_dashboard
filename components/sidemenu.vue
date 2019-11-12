@@ -30,9 +30,14 @@
           Historique
         </nuxt-link>
       </li>
-      <li>
+      <li v-if="hasCampus && $auth.isRegulator() && !$auth.isAdmin()">
         <nuxt-link :to="campusLink('drivers')">
           Chauffeurs
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus && $auth.isAdmin()">
+        <nuxt-link :to="campusLink('users')">
+          Utilisateurs
         </nuxt-link>
       </li>
       <li v-if="hasCampus">

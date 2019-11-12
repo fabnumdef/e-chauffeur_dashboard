@@ -48,6 +48,7 @@ module.exports = {
           phones: 'phones',
           phoneModels: 'phone-models',
           ratings: 'ratings',
+          campusUsers: 'campus-users',
         },
         withAuth: true,
         authPlugins: [
