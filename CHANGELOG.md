@@ -8,6 +8,8 @@
 ### Fix
 * Add horizontal scroll in planificator when there is too much driver
 * Fix map driver's marker color
+* Fix fetch ride when selecting a base
+* Fix tooltip overflow on planificator
 ## Version 1.4.2
 ### Features
 * Improve reliability, k8s side

@@ -506,6 +506,7 @@ export default {
     }
     .driver-col {
       border-right: 1px solid black;
+      overflow: visible;
     }
     .hours {
       font-size: 15px;

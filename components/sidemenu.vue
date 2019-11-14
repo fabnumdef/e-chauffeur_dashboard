@@ -166,6 +166,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import { DateTime } from 'luxon';
 import searchUserCampus from '~/components/form/search-user-campus.vue';
 import reconnectingHero from '~/components/reconnecting-hero.vue';
 
@@ -194,9 +195,14 @@ export default {
     },
   },
   methods: {
-    ...mapActions({ fetchCampus: 'context/fetchCampus' }),
-    setCampus(campus) {
+    ...mapActions({ fetchCampus: 'context/fetchCampus', setRides: 'realtime/setRides' }),
+    async setCampus(campus) {
       this.fetchCampus(campus ? campus.id : null);
+      if (campus) {
+        const start = DateTime.local().startOf('days').toJSDate();
+        const end = DateTime.local().endOf('days').toJSDate();
+        await this.setRides({ campus: campus.id, start, end });
+      }
     },
     logout() {
       try {
