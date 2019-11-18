@@ -10,6 +10,7 @@
 * Fix map driver's marker color
 * Fix fetch ride when selecting a base
 * Fix tooltip overflow on planificator
+* Handle errors on post/patch /users /campuses/{id}/users /campuses/{id}/drivers
 ## Version 1.4.2
 ### Features
 * Improve reliability, k8s side

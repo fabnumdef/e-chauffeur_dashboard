@@ -153,25 +153,36 @@ export default {
   methods: {
     async edit(user) {
       let data = {};
-      if (user.id) {
-        ({ data } = (await this.$api.users.patchUser(
-          user.id,
-          user,
-          'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
-          {},
-        )));
-      } else {
-        ({ data } = (await this.$api.users.postUser(
-          user,
-          'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
-          {},
-        )));
-      }
+      try {
+        if (user.id) {
+          ({ data } = (await this.$api.users.patchUser(
+            user.id,
+            user,
+            'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
+            {},
+          )));
+        } else {
+          ({ data } = (await this.$api.users.postUser(
+            user,
+            'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
+            {},
+          )));
+        }
 
-      this.$router.push({
-        name: 'users-id-edit',
-        params: { id: data.id },
-      });
+        this.$router.push({
+          name: 'users-id-edit',
+          params: { id: data.id },
+        });
+      } catch (e) {
+        let message = 'Une erreur est survenue durant la création / édition de l\'utilisateur';
+        if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.email
+          && e.response.data.whitelistDomains) {
+          message += ` :
+          ${e.response.data.errors.email.value} devrait se terminer par `
+            + `"${e.response.data.whitelistDomains.join(' ou ')}"`;
+        }
+        this.$toast.error(message);
+      }
     },
   },
 };
