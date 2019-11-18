@@ -11,7 +11,7 @@ export default {
       throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'un utilisateur.');
     }
     const { data: user } = await $api.users
-      .getUser(params.id, 'id,firstname,lastname,name,email,roles(role),gprd');
+      .getUser(params.id, 'id,firstname,lastname,name,email,roles(role,campuses(id,name)),gprd');
     return {
       user,
     };
