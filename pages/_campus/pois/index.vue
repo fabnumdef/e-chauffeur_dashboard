@@ -55,7 +55,7 @@
 import { mapGetters } from 'vuex';
 import ecList from '~/components/crud/list.vue';
 
-const columns = { id: 'ID', label: 'Label' };
+const columns = { id: 'ID', label: 'Label', enabled: 'Activé' };
 
 export default {
   watchQuery: ['offset', 'limit'],
@@ -71,8 +71,11 @@ export default {
   async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.pois({ id: params.campus }, Object.keys(columns).join(','))
-      .getPois(offset, limit);
+    const { data, pagination } = await $api.pois(
+      { id: params.campus },
+      Object.keys(columns).join(','),
+      { withDisabled: true },
+    ).getPois(offset, limit);
     return {
       pois: data,
       pagination,
@@ -84,7 +87,8 @@ export default {
         await this.$api.pois(this.campus).deletePoi(id);
         const offset = parseInt(this.$route.query.offset, 10) || 0;
         const limit = parseInt(this.$route.query.limit, 10) || 30;
-        const updatedList = await this.$api.pois(this.campus, Object.keys(columns).join(',')).getPois(offset, limit);
+        const updatedList = await this.$api.pois(this.campus, Object.keys(columns).join(','), { withDisabled: true })
+          .getPois(offset, limit);
         this.pois = updatedList.data;
         this.pagination = updatedList.pagination;
       }

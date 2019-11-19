@@ -14,7 +14,8 @@ export default {
       throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'un lieu.');
     }
     return {
-      poi: (await $api.pois(getters['context/campus'], 'id,label,location(coordinates),campus').getPoi(params.id)).data,
+      poi: (await $api.pois(getters['context/campus'], 'id,label,location(coordinates),campus,enabled')
+        .getPoi(params.id)).data,
     };
   },
 };
