@@ -20,6 +20,7 @@
 * Fix rides fetch on campus change
 * Fix Winston error
 * Handle errors on post/patch /users /campuses/{id}/users /campuses/{id}/drivers
+* Fix planificator column alignment between header and body on month and day view
 ## Version 1.4.2
 ### Features
 * Improve reliability, k8s side
