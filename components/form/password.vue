@@ -38,7 +38,7 @@ export default {
       return this.lengthCheck;
     },
     lengthCheck() {
-      const { length } = this.val || this.value;
+      const { length } = this.val || this.value || '';
       return length === 0 || length >= this.minLength;
     },
   },
