@@ -7,6 +7,8 @@
 * Add new campus users interface for admin
 * Add pins for POIs on the regulator map
 * Add logic of automatic static validation
+* Add planning vehicule and remove old system
+* Add rating page
 * Add cars planning and remove old system
 * Add user creation error message
 * Add ride information on map & rides calendar
