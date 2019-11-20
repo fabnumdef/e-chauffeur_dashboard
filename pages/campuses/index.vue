@@ -26,7 +26,7 @@
     >
       <template #actions="{ row }">
         <nuxt-link
-          v-if="$auth.isSuperAdmin()"
+          v-if="$auth.isSuperAdmin() || $auth.isAdmin()"
           :to="{
             name: 'campuses-id-edit',
             params: { id: row.id },
