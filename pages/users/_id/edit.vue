@@ -92,12 +92,10 @@
         label="Mot de passe"
         field-id="password"
       >
-        <input
+        <ec-password
           id="password"
           v-model="user.password"
-          type="password"
-          class="input"
-        >
+        />
       </ec-field>
 
       <ec-field label="Rôles">
@@ -132,12 +130,14 @@
 <script>
 import { DateTime } from 'luxon';
 import ecField from '~/components/form/field.vue';
+import ecPassword from '~/components/form/password';
 import roleRules from '~/components/form/role-rules';
 
 export default {
   components: {
     roleRules,
     ecField,
+    ecPassword,
   },
   props: {
     user: {
