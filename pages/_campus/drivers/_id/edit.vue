@@ -141,19 +141,29 @@ export default {
   methods: {
     async edit(driver) {
       let data = {};
-      if (driver.id) {
-        ({ data } = (await this.$api
-          .drivers(this.campus.id, EDITABLE_FIELDS.join(','))
-          .patchDriver(driver.id, driver)));
-      } else {
-        ({ data } = (await this.$api.drivers(this.campus.id, EDITABLE_FIELDS.join(',')).postDriver(driver)));
+      try {
+        if (driver.id) {
+          ({ data } = (await this.$api
+            .drivers(this.campus.id, EDITABLE_FIELDS.join(','))
+            .patchDriver(driver.id, driver)));
+        } else {
+          ({ data } = (await this.$api.drivers(this.campus.id, EDITABLE_FIELDS.join(',')).postDriver(driver)));
+        }
+        this.$router.push(
+          this.$context.buildCampusLink('drivers-id-edit', {
+            params: { id: data.id },
+          }),
+        );
+      } catch (e) {
+        let message = 'Une erreur est survenue durant la création / édition de l\'utilisateur';
+        if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.email
+          && e.response.data.whitelistDomains) {
+          message += ` :
+          ${e.response.data.errors.email.value} devrait se terminer par `
+            + `"${e.response.data.whitelistDomains.join(' ou ')}"`;
+        }
+        this.$toast.error(message);
       }
-
-      this.$router.push(
-        this.$context.buildCampusLink('drivers-id-edit', {
-          params: { id: data.id },
-        }),
-      );
     },
   },
 };

@@ -1,16 +1,25 @@
 # Changelog
 ## Current
 ### Features
-* Add new campus users interface when admin
+### Fix
+## Version 1.4.3
+### Features
+* Add new campus users interface for admin
 * Add pins for POIs on the regulator map
 * Add logic of automatic static validation
 * Add planning vehicule and remove old system
 * Add rating page
+* Add cars planning and remove old system
+* Add user creation error message
+* Add ride information on map & rides calendar
 ### Fix
 * Add horizontal scroll in planificator when there is too much driver
 * Fix map driver's marker color
 * Fix fetch ride when selecting a base
 * Fix tooltip overflow on planificator
+* Fix rides fetch on campus change
+* Fix Winston error
+* Handle errors on post/patch /users /campuses/{id}/users /campuses/{id}/drivers
 ## Version 1.4.2
 ### Features
 * Improve reliability, k8s side
