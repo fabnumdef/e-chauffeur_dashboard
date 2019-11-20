@@ -54,6 +54,7 @@ module.exports = {
         authPlugins: [
           'has-right',
           'auth-renew',
+          'user-expiration',
         ],
       },
     ],
