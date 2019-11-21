@@ -51,6 +51,36 @@
       </ec-field>
 
       <ec-field
+        id="status"
+        label="Statut"
+      >
+        <div>
+          <label
+            for="status-enabled"
+            class="radio"
+          >Activé
+            <input
+              id="status-enabled"
+              type="radio"
+              v-model="poi.enabled"
+              :value="true"
+            >
+          </label>
+          <label
+            for="status-disabled"
+            class="radio"
+          >Désactivé
+            <input
+              id="status-disabled"
+              type="radio"
+              v-model="poi.enabled"
+              :value="false"
+            >
+          </label>
+        </div>
+      </ec-field>
+
+      <ec-field
         label="Label"
         field-id="label"
       >
@@ -120,10 +150,11 @@ export default {
     async edit(poi) {
       let data = {};
       if (this.id) {
-        ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus')
+        ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
           .patchPoi(this.id, poi)));
       } else {
-        ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus').postPoi(poi)));
+        ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
+          .postPoi(poi)));
       }
 
       this.$router.push({

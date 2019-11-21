@@ -54,6 +54,36 @@
       </ec-field>
 
       <ec-field
+        id="status"
+        label="Statut"
+      >
+        <div>
+          <label
+            for="status-enabled"
+            class="radio"
+          >Activé
+            <input
+              id="status-enabled"
+              type="radio"
+              v-model="poi.enabled"
+              :value="true"
+            >
+          </label>
+          <label
+            for="status-disabled"
+            class="radio"
+          >Désactivé
+            <input
+              id="status-disabled"
+              type="radio"
+              v-model="poi.enabled"
+              :value="false"
+            >
+          </label>
+        </div>
+      </ec-field>
+
+      <ec-field
         label="Coordonnées GPS"
         field-id="location"
       >
