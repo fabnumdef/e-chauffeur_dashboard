@@ -26,32 +26,27 @@
         @event-mouse-leave="eventMouseLeave"
       >
         <template #title-bar="{ view, switchView, previous, next }">
-          <div
-            class="control-width"
-            :style="{width: `calc(${MIN_SPLIT_WIDTH * splitDrivers.length}px + 3em)`, color: 'red'}"
-          >
-            <div v-if="view.id === 'day'">
-              <button
-                class="button"
-                @click="switchView('month')"
-              >
-                <fa-icon icon="calendar-alt" />&nbsp; {{ getFormatedDate(view.startDate) }}
-              </button>
-            </div>
-            <div v-else>
-              <button @click="previous()">
-                <fa-icon :icon="['fas', 'chevron-left']" />
-              </button>
-              <button
-                class="button"
-                @click="switchView('day', new Date())"
-              >
-                <fa-icon icon="calendar-alt" />&nbsp; {{ getFormatedDate(view.startDate, 'month') }}
-              </button>
-              <button @click="next()">
-                <fa-icon :icon="['fas', 'chevron-right']" />
-              </button>
-            </div>
+          <div v-if="view.id === 'day'">
+            <button
+              class="button"
+              @click="switchView('month')"
+            >
+              <fa-icon icon="calendar-alt" />&nbsp; {{ getFormatedDate(view.startDate) }}
+            </button>
+          </div>
+          <div v-else>
+            <button @click="previous()">
+              <fa-icon :icon="['fas', 'chevron-left']" />
+            </button>
+            <button
+              class="button"
+              @click="switchView('day', new Date())"
+            >
+              <fa-icon icon="calendar-alt" />&nbsp; {{ getFormatedDate(view.startDate, 'month') }}
+            </button>
+            <button @click="next()">
+              <fa-icon :icon="['fas', 'chevron-right']" />
+            </button>
           </div>
         </template>
         <template #split-day-column>
@@ -59,6 +54,7 @@
         </template>
         <template #split-day="{ split }">
           <driver-header
+            :style="{'min-width': `${MIN_SPLIT_WIDTH}px`}"
             :driver="split.driver"
             :ride="getCurrentRide(split.driver.id)"
           />
@@ -85,7 +81,10 @@
             class="vuecal__event-title"
           >
             <div class="event-hover-wrapper">
-              <div class="event-hover" v-show="eventHovered[event.index]">
+              <div
+                v-show="eventHovered[event.index]"
+                class="event-hover"
+              >
                 <div>
                   {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
                 </div>
@@ -406,9 +405,6 @@ export default {
   @import "~assets/css/elements/vue-cal.scss";
 
   /deep/ {
-    .control-width {
-      text-align: left;
-    }
     .vuecal--overflow-x.vuecal--day-view .vuecal__cells, .vuecal--overflow-x.vuecal--week-view .vuecal__cells {
       overflow-x: hidden;
     }
@@ -426,22 +422,24 @@ export default {
       &__body, &__header {
         min-width: fit-content;
       }
-      &__bg {
+      &__bg, &__weekdays-headings {
         overflow-y: scroll;
       }
       &__split-days-in-header {
         padding: 0;
         overflow-y: scroll;
-        padding-right: 1px;
-      }
-      &__split-days-in-header .vuecal__time-column {
-        text-align: center;
-        margin: auto 0;
-        color: $success;
-        vertical-align: middle;
-        line-height: 20px;
-        svg {
-          font-size: 25px;
+        .vuecal__time-column {
+          text-align: center;
+          margin: auto 0;
+          color: $success;
+          vertical-align: middle;
+          line-height: 20px;
+          svg {
+            font-size: 25px;
+          }
+        }
+        .vuecal__flex[wrap] {
+          flex-wrap: nowrap;
         }
       }
       &__time-cell .hours.line:before {border-color: #42b983;}
