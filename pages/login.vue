@@ -86,6 +86,10 @@ export default {
               + 'Si le problème persiste, contactez nous pour réinitialiser votre mot de passe.');
             this.user.password = null;
             break;
+          case 401:
+            this.$toast.error('Impossible de se connecter, le mot de passe a expiré. '
+                + 'Contactez nous pour le réinitialiser.');
+            break;
           default:
             this.$toast.error('Une erreur est survenue, merci de vérifier votre email et mot de passe. \n'
             + 'Si le problème persiste, contactez nous pour réinitialiser votre mot de passe.');
