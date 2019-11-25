@@ -10,6 +10,7 @@
       class="container"
       @submit.prevent="login(user)"
     >
+      <h1 class="title">Bienvenue</h1>
       <ec-field
         label="Email"
         field-id="email"
@@ -105,6 +106,9 @@ export default {
   .logo {
     padding: 50px;
     display: block;
+  }
+  .title {
+    margin-bottom: 2em;
   }
   /deep/ .label {
     color: $white;
