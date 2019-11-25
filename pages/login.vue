@@ -55,7 +55,7 @@
 import ecField from '~/components/form/field';
 
 export default {
-  layout: 'side-picture',
+  layout: 'login',
   components: {
     ecField,
   },

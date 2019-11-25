@@ -1,7 +1,6 @@
 <template>
   <div class="columns is-gapless">
     <nuxt class="column" />
-    <div class="column is-hidden-mobile is-hidden-tablet-only background-column" />
   </div>
 </template>
 
@@ -26,11 +25,6 @@ export default {
   }
   /deep/ ::placeholder {
     color: rgba($white, 0.6);
-  }
-  .background-column {
-    background: url('/background.jpg') center center;
-    background-size: cover;
-    min-height: 100vh;
   }
 </style>
 
