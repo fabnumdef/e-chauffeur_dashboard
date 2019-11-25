@@ -4,6 +4,7 @@
 * Add new component to enforce password strength
 * Add explicit error messages on 
 ### Fix
+* Updated login page ui
 ## Version 1.4.3
 ### Features
 * Add new campus users interface for admin
