@@ -5,6 +5,7 @@
 * Add pins for POIs on the regulator map
 * Add logic of automatic static validation
 * Add planning vehicule and remove old system
+* Add possibility for admin to edit his own campus
 ### Fix
 * Add horizontal scroll in planificator when there is too much driver
 * Fix map driver's marker color
