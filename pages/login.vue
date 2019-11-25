@@ -1,5 +1,5 @@
 <template>
-  <main id="login-page">
+  <main>
     <div class="logo">
       <img
         alt="e-Chauffeur"
@@ -24,7 +24,7 @@
           required="required"
           class="input"
           type="email"
-          placeholder="john@doe.com"
+          placeholder="Identifiant"
           autofocus="autofocus"
         >
       </ec-field>
@@ -40,6 +40,7 @@
           required="required"
           class="input"
           type="password"
+          placeholder="Mot de passe"
         >
       </ec-field>
 
@@ -58,7 +59,7 @@
           alt="DIRISI"
         >
       </div>
-      <div class="logo">
+      <div class="logo ">
           <img
             src="/logo_ma.png"
             alt="Ministère des armées"
@@ -175,7 +176,16 @@ export default {
   .logo-container {
     position: absolute;
     bottom: 1em;
-    left: 1em;
     display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  @media screen and (max-width: 600px) {
+    .logo-container {
+      .logo {
+        padding: 1em;
+      }
+    }
   }
 </style>
