@@ -178,11 +178,16 @@ export default {
     bottom: 1em;
     display: flex;
     justify-content: center;
+    align-items: center;
     width: 100%;
   }
 
   @media screen and (max-width: 600px) {
+    .title {
+      text-align: center;
+    }
     .logo-container {
+      flex-direction: column;
       .logo {
         padding: 1em;
       }
