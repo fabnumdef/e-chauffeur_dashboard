@@ -85,7 +85,7 @@
     </p>
     <ul class="menu-list">
       <li
-        v-if="$auth.isSuperAdmin()"
+        v-if="$auth.isSuperAdmin() || $auth.isAdmin()"
       >
         <nuxt-link
           :to="{ name: 'campuses' }"
