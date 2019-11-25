@@ -237,7 +237,7 @@
                         </p>
                         {{ ride.id }}
                       </div>
-                      <div class="column">
+                      <div class="column" v-if="ride.car">
                         <p class="is-size-7">
                           Type de véhicule
                         </p>
