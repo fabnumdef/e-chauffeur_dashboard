@@ -18,7 +18,7 @@
     </thead>
     <tbody>
       <tr
-        v-for="row in data"
+        v-for="row in authorizedData"
         :key="row[id]"
       >
         <td
@@ -114,6 +114,9 @@ export default {
     },
   },
   computed: {
+    authorizedData() {
+      return this.data.filter((row) => this.$auth.isSuperAdmin() || this.$auth.isAdmin(row.id));
+    },
     columnNumber() {
       return this.columnKeys.length + 1;
     },
