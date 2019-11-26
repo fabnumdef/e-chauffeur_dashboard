@@ -5,6 +5,7 @@
 * Add explicit error messages on 
 ### Fix
 * Updated login page ui
+* Changed dropdown title when creating a new car in planning
 ## Version 1.4.3
 ### Features
 * Add new campus users interface for admin
