@@ -193,7 +193,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
@@ -230,6 +229,7 @@ export default {
       } else {
         ({ data } = (await this.$api.campuses.postCampus(campus, EDITABLE_FIELDS)));
       }
+
       this.$store.commit('context/setCampus', data);
 
       this.$router.push({
