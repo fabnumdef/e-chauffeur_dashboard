@@ -40,8 +40,5 @@ export default {
     display: flex;
     align-items: center;
     overflow: hidden;
-    img {
-      transform: rotateY(180deg);
-    }
   }
 </style>

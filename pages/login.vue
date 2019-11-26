@@ -24,7 +24,7 @@
           required="required"
           class="input"
           type="email"
-          placeholder="Identifiant"
+          placeholder="john@doe.com"
           autofocus="autofocus"
         >
       </ec-field>
@@ -40,7 +40,7 @@
           required="required"
           class="input"
           type="password"
-          placeholder="Mot de passe"
+          placeholder=""
         >
       </ec-field>
 
