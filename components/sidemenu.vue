@@ -67,6 +67,11 @@
           Lieux
         </nuxt-link>
       </li>
+      <li v-if="hasCampus && $auth.isAdmin(campus.id)">
+        <nuxt-link :to="campusLink('edit')">
+          Base
+        </nuxt-link>
+      </li>
       <li v-if="hasCampus && $auth.isSuperAdmin()">
         <nuxt-link
           :to="campusLink('map-vision')"
