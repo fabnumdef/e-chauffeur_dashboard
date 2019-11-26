@@ -225,7 +225,6 @@ export default {
   methods: {
     async edit(campus) {
       let data = {};
-      console.log(campus);
       if (this.campus.id) {
         ({ data } = (await this.$api.campuses.patchCampus(campus.id, campus, EDITABLE_FIELDS)));
       } else {
