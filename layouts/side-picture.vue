@@ -1,7 +1,9 @@
 <template>
   <div class="columns is-gapless">
     <nuxt class="column" />
-    <div class="column is-hidden-mobile is-hidden-tablet-only background-column" />
+    <div class="column is-hidden-mobile is-hidden-tablet-only background-column">
+      <img src="/hand-app.png" alt="logo-picto-application">
+    </div>
   </div>
 </template>
 
@@ -21,22 +23,22 @@ export default {
   /deep/ .input,
   /deep/ .control .icon,
   /deep/ .control .input:focus ~ .icon {
-    color: $text-invert;
-    border-color: $text-invert;
+    color: $blue-light;
+    border-color: $blue-light;
   }
   /deep/ ::placeholder {
-    color: rgba($white, 0.6);
+    color: rgba($blue-medium, 0.6);
   }
-  .background-column {
-    background: url('/background.jpg') center center;
-    background-size: cover;
+  .column {
+    position: relative;
     min-height: 100vh;
   }
-</style>
-
-<style lang="scss">
-  @import "~assets/css/head";
-  .is-blue-medium {
-    background: $blue-medium;
+  .background-column {
+    background-color: $blue-light;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
   }
 </style>
