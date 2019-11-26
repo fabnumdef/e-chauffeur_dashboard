@@ -119,31 +119,6 @@ export default {
     },
   },
   watchQuery: ['before', 'after', 'time-scope', 'time-unit'],
-  computed: {
-    range() {
-      return [
-        this.request.start || null,
-        this.request.end || null,
-      ].map((l) => (l && l.toJSDate ? l.toJSDate() : l));
-    },
-    REQUESTABLE() {
-      return REQUESTABLE;
-    },
-  },
-  watch: {
-    'request.start': function watchRequestStart() {
-      this.updateRoute();
-    },
-    'request.end': function watchRequestEnd() {
-      this.updateRoute();
-    },
-    'request.timeScope': function watchRequestTimeScope() {
-      this.updateRoute();
-    },
-    'request.timeUnit': function watchRequestTimeUnit() {
-      this.updateRoute();
-    },
-  },
   async asyncData({ $api, params, query }) {
     const start = (query.after ? DateTime.fromISO(query.after) : DateTime.local().startOf('weeks')).toJSDate();
     const end = (query.before ? DateTime.fromISO(query.before) : DateTime.local().endOf('weeks')).toJSDate();
@@ -175,6 +150,31 @@ export default {
         timeUnit,
       },
     };
+  },
+  computed: {
+    range() {
+      return [
+        this.request.start || null,
+        this.request.end || null,
+      ].map((l) => (l && l.toJSDate ? l.toJSDate() : l));
+    },
+    REQUESTABLE() {
+      return REQUESTABLE;
+    },
+  },
+  watch: {
+    'request.start': function watchRequestStart() {
+      this.updateRoute();
+    },
+    'request.end': function watchRequestEnd() {
+      this.updateRoute();
+    },
+    'request.timeScope': function watchRequestTimeScope() {
+      this.updateRoute();
+    },
+    'request.timeUnit': function watchRequestTimeUnit() {
+      this.updateRoute();
+    },
   },
   methods: {
     updateDates([start, end]) {

@@ -62,12 +62,6 @@ export default {
   components: {
     ecList,
   },
-  computed: {
-    columns() { return columns; },
-    ...mapGetters({
-      campus: 'context/campus',
-    }),
-  },
   async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
@@ -80,6 +74,12 @@ export default {
       pois: data,
       pagination,
     };
+  },
+  computed: {
+    columns() { return columns; },
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
   },
   methods: {
     async deletePoi({ id }) {

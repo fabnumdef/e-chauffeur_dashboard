@@ -15,19 +15,19 @@ import ecSidemenu from '~/components/sidemenu.vue';
 import ecMap from '~/components/map.vue';
 
 export default {
-  head() {
-    return {
-      bodyAttrs: {
-        class: 'has-background',
-      },
-    };
-  },
   components: {
     ecSidemenu,
     ecMap,
   },
   computed: {
     ...mapGetters({ hideMap: 'context/hideMap' }),
+  },
+  head() {
+    return {
+      bodyAttrs: {
+        class: 'has-background',
+      },
+    };
   },
 };
 </script>

@@ -9,15 +9,15 @@
 import ecSidemenu from '~/components/sidemenu.vue';
 
 export default {
+  components: {
+    ecSidemenu,
+  },
   head() {
     return {
       bodyAttrs: {
         class: 'has-background',
       },
     };
-  },
-  components: {
-    ecSidemenu,
   },
 };
 </script>

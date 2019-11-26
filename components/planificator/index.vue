@@ -117,15 +117,15 @@
             </div>
           </div>
         </template>
-        <template #cell-content="{ cell, view, events }">
+        <template #cell-content="{ cell, view, events: evts }">
           <div class="vuecal__cell-date">
             {{ cell.content }}
           </div>
           <div
-            v-if="view.id === 'month' && customEventsCount(events)"
+            v-if="view.id === 'month' && customEventsCount(evts)"
             class="vuecal__cell-events-count"
           >
-            {{ customEventsCount(events) }}
+            {{ customEventsCount(evts) }}
           </div>
         </template>
       </vue-cal>

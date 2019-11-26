@@ -2,7 +2,10 @@
   <div class="columns is-gapless">
     <nuxt class="column" />
     <div class="column is-hidden-mobile is-hidden-tablet-only background-column">
-      <img src="/hand-app.png" alt="logo-picto-application">
+      <img
+        src="/hand-app.png"
+        alt="logo-picto-application"
+      >
     </div>
   </div>
 </template>

@@ -40,15 +40,6 @@ export default {
   components: {
     ecList,
   },
-  computed: {
-    columns: () => columns,
-    ...mapGetters({
-      campus: 'context/campus',
-    }),
-    CarsAPI() {
-      return this.$api.cars(this.campus, Object.keys(columns).join(','));
-    },
-  },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
@@ -59,6 +50,15 @@ export default {
       cars: data,
       pagination,
     };
+  },
+  computed: {
+    columns: () => columns,
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
+    CarsAPI() {
+      return this.$api.cars(this.campus, Object.keys(columns).join(','));
+    },
   },
   methods: {
     async deleteCar({ id }) {

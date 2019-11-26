@@ -61,6 +61,19 @@ export default {
       default: null,
     },
   },
+  async asyncData({ $api, query, params: { campus } }) {
+    const date = query.date ? DateTime.fromISO(query.date) : DateTime.local();
+    const { data: positions } = await $api.logs()
+      .getDriversPositionsHistory(
+        date.toJSDate(),
+        'driver(id,name,firstname,lastname),date,position(coordinates)',
+        campus,
+      );
+    return {
+      currentTime: date.toJSDate(),
+      positions,
+    };
+  },
   computed: {
     luxonDate: {
       get() {
@@ -75,19 +88,6 @@ export default {
     currentTime() {
       this.$router.push(this.campusLink('map-vision', { query: { date: this.currentTime.toISOString() } }));
     },
-  },
-  async asyncData({ $api, query, params: { campus } }) {
-    const date = query.date ? DateTime.fromISO(query.date) : DateTime.local();
-    const { data: positions } = await $api.logs()
-      .getDriversPositionsHistory(
-        date.toJSDate(),
-        'driver(id,name,firstname,lastname),date,position(coordinates)',
-        campus,
-      );
-    return {
-      currentTime: date.toJSDate(),
-      positions,
-    };
   },
   methods: {
     incrementSecs(seconds) {
