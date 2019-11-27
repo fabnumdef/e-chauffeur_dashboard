@@ -64,17 +64,6 @@ export default {
     RideCalendar,
   },
 
-  computed: {
-    ...mapGetters({
-      rides: 'realtime/rides',
-      currentCampus: 'context/campus',
-      hideMap: 'context/hideMap',
-    }),
-    flavoredRides() {
-      return this.rides.filter(({ status }) => status !== DRAFTED);
-    },
-  },
-
   async asyncData({ params, $api }) {
     const start = DateTime.local().startOf('days').toJSDate();
     const end = DateTime.local().endOf('days').toJSDate();
@@ -89,6 +78,17 @@ export default {
       campus: params.campus,
       drivers,
     };
+  },
+
+  computed: {
+    ...mapGetters({
+      rides: 'realtime/rides',
+      currentCampus: 'context/campus',
+      hideMap: 'context/hideMap',
+    }),
+    flavoredRides() {
+      return this.rides.filter(({ status }) => status !== DRAFTED);
+    },
   },
 
   methods: {

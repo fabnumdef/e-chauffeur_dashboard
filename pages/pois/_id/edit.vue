@@ -61,8 +61,8 @@
           >Activé
             <input
               id="status-enabled"
-              type="radio"
               v-model="poi.enabled"
+              type="radio"
               :value="true"
             >
           </label>
@@ -72,8 +72,8 @@
           >Désactivé
             <input
               id="status-disabled"
-              type="radio"
               v-model="poi.enabled"
+              type="radio"
               :value="false"
             >
           </label>

@@ -16,9 +16,6 @@ export default {
     }
     return layout;
   },
-  computed: {
-    ...mapGetters('context', ['campus']),
-  },
   async asyncData({ params, store }) {
     if (!store.getters['context/isCampus'](params.campus)) {
       const start = DateTime.local().startOf('days').toJSDate();
@@ -27,6 +24,9 @@ export default {
       await store.dispatch('realtime/setRides', { campus: params.campus, start, end });
     }
     return {};
+  },
+  computed: {
+    ...mapGetters('context', ['campus']),
   },
 };
 </script>

@@ -38,9 +38,6 @@ export default {
   components: {
     ecList,
   },
-  computed: {
-    columns() { return columns; },
-  },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
@@ -50,6 +47,9 @@ export default {
       pois: data,
       pagination,
     };
+  },
+  computed: {
+    columns() { return columns; },
   },
   methods: {
     async deletePoi({ id }) {

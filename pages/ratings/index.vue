@@ -32,9 +32,6 @@ export default {
   components: {
     ecList,
   },
-  computed: {
-    columns() { return columns; },
-  },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
@@ -48,6 +45,9 @@ export default {
       ratingsToDisplay,
       pagination,
     };
+  },
+  computed: {
+    columns() { return columns; },
   },
 };
 </script>

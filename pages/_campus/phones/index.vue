@@ -67,6 +67,16 @@ export default {
   components: {
     ecList,
   },
+  async asyncData({ $api, query, params }) {
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const { data, pagination } = await $api.phones({ id: params.campus }, FIELDS.join(','))
+      .getPhones(offset, limit);
+    return {
+      phones: data,
+      pagination,
+    };
+  },
   computed: {
     ...mapGetters({
       campus: 'context/campus',
@@ -90,16 +100,6 @@ export default {
         },
       );
     },
-  },
-  async asyncData({ $api, query, params }) {
-    const offset = parseInt(query.offset, 10) || 0;
-    const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.phones({ id: params.campus }, FIELDS.join(','))
-      .getPhones(offset, limit);
-    return {
-      phones: data,
-      pagination,
-    };
   },
   methods: {
     async deletePhone({ id }) {

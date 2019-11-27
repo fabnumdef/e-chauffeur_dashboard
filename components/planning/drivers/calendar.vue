@@ -19,7 +19,7 @@
         @click-and-release="openCreate"
         @view-change="viewChange"
       >
-        <template #event-renderer="{ event: { content }, view }">
+        <template #event-renderer="{ event: { content } }">
           <div
             class="drop"
             :class="{'dropzone': isGrabbing}"

@@ -80,12 +80,6 @@ export default {
   components: {
     ecList,
   },
-  computed: {
-    columns: () => columns,
-    ...mapGetters({
-      campus: 'context/campus',
-    }),
-  },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
@@ -101,6 +95,12 @@ export default {
       users: usersRes.data,
       usersPagination: usersRes.pagination,
     };
+  },
+  computed: {
+    columns: () => columns,
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
   },
   methods: {
     async deleteDriver({ id }) {

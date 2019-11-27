@@ -60,14 +60,14 @@
         >
       </div>
       <div class="logo ">
-          <img
-            src="/logo_ma.png"
-            alt="Ministère des armées"
-          >
-          <img
-            src="/start_up_etat.png"
-            alt="Start-up d'état"
-          >
+        <img
+          src="/logo_ma.png"
+          alt="Ministère des armées"
+        >
+        <img
+          src="/start_up_etat.png"
+          alt="Start-up d'état"
+        >
       </div>
 
       <div class="logo">
