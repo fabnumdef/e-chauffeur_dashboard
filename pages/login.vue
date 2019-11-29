@@ -3,7 +3,7 @@
     <div class="logo">
       <img
         alt="e-Chauffeur"
-        src="/logo.svg"
+        src="/logo_ec_blue.svg"
       >
     </div>
     <form

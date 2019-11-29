@@ -9,6 +9,7 @@
 * Updated login page ui
 * Changed dropdown title when creating a new car in planning
 * Fix infosec issue with X-Frame header
+* Fixed logo color when connected
 ## Version 1.4.3
 ### Features
 * Add new campus users interface for admin

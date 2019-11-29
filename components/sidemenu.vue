@@ -5,7 +5,7 @@
       <nuxt-link :to="{ name: 'index' }">
         <img
           class="logo"
-          src="/logo.svg"
+          src="/logo_ec.svg"
           alt="logo"
         >
       </nuxt-link>
