@@ -65,7 +65,7 @@ export default {
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api
       .cars({ id: params.campus }, Object.keys(columns).join(','))
-      .getCars(offset, limit);
+      .getCars({ offset, limit });
     return {
       cars: data,
       pagination,
@@ -90,7 +90,7 @@ export default {
       await this.CarsAPI.deleteCar(id);
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.CarsAPI.getCars(offset, limit);
+      const updatedList = await this.CarsAPI.getCars({ offset, limit });
       this.cars = updatedList.data;
       this.pagination = updatedList.pagination;
     },

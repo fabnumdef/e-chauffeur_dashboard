@@ -76,7 +76,7 @@ import csvModal from '~/components/csv-modal';
 const columns = { id: 'ID', label: 'Label' };
 
 function getCarModels(offset, limit) {
-  return this.carModels.getCarModels(Object.keys(columns).join(','), {}, offset, limit);
+  return this.carModels.getCarModels(Object.keys(columns).join(','), { offset, limit });
 }
 
 export default {

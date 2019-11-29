@@ -87,7 +87,7 @@ export default {
     const before = week.endOf('week').toJSDate();
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const cars = await $api.cars({ id: params.campus }, CARS_DATA).getCars(offset, limit);
+    const cars = await $api.cars({ id: params.campus }, CARS_DATA).getCars({ offset, limit });
     const events = await $api.timeSlot(TIMESLOT_DATA, params.campus)
       .getCarsTimeSlotsBetween(after, before);
     return {

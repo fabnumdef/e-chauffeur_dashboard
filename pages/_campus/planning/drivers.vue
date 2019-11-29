@@ -87,7 +87,7 @@ export default {
     const week = query.week ? DateTime.fromISO(query.week) : DateTime.local();
     const after = week.startOf('week').toJSDate();
     const before = week.endOf('week').toJSDate();
-    const drivers = await $api.drivers(params.campus, DRIVER_DATA).getDrivers(offset, limit);
+    const drivers = await $api.drivers(params.campus, DRIVER_DATA).getDrivers({ offset, limit });
     const events = await $api.timeSlot(TIMESLOT_DATA, params.campus)
       .getDriversTimeSlotsBetween(after, before);
     return {

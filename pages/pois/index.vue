@@ -19,7 +19,7 @@
         :csv-status="displayModal"
         :pagination="pagination"
         :api-call="$api.pois(null, '*').getPois"
-        :hasMask="true"
+        :has-mask="true"
         @toggleModal="toggleCsvModal"
       />
       <div class="options">
@@ -62,7 +62,7 @@ export default {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api.pois(null, Object.keys(columns).join(','), { withDisabled: true })
-      .getPois(offset, limit);
+      .getPois({ offset, limit });
     return {
       pois: data,
       pagination,
@@ -82,7 +82,7 @@ export default {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await this.$api.pois(null, Object.keys(columns).join(','), { withDisabled: true })
-        .getPois(offset, limit);
+        .getPois({ offset, limit });
       this.pois = updatedList.data;
       this.pagination = updatedList.pagination;
     },

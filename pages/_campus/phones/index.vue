@@ -90,7 +90,7 @@ export default {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api.phones({ id: params.campus }, FIELDS.join(','))
-      .getPhones(offset, limit);
+      .getPhones({ offset, limit });
     return {
       phones: data,
       pagination,
@@ -131,7 +131,7 @@ export default {
         await this.$api.phones(this.campus).deletePhone(id);
         const offset = parseInt(this.$route.query.offset, 10) || 0;
         const limit = parseInt(this.$route.query.limit, 10) || 30;
-        const { data, pagination } = await this.$api.phones(this.campus, FIELDS.join(',')).getPhones(offset, limit);
+        const { data, pagination } = await this.$api.phones(this.campus, FIELDS.join(',')).getPhones({ offset, limit });
         this.phones = data;
         this.pagination = pagination;
       }
