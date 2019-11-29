@@ -1,22 +1,40 @@
 <template>
   <main>
-    <header>
+    <header id="rating-header">
       <h1 class="title">
         Appréciations
       </h1>
+      <button
+        class="button is-rounded"
+        type="button"
+        @click="toggleCsvModal(true)"
+      >
+        <fa-icon
+          :icon="['fas', 'file-export']"
+          class="has-text-info"
+        />
+        Exporter CSV
+      </button>
     </header>
     <ec-list
       :columns="columns"
-      :data="ratingsToDisplay"
+      :data="ratings"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
+    />
+    <csv-modal
+      :csv-status="displayModal"
+      :pagination="pagination"
+      :api-call="$api.ratings.getRatings"
+      @toggleModal="toggleCsvModal"
     />
   </main>
 </template>
 
 <script>
 import ecList from '~/components/crud/list.vue';
+import csvModal from '~/components/csv-modal';
 
 const columns = {
   createdAt: 'Timestamp',
@@ -31,23 +49,41 @@ export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    csvModal,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data: ratings, pagination } = await $api.ratings('*').getRatings(offset, limit);
-    const ratingsToDisplay = ratings.map((rating) => ({
+    const { data, pagination } = await $api.ratings.getRatings('*', { offset, limit });
+    const ratings = data.map((rating) => ({
       ...rating,
       ride: rating.ride.id,
       campus: rating.ride.campus.id,
     }));
     return {
-      ratingsToDisplay,
+      ratings,
       pagination,
+    };
+  },
+  data() {
+    return {
+      displayModal: false,
     };
   },
   computed: {
     columns() { return columns; },
   },
+  methods: {
+    toggleCsvModal(force) {
+      this.displayModal = force || !this.displayModal;
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+  #rating-header {
+    display: flex;
+    justify-content: space-between;
+  }
+</style>

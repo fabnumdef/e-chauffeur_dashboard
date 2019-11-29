@@ -158,8 +158,8 @@ export default {
           generateCsvLink(data, i + 1);
         });
     },
-    toggle() {
-      this.$emit('toggleModal');
+    toggle(force) {
+      this.$emit('toggleModal', force);
     },
   },
 };

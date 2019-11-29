@@ -4,6 +4,24 @@
       <h1 class="title">
         Catégories
       </h1>
+      <button
+        class="button is-rounded"
+        type="button"
+        @click="toggleCsvModal(true)"
+      >
+        <fa-icon
+          :icon="['fas', 'file-export']"
+          class="has-text-info"
+        />
+        Exporter CSV
+      </button>
+      <csv-modal
+        :csv-status="displayModal"
+        :pagination="pagination"
+        :api-call="$api.categories('*').getCategories"
+        :has-mask="true"
+        @toggleModal="toggleCsvModal"
+      />
       <div class="options">
         <nuxt-link
           v-if="$auth.isSuperAdmin()"
@@ -55,11 +73,13 @@
 
 <script>
 import ecList from '~/components/crud/list.vue';
+import csvModal from '~/components/csv-modal';
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    csvModal,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -68,6 +88,11 @@ export default {
     return {
       categories: data,
       pagination,
+    };
+  },
+  data() {
+    return {
+      displayModal: false,
     };
   },
   methods: {
@@ -81,6 +106,9 @@ export default {
         this.categories = updatedList.data;
         this.pagination = updatedList.pagination;
       }
+    },
+    toggleCsvModal(force) {
+      this.displayModal = force || !this.displayModal;
     },
   },
 };

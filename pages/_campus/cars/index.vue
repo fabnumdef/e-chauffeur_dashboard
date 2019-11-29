@@ -4,6 +4,24 @@
       <h1 class="title">
         Véhicules
       </h1>
+      <button
+        class="button is-rounded"
+        type="button"
+        @click="toggleCsvModal(true)"
+      >
+        <fa-icon
+          :icon="['fas', 'file-export']"
+          class="has-text-info"
+        />
+        Exporter CSV
+      </button>
+      <csv-modal
+        :csv-status="displayModal"
+        :pagination="pagination"
+        :api-call="$api.cars(campus.id, '*').getCars"
+        :has-mask="true"
+        @toggleModal="toggleCsvModal"
+      />
       <div class="options">
         <nuxt-link
           :to="campusLink('cars-new')"
@@ -32,6 +50,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import ecList from '~/components/crud/list.vue';
+import csvModal from '~/components/csv-modal';
 
 const columns = { id: 'ID', label: 'Label' };
 
@@ -39,6 +58,7 @@ export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    csvModal,
   },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -49,6 +69,11 @@ export default {
     return {
       cars: data,
       pagination,
+    };
+  },
+  data() {
+    return {
+      displayModal: false,
     };
   },
   computed: {
@@ -68,6 +93,9 @@ export default {
       const updatedList = await this.CarsAPI.getCars(offset, limit);
       this.cars = updatedList.data;
       this.pagination = updatedList.pagination;
+    },
+    toggleCsvModal(force) {
+      this.displayModal = force || !this.displayModal;
     },
   },
 };

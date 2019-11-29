@@ -10,6 +10,17 @@
               </h1>
             </div>
             <div class="column is-narrow">
+              <button
+                class="button is-rounded"
+                type="button"
+                @click="toggleCsvModal(true, 'drivers')"
+              >
+                <fa-icon
+                  :icon="['fas', 'file-export']"
+                  class="has-text-info"
+                />
+                Exporter CSV
+              </button>
               <nuxt-link
                 :to="campusLink('drivers-new')"
                 class="button is-success"
@@ -42,6 +53,17 @@
               </h1>
             </div>
             <div class="column is-narrow">
+              <button
+                class="button is-rounded"
+                type="button"
+                @click="toggleCsvModal(true, 'users')"
+              >
+                <fa-icon
+                  :icon="['fas', 'file-export']"
+                  class="has-text-info"
+                />
+                Exporter CSV
+              </button>
               <nuxt-link
                 :to="campusLink('users-new')"
                 class="button is-success"
@@ -66,12 +88,22 @@
         />
       </div>
     </div>
+    <csv-modal
+      :csv-status="displayModal"
+      :pagination="modalType === 'users' ? usersPagination : driversPagination"
+      :api-call="modalType === 'users'
+        ? $api.campusUsers(campus.id, '*').getUsers
+        : $api.drivers(campus.id, '*').getDrivers"
+      :has-mask="true"
+      @toggleModal="toggleCsvModal"
+    />
   </main>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import ecList from '~/components/crud/list.vue';
+import csvModal from '~/components/csv-modal';
 
 const columns = { id: 'ID', email: 'E-mail' };
 
@@ -79,6 +111,7 @@ export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    csvModal,
   },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -94,6 +127,12 @@ export default {
       driversPagination: driversRes.pagination,
       users: usersRes.data,
       usersPagination: usersRes.pagination,
+    };
+  },
+  data() {
+    return {
+      displayModal: false,
+      modalType: '',
     };
   },
   computed: {
@@ -120,6 +159,10 @@ export default {
         .getUsers(offset, limit);
       this.users = updatedList.data;
       this.usersPagination = updatedList.pagination;
+    },
+    toggleCsvModal(force, type) {
+      this.modalType = type;
+      this.displayModal = force || !this.displayModal;
     },
   },
 };

@@ -4,6 +4,23 @@
       <h1 class="title">
         Téléphones
       </h1>
+      <button
+        class="button is-rounded"
+        type="button"
+        @click="toggleCsvModal(true)"
+      >
+        <fa-icon
+          :icon="['fas', 'file-export']"
+          class="has-text-info"
+        />
+        Exporter CSV
+      </button>
+      <csv-modal
+        :csv-status="displayModal"
+        :pagination="pagination"
+        :api-call="$api.phones(campus.id, '*').getPhones"
+        @toggleModal="toggleCsvModal"
+      />
       <div class="options">
         <nuxt-link
           v-if="$auth.isAdmin()"
@@ -55,6 +72,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import ecList from '~/components/crud/list.vue';
+import csvModal from '~/components/csv-modal';
 
 const FIELDS = [
   'id',
@@ -66,6 +84,7 @@ export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    csvModal,
   },
   async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -75,6 +94,11 @@ export default {
     return {
       phones: data,
       pagination,
+    };
+  },
+  data() {
+    return {
+      displayModal: false,
     };
   },
   computed: {
@@ -111,6 +135,9 @@ export default {
         this.phones = data;
         this.pagination = pagination;
       }
+    },
+    toggleCsvModal(force) {
+      this.displayModal = force || !this.displayModal;
     },
   },
 };
