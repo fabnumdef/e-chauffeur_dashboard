@@ -1,4 +1,4 @@
-import DateManager from '~/helpers/DateManager';
+import { DateTime } from 'luxon';
 
 export default (data, index) => {
   if (window && window.document && window.btoa) {
@@ -8,7 +8,7 @@ export default (data, index) => {
     link.setAttribute('href', encodedUri);
     link.setAttribute(
       'download',
-      `export_${DateManager.formatDate('dd_MM_yyyy')}_part${index}.csv`,
+      `export_${DateTime.fromISO(DateTime.local()).toFormat('dd_MM_yyyy')}_part${index}.csv`,
     );
     window.document.body.appendChild(link);
     link.click();
