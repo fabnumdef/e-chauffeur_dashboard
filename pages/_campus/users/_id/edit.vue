@@ -117,7 +117,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field.vue';
+import ecField from '~/components/form/field';
 import ecPassword from '~/components/form/password';
 import roleRules from '~/components/form/role-only';
 

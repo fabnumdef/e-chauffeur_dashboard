@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
+import ecField from '~/components/form/field';
 
 const EDITABLE_FIELDS = [
   'id',

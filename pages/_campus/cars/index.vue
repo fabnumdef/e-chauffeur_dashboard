@@ -49,7 +49,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecList from '~/components/crud/list.vue';
+import ecList from '~/components/crud/list';
 import csvModal from '~/components/csv-modal';
 
 const columns = { id: 'ID', label: 'Label' };

@@ -120,9 +120,9 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field.vue';
-import ecSearchPhoneStates from '~/components/form/search-phone-states.vue';
-import ecSearchPhoneModels from '~/components/form/search-phone-models.vue';
+import ecField from '~/components/form/field';
+import ecSearchPhoneStates from '~/components/form/search-phone-states';
+import ecSearchPhoneModels from '~/components/form/search-phone-models';
 
 const EDITABLE_FIELDS = [
   'id',

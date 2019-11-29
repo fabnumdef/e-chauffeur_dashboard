@@ -193,11 +193,11 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
-import ecGpsPoint from '~/components/form/gps-point.vue';
-import searchCategories from '~/components/form/search-categories.vue';
-import weekdaysSelect from '~/components/form/weekdays.vue';
-import rideDuration from '~/components/form/ride-duration.vue';
+import ecField from '~/components/form/field';
+import ecGpsPoint from '~/components/form/gps-point';
+import searchCategories from '~/components/form/search-categories';
+import weekdaysSelect from '~/components/form/weekdays';
+import rideDuration from '~/components/form/ride-duration';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
   + 'information,timezone,workedDays,workedHours,defaultRideDuration';

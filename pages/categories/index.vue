@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import ecList from '~/components/crud/list.vue';
+import ecList from '~/components/crud/list';
 import csvModal from '~/components/csv-modal';
 
 export default {
