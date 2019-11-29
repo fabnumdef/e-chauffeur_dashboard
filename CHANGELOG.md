@@ -4,6 +4,7 @@
 * Add new component to enforce password strength
 * Add explicit error messages on 
 * Add possibility for admin to edit his own campus
+* Round percents in dashboard
 ### Fix
 * Updated login page ui
 * Changed dropdown title when creating a new car in planning
