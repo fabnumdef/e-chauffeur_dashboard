@@ -4,6 +4,24 @@
       <h1 class="title">
         Lieux
       </h1>
+      <button
+        class="button is-rounded"
+        type="button"
+        @click="toggleCsvModal(true)"
+      >
+        <fa-icon
+          :icon="['fas', 'file-export']"
+          class="has-text-info"
+        />
+        Exporter CSV
+      </button>
+      <csv-modal
+        :csv-status="displayModal"
+        :pagination="pagination"
+        :api-call="$api.pois(null, '*').getPois"
+        :hasMask="true"
+        @toggleModal="toggleCsvModal"
+      />
       <div class="options">
         <nuxt-link
           :to="{name: 'pois-new'}"
@@ -30,6 +48,7 @@
 
 <script>
 import ecList from '~/components/crud/list.vue';
+import csvModal from '~/components/csv-modal';
 
 const columns = { id: 'ID', label: 'Label', enabled: 'Activé' };
 
@@ -37,6 +56,7 @@ export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    csvModal,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -46,6 +66,11 @@ export default {
     return {
       pois: data,
       pagination,
+    };
+  },
+  data() {
+    return {
+      displayModal: false,
     };
   },
   computed: {
@@ -60,6 +85,9 @@ export default {
         .getPois(offset, limit);
       this.pois = updatedList.data;
       this.pagination = updatedList.pagination;
+    },
+    toggleCsvModal(force) {
+      this.displayModal = force || !this.displayModal;
     },
   },
 };

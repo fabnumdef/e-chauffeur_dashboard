@@ -310,6 +310,7 @@ import {
 import {
   CANCEL,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
+import generateCsvLink from '~/helpers/generateCsvLink';
 import ecDatePicker from '~/components/datepicker.vue';
 import vueModal from '~/components/modal.vue';
 import ecField from '~/components/form/field.vue';
@@ -386,7 +387,7 @@ export default {
       this.downloadLinks = Array
         .from({ length: Math.ceil(total / limit) })
         .map((_, i) => async () => {
-          const response = await this.$api
+          const { data } = await this.$api
             .rides(this.campus.id, this.fields.join(','))
             .getRides(
               this.filters.date[0],
@@ -398,19 +399,7 @@ export default {
                 csv,
               },
             );
-          if (window && window.document && window.btoa) {
-            const encodedUri = encodeURI(`data:text/csv;base64,${window.btoa(response.data)}`);
-            const link = window.document
-              .createElement('a');
-            link.setAttribute('href', encodedUri);
-            link.setAttribute(
-              'download',
-              `export_${this.getFormatDate(DateTime.local(), 'dd_MM_yyyy')}_part${i + 1}.csv`,
-            );
-            window.document.body.appendChild(link);
-            link.click();
-            link.remove();
-          }
+          generateCsvLink(data);
         });
     },
     toggleCsvModal(force) {

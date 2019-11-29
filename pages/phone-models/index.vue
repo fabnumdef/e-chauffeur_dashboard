@@ -4,6 +4,23 @@
       <h1 class="title">
         Modèles de téléphones
       </h1>
+      <button
+        class="button is-rounded"
+        type="button"
+        @click="toggleCsvModal(true)"
+      >
+        <fa-icon
+          :icon="['fas', 'file-export']"
+          class="has-text-info"
+        />
+        Exporter CSV
+      </button>
+      <csv-modal
+        :csv-status="displayModal"
+        :pagination="pagination"
+        :api-call="$api.phoneModels.getPhoneModels"
+        @toggleModal="toggleCsvModal"
+      />
       <div class="options">
         <nuxt-link
           v-if="$auth.isAdmin()"
@@ -32,6 +49,7 @@
 
 <script>
 import ecList from '~/components/crud/list.vue';
+import csvModal from '~/components/csv-modal';
 
 const FIELDS = [
   'id',
@@ -42,6 +60,7 @@ export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    csvModal,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -52,6 +71,11 @@ export default {
       pagination,
     };
   },
+  data() {
+    return {
+      displayModal: false,
+    };
+  },
   methods: {
     async deletePhoneModel({ id }) {
       await this.$api.phoneModels.deletePhoneModel(id);
@@ -60,6 +84,9 @@ export default {
       const updatedList = await this.$api.phoneModels.getPhoneModels(FIELDS.join(','), {}, offset, limit);
       this.phoneModels = updatedList.data;
       this.pagination = updatedList.pagination;
+    },
+    toggleCsvModal(force) {
+      this.displayModal = force || !this.displayModal;
     },
   },
 };
