@@ -23,11 +23,14 @@
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
     >
-      <template #actions="{ row }">
+      <template
+        v-if="$auth.isSuperAdmin()"
+        #actions="{ row }"
+      >
         <nuxt-link
           v-if="$auth.isSuperAdmin()"
           :to="{
-            name: 'car-models-id-edit',
+            name: 'campuses-id-edit',
             params: { id: row.id },
           }"
           class="button is-primary"

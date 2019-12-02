@@ -106,6 +106,8 @@ module.exports = {
           'faExclamationTriangle',
           'faMapPin',
           'faCar',
+          'faCheckCircle',
+          'faTimesCircle',
         ],
       },
     ],

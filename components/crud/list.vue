@@ -9,7 +9,7 @@
           {{ label }}
         </th>
         <th
-          v-if="hasSlot('actions') || hasAction"
+          v-if="hasSlot('actions')"
           class="actions"
         >
           Actions
@@ -25,35 +25,21 @@
           v-for="key in columnKeys"
           :key="key"
         >
-          {{ row[key] }}
+          <span v-if="isIcon(row[key])">
+            <fa-icon
+              :class="getIcon(row[key]).type"
+              :icon="[getIcon(row[key]).pre, getIcon(row[key]).name]"
+            />
+          </span>
+          <span v-else>
+            {{ row[key] }}
+          </span>
         </td>
         <td v-if="hasSlot('actions')">
           <slot
             name="actions"
             :row="row"
           />
-        </td>
-        <td v-else-if="hasAction">
-          <nuxt-link
-            v-if="!!actionEdit"
-            :to="routeActionEdit(row)"
-            class="button is-primary"
-          >
-            <span class="icon is-small">
-              <fa-icon :icon="['fas', 'edit']" />
-            </span>
-            <span>Modifier</span>
-          </nuxt-link>
-          <button
-            v-if="$listeners['action-remove']"
-            class="button is-danger"
-            @click="confirmRemove(row)"
-          >
-            <span class="icon is-small">
-              <fa-icon :icon="['fas', 'trash']" />
-            </span>
-            <span>Supprimer</span>
-          </button>
         </td>
       </tr>
     </tbody>
@@ -141,9 +127,6 @@ export default {
         });
       };
     },
-    hasAction() {
-      return !!this.routeActionEdit || (this.$listeners && this.$listeners['action-remove']);
-    },
   },
   methods: {
     confirmRemove(row) {
@@ -156,11 +139,30 @@ export default {
     hasSlot(name) {
       return !!this.$slots[name] || !!this.$scopedSlots[name];
     },
+    isIcon(string) {
+      const [isIcon] = string.split(':');
+      return isIcon === 'fas';
+    },
+    getIcon(icon) {
+      const [pre, name, type] = icon.split(':');
+      return {
+        pre,
+        name,
+        type,
+      };
+    },
   },
 };
 </script>
 <style scoped lang="scss">
   .actions {
     width: 250px;
+  }
+
+  svg.success {
+    color: #23d160;
+  }
+  svg.error {
+    color: #ff3860;
   }
 </style>

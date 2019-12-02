@@ -149,13 +149,19 @@ export default {
   methods: {
     async edit(poi) {
       let data = {};
-      if (this.id) {
-        ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
-          .patchPoi(this.id, poi)));
-      } else {
-        ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
-          .postPoi(poi)));
+      try {
+        if (this.id) {
+          ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
+            .patchPoi(this.id, poi)));
+        } else {
+          ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
+            .postPoi(poi)));
+        }
+        this.$toast.success('Le lieu a bien été mis à jour');
+      } catch (err) {
+        this.$toast.error("L'édition du lieu n'a pas fonctionné");
       }
+
 
       this.$router.push({
         name: 'pois-id-edit',
