@@ -19,6 +19,7 @@
         :csv-status="displayModal"
         :pagination="pagination"
         :api-call="$api.campuses.getCampuses"
+        :mask="mask"
         @toggleModal="toggleCsvModal"
       />
       <div class="options">
@@ -92,6 +93,7 @@ export default {
   data() {
     return {
       displayModal: false,
+      mask: 'id,name,workedDays,workedHours(start,end),location(coordinates),phone,timezone',
     };
   },
   methods: {

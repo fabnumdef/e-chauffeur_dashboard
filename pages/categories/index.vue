@@ -18,9 +18,10 @@
       <csv-modal
         :csv-status="displayModal"
         :pagination="pagination"
-        :api-call="$api.categories('*').getCategories"
+        :api-call="$api.categories(mask).getCategories"
         :has-mask="true"
         @toggleModal="toggleCsvModal"
+        :mask="mask"
       />
       <div class="options">
         <nuxt-link
@@ -93,6 +94,7 @@ export default {
   data() {
     return {
       displayModal: false,
+      mask: 'id,label',
     };
   },
   methods: {

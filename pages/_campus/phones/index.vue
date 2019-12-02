@@ -18,8 +18,10 @@
       <csv-modal
         :csv-status="displayModal"
         :pagination="pagination"
-        :api-call="$api.phones(campus.id, '*').getPhones"
+        :api-call="$api.phones(campus.id, mask).getPhones"
+        :mask="mask"
         @toggleModal="toggleCsvModal"
+        @updateMask="updateMask"
       />
       <div class="options">
         <nuxt-link
@@ -99,6 +101,7 @@ export default {
   data() {
     return {
       displayModal: false,
+      mask: 'id,imei,model(label),number,owner(_id),campus,state,comments',
     };
   },
   computed: {
@@ -138,6 +141,9 @@ export default {
     },
     toggleCsvModal(force) {
       this.displayModal = force || !this.displayModal;
+    },
+    updateMask(mask) {
+      this.mask = mask;
     },
   },
 };

@@ -18,9 +18,11 @@
       <csv-modal
         :csv-status="displayModal"
         :pagination="pagination"
-        :api-call="$api.pois(campus.id, '*').getPois"
+        :api-call="$api.pois(campus.id, mask).getPois"
         :has-mask="true"
+        :mask="mask"
         @toggleModal="toggleCsvModal"
+        @updateMask="updateMask"
       />
       <div class="options">
         <nuxt-link
@@ -98,6 +100,7 @@ export default {
   data() {
     return {
       displayModal: false,
+      mask: 'id,label,location(coordinates),campus(name),enabled',
     };
   },
   computed: {
@@ -120,6 +123,9 @@ export default {
     },
     toggleCsvModal(force) {
       this.displayModal = force || !this.displayModal;
+    },
+    updateMask(mask) {
+      this.mask = mask;
     },
   },
 };

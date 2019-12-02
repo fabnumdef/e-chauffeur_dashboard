@@ -92,10 +92,12 @@
       :csv-status="displayModal"
       :pagination="modalType === 'users' ? usersPagination : driversPagination"
       :api-call="modalType === 'users'
-        ? $api.campusUsers(campus.id, '*').getUsers
-        : $api.drivers(campus.id, '*').getDrivers"
+        ? $api.campusUsers(campus.id, mask).getUsers
+        : $api.drivers(campus.id, mask).getDrivers"
       :has-mask="true"
+      :mask="mask"
       @toggleModal="toggleCsvModal"
+      @updateMask="updateMask"
     />
   </main>
 </template>
@@ -133,6 +135,7 @@ export default {
     return {
       displayModal: false,
       modalType: '',
+      mask: 'id,email,firstname,lastname,phone',
     };
   },
   computed: {
@@ -163,6 +166,9 @@ export default {
     toggleCsvModal(force, type) {
       this.modalType = type;
       this.displayModal = force || !this.displayModal;
+    },
+    updateMask(mask) {
+      this.mask = mask;
     },
   },
 };

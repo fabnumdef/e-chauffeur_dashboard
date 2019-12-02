@@ -20,6 +20,7 @@
         :pagination="pagination"
         :api-call="$api.phoneModels.getPhoneModels"
         @toggleModal="toggleCsvModal"
+        :mask="mask"
       />
       <div class="options">
         <nuxt-link
@@ -74,6 +75,7 @@ export default {
   data() {
     return {
       displayModal: false,
+      mask: 'id,label',
     };
   },
   methods: {

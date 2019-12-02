@@ -20,6 +20,7 @@
         @toggleModal="toggleCsvModal"
         :pagination="pagination"
         :apiCall="$api.users.getUsers"
+        :mask="mask"
       />
       <div class="options">
         <nuxt-link
@@ -92,6 +93,7 @@ export default {
   data() {
     return {
       displayModal: false,
+      mask: 'id,email,firstname,lastname,phone',
     };
   },
   methods: {

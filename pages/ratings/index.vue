@@ -28,6 +28,7 @@
       :pagination="pagination"
       :api-call="$api.ratings.getRatings"
       @toggleModal="toggleCsvModal"
+      :mask="mask"
     />
   </main>
 </template>
@@ -68,6 +69,7 @@ export default {
   data() {
     return {
       displayModal: false,
+      mask: 'id,uxGrade,recommandationGrade,message,ride(campus)',
     };
   },
   computed: {

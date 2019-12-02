@@ -99,9 +99,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    fields: {
-      type: Array,
-      default: () => (['*']),
+    mask: {
+      type: String,
+      required: true,
     },
   },
   data() {
@@ -124,6 +124,7 @@ export default {
       await this.recalcDownloadLinks();
     },
     'csv.mask': async function csvSeparator() {
+      this.$emit('updateMask', this.csv.mask);
       await this.recalcDownloadLinks();
     },
   },
@@ -132,7 +133,7 @@ export default {
       separator: ';',
       delimiter: '"',
       flatten: true,
-      mask: '*',
+      mask: this.mask,
     };
   },
   methods: {
@@ -143,7 +144,7 @@ export default {
         .from({ length: Math.ceil(total / ROWS_PER_QUERY) })
         .map((_, i) => async () => {
           const args = [
-            csv.mask || this.fields,
+            csv.mask,
             {
               offset: ROWS_PER_QUERY * i,
               limit: ROWS_PER_QUERY,
@@ -161,10 +162,9 @@ export default {
     toggle(force) {
       this.$emit('toggleModal', force);
     },
+    emitUpdateMask(mask) {
+      this.$emit('updateMask', mask);
+    },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

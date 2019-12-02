@@ -20,6 +20,7 @@
         :pagination="pagination"
         :api-call="$api.carModels.getCarModels"
         @toggleModal="toggleCsvModal"
+        :mask="mask"
       />
       <div class="options">
         <nuxt-link
@@ -97,6 +98,7 @@ export default {
   data() {
     return {
       displayModal: false,
+      mask: 'id,label',
     };
   },
   computed: {
