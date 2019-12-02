@@ -10,6 +10,7 @@
 * Changed dropdown title when creating a new car in planning
 * Fix infosec issue with X-Frame header
 * Fix arrow on calendar tooltip
+* Fix links to update items in lists
 ## Version 1.4.3
 ### Features
 * Add new campus users interface for admin
