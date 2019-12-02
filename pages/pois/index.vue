@@ -43,8 +43,15 @@ export default {
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api.pois(null, Object.keys(columns).join(','), { withDisabled: true })
       .getPois(offset, limit);
+
+    const pois = data.map((poi) => ({
+      ...poi,
+      enabled: poi.enabled
+        ? 'fas:check-circle:success'
+        : 'fas:times-circle:error',
+    }));
     return {
-      pois: data,
+      pois,
       pagination,
     };
   },

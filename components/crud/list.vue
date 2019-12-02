@@ -25,7 +25,15 @@
           v-for="key in columnKeys"
           :key="key"
         >
-          {{ row[key] }}
+          <span v-if="isIcon(row[key])">
+            <fa-icon
+              :class="getIcon(row[key]).type"
+              :icon="[getIcon(row[key]).pre, getIcon(row[key]).name]"
+            />
+          </span>
+          <span v-else>
+            {{ row[key] }}
+          </span>
         </td>
         <td v-if="hasSlot('actions')">
           <slot
@@ -156,11 +164,30 @@ export default {
     hasSlot(name) {
       return !!this.$slots[name] || !!this.$scopedSlots[name];
     },
+    isIcon(string) {
+      const [isIcon] = string.split(':');
+      return isIcon === 'fas';
+    },
+    getIcon(icon) {
+      const [pre, name, type] = icon.split(':');
+      return {
+        pre,
+        name,
+        type,
+      };
+    },
   },
 };
 </script>
 <style scoped lang="scss">
   .actions {
     width: 250px;
+  }
+
+  svg.success {
+    color: #23d160;
+  }
+  svg.error {
+    color: #ff3860;
   }
 </style>

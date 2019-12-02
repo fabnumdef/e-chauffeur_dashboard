@@ -70,8 +70,15 @@ export default {
       Object.keys(columns).join(','),
       { withDisabled: true },
     ).getPois(offset, limit);
+
+    const pois = data.map((poi) => ({
+      ...poi,
+      enabled: poi.enabled
+        ? 'fas:check-circle:success'
+        : 'fas:times-circle:error',
+    }));
     return {
-      pois: data,
+      pois,
       pagination,
     };
   },
