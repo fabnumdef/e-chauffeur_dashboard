@@ -475,7 +475,7 @@ export default {
           }
           .event-hover:after, .event-hover:before {
             top: 100%;
-            left: 50%;
+            left: 25px;
             border: solid transparent;
             content: " ";
             height: 0;
