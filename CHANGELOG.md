@@ -30,6 +30,8 @@
 * Fix Winston error
 * Handle errors on post/patch /users /campuses/{id}/users /campuses/{id}/drivers
 * Fix planificator column alignment between header and body on month and day view
+* Fix POI update for admin
+* Fix actions display when user has no rights for CRUD
 ## Version 1.4.2
 ### Features
 * Improve reliability, k8s side
