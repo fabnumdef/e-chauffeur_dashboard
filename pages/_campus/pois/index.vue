@@ -30,7 +30,7 @@
         <nuxt-link
           v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
           :to="{
-            name: 'campuses-id-edit',
+            name: 'campus-pois-id-edit',
             params: { id: row.id },
           }"
           class="button is-primary"

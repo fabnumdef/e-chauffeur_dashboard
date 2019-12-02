@@ -30,9 +30,10 @@
       >
         <nuxt-link
           v-if="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
-          :to="campusLink('phones-id-edit', {
-            params: row,
-          })"
+          :to="{
+            name: 'campus-phones-id-edit',
+            params: { id: row.id }
+          }"
           class="button is-primary"
         >
           <span class="icon is-small">
