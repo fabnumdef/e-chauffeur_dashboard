@@ -55,7 +55,10 @@ export default {
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.ratings.getRatings('*', { offset, limit });
+    const { data, pagination } = await $api.ratings.getRatings(
+      'id,uxGrade,recommandationGrade,message,ride(campus),createdAt,ride',
+      { offset, limit },
+    );
     const ratings = data.map((rating) => ({
       ...rating,
       ride: rating.ride.id,
@@ -69,7 +72,7 @@ export default {
   data() {
     return {
       displayModal: false,
-      mask: 'id,uxGrade,recommandationGrade,message,ride(campus)',
+      mask: 'id,uxGrade,recommandationGrade,message,ride(campus),ride,createdAt',
     };
   },
   computed: {
