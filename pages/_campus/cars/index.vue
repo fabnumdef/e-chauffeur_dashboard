@@ -27,8 +27,8 @@
       @action-remove="deleteCar"
     >
       <template
-        #actions="{ row }"
         v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+        #actions="{ row }"
       >
         <nuxt-link
           v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"

@@ -33,8 +33,8 @@
           @action-remove="deleteDriver"
         >
           <template
-            #actions="{ row }"
             v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+            #actions="{ row }"
           >
             <nuxt-link
               v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
@@ -93,7 +93,10 @@
           action-remove-confirm="Voulez-vous vraiment supprimer cet utilisateur ?"
           @action-remove="deleteUser"
         >
-          <template #actions="{ row }">
+          <template
+            v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+            #actions="{ row }"
+          >
             <nuxt-link
               v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
               :to="{

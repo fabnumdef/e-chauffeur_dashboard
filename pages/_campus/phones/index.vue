@@ -25,8 +25,8 @@
       :pagination-per-page="pagination.limit"
     >
       <template
-        #actions="{ row }"
         v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+        #actions="{ row }"
       >
         <nuxt-link
           v-if="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
