@@ -24,7 +24,10 @@
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
     >
-      <template #actions="{ row }">
+      <template
+        #actions="{ row }"
+        v-if="$auth.isSuperAdmin()"
+      >
         <nuxt-link
           v-if="$auth.isSuperAdmin()"
           :to="{

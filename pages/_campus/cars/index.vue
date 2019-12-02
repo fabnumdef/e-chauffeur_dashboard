@@ -25,7 +25,36 @@
       :action-edit="campusLink('cars-id-edit')"
       action-remove-confirm="Voulez vous vraiment supprimer ce véhicule ?"
       @action-remove="deleteCar"
-    />
+    >
+      <template
+        #actions="{ row }"
+        v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+      >
+        <nuxt-link
+          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+          :to="{
+            name: 'campuses-id-edit',
+            params: { id: row.id },
+          }"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'edit']" />
+          </span>
+          <span>Modifier</span>
+        </nuxt-link>
+        <button
+          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+          class="button is-danger"
+          @click="deleteCar(row)"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'trash']" />
+          </span>
+          <span>Supprimer</span>
+        </button>
+      </template>
+    </ec-list>
   </main>
 </template>
 

@@ -9,7 +9,7 @@
           {{ label }}
         </th>
         <th
-          v-if="hasSlot('actions') || hasAction"
+          v-if="hasSlot('actions')"
           class="actions"
         >
           Actions
@@ -40,28 +40,6 @@
             name="actions"
             :row="row"
           />
-        </td>
-        <td v-else-if="hasAction">
-          <nuxt-link
-            v-if="!!actionEdit"
-            :to="routeActionEdit(row)"
-            class="button is-primary"
-          >
-            <span class="icon is-small">
-              <fa-icon :icon="['fas', 'edit']" />
-            </span>
-            <span>Modifier</span>
-          </nuxt-link>
-          <button
-            v-if="$listeners['action-remove']"
-            class="button is-danger"
-            @click="confirmRemove(row)"
-          >
-            <span class="icon is-small">
-              <fa-icon :icon="['fas', 'trash']" />
-            </span>
-            <span>Supprimer</span>
-          </button>
         </td>
       </tr>
     </tbody>
@@ -148,9 +126,6 @@ export default {
           params: { id: row.id },
         });
       };
-    },
-    hasAction() {
-      return !!this.routeActionEdit || (this.$listeners && this.$listeners['action-remove']);
     },
   },
   methods: {

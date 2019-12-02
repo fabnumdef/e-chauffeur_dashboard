@@ -24,9 +24,12 @@
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
     >
-      <template #actions="{ row }">
+      <template
+        #actions="{ row }"
+        v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+      >
         <nuxt-link
-          v-if="$auth.isAdmin()"
+          v-if="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
           :to="campusLink('phones-id-edit', {
             params: row,
           })"
@@ -38,7 +41,7 @@
           <span>Modifier</span>
         </nuxt-link>
         <button
-          v-if="$auth.isAdmin()"
+          v-if="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
           class="button is-danger"
           @click="deletePhone(row)"
         >

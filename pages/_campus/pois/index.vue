@@ -23,12 +23,16 @@
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
     >
-      <template #actions="{ row }">
+      <template
+        #actions="{ row }"
+        v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+      >
         <nuxt-link
-          v-if="$auth.isAdmin()"
-          :to="campusLink('pois-id-edit', {
+          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+          :to="{
+            name: 'campuses-id-edit',
             params: { id: row.id },
-          })"
+          }"
           class="button is-primary"
         >
           <span class="icon is-small">
@@ -37,7 +41,7 @@
           <span>Modifier</span>
         </nuxt-link>
         <button
-          v-if="$auth.isAdmin()"
+          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
           class="button is-danger"
           @click="deletePoi(row)"
         >
