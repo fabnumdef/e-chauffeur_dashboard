@@ -5,11 +5,13 @@
 * Add explicit error messages on 
 * Add possibility for admin to edit his own campus
 * Add csv export for CRUDs
+* Round percents in dashboard
 ### Fix
 * Updated login page ui
 * Changed dropdown title when creating a new car in planning
 * Fix infosec issue with X-Frame header
 * Fixed logo color when connected
+* Fix arrow on calendar tooltip
 ## Version 1.4.3
 ### Features
 * Add new campus users interface for admin

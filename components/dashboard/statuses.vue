@@ -52,6 +52,17 @@ const CANCELED_STATUSES = [
 const FAILED_STATUSES = [
   REJECTED_BOUNDARY, REJECTED_CAPACITY, DECLINED, CANCELED_TECHNICAL,
 ];
+
+function makeRidesComputedFrom(STATUSES) {
+  return function genericComputed() {
+    const accumulated = this.statuses
+      .reduce((acc, { total, id }) => (acc + (STATUSES.includes(id) ? total : 0)), 0);
+    return {
+      total: accumulated,
+      percent: (((accumulated / this.ridesTotal) * 100) || 0).toFixed(2),
+    };
+  };
+}
 export default {
   components: {
     fragmentedTile,
@@ -65,38 +76,10 @@ export default {
     },
   },
   computed: {
-    ridesSucceed() {
-      const accumulated = this.statuses
-        .reduce((acc, { total, id }) => (acc + (SUCCEED_STATUSES.includes(id) ? total : 0)), 0);
-      return {
-        total: accumulated,
-        percent: (accumulated / this.ridesTotal) * 100,
-      };
-    },
-    ridesFailed() {
-      const accumulated = this.statuses
-        .reduce((acc, { total, id }) => (acc + (FAILED_STATUSES.includes(id) ? total : 0)), 0);
-      return {
-        total: accumulated,
-        percent: (accumulated / this.ridesTotal) * 100,
-      };
-    },
-    ridesCanceled() {
-      const accumulated = this.statuses
-        .reduce((acc, { total, id }) => (acc + (CANCELED_STATUSES.includes(id) ? total : 0)), 0);
-      return {
-        total: accumulated,
-        percent: (accumulated / this.ridesTotal) * 100,
-      };
-    },
-    ridesInProgress() {
-      const accumulated = this.statuses
-        .reduce((acc, { total, id }) => (acc + (IN_PROGRESS_STATUSES.includes(id) ? total : 0)), 0);
-      return {
-        total: accumulated,
-        percent: (accumulated / this.ridesTotal) * 100,
-      };
-    },
+    ridesSucceed: makeRidesComputedFrom(SUCCEED_STATUSES),
+    ridesFailed: makeRidesComputedFrom(FAILED_STATUSES),
+    ridesCanceled: makeRidesComputedFrom(CANCELED_STATUSES),
+    ridesInProgress: makeRidesComputedFrom(IN_PROGRESS_STATUSES),
     ridesTotal() {
       return this.statuses.reduce((acc, { total }) => (acc + total), 0);
     },
