@@ -149,10 +149,15 @@ export default {
   methods: {
     async edit(poi) {
       let data = {};
-      if (this.id) {
-        ({ data } = (await this.PoisAPI.patchPoi(this.id, poi)));
-      } else {
-        ({ data } = (await this.PoisAPI.postPoi(poi)));
+      try {
+        if (this.id) {
+          ({ data } = (await this.PoisAPI.patchPoi(this.id, poi)));
+        } else {
+          ({ data } = (await this.PoisAPI.postPoi(poi)));
+        }
+        this.$toast.success('Le lieu a bien été mis à jour');
+      } catch (err) {
+        this.$toast.error("L'édition du lieu n'a pas fonctionné");
       }
 
       this.$router.push(this.$context.buildCampusLink('pois-id-edit', {
