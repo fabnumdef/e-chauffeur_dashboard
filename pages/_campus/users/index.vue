@@ -38,10 +38,9 @@
           >
             <nuxt-link
               v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
-              :to="{
-                name: 'campuses-id-edit',
+              :to="campusLink('users-id-edit', {
                 params: { id: row.id },
-              }"
+              })"
               class="button is-primary"
             >
               <span class="icon is-small">
@@ -99,10 +98,9 @@
           >
             <nuxt-link
               v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
-              :to="{
-                name: 'campuses-id-edit',
+              :to="campusLink('users-id-edit', {
                 params: { id: row.id },
-              }"
+              })"
               class="button is-primary"
             >
               <span class="icon is-small">
