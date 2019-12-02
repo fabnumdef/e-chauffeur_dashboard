@@ -101,7 +101,7 @@ export default {
   data() {
     return {
       displayModal: false,
-      mask: 'id,imei,model(label),number,owner(_id),campus,state,comments',
+      mask: 'id,imei,model(label),number,owner(id),campus,state,comments',
     };
   },
   computed: {
