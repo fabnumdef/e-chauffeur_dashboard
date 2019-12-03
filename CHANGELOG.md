@@ -33,6 +33,7 @@
 * Fix planificator column alignment between header and body on month and day view
 * Fix POI update for admin
 * Fix actions display when user has no rights for CRUD
+* Fix POI enabled icon for pois lists
 ## Version 1.4.2
 ### Features
 * Improve reliability, k8s side
