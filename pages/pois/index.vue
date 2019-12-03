@@ -75,9 +75,9 @@ export default {
 
     const pois = data.map((poi) => ({
       ...poi,
-      enabled: poi.enabled
-        ? 'fas:check-circle:success'
-        : 'fas:times-circle:error',
+      enabled: (poi.enabled === false)
+        ? 'fas:times-circle:error'
+        : 'fas:check-circle:success',
     }));
     return {
       pois,
