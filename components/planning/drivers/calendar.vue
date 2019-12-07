@@ -16,6 +16,7 @@
         :disable-views="['years', 'year', 'month', 'day']"
         :on-event-click="openEdit"
         :min-event-width="75"
+        :selected-date="shouldUseSelectedDate ? selectedDate : ''"
         @click-and-release="openCreate"
         @view-change="viewChange"
       >
@@ -79,12 +80,14 @@ export default {
   data() {
     return {
       STEP,
+      shouldUseSelectedDate: true,
     };
   },
 
   computed: {
     ...mapGetters({
       campus: 'context/campus',
+      selectedDate: 'planning/getSelectedDate',
     }),
     ...['TIME_SIMPLE']
       .map((f) => ({ [f]: () => DateTime[f] }))
@@ -115,10 +118,11 @@ export default {
       this.$emit('open-edit', content);
     },
     viewChange({ startDate, endDate }) {
-      this.$emit('view-change', {
-        startDate,
-        endDate,
-      });
+      const current = new Date(startDate);
+      current.setDate(current.getDate() + 5);
+      this.$store.commit('planning/setSelectedDate', current);
+      this.shouldUseSelectedDate = false;
+      this.$emit('view-change', { startDate, endDate });
     },
     drop(event, content) {
       const driver = JSON.parse(event.dataTransfer.getData('application/json'));
