@@ -19,12 +19,12 @@
 import ecList from '~/components/crud/list.vue';
 
 const columns = {
-  createdAt: 'Timestamp',
+  createdAt: 'Date',
   uxGrade: 'Note UX',
   recommandationGrade: 'Recommandation',
   message: 'Message',
-  ride: 'Ride',
-  campus: 'Campus',
+  ride: 'ID de la course',
+  campus: 'Base',
 };
 
 export default {
