@@ -34,6 +34,7 @@
 * Fix POI update for admin
 * Fix actions display when user has no rights for CRUD
 * Fix POI enabled icon for pois lists
+* Fix planning sync between cars and drivers
 ## Version 1.4.2
 ### Features
 * Improve reliability, k8s side
