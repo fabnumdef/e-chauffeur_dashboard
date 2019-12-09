@@ -87,7 +87,6 @@ export default {
   computed: {
     ...mapGetters({
       campus: 'context/campus',
-      selectedDate: 'planning/getSelectedDate',
     }),
     ...['TIME_SIMPLE']
       .map((f) => ({ [f]: () => DateTime[f] }))
@@ -106,6 +105,9 @@ export default {
       return (this.campus && this.campus.workedHours)
         ? this.campus.workedHours.end : END_DAY_HOUR;
     },
+    selectedDate() {
+      return this.$route.query.current;
+    },
   },
   methods: {
     openCreate(event) {
@@ -118,9 +120,10 @@ export default {
       this.$emit('open-edit', content);
     },
     viewChange({ startDate, endDate }) {
-      const current = new Date(startDate);
-      current.setDate(current.getDate() + 5);
-      this.$store.commit('planning/setSelectedDate', current);
+      this.$router.push(this.campusLink(
+        'planning-drivers',
+        { query: { current: DateTime.fromJSDate(startDate).plus({ day: 5 }).toString() } },
+      ));
       this.shouldUseSelectedDate = false;
       this.$emit('view-change', { startDate, endDate });
     },
