@@ -134,6 +134,17 @@
           </div>
         </div>
         <ec-field
+          label="Distance à laquelle le soutenu peut réserver une course (en jours)"
+          field-id="reservation-scope"
+        >
+          <input
+            id="reservation-scope"
+            v-model="campus.defaultReservationScope"
+            class="input"
+            type="number"
+          >
+        </ec-field>
+        <ec-field
           label="Catégories"
           field-id="categories"
         >
@@ -200,7 +211,7 @@ import weekdaysSelect from '~/components/form/weekdays.vue';
 import rideDuration from '~/components/form/ride-duration.vue';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
-    + 'information,timezone,workedDays,workedHours,defaultRideDuration';
+    + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
 export default {
   components: {
     ecField,
