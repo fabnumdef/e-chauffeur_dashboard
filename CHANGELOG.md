@@ -5,6 +5,7 @@
 * Add explicit error messages on 
 * Add possibility for admin to edit his own campus
 * Round percents in dashboard
+* Add custom reservation scope for campus
 ### Fix
 * Updated login page ui
 * Changed dropdown title when creating a new car in planning
@@ -12,6 +13,8 @@
 * Fix arrow on calendar tooltip
 * Fix links to update items in lists
 * Fix status translation in dashboard
+* Fix ratings labels
+* Fix minor bug on list.vue
 ## Version 1.4.3
 ### Features
 * Add new campus users interface for admin
@@ -35,6 +38,7 @@
 * Fix POI update for admin
 * Fix actions display when user has no rights for CRUD
 * Fix POI enabled icon for pois lists
+* Fix planning sync between cars and drivers
 ## Version 1.4.2
 ### Features
 * Improve reliability, k8s side

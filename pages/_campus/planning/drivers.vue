@@ -8,7 +8,7 @@
         <div class="column">
           <nuxt-link
             class="button switch-planning"
-            :to="campusLink('planning-cars')"
+            :to="campusLink('planning-cars', { query: { current: $route.query.current } })"
           >
             <fa-icon icon="user-circle" /> <fa-icon icon="car" />
           </nuxt-link>
