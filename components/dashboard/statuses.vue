@@ -84,52 +84,52 @@ export default {
       return this.statuses.map((status) => {
         let id;
         switch (status.id) {
-          case 'drafted':
+          case DRAFTED:
             id = 'En création';
             break;
-          case 'created':
+          case CREATED:
             id = 'Créée';
             break;
-          case 'validated':
+          case VALIDATED:
             id = 'Validée';
             break;
-          case 'rejected_boundary':
+          case REJECTED_BOUNDARY:
             id = 'Refusée - Hors-limite';
             break;
-          case 'rejected_capacity':
+          case REJECTED_CAPACITY:
             id = 'Refusée - Capacité';
             break;
-          case 'accepted':
+          case ACCEPTED:
             id = 'Acceptée par le chauffeur';
             break;
-          case 'declined':
+          case DECLINED:
             id = 'Rejetée par le chauffeur';
             break;
-          case 'started':
+          case STARTED:
             id = 'Commencée';
             break;
-          case 'waiting':
+          case WAITING:
             id = 'En attente';
             break;
-          case 'progress':
+          case IN_PROGRESS:
             id = 'En cours';
             break;
-          case 'delivered':
+          case DELIVERED:
             id = 'Terminée';
             break;
-          case 'canceled':
+          case CANCELED:
             id = 'Annulée';
             break;
-          case 'canceled_technical':
+          case CANCELED_TECHNICAL:
             id = 'Annulée - raisons techniques';
             break;
-          case 'canceled_requested_customer':
+          case CANCELED_REQUESTED_CUSTOMER:
             id = 'Annulée - initiative du passager';
             break;
-          case 'canceled_customer_overload':
+          case CANCELED_CUSTOMER_OVERLOAD:
             id = 'Annulée - passager trop chargé';
             break;
-          case 'canceled_customer_missing':
+          case CANCELED_CUSTOMER_MISSING:
             id = 'Annulée - passager manquant';
             break;
           default:
