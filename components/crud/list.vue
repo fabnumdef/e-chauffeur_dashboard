@@ -140,6 +140,9 @@ export default {
       return !!this.$slots[name] || !!this.$scopedSlots[name];
     },
     isIcon(string) {
+      if (typeof string !== 'string') {
+        return false;
+      }
       const [isIcon] = string.split(':');
       return isIcon === 'fas';
     },

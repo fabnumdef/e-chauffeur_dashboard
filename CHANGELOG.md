@@ -11,6 +11,8 @@
 * Fix infosec issue with X-Frame header
 * Fix arrow on calendar tooltip
 * Fix links to update items in lists
+* Fix ratings labels
+* Fix minor bug on list.vue
 ## Version 1.4.3
 ### Features
 * Add new campus users interface for admin
