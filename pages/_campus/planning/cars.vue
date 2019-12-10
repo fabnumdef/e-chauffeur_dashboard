@@ -8,7 +8,7 @@
         <div class="column">
           <nuxt-link
             class="button switch-planning"
-            :to="campusLink('planning-drivers')"
+            :to="campusLink('planning-drivers', { query: { current: $route.query.current } })"
           >
             <fa-icon icon="user-circle" /> <fa-icon icon="car" />
           </nuxt-link>
@@ -79,6 +79,7 @@ const newTimeSlot = () => ({
   drivers: null,
 });
 export default {
+  watchQuery: ['current'],
   components: { planningModal, planningCalendar },
   async asyncData({ $api, params, query }) {
     // @todo: paginate
