@@ -11,6 +11,7 @@
 * Fix infosec issue with X-Frame header
 * Fix arrow on calendar tooltip
 * Fix links to update items in lists
+* Fix status translation in dashboard
 ## Version 1.4.3
 ### Features
 * Add new campus users interface for admin
