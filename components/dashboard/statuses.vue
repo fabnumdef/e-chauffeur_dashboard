@@ -124,7 +124,7 @@ export default {
             id = 'Annulée - raisons techniques';
             break;
           case 'canceled_requested_customer':
-            id = 'Annulée - raisons techniques';
+            id = 'Annulée - initiative du passager';
             break;
           case 'canceled_customer_overload':
             id = 'Annulée - passager trop chargé';
