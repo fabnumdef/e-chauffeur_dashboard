@@ -89,7 +89,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
-import SearchCarModels from '~/components/form/search-car-models';
+import SearchCarModels from '~/components/form/search-car-models.vue';
 
 const EDITABLE_FIELDS = ['id', 'label', 'model'];
 

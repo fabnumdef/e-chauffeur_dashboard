@@ -297,10 +297,10 @@ import {
   CANCEL_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
 import ecField from '~/components/form/field.vue';
-import searchPoi from '~/components/form/search-poi';
-import searchCategory from '~/components/form/search-campus-category';
-import searchAvailableCar from '~/components/form/search-available-car';
-import searchAvailableDriver from '~/components/form/search-available-driver';
+import searchPoi from '~/components/form/search-poi.vue';
+import searchCategory from '~/components/form/search-campus-category.vue';
+import searchAvailableCar from '~/components/form/search-available-car.vue';
+import searchAvailableDriver from '~/components/form/search-available-driver.vue';
 import bulmaDropdown from '~/components/dropdown.vue';
 import vueModal from '~/components/modal.vue';
 

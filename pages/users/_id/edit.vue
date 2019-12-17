@@ -130,8 +130,8 @@
 <script>
 import { DateTime } from 'luxon';
 import ecField from '~/components/form/field.vue';
-import ecPassword from '~/components/form/password';
-import roleRules from '~/components/form/role-rules';
+import ecPassword from '~/components/form/password.vue';
+import roleRules from '~/components/form/role-rules.vue';
 
 export default {
   components: {
