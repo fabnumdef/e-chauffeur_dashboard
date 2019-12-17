@@ -6,6 +6,7 @@
 * Add possibility for admin to edit his own campus
 * Round percents in dashboard
 * Add custom reservation scope for campus
+* Add recurrence
 ### Fix
 * Updated login page ui
 * Changed dropdown title when creating a new car in planning

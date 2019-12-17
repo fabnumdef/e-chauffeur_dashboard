@@ -71,12 +71,13 @@ import planningModal from '~/components/planning/drivers/modal.vue';
 import planningCalendar from '~/components/planning/drivers/calendar.vue';
 
 const DRIVER_DATA = 'id,firstname,lastname';
-const TIMESLOT_DATA = `id,start,end,drivers(${DRIVER_DATA})`;
+const TIMESLOT_DATA = `id,start,end,drivers(${DRIVER_DATA}),recurrence(enabled,frequency)`;
 const newTimeSlot = () => ({
   start: null,
   end: null,
   drivers: [],
   cars: null,
+  recurrence: { frequency: null, enabled: false },
 });
 export default {
   components: { planningModal, planningCalendar },
