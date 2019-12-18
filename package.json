@@ -1,8 +1,5 @@
 {
   "name": "e-chauffeur_dashboard",
-  "version": "1.4.2",
-  "description": "e-chauffeur dashboard",
-  "author": "Gaël",
   "private": true,
   "scripts": {
     "dev": "nuxt",
