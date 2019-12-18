@@ -1,4 +1,5 @@
 {
+  "name": "e-chauffeur_dashboard",
   "private": true,
   "scripts": {
     "dev": "nuxt",

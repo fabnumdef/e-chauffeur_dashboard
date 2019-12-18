@@ -81,11 +81,10 @@ deploy_staging:
 
 deploy_prod:
   stage: deploy
-  image: dtzar/helm-kubectl:2.16.1
+  image: dtzar/helm-kubectl:3.0.1
   before_script:
     - mkdir -p `dirname $KUBECONFIG`
     - echo ${PRODUCTION_KUBECONFIG} | base64 -d > $KUBECONFIG
-    - helm init --upgrade --service-account tiller --force-upgrade
   script:
     - helm upgrade
       --install
@@ -99,7 +98,7 @@ deploy_prod:
       --set env.API_URL="${PRODUCTION_API_URL}"
       --set ingress.issuer="letsencrypt-prod"
       --wait
-      e-chauffeur-dashboard-${CI_COMMIT_REF_SLUG}
+      dashboard
       .helm-chart
   only:
     refs:
