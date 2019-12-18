@@ -47,7 +47,6 @@ deploy_review:
       --set imageCredentials.password="${DOCKER_REGISTRY_PASSWORD}"
       --set imageCredentials.registry="${CI_REGISTRY}"
       --set env.API_URL="${STAGING_API_URL}"
-      --set ingress.issuer="letsencrypt-prod"
       --wait
       e-chauffeur-dashboard-${CI_COMMIT_REF_SLUG}
       .helm-chart
