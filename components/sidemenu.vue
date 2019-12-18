@@ -48,6 +48,10 @@
       <li v-if="hasCampus">
         <nuxt-link :to="campusLink('planificator')">
           Planificateur
+          <span
+            v-if="ridesToValidate > 0"
+            class="red-dot"
+          >{{ ridesToValidate }}</span>
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
@@ -188,7 +192,10 @@ export default {
     reconnectingHero,
   },
   computed: {
-    ...mapGetters({ campus: 'context/campus' }),
+    ...mapGetters({
+      campus: 'context/campus',
+      ridesToValidate: 'realtime/ridesToValidate',
+    }),
   },
   watch: {
     campus(c) {
@@ -238,6 +245,26 @@ export default {
 
   .logo {
     padding: 20px;
+  }
+
+  .red-dot {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    height: 20px;
+    width: 20px;
+    border-radius: 100%;
+    background-color: $red;
+    color: $white;
+    font-size: .7em;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  a {
+    position: relative;
   }
 
   .menu-list a {

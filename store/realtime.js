@@ -1,6 +1,7 @@
 // We've to disable param reassign, because it's the common behavior of vuex
 /* eslint-disable no-param-reassign,no-shadow */
 import { DateTime } from 'luxon';
+import { CREATED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
 export const state = () => ({
   drivers: [],
@@ -45,6 +46,7 @@ export const mutations = {
 export const getters = {
   drivers: (s) => s.drivers,
   rides: (s) => s.rides,
+  ridesToValidate: (s) => s.rides.filter(({ status }) => status === CREATED).length,
   todayRides: ({ rides }) => {
     const currentTime = DateTime.local();
     return rides.filter((r) => DateTime.fromISO(r.start).hasSame(currentTime, 'day')
