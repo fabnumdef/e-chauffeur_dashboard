@@ -8,9 +8,7 @@ export const state = () => ({
 
 export const mutations = {
   setCampus: (s, campus = null) => {
-    if (campus) {
-      s.campus = campus;
-    }
+    s.campus = campus;
   },
   hideMap: (s, hide) => {
     s.hideMap = hide;
