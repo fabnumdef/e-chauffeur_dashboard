@@ -46,7 +46,7 @@ export const mutations = {
 export const getters = {
   drivers: (s) => s.drivers,
   rides: (s) => s.rides,
-  ridesToValidate: (s) => s.rides.filter(({ status }) => status === CREATED).length,
+  ridesToValidate: (s) => s.rides.filter(({ status }) => status === CREATED),
   todayRides: ({ rides }) => {
     const currentTime = DateTime.local();
     return rides.filter((r) => DateTime.fromISO(r.start).hasSame(currentTime, 'day')
@@ -84,7 +84,7 @@ export const actions = {
       'luggage',
     ].join(',');
     const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
-    if (getters.rides.length === 0) {
+    if (getters.rides.length === 0 || rides.length === 0) {
       commit('setRides', rides);
     } else {
       rides.forEach((r) => commit('pushRide', r));

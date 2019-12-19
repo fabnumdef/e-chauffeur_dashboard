@@ -8,7 +8,9 @@ export const state = () => ({
 
 export const mutations = {
   setCampus: (s, campus = null) => {
-    s.campus = campus;
+    if (campus) {
+      s.campus = campus;
+    }
   },
   hideMap: (s, hide) => {
     s.hideMap = hide;
@@ -29,7 +31,7 @@ export const actions = {
       return;
     }
     const { data } = await this.$api.campuses.getCampus(campus,
-      'id,name,location,categories(id,label),workedDays,workedHours,defaultRideDuration');
+      'id,name,location,categories(id,label),workedDays,workedHours,defaultRideDuration,defaultReservationScope');
     commit('setCampus', data);
   },
   hideMap({ commit }, hide) {

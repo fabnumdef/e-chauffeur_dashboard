@@ -49,9 +49,9 @@
         <nuxt-link :to="campusLink('planificator')">
           Planificateur
           <span
-            v-if="ridesToValidate > 0"
+            v-if="ridesToValidate.length > 0"
             class="red-dot"
-          >{{ ridesToValidate }}</span>
+          >{{ ridesToValidate.length }}</span>
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
@@ -216,11 +216,13 @@ export default {
   methods: {
     ...mapActions({ fetchCampus: 'context/fetchCampus', setRides: 'realtime/setRides' }),
     async setCampus(campus) {
-      this.fetchCampus(campus ? campus.id : null);
+      await this.fetchCampus(campus ? campus.id : null);
       if (campus) {
         const start = DateTime.local().startOf('days').toJSDate();
-        const end = DateTime.local().endOf('days').toJSDate();
-        await this.setRides({ campus: campus.id, start, end });
+        const end = DateTime.local()
+          .plus({ seconds: this.campus.defaultReservationScope })
+          .toJSDate();
+        await this.setRides({ campus: this.campus.id, start, end });
       }
     },
     logout() {
