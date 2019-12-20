@@ -5,6 +5,17 @@
         Utilisateurs
       </h1>
       <div class="options">
+        <button
+          class="button is-rounded"
+          type="button"
+          @click="toggleUploadModal"
+        >
+          <fa-icon
+            :icon="['fas', 'file-import']"
+            class="has-text-info"
+          />
+          Importer CSV
+        </button>
         <nuxt-link
           v-if="$auth.isRegulator()"
           :to="{name: 'users-new'}"
@@ -16,6 +27,11 @@
           <span>Créer</span>
         </nuxt-link>
       </div>
+      <upload-modal
+        :display="displayUploadModal"
+        @toggle="toggleUploadModal"
+        @submit="uploadCSV"
+      />
     </header>
     <ec-list
       :columns="{id: 'ID', email: 'E-mail'}"
@@ -58,11 +74,13 @@
 
 <script>
 import ecList from '~/components/crud/list.vue';
+import uploadModal from '~/components/modals/upload.vue';
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    uploadModal,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -73,6 +91,11 @@ export default {
       pagination,
     };
   },
+  data() {
+    return {
+      displayUploadModal: false,
+    };
+  },
   methods: {
     async deleteUser({ id }) {
       await this.$api.users.deleteUser(id);
@@ -81,6 +104,12 @@ export default {
       const updatedList = await this.$api.users.getUsers('id,email', offset, limit);
       this.users = updatedList.data;
       this.pagination = updatedList.pagination;
+    },
+    toggleUploadModal() {
+      this.displayUploadModal = !this.displayUploadModal;
+    },
+    uploadCSV(evt) {
+      console.log('submit', evt);
     },
   },
 };
@@ -95,6 +124,9 @@ export default {
     .options {
       padding: 0 10px 10px;
       float: right;
+      * {
+        margin: 0 .3em;
+      }
     }
   }
 </style>
