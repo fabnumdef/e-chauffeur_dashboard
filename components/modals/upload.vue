@@ -8,8 +8,15 @@
     <template #title>
       Importer un fichier CSV
     </template>
-    <ec-field>
-      <input class="input" type="file">
+    <ec-field
+      id="file"
+      label="Veuillez sélectionner un fichier :"
+    >
+      <input
+        class="input"
+        name="csv-file"
+        type="file"
+      >
     </ec-field>
     <template #submit>
       <button
@@ -41,8 +48,16 @@ export default {
     toggle() {
       this.$emit('toggle');
     },
-    emitSubmit(evt) {
-      this.$emit('submit', evt);
+    emitSubmit({ target }) {
+      const formData = new FormData();
+      const [file] = target.querySelector('input').files;
+      if (file.name.split('.').pop() !== 'csv') {
+        this.$toast.error("Le format du fichier n'est pas valide");
+        return;
+      }
+      formData.append(target.name, file);
+
+      this.$emit('submit', formData);
     },
   },
 };
