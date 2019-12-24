@@ -2,26 +2,11 @@
   <main>
     <div class="columns">
       <div class="column">
-        <header>
-          <div class="columns">
-            <div class="column">
-              <h1 class="title">
-                Chauffeurs
-              </h1>
-            </div>
-            <div class="column is-narrow">
-              <nuxt-link
-                :to="campusLink('drivers-new')"
-                class="button is-success"
-              >
-                <span class="icon is-small">
-                  <fa-icon :icon="['fas', 'plus']" />
-                </span>
-                <span>Nouveau</span>
-              </nuxt-link>
-            </div>
-          </div>
-        </header>
+        <ec-header
+          title="Chauffeurs"
+          :to-create-new="campusLink('drivers-new')"
+          @uploadCSV="driversUploadCSV"
+        />
         <ec-list
           :columns="columns"
           :data="drivers"
@@ -62,26 +47,11 @@
         </ec-list>
       </div>
       <div class="column">
-        <header>
-          <div class="columns">
-            <div class="column">
-              <h1 class="title">
-                Utilisateurs
-              </h1>
-            </div>
-            <div class="column is-narrow">
-              <nuxt-link
-                :to="campusLink('users-new')"
-                class="button is-success"
-              >
-                <span class="icon is-small">
-                  <fa-icon :icon="['fas', 'plus']" />
-                </span>
-                <span>Nouveau</span>
-              </nuxt-link>
-            </div>
-          </div>
-        </header>
+        <ec-header
+          title="Chauffeurs"
+          :to-create-new="campusLink('users-new')"
+          @uploadCSV="usersUploadCSV"
+        />
         <ec-list
           :columns="columns"
           :data="users"
@@ -128,6 +98,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import ecList from '~/components/crud/list.vue';
+import ecHeader from '~/components/crud/header.vue';
 
 const columns = { id: 'ID', email: 'E-mail' };
 
@@ -135,6 +106,7 @@ export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    ecHeader,
   },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -177,15 +149,22 @@ export default {
       this.users = updatedList.data;
       this.usersPagination = updatedList.pagination;
     },
+    async driversUploadCSV(data) {
+      try {
+        await this.$api.drivers(this.campus.id).postDrivers(data);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+    },
+    async usersUploadCSV(data) {
+      try {
+        await this.$api.campusUsers(this.campus.id).postUsers(data);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  header {
-    margin-bottom: 1.5rem;
-    .button {
-      margin-right: 10px;
-    }
-  }
-</style>

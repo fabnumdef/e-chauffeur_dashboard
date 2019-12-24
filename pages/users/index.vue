@@ -1,38 +1,10 @@
 <template>
   <main>
-    <header class="with-options">
-      <h1 class="title">
-        Utilisateurs
-      </h1>
-      <div class="options">
-        <button
-          class="button is-rounded"
-          type="button"
-          @click="toggleUploadModal"
-        >
-          <fa-icon
-            :icon="['fas', 'file-import']"
-            class="has-text-info"
-          />
-          Importer CSV
-        </button>
-        <nuxt-link
-          v-if="$auth.isRegulator()"
-          :to="{name: 'users-new'}"
-          class="button is-success"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Créer</span>
-        </nuxt-link>
-      </div>
-      <upload-modal
-        :display="displayUploadModal"
-        @toggle="toggleUploadModal"
-        @submit="uploadCSV"
-      />
-    </header>
+    <ec-header
+      title="Utilisateurs"
+      :to-create-new="{name: 'users-new'}"
+      @uploadCSV="uploadCSV"
+    />
     <ec-list
       :columns="{id: 'ID', email: 'E-mail'}"
       :data="users"
@@ -74,13 +46,13 @@
 
 <script>
 import ecList from '~/components/crud/list.vue';
-import uploadModal from '~/components/modals/upload.vue';
+import ecHeader from '~/components/crud/header.vue';
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
-    uploadModal,
+    ecHeader,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -89,11 +61,6 @@ export default {
     return {
       users: data,
       pagination,
-    };
-  },
-  data() {
-    return {
-      displayUploadModal: false,
     };
   },
   methods: {
@@ -105,28 +72,14 @@ export default {
       this.users = updatedList.data;
       this.pagination = updatedList.pagination;
     },
-    toggleUploadModal() {
-      this.displayUploadModal = !this.displayUploadModal;
-    },
-    uploadCSV(evt) {
-      console.log('submit', evt);
+    async uploadCSV(data) {
+      try {
+        await this.$api.users.postUsers(data);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .with-options {
-    display: flex;
-    .title {
-      flex-grow: 1;
-    }
-    .options {
-      padding: 0 10px 10px;
-      float: right;
-      * {
-        margin: 0 .3em;
-      }
-    }
-  }
-</style>

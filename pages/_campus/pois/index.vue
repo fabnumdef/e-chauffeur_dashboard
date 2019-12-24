@@ -1,21 +1,10 @@
 <template>
   <main>
-    <header class="with-options">
-      <h1 class="title">
-        Lieux
-      </h1>
-      <div class="options">
-        <nuxt-link
-          :to="campusLink('pois-new')"
-          class="button is-success"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Créer</span>
-        </nuxt-link>
-      </div>
-    </header>
+    <ec-header
+      title="Lieux"
+      :to-create-new="campusLink('pois-new')"
+      @uploadCSV="uploadCSV"
+    />
     <ec-list
       :columns="columns"
       :data="pois"
@@ -57,6 +46,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import ecList from '~/components/crud/list.vue';
+import ecHeader from '~/components/crud/header.vue';
 
 const columns = { id: 'ID', label: 'Label', enabled: 'Activé' };
 
@@ -64,6 +54,7 @@ export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    ecHeader,
   },
   async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -103,19 +94,14 @@ export default {
         this.pagination = updatedList.pagination;
       }
     },
+    async uploadCSV(data) {
+      try {
+        await this.$api.pois(this.campus).postPois(data);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .with-options {
-    display: flex;
-    .title {
-      flex-grow: 1;
-    }
-    .options {
-      padding: 0 10px 10px;
-      float: right;
-    }
-  }
-</style>

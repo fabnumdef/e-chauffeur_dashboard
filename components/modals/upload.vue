@@ -55,7 +55,7 @@ export default {
         this.$toast.error("Le format du fichier n'est pas valide");
         return;
       }
-      formData.append(target.name, file);
+      formData.append('csv', file);
 
       this.$emit('submit', formData);
     },

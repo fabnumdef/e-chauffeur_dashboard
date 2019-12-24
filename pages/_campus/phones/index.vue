@@ -1,22 +1,10 @@
 <template>
   <main>
-    <header class="with-options">
-      <h1 class="title">
-        Téléphones
-      </h1>
-      <div class="options">
-        <nuxt-link
-          v-if="$auth.isAdmin()"
-          :to="campusLink('phones-new')"
-          class="button is-success"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Créer</span>
-        </nuxt-link>
-      </div>
-    </header>
+    <ec-header
+      title="Téléphones"
+      :to-create-new="campusLink('phones-new')"
+      @uploadCSV="uploadCSV"
+    />
     <ec-list
       :columns="{id: 'S/N', assignTo: 'Assigné à'}"
       :data="getPhones"
@@ -58,6 +46,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import ecList from '~/components/crud/list.vue';
+import ecHeader from '~/components/crud/header.vue';
 
 const FIELDS = [
   'id',
@@ -69,6 +58,7 @@ export default {
   watchQuery: ['offset', 'limit'],
   components: {
     ecList,
+    ecHeader,
   },
   async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -115,19 +105,14 @@ export default {
         this.pagination = pagination;
       }
     },
+    async uploadCSV(data) {
+      try {
+        await this.$api.phones(this.campus).postPhones(data);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .with-options {
-    display: flex;
-    .title {
-      flex-grow: 1;
-    }
-    .options {
-      padding: 0 10px 10px;
-      float: right;
-    }
-  }
-</style>
