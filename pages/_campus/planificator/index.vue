@@ -39,7 +39,7 @@ import { DateTime } from 'luxon';
 import {
   DRAFTED,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
-import RideCalendar from '~/components/planificator';
+import RideCalendar from '~/components/planificator/index.vue';
 
 const EDITABLE_FIELDS = [
   'id',

@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field';
+import ecField from '~/components/form/field.vue';
 
 export default {
   layout: 'side-picture',
