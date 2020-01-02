@@ -1,11 +1,11 @@
 <template>
   <main>
-    <ec-header
+    <crud-header
       title="Modèles de véhicules"
       :to-create-new="{name: 'car-models-new'}"
       @uploadCSV="uploadCSV"
     />
-    <ec-list
+    <crud-list
       :columns="columns"
       :data="carModels"
       :pagination-offset="pagination.offset"
@@ -40,13 +40,13 @@
           <span>Supprimer</span>
         </button>
       </template>
-    </ec-list>
+    </crud-list>
   </main>
 </template>
 
 <script>
-import ecList from '~/components/crud/list.vue';
-import ecHeader from '~/components/crud/header.vue';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 const columns = { id: 'ID', label: 'Label' };
 
@@ -57,8 +57,8 @@ function getCarModels(offset, limit) {
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
-    ecHeader,
+    crudList,
+    crudHeader,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;

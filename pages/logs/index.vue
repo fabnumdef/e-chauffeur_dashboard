@@ -5,7 +5,7 @@
         Logs
       </h1>
     </header>
-    <ec-list
+    <crud-list
       :columns="columns"
       :data="logs"
     />
@@ -13,14 +13,14 @@
 </template>
 
 <script>
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
 
 const columns = { timestamp: 'Timestamp', level: 'Level', message: 'Message' };
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;

@@ -1,11 +1,11 @@
 <template>
   <main>
-    <ec-header
+    <crud-header
       title="Utilisateurs"
       :to-create-new="{name: 'users-new'}"
       @uploadCSV="uploadCSV"
     />
-    <ec-list
+    <crud-list
       :columns="{id: 'ID', email: 'E-mail'}"
       :data="users"
       :pagination-offset="pagination.offset"
@@ -40,19 +40,19 @@
           <span>Supprimer</span>
         </button>
       </template>
-    </ec-list>
+    </crud-list>
   </main>
 </template>
 
 <script>
-import ecList from '~/components/crud/list.vue';
-import ecHeader from '~/components/crud/header.vue';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
-    ecHeader,
+    crudList,
+    crudHeader,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;

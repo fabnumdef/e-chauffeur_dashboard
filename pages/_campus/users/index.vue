@@ -2,12 +2,12 @@
   <main>
     <div class="columns">
       <div class="column">
-        <ec-header
+        <crud-header
           title="Chauffeurs"
           :to-create-new="campusLink('drivers-new')"
           @uploadCSV="driversUploadCSV"
         />
-        <ec-list
+        <crud-list
           :columns="columns"
           :data="drivers"
           :pagination-offset="driversPagination.offset"
@@ -44,15 +44,15 @@
               <span>Supprimer</span>
             </button>
           </template>
-        </ec-list>
+        </crud-list>
       </div>
       <div class="column">
-        <ec-header
+        <crud-header
           title="Chauffeurs"
           :to-create-new="campusLink('users-new')"
           @uploadCSV="usersUploadCSV"
         />
-        <ec-list
+        <crud-list
           :columns="columns"
           :data="users"
           :pagination-offset="usersPagination.offset"
@@ -89,7 +89,7 @@
               <span>Supprimer</span>
             </button>
           </template>
-        </ec-list>
+        </crud-list>
       </div>
     </div>
   </main>
@@ -97,16 +97,16 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecList from '~/components/crud/list.vue';
-import ecHeader from '~/components/crud/header.vue';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 const columns = { id: 'ID', email: 'E-mail' };
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
-    ecHeader,
+    crudList,
+    crudHeader,
   },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
