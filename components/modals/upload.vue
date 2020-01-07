@@ -18,6 +18,43 @@
         type="file"
       >
     </ec-field>
+    <ec-field
+      id="delimiter"
+      label="Type de délimiteur"
+    >
+      <input
+        v-model="delimiter"
+        class="input"
+        type="text"
+      >
+    </ec-field>
+    <ec-field
+      id="ignore-empty"
+      label="Ignorer les champs vides"
+    >
+      <label
+        for="status-enabled"
+        class="radio"
+      >Oui
+        <input
+          id="status-enabled"
+          v-model="ignoreEmpty"
+          type="radio"
+          :value="true"
+        >
+      </label>
+      <label
+        for="status-disabled"
+        class="radio"
+      >Non
+        <input
+          id="status-disabled"
+          v-model="ignoreEmpty"
+          type="radio"
+          :value="false"
+        >
+      </label>
+    </ec-field>
     <template #submit>
       <button
         type="submit"
@@ -44,6 +81,12 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      delimiter: ';',
+      ignoreEmpty: true,
+    };
+  },
   methods: {
     toggle() {
       this.$emit('toggle');
@@ -56,6 +99,8 @@ export default {
         return;
       }
       formData.append('csv', file);
+      formData.append('delimiter', this.delimiter);
+      formData.append('ignoreEmpty', this.ignoreEmpty);
 
       this.$emit('submit', formData);
     },
