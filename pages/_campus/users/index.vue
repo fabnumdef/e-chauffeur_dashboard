@@ -4,6 +4,7 @@
       <div class="column">
         <crud-header
           title="Chauffeurs"
+          :import-csv="false"
           :to-create-new="campusLink('drivers-new')"
           @uploadCSV="driversUploadCSV"
         />
@@ -48,7 +49,7 @@
       </div>
       <div class="column">
         <crud-header
-          title="Chauffeurs"
+          title="Utilisateurs"
           :to-create-new="campusLink('users-new')"
           @uploadCSV="usersUploadCSV"
         />
@@ -133,21 +134,11 @@ export default {
   methods: {
     async deleteDriver({ id }) {
       await this.$api.drivers(this.campus.id).deleteDriver(id);
-      const offset = parseInt(this.$route.query.offset, 10) || 0;
-      const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(','))
-        .getDrivers(offset, limit);
-      this.drivers = updatedList.data;
-      this.driversPagination = updatedList.pagination;
+      this.updateDriversList();
     },
     async deleteUser({ id }) {
       await this.$api.campusUsers(this.campus.id).deleteUser(id);
-      const offset = parseInt(this.$route.query.offset, 10) || 0;
-      const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.$api.campusUsers(this.campus.id, Object.keys(columns).join(','))
-        .getUsers(offset, limit);
-      this.users = updatedList.data;
-      this.usersPagination = updatedList.pagination;
+      this.updateUsersList();
     },
     async driversUploadCSV(data) {
       try {
@@ -164,6 +155,24 @@ export default {
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");
       }
+      this.updateDriversList();
+      this.updateUsersList();
+    },
+    async updateUsersList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.campusUsers(this.campus.id, Object.keys(columns).join(','))
+        .getUsers(offset, limit);
+      this.users = updatedList.data;
+      this.usersPagination = updatedList.pagination;
+    },
+    async updateDriversList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(','))
+        .getDrivers(offset, limit);
+      this.drivers = updatedList.data;
+      this.driversPagination = updatedList.pagination;
     },
   },
 };

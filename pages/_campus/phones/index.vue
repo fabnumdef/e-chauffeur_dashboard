@@ -98,11 +98,7 @@ export default {
     async deletePhone({ id }) {
       if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce téléphone ?')) {
         await this.$api.phones(this.campus).deletePhone(id);
-        const offset = parseInt(this.$route.query.offset, 10) || 0;
-        const limit = parseInt(this.$route.query.limit, 10) || 30;
-        const { data, pagination } = await this.$api.phones(this.campus, FIELDS.join(',')).getPhones(offset, limit);
-        this.phones = data;
-        this.pagination = pagination;
+        this.updateList();
       }
     },
     async uploadCSV(data) {
@@ -112,6 +108,14 @@ export default {
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");
       }
+      this.updateList();
+    },
+    async updateList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const { data, pagination } = await this.$api.phones(this.campus, FIELDS.join(',')).getPhones(offset, limit);
+      this.phones = data;
+      this.pagination = pagination;
     },
   },
 };

@@ -5,6 +5,7 @@
     </h1>
     <div class="options">
       <button
+        v-if="importCsv"
         class="button is-rounded"
         type="button"
         @click="toggleUploadModal"
@@ -49,6 +50,10 @@ export default {
     toCreateNew: {
       type: Object,
       default: () => null,
+    },
+    importCsv: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {

@@ -86,12 +86,7 @@ export default {
     async deletePoi({ id }) {
       if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce lieu ?')) {
         await this.$api.pois(this.campus).deletePoi(id);
-        const offset = parseInt(this.$route.query.offset, 10) || 0;
-        const limit = parseInt(this.$route.query.limit, 10) || 30;
-        const updatedList = await this.$api.pois(this.campus, Object.keys(columns).join(','), { withDisabled: true })
-          .getPois(offset, limit);
-        this.pois = updatedList.data;
-        this.pagination = updatedList.pagination;
+        this.updateList();
       }
     },
     async uploadCSV(data) {
@@ -101,6 +96,15 @@ export default {
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");
       }
+      this.updateList();
+    },
+    async updateList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.pois(this.campus, Object.keys(columns).join(','), { withDisabled: true })
+        .getPois(offset, limit);
+      this.pois = updatedList.data;
+      this.pagination = updatedList.pagination;
     },
   },
 };

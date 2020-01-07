@@ -66,11 +66,7 @@ export default {
   methods: {
     async deleteUser({ id }) {
       await this.$api.users.deleteUser(id);
-      const offset = parseInt(this.$route.query.offset, 10) || 0;
-      const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.$api.users.getUsers('id,email', offset, limit);
-      this.users = updatedList.data;
-      this.pagination = updatedList.pagination;
+      this.updateList();
     },
     async uploadCSV(data) {
       try {
@@ -79,6 +75,14 @@ export default {
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");
       }
+      this.updateList();
+    },
+    async updateList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.users.getUsers('id,email', offset, limit);
+      this.users = updatedList.data;
+      this.pagination = updatedList.pagination;
     },
   },
 };

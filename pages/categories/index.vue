@@ -66,13 +66,8 @@ export default {
   methods: {
     async deleteCategory({ id }) {
       if (window && window.confirm('Voulez vous vraiment supprimer cette catégorie ?')) {
-        const categoryAPI = this.$api.categories('id,label');
-        await categoryAPI.deleteCategory(id);
-        const offset = parseInt(this.$route.query.offset, 10) || 0;
-        const limit = parseInt(this.$route.query.limit, 10) || 30;
-        const updatedList = await categoryAPI.getCategories(offset, limit);
-        this.categories = updatedList.data;
-        this.pagination = updatedList.pagination;
+        await this.$api.categories('id,label').deleteCategory(id);
+        this.updateList();
       }
     },
     async uploadCSV(data) {
@@ -82,6 +77,14 @@ export default {
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");
       }
+      this.updateList();
+    },
+    async updateList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.categories('id,label').getCategories(offset, limit);
+      this.categories = updatedList.data;
+      this.pagination = updatedList.pagination;
     },
   },
 };

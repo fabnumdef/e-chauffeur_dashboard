@@ -82,19 +82,23 @@ export default {
   methods: {
     async deleteCar({ id }) {
       await this.CarsAPI.deleteCar(id);
+      this.updateList();
+    },
+    async uploadCSV(data) {
+      try {
+        await this.CarsAPI.postCars(data);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+      this.updateList();
+    },
+    async updateList() {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await this.CarsAPI.getCars(offset, limit);
       this.cars = updatedList.data;
       this.pagination = updatedList.pagination;
-    },
-    async uploadCSV(data) {
-      try {
-        await this.$api.CarsAPI.postCars(data);
-        this.$toast.success('Import réalisé avec succès');
-      } catch (err) {
-        this.$toast.error("Un problème est survenu pendant l'import");
-      }
     },
   },
 };

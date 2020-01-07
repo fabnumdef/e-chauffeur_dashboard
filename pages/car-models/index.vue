@@ -75,11 +75,7 @@ export default {
   methods: {
     async deleteCarModel({ id }) {
       await this.$api.carModels.deleteCarModel(id);
-      const offset = parseInt(this.$route.query.offset, 10) || 0;
-      const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await getCarModels.call(this.$api, offset, limit);
-      this.carModels = updatedList.data;
-      this.pagination = updatedList.pagination;
+      this.updateList();
     },
     async uploadCSV(data) {
       try {
@@ -88,6 +84,14 @@ export default {
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");
       }
+      this.updateList();
+    },
+    async updateList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await getCarModels.call(this.$api, offset, limit);
+      this.carModels = updatedList.data;
+      this.pagination = updatedList.pagination;
     },
   },
 };
