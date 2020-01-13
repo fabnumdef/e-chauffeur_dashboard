@@ -26,7 +26,36 @@
       :action-edit="'phone-models-id-edit'"
       action-remove-confirm="Voulez-vous vraiment supprimer ce modèle de téléphone ?"
       @action-remove="deletePhoneModel"
-    />
+    >
+      <template
+        v-if="$auth.isSuperAdmin()"
+        #actions="{ row }"
+      >
+        <nuxt-link
+          v-if="$auth.isSuperAdmin()"
+          :to="{
+            name: 'phone-models-id-edit',
+            params: { id: row.id },
+          }"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'edit']" />
+          </span>
+          <span>Modifier</span>
+        </nuxt-link>
+        <button
+          v-if="$auth.isSuperAdmin()"
+          class="button is-danger"
+          @click="deletePhoneModel(row)"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'trash']" />
+          </span>
+          <span>Supprimer</span>
+        </button>
+      </template>
+    </ec-list>
   </main>
 </template>
 

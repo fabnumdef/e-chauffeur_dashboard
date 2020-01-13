@@ -43,12 +43,10 @@
         label="Mot de passe"
         field-id="password"
       >
-        <input
+        <ec-password
           id="password"
           v-model="user.password"
-          type="password"
-          class="input"
-        >
+        />
       </ec-field>
       <button
         type="submit"
@@ -61,13 +59,15 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field';
+import ecField from '~/components/form/field.vue';
+import ecPassword from '~/components/form/password.vue';
 
 const FIELDS = 'id,email,name';
 
 export default {
   components: {
     ecField,
+    ecPassword,
   },
   async asyncData({ $api }) {
     const { data: user } = await $api.jwt.getUser(FIELDS);

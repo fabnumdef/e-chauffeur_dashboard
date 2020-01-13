@@ -24,9 +24,12 @@
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
     >
-      <template #actions="{ row }">
+      <template
+        v-if="$auth.isSuperAdmin()"
+        #actions="{ row }"
+      >
         <nuxt-link
-          v-if="$auth.isRegulator()"
+          v-if="$auth.isSuperAdmin()"
           :to="{
             name: 'users-id-edit',
             params: { id: row.id },

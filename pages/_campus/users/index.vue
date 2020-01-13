@@ -31,7 +31,35 @@
           :action-edit="campusLink('drivers-id-edit')"
           action-remove-confirm="Voulez-vous vraiment supprimer ce chauffeur ?"
           @action-remove="deleteDriver"
-        />
+        >
+          <template
+            v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+            #actions="{ row }"
+          >
+            <nuxt-link
+              v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+              :to="campusLink('users-id-edit', {
+                params: { id: row.id },
+              })"
+              class="button is-primary"
+            >
+              <span class="icon is-small">
+                <fa-icon :icon="['fas', 'edit']" />
+              </span>
+              <span>Modifier</span>
+            </nuxt-link>
+            <button
+              v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+              class="button is-danger"
+              @click="deleteDriver(row)"
+            >
+              <span class="icon is-small">
+                <fa-icon :icon="['fas', 'trash']" />
+              </span>
+              <span>Supprimer</span>
+            </button>
+          </template>
+        </ec-list>
       </div>
       <div class="column">
         <header>
@@ -63,7 +91,35 @@
           :action-edit="campusLink('users-id-edit')"
           action-remove-confirm="Voulez-vous vraiment supprimer cet utilisateur ?"
           @action-remove="deleteUser"
-        />
+        >
+          <template
+            v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+            #actions="{ row }"
+          >
+            <nuxt-link
+              v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+              :to="campusLink('users-id-edit', {
+                params: { id: row.id },
+              })"
+              class="button is-primary"
+            >
+              <span class="icon is-small">
+                <fa-icon :icon="['fas', 'edit']" />
+              </span>
+              <span>Modifier</span>
+            </nuxt-link>
+            <button
+              v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+              class="button is-danger"
+              @click="deleteUser(row)"
+            >
+              <span class="icon is-small">
+                <fa-icon :icon="['fas', 'trash']" />
+              </span>
+              <span>Supprimer</span>
+            </button>
+          </template>
+        </ec-list>
       </div>
     </div>
   </main>
@@ -80,12 +136,6 @@ export default {
   components: {
     ecList,
   },
-  computed: {
-    columns: () => columns,
-    ...mapGetters({
-      campus: 'context/campus',
-    }),
-  },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
@@ -101,6 +151,12 @@ export default {
       users: usersRes.data,
       usersPagination: usersRes.pagination,
     };
+  },
+  computed: {
+    columns: () => columns,
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
   },
   methods: {
     async deleteDriver({ id }) {

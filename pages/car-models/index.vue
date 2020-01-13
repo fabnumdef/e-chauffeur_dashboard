@@ -23,7 +23,10 @@
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
     >
-      <template #actions="{ row }">
+      <template
+        v-if="$auth.isSuperAdmin()"
+        #actions="{ row }"
+      >
         <nuxt-link
           v-if="$auth.isSuperAdmin()"
           :to="{
@@ -66,9 +69,6 @@ export default {
   components: {
     ecList,
   },
-  computed: {
-    columns() { return columns; },
-  },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
@@ -77,6 +77,9 @@ export default {
       carModels: data,
       pagination,
     };
+  },
+  computed: {
+    columns() { return columns; },
   },
   methods: {
     async deleteCarModel({ id }) {

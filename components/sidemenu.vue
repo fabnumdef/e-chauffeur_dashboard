@@ -48,6 +48,10 @@
       <li v-if="hasCampus">
         <nuxt-link :to="campusLink('planificator')">
           Planificateur
+          <span
+            v-if="ridesToValidate.length > 0"
+            class="red-dot"
+          >{{ ridesToValidate.length }}</span>
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
@@ -65,6 +69,11 @@
       <li v-if="hasCampus">
         <nuxt-link :to="campusLink('pois')">
           Lieux
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus && $auth.isAdmin(campus.id)">
+        <nuxt-link :to="campusLink('edit')">
+          Base
         </nuxt-link>
       </li>
       <li v-if="hasCampus && $auth.isSuperAdmin()">
@@ -128,9 +137,9 @@
       </li>
       <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
-          :to="{ name: 'logs' }"
+          :to="{ name: 'ratings' }"
         >
-          Logs
+          Appréciations
         </nuxt-link>
       </li>
       <li v-if="$auth.isRegulator()">
@@ -176,7 +185,10 @@ export default {
     reconnectingHero,
   },
   computed: {
-    ...mapGetters({ campus: 'context/campus' }),
+    ...mapGetters({
+      campus: 'context/campus',
+      ridesToValidate: 'realtime/ridesToValidate',
+    }),
   },
   watch: {
     campus(c) {
@@ -197,11 +209,13 @@ export default {
   methods: {
     ...mapActions({ fetchCampus: 'context/fetchCampus', setRides: 'realtime/setRides' }),
     async setCampus(campus) {
-      this.fetchCampus(campus ? campus.id : null);
+      await this.fetchCampus(campus ? campus.id : null);
       if (campus) {
         const start = DateTime.local().startOf('days').toJSDate();
-        const end = DateTime.local().endOf('days').toJSDate();
-        await this.setRides({ campus: campus.id, start, end });
+        const end = DateTime.local()
+          .plus({ seconds: this.campus.defaultReservationScope })
+          .toJSDate();
+        await this.setRides({ campus: this.campus.id, start, end });
       }
     },
     logout() {
@@ -226,6 +240,26 @@ export default {
 
   .logo {
     padding: 20px;
+  }
+
+  .red-dot {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    height: 20px;
+    width: 20px;
+    border-radius: 100%;
+    background-color: $red;
+    color: $white;
+    font-size: .7em;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  a {
+    position: relative;
   }
 
   .menu-list a {

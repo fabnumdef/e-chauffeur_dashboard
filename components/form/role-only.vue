@@ -38,8 +38,8 @@
   </ul>
 </template>
 <script>
-import searchRole from './search-role';
-import ecField from '~/components/form/field';
+import searchRole from './search-role.vue';
+import ecField from '~/components/form/field.vue';
 
 export default {
   components: {

@@ -37,7 +37,7 @@
           </template>
         </date-time>
       </ec-field>
-      <ec-field label="Chauffeurs">
+      <ec-field label="Voitures">
         <vue-multiselect
           v-model="timeSlot.cars"
           :options="cars.data"

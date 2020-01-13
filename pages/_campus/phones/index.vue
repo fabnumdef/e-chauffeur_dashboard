@@ -24,11 +24,14 @@
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
     >
-      <template #actions="{ row }">
+      <template
+        v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+        #actions="{ row }"
+      >
         <nuxt-link
-          v-if="$auth.isAdmin()"
+          v-if="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
           :to="campusLink('phones-id-edit', {
-            params: row,
+            params: { id: row.id },
           })"
           class="button is-primary"
         >
@@ -38,7 +41,7 @@
           <span>Modifier</span>
         </nuxt-link>
         <button
-          v-if="$auth.isAdmin()"
+          v-if="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
           class="button is-danger"
           @click="deletePhone(row)"
         >
@@ -67,6 +70,16 @@ export default {
   components: {
     ecList,
   },
+  async asyncData({ $api, query, params }) {
+    const offset = parseInt(query.offset, 10) || 0;
+    const limit = parseInt(query.limit, 10) || 30;
+    const { data, pagination } = await $api.phones({ id: params.campus }, FIELDS.join(','))
+      .getPhones(offset, limit);
+    return {
+      phones: data,
+      pagination,
+    };
+  },
   computed: {
     ...mapGetters({
       campus: 'context/campus',
@@ -90,16 +103,6 @@ export default {
         },
       );
     },
-  },
-  async asyncData({ $api, query, params }) {
-    const offset = parseInt(query.offset, 10) || 0;
-    const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.phones({ id: params.campus }, FIELDS.join(','))
-      .getPhones(offset, limit);
-    return {
-      phones: data,
-      pagination,
-    };
   },
   methods: {
     async deletePhone({ id }) {

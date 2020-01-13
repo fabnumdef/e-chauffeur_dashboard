@@ -156,17 +156,28 @@
     </div>
 
     <div class="columns">
-      <div class="column">
-        <div class="control">
-          <label class="checkbox">
-            <input
-              v-model="ride.luggage"
-              type="checkbox"
-            >
-            Présence de bagages.
-          </label>
-        </div>
-      </div>
+      <ec-field
+        label="Présence de bagages"
+        class="column"
+        field-id="passengers-luggage"
+      >
+        <button
+          class="button button-luggage"
+          :class="ride.luggage && 'is-primary'"
+          type="button"
+          @click="toggleLuggage(true)"
+        >
+          Oui
+        </button>
+        <button
+          class="button button-luggage"
+          :class="ride.luggage || 'is-primary'"
+          type="button"
+          @click="toggleLuggage(false)"
+        >
+          Non
+        </button>
+      </ec-field>
     </div>
 
     <div class="columns">
@@ -297,10 +308,10 @@ import {
   CANCEL_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
 import ecField from '~/components/form/field.vue';
-import searchPoi from '~/components/form/search-poi';
-import searchCategory from '~/components/form/search-campus-category';
-import searchAvailableCar from '~/components/form/search-available-car';
-import searchAvailableDriver from '~/components/form/search-available-driver';
+import searchPoi from '~/components/form/search-poi.vue';
+import searchCategory from '~/components/form/search-campus-category.vue';
+import searchAvailableCar from '~/components/form/search-available-car.vue';
+import searchAvailableDriver from '~/components/form/search-available-driver.vue';
 import bulmaDropdown from '~/components/dropdown.vue';
 import vueModal from '~/components/modal.vue';
 
@@ -446,6 +457,10 @@ export default {
       }
     },
 
+    toggleLuggage(value) {
+      this.ride.luggage = value;
+    },
+
     focusNext(input) {
       if (this.focusState[input]) {
         this.focusState[input] = 'unwatch';
@@ -542,6 +557,12 @@ ${this.ride.comments || ''}`;
 </script>
 
 <style lang="scss" scoped>
+  button.button-luggage {
+      border-radius: 1em;
+      width: 5em;
+      margin: 1em 0 0;
+  }
+
   .only-one-scroll {
     /deep/ .multiselect__content-wrapper {
       position: initial;

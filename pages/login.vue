@@ -10,6 +10,9 @@
       class="container"
       @submit.prevent="login(user)"
     >
+      <h1 class="title">
+        Bienvenue
+      </h1>
       <ec-field
         label="Email"
         field-id="email"
@@ -37,6 +40,7 @@
           required="required"
           class="input"
           type="password"
+          placeholder=""
         >
       </ec-field>
 
@@ -48,11 +52,36 @@
         </div>
       </div>
     </form>
+    <div class="logo-container">
+      <div class="logo">
+        <img
+          src="/logo_dirisi.png"
+          alt="DIRISI"
+        >
+      </div>
+      <div class="logo ">
+        <img
+          src="/logo_ma.png"
+          alt="Ministère des armées"
+        >
+        <img
+          src="/start_up_etat.png"
+          alt="Start-up d'état"
+        >
+      </div>
+
+      <div class="logo">
+        <img
+          src="/logo_fab_num.png"
+          alt="Fabrique numérique"
+        >
+      </div>
+    </div>
   </main>
 </template>
 
 <script>
-import ecField from '~/components/form/field';
+import ecField from '~/components/form/field.vue';
 
 export default {
   layout: 'side-picture',
@@ -86,6 +115,10 @@ export default {
               + 'Si le problème persiste, contactez nous pour réinitialiser votre mot de passe.');
             this.user.password = null;
             break;
+          case 401:
+            this.$toast.error('Impossible de se connecter, le mot de passe a expiré. '
+                + 'Contactez nous pour le réinitialiser.');
+            break;
           default:
             this.$toast.error('Une erreur est survenue, merci de vérifier votre email et mot de passe. \n'
             + 'Si le problème persiste, contactez nous pour réinitialiser votre mot de passe.');
@@ -98,9 +131,14 @@ export default {
 
 <style scoped lang="scss">
   @import "~assets/css/head";
+
   .logo {
     padding: 50px;
     display: block;
+  }
+  .title {
+    margin: 2em 0;
+    color: $primary;
   }
   /deep/ .label {
     color: $white;
@@ -125,11 +163,34 @@ export default {
     }
     .button {
       display: block;
+      margin-top: 2em;
       padding: 10px 20px;
       height: auto;
       width: 100%;
-      color: $primary;
+      background-color: $primary;
+      color: white;
       font-weight: bold;
+    }
+  }
+
+  .logo-container {
+    position: absolute;
+    bottom: 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  @media screen and (max-width: 600px) {
+    .title {
+      text-align: center;
+    }
+    .logo-container {
+      flex-direction: column;
+      .logo {
+        padding: 1em;
+      }
     }
   }
 </style>

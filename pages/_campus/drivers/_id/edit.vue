@@ -82,12 +82,10 @@
         label="Mot de passe"
         field-id="password"
       >
-        <input
+        <ec-password
           id="password"
           v-model="driver.password"
-          type="password"
-          class="input"
-        >
+        />
       </ec-field>
       <button
         v-if="id"
@@ -117,12 +115,14 @@
 <script>
 import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
+import ecPassword from '~/components/form/password.vue';
 
 const EDITABLE_FIELDS = ['id', 'email', 'password', 'name'];
 
 export default {
   components: {
     ecField,
+    ecPassword,
   },
   props: {
     driver: {

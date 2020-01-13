@@ -40,7 +40,7 @@
 <script>
 import debounce from 'lodash.debounce';
 
-const FIELDS = 'id,label';
+const FIELDS = 'id,label,enabled';
 export default {
   props: {
     placeholder: {

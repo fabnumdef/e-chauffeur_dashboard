@@ -54,6 +54,36 @@
       </ec-field>
 
       <ec-field
+        id="status"
+        label="Statut"
+      >
+        <div>
+          <label
+            for="status-enabled"
+            class="radio"
+          >Activé
+            <input
+              id="status-enabled"
+              v-model="poi.enabled"
+              type="radio"
+              :value="true"
+            >
+          </label>
+          <label
+            for="status-disabled"
+            class="radio"
+          >Désactivé
+            <input
+              id="status-disabled"
+              v-model="poi.enabled"
+              type="radio"
+              :value="false"
+            >
+          </label>
+        </div>
+      </ec-field>
+
+      <ec-field
         label="Coordonnées GPS"
         field-id="location"
       >
@@ -119,15 +149,19 @@ export default {
   methods: {
     async edit(poi) {
       let data = {};
-      if (this.id) {
-        ({ data } = (await this.PoisAPI.patchPoi(this.id, poi)));
-      } else {
-        ({ data } = (await this.PoisAPI.postPoi(poi)));
+      try {
+        if (this.id) {
+          ({ data } = (await this.PoisAPI.patchPoi(this.id, poi)));
+        } else {
+          ({ data } = (await this.PoisAPI.postPoi(poi)));
+        }
+        this.$toast.success('Le lieu a bien été mis à jour');
+        this.$router.push(this.$context.buildCampusLink('pois-id-edit', {
+          params: { id: data.id },
+        }));
+      } catch (err) {
+        this.$toast.error("L'édition du lieu n'a pas fonctionné");
       }
-
-      this.$router.push(this.$context.buildCampusLink('pois-id-edit', {
-        params: { id: data.id },
-      }));
     },
   },
 };

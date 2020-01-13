@@ -2,14 +2,38 @@
 ## Current
 ### Features
 ### Fix
+## Version 1.4.4
+### Features
+* Add new component to enforce password strength
+* Add explicit error messages on 
+* Add possibility for admin to edit his own campus
+* Round percents in dashboard
+* Add custom reservation scope for campus
+* Add red dot to notify created rides regulator
+* Luggage visibility increase in planificator
+* Added toast messages on phones & cars edit/creation
+* Remove logs menu, using Loki stack right now
+* Export dashboard and monitoring on deploy
+### Fix
+* Updated login page ui
+* Changed dropdown title when creating a new car in planning
+* Fix infosec issue with X-Frame header
+* Fix arrow on calendar tooltip
+* Fix links to update items in lists
+* Fix status translation in dashboard
+* Fix ratings labels
+* Fix minor bug on list.vue
 ## Version 1.4.3
 ### Features
 * Add new campus users interface for admin
 * Add pins for POIs on the regulator map
 * Add logic of automatic static validation
+* Add planning vehicule and remove old system
+* Add rating page
 * Add cars planning and remove old system
 * Add user creation error message
 * Add ride information on map & rides calendar
+* Add activated to POI list and possibility to enable/disable it
 ### Fix
 * Add horizontal scroll in planificator when there is too much driver
 * Fix map driver's marker color
@@ -18,6 +42,11 @@
 * Fix rides fetch on campus change
 * Fix Winston error
 * Handle errors on post/patch /users /campuses/{id}/users /campuses/{id}/drivers
+* Fix planificator column alignment between header and body on month and day view
+* Fix POI update for admin
+* Fix actions display when user has no rights for CRUD
+* Fix POI enabled icon for pois lists
+* Fix planning sync between cars and drivers
 ## Version 1.4.2
 ### Features
 * Improve reliability, k8s side

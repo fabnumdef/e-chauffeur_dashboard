@@ -25,7 +25,35 @@
       :action-edit="campusLink('cars-id-edit')"
       action-remove-confirm="Voulez vous vraiment supprimer ce véhicule ?"
       @action-remove="deleteCar"
-    />
+    >
+      <template
+        v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+        #actions="{ row }"
+      >
+        <nuxt-link
+          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+          :to="campusLink('cars-id-edit', {
+            params: { id: row.id },
+          })"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'edit']" />
+          </span>
+          <span>Modifier</span>
+        </nuxt-link>
+        <button
+          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+          class="button is-danger"
+          @click="deleteCar(row)"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'trash']" />
+          </span>
+          <span>Supprimer</span>
+        </button>
+      </template>
+    </ec-list>
   </main>
 </template>
 
@@ -40,15 +68,6 @@ export default {
   components: {
     ecList,
   },
-  computed: {
-    columns: () => columns,
-    ...mapGetters({
-      campus: 'context/campus',
-    }),
-    CarsAPI() {
-      return this.$api.cars(this.campus, Object.keys(columns).join(','));
-    },
-  },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
@@ -59,6 +78,15 @@ export default {
       cars: data,
       pagination,
     };
+  },
+  computed: {
+    columns: () => columns,
+    ...mapGetters({
+      campus: 'context/campus',
+    }),
+    CarsAPI() {
+      return this.$api.cars(this.campus, Object.keys(columns).join(','));
+    },
   },
   methods: {
     async deleteCar({ id }) {

@@ -82,12 +82,10 @@
         label="Mot de passe"
         field-id="password"
       >
-        <input
+        <ec-password
           id="password"
           v-model="user.password"
-          type="password"
-          class="input"
-        >
+        />
       </ec-field>
       <ec-field label="Rôles">
         <role-rules v-model="user.roles" />
@@ -120,7 +118,8 @@
 <script>
 import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
-import roleRules from '~/components/form/role-only';
+import ecPassword from '~/components/form/password.vue';
+import roleRules from '~/components/form/role-only.vue';
 
 const EDITABLE_FIELDS = ['id', 'email', 'password', 'name', 'firstname', 'lastname', 'roles(role)'];
 
@@ -128,6 +127,7 @@ export default {
   components: {
     ecField,
     roleRules,
+    ecPassword,
   },
   props: {
     user: {

@@ -2,10 +2,10 @@
   <main>
     <header>
       <h1
-        v-if="id"
+        v-if="campus.id"
         class="title"
       >
-        Base #{{ id }} : {{ campus.name }}
+        Base #{{ campus.id }} : {{ campus.name }}
       </h1>
       <h1
         v-else
@@ -14,7 +14,7 @@
         Base
       </h1>
       <h2
-        v-if="id"
+        v-if="campus.id"
         class="subtitle"
       >
         Modification
@@ -40,7 +40,7 @@
           <input
             id="id"
             v-model="campus.id"
-            :disabled="!!id"
+            :disabled="!!campus.id"
             class="input"
           >
         </ec-field>
@@ -200,7 +200,7 @@
       </fieldset>
       <fieldset class="box">
         <button
-          v-if="id"
+          v-if="campus.id"
           type="submit"
           class="button is-primary"
         >
@@ -233,7 +233,7 @@ import weekdaysSelect from '~/components/form/weekdays.vue';
 import rideDuration from '~/components/form/ride-duration.vue';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
-  + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
+    + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
 export default {
   components: {
     ecField,
@@ -242,15 +242,20 @@ export default {
     weekdaysSelect,
     rideDuration,
   },
-  props: {
-    campus: {
-      type: Object,
-      default: () => ({ phone: {}, categories: [], workedHours: { start: 5, end: 23 } }),
-    },
+  async asyncData({ app, params, $api }) {
+    if (!app.$auth.isRegulator()) {
+      throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'une base.');
+    }
+    return {
+      campus: {
+        phone: {},
+        categories: [],
+        ...(await $api.campuses.getCampus(params.campus, EDITABLE_FIELDS)).data,
+      },
+    };
   },
   data() {
     return {
-      id: this.campus.id,
       selectScope: null,
     };
   },
@@ -279,15 +284,16 @@ export default {
   methods: {
     async edit(campus) {
       let data = {};
-      if (this.id) {
+      if (this.campus.id) {
         ({ data } = (await this.$api.campuses.patchCampus(campus.id, campus, EDITABLE_FIELDS)));
       } else {
         ({ data } = (await this.$api.campuses.postCampus(campus, EDITABLE_FIELDS)));
       }
+
       this.$store.commit('context/setCampus', data);
 
       this.$router.push({
-        name: 'campuses-id-edit',
+        name: 'campus-edit',
         params: { id: data.id },
       });
     },
@@ -299,15 +305,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~assets/css/head";
-.box legend.subtitle {
-  color: $text;
-  background: $white;
-  padding: $size-small/2 $size-small;
-  margin: 0;
-  border-radius: $radius-small;
-}
-.select select {
-  width: 100%;
-}
+  @import "~assets/css/head";
+  .box legend.subtitle {
+    color: $text;
+    background: $white;
+    padding: $size-small/2 $size-small;
+    margin: 0;
+    border-radius: $radius-small;
+  }
+
+  .select select {
+    width: 100%;
+  }
 </style>

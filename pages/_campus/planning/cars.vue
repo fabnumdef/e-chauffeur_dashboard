@@ -8,7 +8,7 @@
         <div class="column">
           <nuxt-link
             class="button switch-planning"
-            :to="campusLink('planning-drivers')"
+            :to="campusLink('planning-drivers', { query: { current: $route.query.current } })"
           >
             <fa-icon icon="user-circle" /> <fa-icon icon="car" />
           </nuxt-link>
@@ -79,25 +79,8 @@ const newTimeSlot = () => ({
   drivers: null,
 });
 export default {
+  watchQuery: ['current'],
   components: { planningModal, planningCalendar },
-  computed: {
-    calEvents() {
-      return this.events.data.map((event) => {
-        const start = DateTime.fromISO(event.start);
-        const end = DateTime.fromISO(event.end);
-        return {
-          start: this.$vuecal().getVueCalFromDatetime(start),
-          end: this.$vuecal().getVueCalFromDatetime(end),
-          content: {
-            ...event,
-            start,
-            end,
-          },
-          class: 'slot-event',
-        };
-      });
-    },
-  },
   async asyncData({ $api, params, query }) {
     // @todo: paginate
     const week = query.week ? DateTime.fromISO(query.week) : DateTime.local();
@@ -122,6 +105,24 @@ export default {
       campusId: params.campus,
       isGrabbing: false,
     };
+  },
+  computed: {
+    calEvents() {
+      return this.events.data.map((event) => {
+        const start = DateTime.fromISO(event.start);
+        const end = DateTime.fromISO(event.end);
+        return {
+          start: this.$vuecal().getVueCalFromDatetime(start),
+          end: this.$vuecal().getVueCalFromDatetime(end),
+          content: {
+            ...event,
+            start,
+            end,
+          },
+          class: 'slot-event',
+        };
+      });
+    },
   },
   methods: {
     async viewChange({ startDate, endDate }) {
