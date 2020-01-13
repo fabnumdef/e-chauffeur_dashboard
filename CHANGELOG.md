@@ -8,6 +8,8 @@
 * Add custom reservation scope for campus
 * Add red dot to notify created rides regulator
 * Added toast messages on phones & cars edit/creation
+* Remove logs menu, using Loki stack right now
+* Export dashboard and monitoring on deploy
 ### Fix
 * Updated login page ui
 * Changed dropdown title when creating a new car in planning
