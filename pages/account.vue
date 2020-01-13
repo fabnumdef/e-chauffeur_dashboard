@@ -59,8 +59,8 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field';
-import ecPassword from '~/components/form/password';
+import ecField from '~/components/form/field.vue';
+import ecPassword from '~/components/form/password.vue';
 
 const FIELDS = 'id,email,name';
 
