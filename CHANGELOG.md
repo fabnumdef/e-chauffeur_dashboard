@@ -7,6 +7,7 @@
 * Round percents in dashboard
 * Add custom reservation scope for campus
 * Add red dot to notify created rides regulator
+* Added toast messages on phones & cars edit/creation
 ### Fix
 * Updated login page ui
 * Changed dropdown title when creating a new car in planning
