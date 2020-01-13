@@ -162,14 +162,24 @@ export default {
   methods: {
     async edit(phone) {
       let data = {};
-      if (this.id) {
-        ({ data } = (await this.PhonesAPI.patchPhone(phone.id, phone)));
-      } else {
-        ({ data } = (await this.PhonesAPI.postPhone(phone)));
+      try {
+        if (this.id) {
+          ({ data } = (await this.PhonesAPI.patchPhone(phone.id, phone)));
+        } else {
+          ({ data } = (await this.PhonesAPI.postPhone(phone)));
+        }
+        this.$toast.success('Donnée sauvegardée avec succès');
+        this.$router.push(this.$context.buildCampusLink('phones-id-edit', {
+          params: { id: data.id },
+        }));
+      } catch ({ response: { status } }) {
+        if (status === 400) {
+          this.$toast.error('Erreur de création ou de mise à jour, merci de vérifier tous les champs');
+        }
+        if (status === 500) {
+          this.$toast.error('Erreur serveur, si le problème persiste, veuillez contacter le service technique');
+        }
       }
-      this.$router.push(this.$context.buildCampusLink('phones-id-edit', {
-        params: { id: data.id },
-      }));
     },
   },
 };
