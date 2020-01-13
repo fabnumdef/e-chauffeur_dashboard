@@ -131,8 +131,7 @@ export default {
       } catch ({ response: { status } }) {
         if (status === 400) {
           this.$toast.error('Erreur de création ou de mise à jour, merci de vérifier tous les champs');
-        }
-        if (status === 500) {
+        } else {
           this.$toast.error('Erreur serveur, si le problème persiste, veuillez contacter le service technique');
         }
       }
