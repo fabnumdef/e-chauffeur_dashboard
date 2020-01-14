@@ -138,21 +138,14 @@
           field-id="reservation-scope"
         >
           <div class="columns">
-            <div class="column select">
-              <select
-                id="select-scope"
-                @change="defineScope"
-              >
-                <option value="">
-                  Choisissez une unité :
-                </option>
-                <option value="hour">
-                  Heures
-                </option>
-                <option value="day">
-                  Jours
-                </option>
-              </select>
+            <div class="column">
+              <vue-multiselect
+                v-model="selectScope"
+                :options="multiSelectOptions"
+                placeholder="Veuillez sélectionner une unité"
+                track-by="value"
+                label="label"
+              />
             </div>
             <div class="column">
               <input
@@ -251,25 +244,32 @@ export default {
   data() {
     return {
       id: this.campus.id,
-      selectScope: null,
+      selectScope: {
+        label: 'Unité : heure',
+        value: 'hour',
+      },
+      multiSelectOptions: [
+        { label: 'Unité : heure', value: 'hour' },
+        { label: 'Unité : jour', value: 'day' },
+      ],
     };
   },
   computed: {
     localReservationScope: {
       get() {
-        if (this.selectScope === 'day') {
+        if (this.selectScope.value === 'day') {
           return Math.floor(this.campus.defaultReservationScope / 3600 / 24);
         }
-        if (this.selectScope === 'hour') {
+        if (this.selectScope.value === 'hour') {
           return Math.floor(this.campus.defaultReservationScope / 3600);
         }
         return null;
       },
       set(value) {
-        if (this.selectScope === 'day') {
+        if (this.selectScope.value === 'day') {
           this.campus.defaultReservationScope = value * 3600 * 24;
         }
-        if (this.selectScope === 'hour') {
+        if (this.selectScope.value === 'hour') {
           this.campus.defaultReservationScope = value * 3600;
         }
         return value;
@@ -290,9 +290,6 @@ export default {
         name: 'campuses-id-edit',
         params: { id: data.id },
       });
-    },
-    defineScope({ target }) {
-      this.selectScope = target.value;
     },
   },
 };
