@@ -64,6 +64,19 @@
           </template>
         </vue-multiselect>
       </ec-field>
+      <template v-if="timeSlot.recurrence">
+        <recurring-option
+          v-model="timeSlot.recurrence"
+          :frequency="{weekly: 'Hebdomadaire', monthly: 'Mensuel'}"
+        />
+      </template>
+      <ec-field label="Commentaires">
+        <textarea
+          id="comments"
+          v-model="timeSlot.comments"
+          class="textarea"
+        />
+      </ec-field>
       <template
         v-if="timeSlot.id"
         #submit
@@ -100,11 +113,13 @@
 <script>
 import ecModal from '~/components/modal.vue';
 import ecField from '~/components/form/field.vue';
+import recurringOption from '~/components/form/recurring-option.vue';
 
 export default {
   components: {
     ecModal,
     ecField,
+    recurringOption,
   },
   props: {
     active: {

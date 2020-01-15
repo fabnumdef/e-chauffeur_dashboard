@@ -137,13 +137,6 @@
       </li>
       <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
-          :to="{ name: 'logs' }"
-        >
-          Logs
-        </nuxt-link>
-      </li>
-      <li v-if="$auth.isSuperAdmin()">
-        <nuxt-link
           :to="{ name: 'ratings' }"
         >
           Appréciations
