@@ -1,12 +1,20 @@
 # Changelog
 ## Current
 ### Features
+* Add recurrence
+### Fix
+## Version 1.4.4
+### Features
 * Add new component to enforce password strength
 * Add explicit error messages on 
 * Add possibility for admin to edit his own campus
 * Round percents in dashboard
 * Add custom reservation scope for campus
-* Add recurrence
+* Add red dot to notify created rides regulator
+* Luggage visibility increase in planificator
+* Added toast messages on phones & cars edit/creation
+* Remove logs menu, using Loki stack right now
+* Export dashboard and monitoring on deploy
 ### Fix
 * Updated login page ui
 * Changed dropdown title when creating a new car in planning
