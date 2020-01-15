@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Add recurrence
 ### Fix
 ## Version 1.4.4
 ### Features

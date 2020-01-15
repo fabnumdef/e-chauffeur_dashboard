@@ -71,12 +71,13 @@ import planningModal from '~/components/planning/cars/modal.vue';
 import planningCalendar from '~/components/planning/cars/calendar.vue';
 
 const CARS_DATA = 'id,label,model(label)';
-const TIMESLOT_DATA = `id,start,end,cars(${CARS_DATA})`;
+const TIMESLOT_DATA = `id,start,end,cars(${CARS_DATA}),recurrence(enabled,frequency)`;
 const newTimeSlot = () => ({
   start: null,
   end: null,
   cars: [],
   drivers: null,
+  recurrence: { frequency: null, enabled: false },
 });
 export default {
   watchQuery: ['current'],
