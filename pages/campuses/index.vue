@@ -17,7 +17,7 @@
         </nuxt-link>
       </div>
     </header>
-    <ec-list
+    <crud-list
       :columns="{id: 'ID', name: 'Nom'}"
       :data="campuses"
       :pagination-offset="pagination.offset"
@@ -52,17 +52,17 @@
           <span>Supprimer</span>
         </button>
       </template>
-    </ec-list>
+    </crud-list>
   </main>
 </template>
 
 <script>
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;

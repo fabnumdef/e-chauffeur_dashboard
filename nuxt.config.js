@@ -108,6 +108,7 @@ module.exports = {
           'faCar',
           'faCheckCircle',
           'faTimesCircle',
+          'faFileImport',
         ],
       },
     ],

@@ -5,7 +5,7 @@
         Appréciations
       </h1>
     </header>
-    <ec-list
+    <crud-list
       :columns="columns"
       :data="ratingsToDisplay"
       :pagination-offset="pagination.offset"
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
 
 const columns = {
   createdAt: 'Date',
@@ -30,7 +30,7 @@ const columns = {
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;

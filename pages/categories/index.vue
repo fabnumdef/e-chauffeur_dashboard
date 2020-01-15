@@ -1,23 +1,11 @@
 <template>
   <main>
-    <header class="with-options">
-      <h1 class="title">
-        Catégories
-      </h1>
-      <div class="options">
-        <nuxt-link
-          v-if="$auth.isSuperAdmin()"
-          :to="{name: 'categories-new'}"
-          class="button is-success"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Créer</span>
-        </nuxt-link>
-      </div>
-    </header>
-    <ec-list
+    <crud-header
+      title="Catégories"
+      :to-create-new="{name: 'categories-new'}"
+      @uploadCSV="uploadCSV"
+    />
+    <crud-list
       :columns="{id: 'ID', label: 'Label'}"
       :data="categories"
       :pagination-offset="pagination.offset"
@@ -52,17 +40,19 @@
           <span>Supprimer</span>
         </button>
       </template>
-    </ec-list>
+    </crud-list>
   </main>
 </template>
 
 <script>
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
+    crudHeader,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -76,28 +66,26 @@ export default {
   methods: {
     async deleteCategory({ id }) {
       if (window && window.confirm('Voulez vous vraiment supprimer cette catégorie ?')) {
-        const categoryAPI = this.$api.categories('id,label');
-        await categoryAPI.deleteCategory(id);
-        const offset = parseInt(this.$route.query.offset, 10) || 0;
-        const limit = parseInt(this.$route.query.limit, 10) || 30;
-        const updatedList = await categoryAPI.getCategories(offset, limit);
-        this.categories = updatedList.data;
-        this.pagination = updatedList.pagination;
+        await this.$api.categories('id,label').deleteCategory(id);
+        this.updateList();
       }
+    },
+    async uploadCSV(data) {
+      try {
+        await this.$api.categories().postCategories(data);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+      this.updateList();
+    },
+    async updateList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.categories('id,label').getCategories(offset, limit);
+      this.categories = updatedList.data;
+      this.pagination = updatedList.pagination;
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .with-options {
-    display: flex;
-    .title {
-      flex-grow: 1;
-    }
-    .options {
-      padding: 0 10px 10px;
-      float: right;
-    }
-  }
-</style>

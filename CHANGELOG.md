@@ -2,6 +2,7 @@
 ## Current
 ### Features
 * Add recurrence
+* Add csv Import
 ### Fix
 ## Version 1.4.4
 ### Features
