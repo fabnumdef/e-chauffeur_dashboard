@@ -110,8 +110,8 @@ export default {
     toggleUploadModal() {
       this.displayUploadModal = !this.displayUploadModal;
     },
-    uploadCSV(data) {
-      this.$emit('uploadCSV', data);
+    uploadCSV(...args) {
+      this.$emit('uploadCSV', ...args);
     },
     toggleExportModal() {
       this.displayExportModal = !this.displayExportModal;

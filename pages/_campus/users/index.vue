@@ -153,9 +153,9 @@ export default {
       await this.$api.campusUsers(this.campus.id).deleteUser(id);
       this.updateUsersList();
     },
-    async usersUploadCSV(data) {
+    async usersUploadCSV({ data, params }) {
       try {
-        await this.$api.campusUsers(this.campus.id).postUsers(data);
+        await this.$api.campusUsers(this.campus.id).postUsers(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");

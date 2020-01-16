@@ -97,9 +97,9 @@ export default {
         this.updateList();
       }
     },
-    async uploadCSV(data) {
+    async uploadCSV({ data, params }) {
       try {
-        await this.$api.pois(this.campus).postPois(data);
+        await this.$api.pois(this.campus).postPois(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");

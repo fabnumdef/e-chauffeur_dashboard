@@ -99,10 +99,8 @@ export default {
         return;
       }
       formData.append('csv', file);
-      formData.append('delimiter', this.delimiter);
-      formData.append('ignoreEmpty', this.ignoreEmpty);
 
-      this.$emit('submit', formData);
+      this.$emit('submit', { data: formData, params: { delimiter: this.delimiter, ignoreEmpty: this.ignoreEmpty } });
     },
   },
 };

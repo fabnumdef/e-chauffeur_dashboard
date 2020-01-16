@@ -81,9 +81,9 @@ export default {
         this.updateList();
       }
     },
-    async uploadCSV(data) {
+    async uploadCSV({ data, params }) {
       try {
-        await this.$api.categories().postCategories(data);
+        await this.$api.categories().postCategories(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");

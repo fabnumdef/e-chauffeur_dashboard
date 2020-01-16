@@ -94,9 +94,9 @@ export default {
       await this.$api.pois().deletePoi(id);
       this.updateList();
     },
-    async uploadCSV(data) {
+    async uploadCSV({ data, params }) {
       try {
-        await this.$api.pois().postPois(data);
+        await this.$api.pois().postPois(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");

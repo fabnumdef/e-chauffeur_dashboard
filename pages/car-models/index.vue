@@ -87,9 +87,9 @@ export default {
       await this.$api.carModels.deleteCarModel(id);
       this.updateList();
     },
-    async uploadCSV(data) {
+    async uploadCSV({ data, params }) {
       try {
-        await this.$api.carModels.postCarModels(data);
+        await this.$api.carModels.postCarModels(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");

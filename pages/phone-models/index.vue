@@ -86,9 +86,9 @@ export default {
       await this.$api.phoneModels.deletePhoneModel(id);
       this.updateList();
     },
-    async uploadCSV(data) {
+    async uploadCSV({ data, params }) {
       try {
-        await this.$api.phoneModels.postPhoneModels(data);
+        await this.$api.phoneModels.postPhoneModels(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");
