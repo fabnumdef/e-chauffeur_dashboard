@@ -3,13 +3,14 @@
 ### Features
 * Add recurrence
 * Add csv Import
+* Add csv export for CRUDs
 ### Fix
+* Fixed logo color when connected
 ## Version 1.4.4
 ### Features
 * Add new component to enforce password strength
 * Add explicit error messages on 
 * Add possibility for admin to edit his own campus
-* Add csv export for CRUDs
 * Round percents in dashboard
 * Add custom reservation scope for campus
 * Add red dot to notify created rides regulator
@@ -21,7 +22,6 @@
 * Updated login page ui
 * Changed dropdown title when creating a new car in planning
 * Fix infosec issue with X-Frame header
-* Fixed logo color when connected
 * Fix arrow on calendar tooltip
 * Fix links to update items in lists
 * Fix status translation in dashboard
