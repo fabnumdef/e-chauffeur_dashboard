@@ -1,48 +1,24 @@
 <template>
   <main>
-    <header class="with-options">
-      <h1 class="title">
-        Bases
-      </h1>
-      <button
-        class="button is-rounded"
-        type="button"
-        @click="toggleCsvModal(true)"
-      >
-        <fa-icon
-          :icon="['fas', 'file-export']"
-          class="has-text-info"
-        />
-        Exporter CSV
-      </button>
-      <csv-modal
-        :csv-status="displayModal"
-        :pagination="pagination"
-        :api-call="$api.campuses.getCampuses"
-        :mask="mask"
-        @toggleModal="toggleCsvModal"
-      />
-      <div class="options">
-        <nuxt-link
-          v-if="$auth.isSuperAdmin()"
-          :to="{name: 'campuses-new'}"
-          class="button is-success"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Nouveau</span>
-        </nuxt-link>
-      </div>
-    </header>
-    <ec-list
+    <crud-header
+      title="Bases"
+      :to-create-new="{name: 'campuses-new'}"
+      export-csv
+      :mask="mask"
+      :pagination="pagination"
+      :api-call="$api.campuses.getCampuses"
+    />
+    <crud-list
       :columns="{id: 'ID', name: 'Nom'}"
       :data="campuses"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
     >
-      <template #actions="{ row }">
+      <template
+        v-if="$auth.isSuperAdmin()"
+        #actions="{ row }"
+      >
         <nuxt-link
           v-if="$auth.isSuperAdmin()"
           :to="{
@@ -67,19 +43,19 @@
           <span>Supprimer</span>
         </button>
       </template>
-    </ec-list>
+    </crud-list>
   </main>
 </template>
 
 <script>
-import ecList from '~/components/crud/list';
-import csvModal from '~/components/csv-modal';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
-    csvModal,
+    crudList,
+    crudHeader,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -92,7 +68,6 @@ export default {
   },
   data() {
     return {
-      displayModal: false,
       mask: 'id,name,workedDays,workedHours(start,end),location(coordinates),phone,timezone',
     };
   },
@@ -104,9 +79,6 @@ export default {
       const updatedList = await this.$api.campuses.getCampuses('id,name', { offset, limit });
       this.campuses = updatedList.data;
       this.pagination = updatedList.pagination;
-    },
-    toggleCsvModal(force) {
-      this.displayModal = force || !this.displayModal;
     },
   },
 };

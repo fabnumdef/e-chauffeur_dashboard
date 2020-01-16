@@ -120,9 +120,9 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field';
-import ecSearchPhoneStates from '~/components/form/search-phone-states';
-import ecSearchPhoneModels from '~/components/form/search-phone-models';
+import ecField from '~/components/form/field.vue';
+import ecSearchPhoneStates from '~/components/form/search-phone-states.vue';
+import ecSearchPhoneModels from '~/components/form/search-phone-models.vue';
 
 const EDITABLE_FIELDS = [
   'id',
@@ -162,14 +162,23 @@ export default {
   methods: {
     async edit(phone) {
       let data = {};
-      if (this.id) {
-        ({ data } = (await this.PhonesAPI.patchPhone(phone.id, phone)));
-      } else {
-        ({ data } = (await this.PhonesAPI.postPhone(phone)));
+      try {
+        if (this.id) {
+          ({ data } = (await this.PhonesAPI.patchPhone(phone.id, phone)));
+        } else {
+          ({ data } = (await this.PhonesAPI.postPhone(phone)));
+        }
+        this.$toast.success('Donnée sauvegardée avec succès');
+        this.$router.push(this.$context.buildCampusLink('phones-id-edit', {
+          params: { id: data.id },
+        }));
+      } catch ({ response: { status } }) {
+        if (status === 400) {
+          this.$toast.error('Erreur de création ou de mise à jour, merci de vérifier tous les champs');
+        } else {
+          this.$toast.error('Erreur serveur, si le problème persiste, veuillez contacter le service technique');
+        }
       }
-      this.$router.push(this.$context.buildCampusLink('phones-id-edit', {
-        params: { id: data.id },
-      }));
     },
   },
 };

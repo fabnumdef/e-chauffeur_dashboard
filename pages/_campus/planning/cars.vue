@@ -8,7 +8,7 @@
         <div class="column">
           <nuxt-link
             class="button switch-planning"
-            :to="campusLink('planning-drivers')"
+            :to="campusLink('planning-drivers', { query: { current: $route.query.current } })"
           >
             <fa-icon icon="user-circle" /> <fa-icon icon="car" />
           </nuxt-link>
@@ -67,18 +67,20 @@
 </template>
 <script>
 import { DateTime } from 'luxon';
-import planningModal from '~/components/planning/cars/modal.vue';
+import planningModal from '~/components/modals/cars-planning.vue';
 import planningCalendar from '~/components/planning/cars/calendar.vue';
 
 const CARS_DATA = 'id,label,model(label)';
-const TIMESLOT_DATA = `id,start,end,cars(${CARS_DATA})`;
+const TIMESLOT_DATA = `id,start,end,cars(${CARS_DATA}),recurrence(enabled,frequency)`;
 const newTimeSlot = () => ({
   start: null,
   end: null,
   cars: [],
   drivers: null,
+  recurrence: { frequency: null, enabled: false },
 });
 export default {
+  watchQuery: ['current'],
   components: { planningModal, planningCalendar },
   async asyncData({ $api, params, query }) {
     // @todo: paginate
@@ -246,7 +248,7 @@ export default {
     /deep/ .fa-car {
       position: absolute;
       background: $orange;
-      right: 0px;
+      right: 0;
       color: $white;
       padding: 7px;
       box-sizing: initial;

@@ -134,6 +134,32 @@
           </div>
         </div>
         <ec-field
+          label="Distance à laquelle le soutenu peut réserver une course"
+          field-id="reservation-scope"
+        >
+          <div class="columns">
+            <div class="column">
+              <vue-multiselect
+                v-model="selectScope"
+                :options="multiSelectOptions"
+                placeholder="Veuillez sélectionner une unité"
+                track-by="value"
+                label="label"
+              />
+            </div>
+            <div class="column">
+              <input
+                id="reservation-scope"
+                v-model="localReservationScope"
+                class="input"
+                type="number"
+                :disabled="!selectScope"
+                :placeholder="!selectScope && 'Veuillez sélectionner une unité'"
+              >
+            </div>
+          </div>
+        </ec-field>
+        <ec-field
           label="Catégories"
           field-id="categories"
         >
@@ -200,7 +226,7 @@ import weekdaysSelect from '~/components/form/weekdays.vue';
 import rideDuration from '~/components/form/ride-duration.vue';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
-    + 'information,timezone,workedDays,workedHours,defaultRideDuration';
+    + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
 export default {
   components: {
     ecField,
@@ -220,6 +246,40 @@ export default {
         ...(await $api.campuses.getCampus(params.campus, EDITABLE_FIELDS)).data,
       },
     };
+  },
+  data() {
+    return {
+      selectScope: {
+        label: 'Unité : heure',
+        value: 'hour',
+      },
+      multiSelectOptions: [
+        { label: 'Unité : heure', value: 'hour' },
+        { label: 'Unité : jour', value: 'day' },
+      ],
+    };
+  },
+  computed: {
+    localReservationScope: {
+      get() {
+        if (this.selectScope.value === 'day') {
+          return Math.floor(this.campus.defaultReservationScope / 3600 / 24);
+        }
+        if (this.selectScope.value === 'hour') {
+          return Math.floor(this.campus.defaultReservationScope / 3600);
+        }
+        return null;
+      },
+      set(value) {
+        if (this.selectScope.value === 'day') {
+          this.campus.defaultReservationScope = value * 3600 * 24;
+        }
+        if (this.selectScope.value === 'hour') {
+          this.campus.defaultReservationScope = value * 3600;
+        }
+        return value;
+      },
+    },
   },
   methods: {
     async edit(campus) {
@@ -249,5 +309,9 @@ export default {
     padding: $size-small/2 $size-small;
     margin: 0;
     border-radius: $radius-small;
+  }
+
+  .select select {
+    width: 100%;
   }
 </style>

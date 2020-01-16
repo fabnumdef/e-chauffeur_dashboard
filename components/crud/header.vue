@@ -1,0 +1,137 @@
+<template>
+  <header class="with-options">
+    <h1 class="title">
+      {{ title }}
+    </h1>
+    <div class="options">
+      <button
+        v-if="uploadCsv"
+        class="button is-rounded"
+        type="button"
+        @click="toggleUploadModal"
+      >
+        <fa-icon
+          :icon="['fas', 'file-import']"
+          class="has-text-info"
+        />
+        Importer CSV
+      </button>
+      <button
+        v-if="exportCsv"
+        class="button is-rounded"
+        type="button"
+        @click="toggleExportModal"
+      >
+        <fa-icon
+          :icon="['fas', 'file-export']"
+          class="has-text-info"
+        />
+        Exporter CSV
+      </button>
+      <nuxt-link
+        v-if="$auth.isSuperAdmin() && toCreateNew"
+        :to="toCreateNew"
+        class="button is-success"
+      >
+        <span class="icon is-small">
+          <fa-icon :icon="['fas', 'plus']" />
+        </span>
+        <span>Créer</span>
+      </nuxt-link>
+    </div>
+    <upload-modal
+      v-if="uploadCsv"
+      :display="displayUploadModal"
+      @toggle="toggleUploadModal"
+      @submit="uploadCSV"
+    />
+    <export-modal
+      v-if="exportCsv"
+      :display="displayExportModal"
+      :pagination="pagination"
+      :api-call="apiCall"
+      :has-mask="hasMask"
+      :mask="mask"
+      @toggleModal="toggleExportModal"
+    />
+  </header>
+</template>
+
+<script>
+import uploadModal from '~/components/modals/upload-csv.vue';
+import exportModal from '~/components/modals/export-csv.vue';
+
+export default {
+  components: {
+    uploadModal,
+    exportModal,
+  },
+  props: {
+    title: {
+      type: String,
+      required: true,
+    },
+    toCreateNew: {
+      type: Object,
+      default: () => null,
+    },
+    uploadCsv: {
+      type: Boolean,
+      default: false,
+    },
+    exportCsv: {
+      type: Boolean,
+      default: false,
+    },
+    apiCall: {
+      type: Function,
+      default: () => null,
+    },
+    mask: {
+      type: String,
+      default: 'id',
+    },
+    pagination: {
+      type: Object,
+      default: () => null,
+    },
+    hasMask: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      displayUploadModal: false,
+      displayExportModal: false,
+    };
+  },
+  methods: {
+    toggleUploadModal() {
+      this.displayUploadModal = !this.displayUploadModal;
+    },
+    uploadCSV(data) {
+      this.$emit('uploadCSV', data);
+    },
+    toggleExportModal() {
+      this.displayExportModal = !this.displayExportModal;
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+  .with-options {
+    display: flex;
+  .title {
+    flex-grow: 1;
+  }
+  .options {
+    padding: 0 10px 10px;
+    float: right;
+    * {
+      margin: 0 .3em;
+    }
+  }
+}
+</style>

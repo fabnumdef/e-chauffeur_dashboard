@@ -117,9 +117,9 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field';
-import ecPassword from '~/components/form/password';
-import roleRules from '~/components/form/role-only';
+import ecField from '~/components/form/field.vue';
+import ecPassword from '~/components/form/password.vue';
+import roleRules from '~/components/form/role-only.vue';
 
 const EDITABLE_FIELDS = ['id', 'email', 'password', 'name', 'firstname', 'lastname', 'roles(role)'];
 

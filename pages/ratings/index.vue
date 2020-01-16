@@ -1,56 +1,40 @@
 <template>
   <main>
-    <header id="rating-header">
-      <h1 class="title">
-        Appréciations
-      </h1>
-      <button
-        class="button is-rounded"
-        type="button"
-        @click="toggleCsvModal(true)"
-      >
-        <fa-icon
-          :icon="['fas', 'file-export']"
-          class="has-text-info"
-        />
-        Exporter CSV
-      </button>
-    </header>
-    <ec-list
+    <crud-header
+      title="Appréciations"
+      export-csv
+      :mask="mask"
+      :pagination="pagination"
+      :api-call="$api.users.getUsers"
+    />
+    <crud-list
       :columns="columns"
       :data="ratings"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
     />
-    <csv-modal
-      :csv-status="displayModal"
-      :pagination="pagination"
-      :api-call="$api.ratings.getRatings"
-      @toggleModal="toggleCsvModal"
-      :mask="mask"
-    />
   </main>
 </template>
 
 <script>
-import ecList from '~/components/crud/list';
-import csvModal from '~/components/csv-modal';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 const columns = {
-  createdAt: 'Timestamp',
+  createdAt: 'Date',
   uxGrade: 'Note UX',
   recommandationGrade: 'Recommandation',
   message: 'Message',
-  ride: 'Ride',
-  campus: 'Campus',
+  ride: 'ID de la course',
+  campus: 'Base',
 };
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
-    csvModal,
+    crudList,
+    crudHeader,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -71,17 +55,11 @@ export default {
   },
   data() {
     return {
-      displayModal: false,
       mask: 'id,uxGrade,recommandationGrade,message,ride(campus),ride,createdAt',
     };
   },
   computed: {
     columns() { return columns; },
-  },
-  methods: {
-    toggleCsvModal(force) {
-      this.displayModal = force || !this.displayModal;
-    },
   },
 };
 </script>

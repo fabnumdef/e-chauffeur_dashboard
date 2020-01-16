@@ -18,9 +18,11 @@ export default {
   },
   async asyncData({ params, store }) {
     if (!store.getters['context/isCampus'](params.campus)) {
-      const start = DateTime.local().startOf('days').toJSDate();
-      const end = DateTime.local().endOf('days').toJSDate();
       await store.dispatch('context/fetchCampus', params.campus);
+      const start = DateTime.local().startOf('days').toJSDate();
+      const end = DateTime.local()
+        .plus({ seconds: store.getters['context/campus'].defaultReservationScope })
+        .toJSDate();
       await store.dispatch('realtime/setRides', { campus: params.campus, start, end });
     }
     return {};

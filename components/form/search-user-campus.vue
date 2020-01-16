@@ -9,7 +9,7 @@
     :searchable="false"
     :show-labels="false"
     placeholder="Choisir une base"
-    @input="onInput"
+    @select="onInput"
   />
 </template>
 <script>

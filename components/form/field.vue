@@ -1,6 +1,7 @@
 <template>
   <div
     class="field"
+    :class="{'is-horizontal': horizontal}"
   >
     <div
       v-if="label || $slots.label"
@@ -62,6 +63,10 @@ export default {
     fieldId: {
       type: String,
       default: null,
+    },
+    horizontal: {
+      type: Boolean,
+      default: false,
     },
   },
 };

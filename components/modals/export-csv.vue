@@ -1,6 +1,6 @@
 <template>
   <vue-modal
-    :active="csvStatus"
+    :active="display"
     @toggle-modal="toggle(false)"
   >
     <template slot="title">
@@ -72,8 +72,8 @@
 
 <script>
 import generateCsvLink from '~/helpers/generateCsvLink';
-import vueModal from '~/components/modal';
-import ecField from '~/components/form/field';
+import vueModal from '~/components/modals/default.vue';
+import ecField from '~/components/form/field.vue';
 
 const ROWS_PER_QUERY = 1000;
 
@@ -87,7 +87,7 @@ export default {
       type: Object,
       required: true,
     },
-    csvStatus: {
+    display: {
       type: Boolean,
       required: true,
     },

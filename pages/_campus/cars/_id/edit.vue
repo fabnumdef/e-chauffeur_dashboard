@@ -89,7 +89,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
-import SearchCarModels from '~/components/form/search-car-models';
+import SearchCarModels from '~/components/form/search-car-models.vue';
 
 const EDITABLE_FIELDS = ['id', 'label', 'model'];
 
@@ -118,15 +118,23 @@ export default {
   methods: {
     async edit(car) {
       let data = {};
-      if (this.id) {
-        ({ data } = (await this.CarsAPI.patchCar(car.id, car)));
-      } else {
-        ({ data } = (await this.CarsAPI.postCar(car)));
+      try {
+        if (this.id) {
+          ({ data } = (await this.CarsAPI.patchCar(car.id, car)));
+        } else {
+          ({ data } = (await this.CarsAPI.postCar(car)));
+        }
+        this.$toast.success('Donnée sauvegardée avec succès');
+        this.$router.push(this.$context.buildCampusLink('cars-id-edit', {
+          params: { id: data.id },
+        }));
+      } catch ({ response: { status } }) {
+        if (status === 400) {
+          this.$toast.error('Erreur de création ou de mise à jour, merci de vérifier tous les champs');
+        } else {
+          this.$toast.error('Erreur serveur, si le problème persiste, veuillez contacter le service technique');
+        }
       }
-
-      this.$router.push(this.$context.buildCampusLink('cars-id-edit', {
-        params: { id: data.id },
-      }));
     },
   },
 };

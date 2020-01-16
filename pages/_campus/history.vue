@@ -312,7 +312,7 @@ import {
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
 import generateCsvLink from '~/helpers/generateCsvLink';
 import ecDatePicker from '~/components/datepicker.vue';
-import vueModal from '~/components/modal.vue';
+import vueModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';
 
 const ROWS_PER_QUERY = 1000;
@@ -465,7 +465,7 @@ export default {
 };
 </script>
 
-<style scope lang="scss" scoped>
+<style lang="scss" scoped>
   @import "~assets/css/head";
 
   $heightHeader: 75px;

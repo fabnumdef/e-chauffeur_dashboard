@@ -16,6 +16,7 @@
         :disable-views="['years', 'year', 'month', 'day']"
         :on-event-click="openEdit"
         :min-event-width="75"
+        :selected-date="shouldUseSelectedDate ? selectedDate : ''"
         @click-and-release="openCreate"
         @view-change="viewChange"
       >
@@ -79,6 +80,7 @@ export default {
   data() {
     return {
       STEP,
+      shouldUseSelectedDate: true,
     };
   },
 
@@ -103,6 +105,9 @@ export default {
       return (this.campus && this.campus.workedHours)
         ? this.campus.workedHours.end : END_DAY_HOUR;
     },
+    selectedDate() {
+      return this.$route.query.current;
+    },
   },
   methods: {
     openCreate(event) {
@@ -115,10 +120,12 @@ export default {
       this.$emit('open-edit', content);
     },
     viewChange({ startDate, endDate }) {
-      this.$emit('view-change', {
-        startDate,
-        endDate,
-      });
+      this.$router.push(this.campusLink(
+        'planning-drivers',
+        { query: { current: DateTime.fromJSDate(startDate).plus({ day: 5 }).toString() } },
+      ));
+      this.shouldUseSelectedDate = false;
+      this.$emit('view-change', { startDate, endDate });
     },
     drop(event, content) {
       const driver = JSON.parse(event.dataTransfer.getData('application/json'));

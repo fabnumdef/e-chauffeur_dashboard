@@ -1,53 +1,31 @@
 <template>
   <main>
-    <header class="with-options">
-      <h1 class="title">
-        Téléphones
-      </h1>
-      <button
-        class="button is-rounded"
-        type="button"
-        @click="toggleCsvModal(true)"
-      >
-        <fa-icon
-          :icon="['fas', 'file-export']"
-          class="has-text-info"
-        />
-        Exporter CSV
-      </button>
-      <csv-modal
-        :csv-status="displayModal"
-        :pagination="pagination"
-        :api-call="$api.phones(campus.id, mask).getPhones"
-        :mask="mask"
-        @toggleModal="toggleCsvModal"
-        @updateMask="updateMask"
-      />
-      <div class="options">
-        <nuxt-link
-          v-if="$auth.isAdmin()"
-          :to="campusLink('phones-new')"
-          class="button is-success"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Créer</span>
-        </nuxt-link>
-      </div>
-    </header>
-    <ec-list
+    <crud-header
+      title="Téléphones"
+      :to-create-new="campusLink('phones-new')"
+      upload-csv
+      export-csv
+      :mask="mask"
+      has-mask
+      :pagination="pagination"
+      :api-call="$api.phones(campus.id, mask).getPhones"
+      @uploadCSV="uploadCSV"
+    />
+    <crud-list
       :columns="{id: 'S/N', assignTo: 'Assigné à'}"
       :data="getPhones"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
     >
-      <template #actions="{ row }">
+      <template
+        v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+        #actions="{ row }"
+      >
         <nuxt-link
-          v-if="$auth.isAdmin()"
+          v-if="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
           :to="campusLink('phones-id-edit', {
-            params: row,
+            params: { id: row.id },
           })"
           class="button is-primary"
         >
@@ -57,7 +35,7 @@
           <span>Modifier</span>
         </nuxt-link>
         <button
-          v-if="$auth.isAdmin()"
+          v-if="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
           class="button is-danger"
           @click="deletePhone(row)"
         >
@@ -67,14 +45,14 @@
           <span>Supprimer</span>
         </button>
       </template>
-    </ec-list>
+    </crud-list>
   </main>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import ecList from '~/components/crud/list';
-import csvModal from '~/components/csv-modal';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 const FIELDS = [
   'id',
@@ -85,8 +63,8 @@ const FIELDS = [
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
-    csvModal,
+    crudList,
+    crudHeader,
   },
   async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
@@ -100,7 +78,6 @@ export default {
   },
   data() {
     return {
-      displayModal: false,
       mask: 'id,imei,model(label),number,owner(id),campus,state,comments',
     };
   },
@@ -132,32 +109,25 @@ export default {
     async deletePhone({ id }) {
       if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce téléphone ?')) {
         await this.$api.phones(this.campus).deletePhone(id);
-        const offset = parseInt(this.$route.query.offset, 10) || 0;
-        const limit = parseInt(this.$route.query.limit, 10) || 30;
-        const { data, pagination } = await this.$api.phones(this.campus, FIELDS.join(',')).getPhones({ offset, limit });
-        this.phones = data;
-        this.pagination = pagination;
+        this.updateList();
       }
     },
-    toggleCsvModal(force) {
-      this.displayModal = force || !this.displayModal;
+    async uploadCSV(data) {
+      try {
+        await this.$api.phones(this.campus).postPhones(data);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+      this.updateList();
     },
-    updateMask(mask) {
-      this.mask = mask;
+    async updateList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const { data, pagination } = await this.$api.phones(this.campus, FIELDS.join(',')).getPhones(offset, limit);
+      this.phones = data;
+      this.pagination = pagination;
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .with-options {
-    display: flex;
-    .title {
-      flex-grow: 1;
-    }
-    .options {
-      padding: 0 10px 10px;
-      float: right;
-    }
-  }
-</style>

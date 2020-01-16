@@ -1,42 +1,17 @@
 <template>
   <main>
-    <header class="with-options">
-      <h1 class="title">
-        Lieux
-      </h1>
-      <button
-        class="button is-rounded"
-        type="button"
-        @click="toggleCsvModal(true)"
-      >
-        <fa-icon
-          :icon="['fas', 'file-export']"
-          class="has-text-info"
-        />
-        Exporter CSV
-      </button>
-      <csv-modal
-        :csv-status="displayModal"
-        :pagination="pagination"
-        :api-call="$api.pois(null, mask).getPois"
-        :has-mask="true"
-        :mask="mask"
-        @toggleModal="toggleCsvModal"
-        @updateMask="updateMask"
-      />
-      <div class="options">
-        <nuxt-link
-          :to="{name: 'pois-new'}"
-          class="button is-success"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Créer</span>
-        </nuxt-link>
-      </div>
-    </header>
-    <ec-list
+    <crud-header
+      title="Lieux"
+      :to-create-new="{name: 'pois-new'}"
+      upload-csv
+      export-csv
+      :mask="mask"
+      has-mask
+      :pagination="pagination"
+      :api-call="$api.pois(null, mask).getPois"
+      @uploadCSV="uploadCSV"
+    />
+    <crud-list
       :columns="columns"
       :data="pois"
       :pagination-offset="pagination.offset"
@@ -44,35 +19,70 @@
       :pagination-per-page="pagination.limit"
       action-edit="pois-id-edit"
       @action-remove="deletePoi"
-    />
+    >
+      <template
+        v-if="$auth.isSuperAdmin()"
+        #actions="{ row }"
+      >
+        <nuxt-link
+          v-if="$auth.isSuperAdmin()"
+          :to="{
+            name: 'pois-id-edit',
+            params: { id: row.id },
+          }"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'edit']" />
+          </span>
+          <span>Modifier</span>
+        </nuxt-link>
+        <button
+          v-if="$auth.isSuperAdmin()"
+          class="button is-danger"
+          @click="deletePoi(row)"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'trash']" />
+          </span>
+          <span>Supprimer</span>
+        </button>
+      </template>
+    </crud-list>
   </main>
 </template>
 
 <script>
-import ecList from '~/components/crud/list.vue';
-import csvModal from '~/components/csv-modal';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 const columns = { id: 'ID', label: 'Label', enabled: 'Activé' };
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
-    csvModal,
+    crudList,
+    crudHeader,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api.pois(null, Object.keys(columns).join(','), { withDisabled: true })
       .getPois({ offset, limit });
+
+    const pois = data.map((poi) => ({
+      ...poi,
+      enabled: (poi.enabled === false)
+        ? 'fas:times-circle:error'
+        : 'fas:check-circle:success',
+    }));
     return {
-      pois: data,
+      pois,
       pagination,
     };
   },
   data() {
     return {
-      displayModal: false,
       mask: 'id,label,location(coordinates),campus(name),enabled',
     };
   },
@@ -82,6 +92,18 @@ export default {
   methods: {
     async deletePoi({ id }) {
       await this.$api.pois().deletePoi(id);
+      this.updateList();
+    },
+    async uploadCSV(data) {
+      try {
+        await this.$api.pois().postPois(data);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+      this.updateList();
+    },
+    async updateList() {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await this.$api.pois(null, Object.keys(columns).join(','), { withDisabled: true })
@@ -89,25 +111,6 @@ export default {
       this.pois = updatedList.data;
       this.pagination = updatedList.pagination;
     },
-    toggleCsvModal(force) {
-      this.displayModal = force || !this.displayModal;
-    },
-    updateMask(mask) {
-      this.mask = mask;
-    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .with-options {
-    display: flex;
-    .title {
-      flex-grow: 1;
-    }
-    .options {
-      padding: 0 10px 10px;
-      float: right;
-    }
-  }
-</style>

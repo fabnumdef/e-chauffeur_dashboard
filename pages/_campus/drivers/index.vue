@@ -20,7 +20,7 @@
         </div>
       </div>
     </header>
-    <ec-list
+    <crud-list
       :columns="columns"
       :data="drivers"
       :pagination-offset="pagination.offset"
@@ -35,14 +35,14 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
 
 const columns = { id: 'ID', email: 'E-mail' };
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
   },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
