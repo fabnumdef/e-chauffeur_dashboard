@@ -80,14 +80,14 @@
 
 <script>
 import { DateTime } from 'luxon';
-import bulmaTile from '~/components/tile';
-import carModelsTile from '~/components/dashboard/car-models';
-import categoriesTile from '~/components/dashboard/categories';
-import driversTile from '~/components/dashboard/drivers';
-import hasPhoneTile from '~/components/dashboard/has-phone';
-import overTimeTile from '~/components/dashboard/over-time';
-import poisTile from '~/components/dashboard/pois';
-import statusesTile from '~/components/dashboard/statuses';
+import bulmaTile from '~/components/tile.vue';
+import carModelsTile from '~/components/dashboard/car-models.vue';
+import categoriesTile from '~/components/dashboard/categories.vue';
+import driversTile from '~/components/dashboard/drivers.vue';
+import hasPhoneTile from '~/components/dashboard/has-phone.vue';
+import overTimeTile from '~/components/dashboard/over-time.vue';
+import poisTile from '~/components/dashboard/pois.vue';
+import statusesTile from '~/components/dashboard/statuses.vue';
 
 const REQUESTABLE = {
   total: 'total',

@@ -48,7 +48,7 @@
 
 <script>
 import { DateTime } from 'luxon';
-import driverPositions from '~/components/map-driver-positions';
+import driverPositions from '~/components/map-driver-positions.vue';
 
 export default {
   watchQuery: ['date'],
