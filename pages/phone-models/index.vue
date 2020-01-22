@@ -3,7 +3,12 @@
     <crud-header
       title="Modèles de téléphone"
       :to-create-new="{name: 'phone-models-new'}"
-      @uploadCSV="uploadCSV"
+      import-csv
+      export-csv
+      :mask="mask"
+      :pagination="pagination"
+      :api-call="$api.phoneModels.getPhoneModels"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="{id: 'ID', label: 'Modèle'}"
@@ -65,10 +70,15 @@ export default {
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.phoneModels.getPhoneModels(FIELDS.join(','), {}, offset, limit);
+    const { data, pagination } = await $api.phoneModels.getPhoneModels(FIELDS.join(','), { offset, limit });
     return {
       phoneModels: data,
       pagination,
+    };
+  },
+  data() {
+    return {
+      mask: 'id,label',
     };
   },
   methods: {
@@ -76,9 +86,9 @@ export default {
       await this.$api.phoneModels.deletePhoneModel(id);
       this.updateList();
     },
-    async uploadCSV(data) {
+    async importCSV({ data, params }) {
       try {
-        await this.$api.phoneModels.postPhoneModels(data);
+        await this.$api.phoneModels.postPhoneModels(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");
@@ -88,7 +98,7 @@ export default {
     async updateList() {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.$api.phoneModels.getPhoneModels(FIELDS.join(','), {}, offset, limit);
+      const updatedList = await this.$api.phoneModels.getPhoneModels(FIELDS.join(','), { offset, limit });
       this.phoneModels = updatedList.data;
       this.pagination = updatedList.pagination;
     },

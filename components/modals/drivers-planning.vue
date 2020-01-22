@@ -37,21 +37,22 @@
           </template>
         </date-time>
       </ec-field>
-      <ec-field label="Voitures">
+      <ec-field label="Chauffeurs">
         <vue-multiselect
-          v-model="timeSlot.cars"
-          :options="cars.data"
+          v-model="timeSlot.drivers"
+          :options="drivers.data"
           track-by="id"
           multiple
-          label="label"
+          label="name"
           :show-labels="false"
         >
           <template #option="{option}">
-            {{ option.id }} {{ option.label }}
+            {{ option.firstname }} {{ option.lastname }}
           </template>
           <template #tag="{option, search, remove}">
             <span class="multiselect__tag">
-              <span>{{ option.id }} {{ option.label }}</span>
+              <span v-if="option.firstname || option.lastname">{{ option.firstname }} {{ option.lastname }}</span>
+              <span v-else>{{ option.id }}</span>
               <i
                 aria-hidden="true"
                 tabindex="1"
@@ -111,7 +112,7 @@
 </template>
 
 <script>
-import ecModal from '~/components/modal.vue';
+import ecModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';
 import recurringOption from '~/components/form/recurring-option.vue';
 
@@ -130,7 +131,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    cars: {
+    drivers: {
       type: Object,
       default: () => ({}),
     },

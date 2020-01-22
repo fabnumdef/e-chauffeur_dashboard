@@ -3,7 +3,12 @@
     <crud-header
       title="Modèles de véhicules"
       :to-create-new="{name: 'car-models-new'}"
-      @uploadCSV="uploadCSV"
+      import-csv
+      export-csv
+      :mask="mask"
+      :pagination="pagination"
+      :api-call="$api.carModels.getCarModels"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="columns"
@@ -51,7 +56,7 @@ import crudHeader from '~/components/crud/header.vue';
 const columns = { id: 'ID', label: 'Label' };
 
 function getCarModels(offset, limit) {
-  return this.carModels.getCarModels(Object.keys(columns).join(','), {}, offset, limit);
+  return this.carModels.getCarModels(Object.keys(columns).join(','), { offset, limit });
 }
 
 export default {
@@ -69,6 +74,11 @@ export default {
       pagination,
     };
   },
+  data() {
+    return {
+      mask: 'id,label',
+    };
+  },
   computed: {
     columns() { return columns; },
   },
@@ -77,9 +87,9 @@ export default {
       await this.$api.carModels.deleteCarModel(id);
       this.updateList();
     },
-    async uploadCSV(data) {
+    async importCSV({ data, params }) {
       try {
-        await this.$api.carModels.postCarModels(data);
+        await this.$api.carModels.postCarModels(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");

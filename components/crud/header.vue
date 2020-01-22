@@ -16,8 +16,20 @@
         />
         Importer CSV
       </button>
+      <button
+        v-if="exportCsv"
+        class="button is-rounded"
+        type="button"
+        @click="toggleExportModal"
+      >
+        <fa-icon
+          :icon="['fas', 'file-export']"
+          class="has-text-info"
+        />
+        Exporter CSV
+      </button>
       <nuxt-link
-        v-if="$auth.isSuperAdmin()"
+        v-if="$auth.isSuperAdmin() && toCreateNew"
         :to="toCreateNew"
         class="button is-success"
       >
@@ -27,20 +39,32 @@
         <span>Créer</span>
       </nuxt-link>
     </div>
-    <upload-modal
+    <import-modal
+      v-if="importCsv"
       :display="displayUploadModal"
       @toggle="toggleUploadModal"
-      @submit="uploadCSV"
+      @submit="importCSV"
+    />
+    <export-modal
+      v-if="exportCsv"
+      :display="displayExportModal"
+      :pagination="pagination"
+      :api-call="apiCall"
+      :has-mask="hasMask"
+      :mask="mask"
+      @toggleModal="toggleExportModal"
     />
   </header>
 </template>
 
 <script>
-import uploadModal from '~/components/modals/upload.vue';
+import importModal from '~/components/modals/import-csv.vue';
+import exportModal from '~/components/modals/export-csv.vue';
 
 export default {
   components: {
-    uploadModal,
+    importModal,
+    exportModal,
   },
   props: {
     title: {
@@ -53,20 +77,44 @@ export default {
     },
     importCsv: {
       type: Boolean,
-      default: true,
+      default: false,
+    },
+    exportCsv: {
+      type: Boolean,
+      default: false,
+    },
+    apiCall: {
+      type: Function,
+      default: () => null,
+    },
+    mask: {
+      type: String,
+      default: 'id',
+    },
+    pagination: {
+      type: Object,
+      default: () => null,
+    },
+    hasMask: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
     return {
       displayUploadModal: false,
+      displayExportModal: false,
     };
   },
   methods: {
     toggleUploadModal() {
       this.displayUploadModal = !this.displayUploadModal;
     },
-    uploadCSV(data) {
-      this.$emit('uploadCSV', data);
+    importCSV(...args) {
+      this.$emit('importCSV', ...args);
+    },
+    toggleExportModal() {
+      this.displayExportModal = !this.displayExportModal;
     },
   },
 };

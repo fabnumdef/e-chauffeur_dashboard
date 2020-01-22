@@ -3,7 +3,13 @@
     <crud-header
       title="Catégories"
       :to-create-new="{name: 'categories-new'}"
-      @uploadCSV="uploadCSV"
+      import-csv
+      export-csv
+      :mask="mask"
+      has-mask
+      :pagination="pagination"
+      :api-call="$api.categories(mask).getCategories"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="{id: 'ID', label: 'Label'}"
@@ -57,10 +63,15 @@ export default {
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.categories('id,label').getCategories(offset, limit);
+    const { data, pagination } = await $api.categories('id,label').getCategories({ offset, limit });
     return {
       categories: data,
       pagination,
+    };
+  },
+  data() {
+    return {
+      mask: 'id,label',
     };
   },
   methods: {
@@ -70,9 +81,9 @@ export default {
         this.updateList();
       }
     },
-    async uploadCSV(data) {
+    async importCSV({ data, params }) {
       try {
-        await this.$api.categories().postCategories(data);
+        await this.$api.categories().postCategories(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");

@@ -67,7 +67,7 @@
 </template>
 <script>
 import { DateTime } from 'luxon';
-import planningModal from '~/components/planning/drivers/modal.vue';
+import planningModal from '~/components/modals/drivers-planning.vue';
 import planningCalendar from '~/components/planning/drivers/calendar.vue';
 
 const DRIVER_DATA = 'id,firstname,lastname';
@@ -88,7 +88,7 @@ export default {
     const week = query.week ? DateTime.fromISO(query.week) : DateTime.local();
     const after = week.startOf('week').toJSDate();
     const before = week.endOf('week').toJSDate();
-    const drivers = await $api.drivers(params.campus, DRIVER_DATA).getDrivers(offset, limit);
+    const drivers = await $api.drivers(params.campus, DRIVER_DATA).getDrivers({ offset, limit });
     const events = await $api.timeSlot(TIMESLOT_DATA, params.campus)
       .getDriversTimeSlotsBetween(after, before);
     return {
@@ -238,7 +238,7 @@ export default {
     background-color: $gray;
     /deep/ .fa-user-circle {
       position: absolute;
-      left: 0px;
+      left: 0;
       color: $white;
       background: $success;
       padding: 7px;
@@ -247,7 +247,7 @@ export default {
     }
     /deep/ .fa-car {
       position: absolute;
-      right: 0px;
+      right: 0;
       color: $grey;
       padding: 7px;
       box-sizing: initial;

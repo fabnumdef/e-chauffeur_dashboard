@@ -313,7 +313,7 @@ import searchCategory from '~/components/form/search-campus-category.vue';
 import searchAvailableCar from '~/components/form/search-available-car.vue';
 import searchAvailableDriver from '~/components/form/search-available-driver.vue';
 import bulmaDropdown from '~/components/dropdown.vue';
-import vueModal from '~/components/modal.vue';
+import vueModal from '~/components/modals/default.vue';
 
 const EDITABLE_FIELDS = [
   'id',

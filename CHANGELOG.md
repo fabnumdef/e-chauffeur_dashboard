@@ -3,7 +3,9 @@
 ### Features
 * Add recurrence
 * Add csv Import
+* Add csv export for CRUDs
 ### Fix
+* Fixed logo color when connected
 ## Version 1.4.4
 ### Features
 * Add new component to enforce password strength

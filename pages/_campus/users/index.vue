@@ -4,9 +4,12 @@
       <div class="column">
         <crud-header
           title="Chauffeurs"
-          :import-csv="false"
           :to-create-new="campusLink('drivers-new')"
-          @uploadCSV="driversUploadCSV"
+          export-csv
+          :mask="mask"
+          has-mask
+          :pagination="driversPagination"
+          :api-call="$api.drivers(campus.id, mask).getDrivers"
         />
         <crud-list
           :columns="columns"
@@ -51,7 +54,12 @@
         <crud-header
           title="Utilisateurs"
           :to-create-new="campusLink('users-new')"
-          @uploadCSV="usersUploadCSV"
+          import-csv
+          export-csv
+          :mask="mask"
+          :pagination="usersPagination"
+          :api-call="$api.campusUsers(campus.id, mask).getUsers"
+          @importCSV="usersUploadCSV"
         />
         <crud-list
           :columns="columns"
@@ -113,7 +121,7 @@ export default {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const driversReq = $api.drivers(params.campus, Object.keys(columns).join(','))
-      .getDrivers(offset, limit);
+      .getDrivers({ offset, limit });
     const usersReq = $api.campusUsers(params.campus, Object.keys(columns).join(','))
       .getUsers(offset, limit);
     const driversRes = await driversReq;
@@ -123,6 +131,11 @@ export default {
       driversPagination: driversRes.pagination,
       users: usersRes.data,
       usersPagination: usersRes.pagination,
+    };
+  },
+  data() {
+    return {
+      mask: 'id,email,firstname,lastname,phone',
     };
   },
   computed: {
@@ -140,17 +153,9 @@ export default {
       await this.$api.campusUsers(this.campus.id).deleteUser(id);
       this.updateUsersList();
     },
-    async driversUploadCSV(data) {
+    async usersUploadCSV({ data, params }) {
       try {
-        await this.$api.drivers(this.campus.id).postDrivers(data);
-        this.$toast.success('Import réalisé avec succès');
-      } catch (err) {
-        this.$toast.error("Un problème est survenu pendant l'import");
-      }
-    },
-    async usersUploadCSV(data) {
-      try {
-        await this.$api.campusUsers(this.campus.id).postUsers(data);
+        await this.$api.campusUsers(this.campus.id).postUsers(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");

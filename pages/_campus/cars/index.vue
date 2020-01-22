@@ -3,7 +3,13 @@
     <crud-header
       title="Véhicules"
       :to-create-new="campusLink('cars-new')"
-      @uploadCSV="uploadCSV"
+      import-csv
+      export-csv
+      :mask="mask"
+      has-mask
+      :pagination="pagination"
+      :api-call="$api.cars(campus.id, mask).getCars"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="columns"
@@ -64,10 +70,15 @@ export default {
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api
       .cars({ id: params.campus }, Object.keys(columns).join(','))
-      .getCars(offset, limit);
+      .getCars({ offset, limit });
     return {
       cars: data,
       pagination,
+    };
+  },
+  data() {
+    return {
+      mask: 'id,label,model(label),campus(name)',
     };
   },
   computed: {
@@ -84,9 +95,9 @@ export default {
       await this.CarsAPI.deleteCar(id);
       this.updateList();
     },
-    async uploadCSV(data) {
+    async importCSV({ data, params }) {
       try {
-        await this.CarsAPI.postCars(data);
+        await this.CarsAPI.postCars(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");

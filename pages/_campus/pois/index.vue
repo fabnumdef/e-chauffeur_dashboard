@@ -3,7 +3,13 @@
     <crud-header
       title="Lieux"
       :to-create-new="campusLink('pois-new')"
-      @uploadCSV="uploadCSV"
+      import-csv
+      export-csv
+      :mask="mask"
+      has-mask
+      :pagination="pagination"
+      :api-call="$api.pois(campus.id, mask).getPois"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="columns"
@@ -56,14 +62,11 @@ export default {
     crudList,
     crudHeader,
   },
-  async asyncData({ $api, query, params }) {
+  async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.pois(
-      { id: params.campus },
-      Object.keys(columns).join(','),
-      { withDisabled: true },
-    ).getPois(offset, limit);
+    const { data, pagination } = await $api.pois(null, Object.keys(columns).join(','), { withDisabled: true })
+      .getPois({ offset, limit });
 
     const pois = data.map((poi) => ({
       ...poi,
@@ -74,6 +77,11 @@ export default {
     return {
       pois,
       pagination,
+    };
+  },
+  data() {
+    return {
+      mask: 'id,label,location(coordinates),campus(name),enabled',
     };
   },
   computed: {
@@ -89,9 +97,9 @@ export default {
         this.updateList();
       }
     },
-    async uploadCSV(data) {
+    async importCSV({ data, params }) {
       try {
-        await this.$api.pois(this.campus).postPois(data);
+        await this.$api.pois(this.campus).postPois(data, params);
         this.$toast.success('Import réalisé avec succès');
       } catch (err) {
         this.$toast.error("Un problème est survenu pendant l'import");

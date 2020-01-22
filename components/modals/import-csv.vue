@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import ecModal from '~/components/modal.vue';
+import ecModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';
 
 export default {
@@ -93,16 +93,15 @@ export default {
     },
     emitSubmit({ target }) {
       const formData = new FormData();
+      console.log(target);
       const [file] = target.querySelector('input').files;
       if (file.name.split('.').pop() !== 'csv') {
         this.$toast.error("Le format du fichier n'est pas valide");
         return;
       }
       formData.append('csv', file);
-      formData.append('delimiter', this.delimiter);
-      formData.append('ignoreEmpty', this.ignoreEmpty);
 
-      this.$emit('submit', formData);
+      this.$emit('submit', { data: formData, params: { delimiter: this.delimiter, ignoreEmpty: this.ignoreEmpty } });
     },
   },
 };
