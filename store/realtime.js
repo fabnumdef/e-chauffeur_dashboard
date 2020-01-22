@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 import { CREATED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
 export const state = () => ({
+  connectedDrivers: [],
   drivers: [],
   rides: [],
 });
@@ -22,7 +23,6 @@ export const mutations = {
       throw new Error('User id is required');
     }
     const i = s.drivers.findIndex((d) => driver.id === d.id);
-
     if (i === -1) {
       s.drivers.push(driver);
     } else {
@@ -41,10 +41,23 @@ export const mutations = {
       Object.assign(s.rides[i], ride);
     }
   },
+
+  setConnectedDrivers: (s, { ids, connected }) => {
+    if (ids.length > 1) {
+      s.connectedDrivers = ids;
+    }
+    const i = s.connectedDrivers.findIndex((driverId) => driverId === ids[0]);
+    if (i === -1 && connected) {
+      s.connectedDrivers.push(ids[0]);
+    } else if (i !== -1 && !connected) {
+      s.connectedDrivers.splice(i, 1);
+    }
+  },
 };
 
 export const getters = {
   drivers: (s) => s.drivers,
+  connectedDrivers: (s) => s.connectedDrivers,
   rides: (s) => s.rides,
   ridesToValidate: (s) => s.rides.filter(({ status }) => status === CREATED),
   todayRides: ({ rides }) => {
