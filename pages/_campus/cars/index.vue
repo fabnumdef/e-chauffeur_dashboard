@@ -3,13 +3,13 @@
     <crud-header
       title="Véhicules"
       :to-create-new="campusLink('cars-new')"
-      upload-csv
+      import-csv
       export-csv
       :mask="mask"
       has-mask
       :pagination="pagination"
       :api-call="$api.cars(campus.id, mask).getCars"
-      @uploadCSV="uploadCSV"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="columns"
@@ -95,7 +95,7 @@ export default {
       await this.CarsAPI.deleteCar(id);
       this.updateList();
     },
-    async uploadCSV({ data, params }) {
+    async importCSV({ data, params }) {
       try {
         await this.CarsAPI.postCars(data, params);
         this.$toast.success('Import réalisé avec succès');

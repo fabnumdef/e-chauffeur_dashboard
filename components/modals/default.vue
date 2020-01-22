@@ -115,7 +115,7 @@ export default {
 <style scoped lang="scss">
   @import "~assets/css/head";
   $modal-card-body-background-color: $white;
-  @import "../../node_modules/bulma/sass/components/modal";
+  @import "~bulma/sass/components/modal.sass";
 
   .modal-card {
     box-shadow: 15px 15px 30px 0  rgba($black, 0.3);

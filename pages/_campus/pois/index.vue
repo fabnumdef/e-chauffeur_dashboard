@@ -3,13 +3,13 @@
     <crud-header
       title="Lieux"
       :to-create-new="campusLink('pois-new')"
-      upload-csv
+      import-csv
       export-csv
       :mask="mask"
       has-mask
       :pagination="pagination"
       :api-call="$api.pois(campus.id, mask).getPois"
-      @uploadCSV="uploadCSV"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="columns"
@@ -97,7 +97,7 @@ export default {
         this.updateList();
       }
     },
-    async uploadCSV({ data, params }) {
+    async importCSV({ data, params }) {
       try {
         await this.$api.pois(this.campus).postPois(data, params);
         this.$toast.success('Import réalisé avec succès');

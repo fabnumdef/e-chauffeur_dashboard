@@ -93,6 +93,7 @@ export default {
     },
     emitSubmit({ target }) {
       const formData = new FormData();
+      console.log(target);
       const [file] = target.querySelector('input').files;
       if (file.name.split('.').pop() !== 'csv') {
         this.$toast.error("Le format du fichier n'est pas valide");

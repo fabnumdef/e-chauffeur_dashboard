@@ -5,7 +5,7 @@
     </h1>
     <div class="options">
       <button
-        v-if="uploadCsv"
+        v-if="importCsv"
         class="button is-rounded"
         type="button"
         @click="toggleUploadModal"
@@ -39,11 +39,11 @@
         <span>Créer</span>
       </nuxt-link>
     </div>
-    <upload-modal
-      v-if="uploadCsv"
+    <import-modal
+      v-if="importCsv"
       :display="displayUploadModal"
       @toggle="toggleUploadModal"
-      @submit="uploadCSV"
+      @submit="importCSV"
     />
     <export-modal
       v-if="exportCsv"
@@ -58,12 +58,12 @@
 </template>
 
 <script>
-import uploadModal from '~/components/modals/upload-csv.vue';
+import importModal from '~/components/modals/import-csv.vue';
 import exportModal from '~/components/modals/export-csv.vue';
 
 export default {
   components: {
-    uploadModal,
+    importModal,
     exportModal,
   },
   props: {
@@ -75,7 +75,7 @@ export default {
       type: Object,
       default: () => null,
     },
-    uploadCsv: {
+    importCsv: {
       type: Boolean,
       default: false,
     },
@@ -110,8 +110,8 @@ export default {
     toggleUploadModal() {
       this.displayUploadModal = !this.displayUploadModal;
     },
-    uploadCSV(...args) {
-      this.$emit('uploadCSV', ...args);
+    importCSV(...args) {
+      this.$emit('importCSV', ...args);
     },
     toggleExportModal() {
       this.displayExportModal = !this.displayExportModal;

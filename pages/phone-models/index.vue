@@ -3,12 +3,12 @@
     <crud-header
       title="Modèles de téléphone"
       :to-create-new="{name: 'phone-models-new'}"
-      upload-csv
+      import-csv
       export-csv
       :mask="mask"
       :pagination="pagination"
       :api-call="$api.phoneModels.getPhoneModels"
-      @uploadCSV="uploadCSV"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="{id: 'ID', label: 'Modèle'}"
@@ -86,7 +86,7 @@ export default {
       await this.$api.phoneModels.deletePhoneModel(id);
       this.updateList();
     },
-    async uploadCSV({ data, params }) {
+    async importCSV({ data, params }) {
       try {
         await this.$api.phoneModels.postPhoneModels(data, params);
         this.$toast.success('Import réalisé avec succès');

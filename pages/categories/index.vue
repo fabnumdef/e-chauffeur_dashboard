@@ -3,13 +3,13 @@
     <crud-header
       title="Catégories"
       :to-create-new="{name: 'categories-new'}"
-      upload-csv
+      import-csv
       export-csv
       :mask="mask"
       has-mask
       :pagination="pagination"
       :api-call="$api.categories(mask).getCategories"
-      @uploadCSV="uploadCSV"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="{id: 'ID', label: 'Label'}"
@@ -81,7 +81,7 @@ export default {
         this.updateList();
       }
     },
-    async uploadCSV({ data, params }) {
+    async importCSV({ data, params }) {
       try {
         await this.$api.categories().postCategories(data, params);
         this.$toast.success('Import réalisé avec succès');

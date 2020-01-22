@@ -3,13 +3,13 @@
     <crud-header
       title="Téléphones"
       :to-create-new="campusLink('phones-new')"
-      upload-csv
+      import-csv
       export-csv
       :mask="mask"
       has-mask
       :pagination="pagination"
       :api-call="$api.phones(campus.id, mask).getPhones"
-      @uploadCSV="uploadCSV"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="{id: 'S/N', assignTo: 'Assigné à'}"
@@ -112,7 +112,7 @@ export default {
         this.updateList();
       }
     },
-    async uploadCSV({ data, params }) {
+    async importCSV({ data, params }) {
       try {
         await this.$api.phones(this.campus).postPhones(data, params);
         this.$toast.success('Import réalisé avec succès');

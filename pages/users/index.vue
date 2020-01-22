@@ -3,12 +3,12 @@
     <crud-header
       title="Utilisateurs"
       :to-create-new="{name: 'users-new'}"
-      upload-csv
+      import-csv
       export-csv
       :mask="mask"
       :pagination="pagination"
       :api-call="$api.users.getUsers"
-      @uploadCSV="uploadCSV"
+      @importCSV="importCSV"
     />
     <crud-list
       :columns="{id: 'ID', email: 'E-mail'}"
@@ -78,7 +78,7 @@ export default {
       await this.$api.users.deleteUser(id);
       this.updateList();
     },
-    async uploadCSV({ data, params }) {
+    async importCSV({ data, params }) {
       try {
         await this.$api.users.postUsers(data, params);
         this.$toast.success('Import réalisé avec succès');

@@ -54,12 +54,12 @@
         <crud-header
           title="Utilisateurs"
           :to-create-new="campusLink('users-new')"
-          upload-csv
+          import-csv
           export-csv
           :mask="mask"
           :pagination="usersPagination"
           :api-call="$api.campusUsers(campus.id, mask).getUsers"
-          @uploadCSV="usersUploadCSV"
+          @importCSV="usersUploadCSV"
         />
         <crud-list
           :columns="columns"
