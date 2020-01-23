@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Add driver connection status in planificator
 ### Fix
 ## Version 1.4.4
 ### Features
