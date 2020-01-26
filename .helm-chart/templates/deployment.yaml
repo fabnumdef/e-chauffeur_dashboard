@@ -25,10 +25,19 @@ spec:
           env:
             - name: API_URL
               value: "{{ .Values.env.API_URL }}"
+{{- if .Values.monitoring.exporter.enabled }}
+            - name: PROMETHEUS_EXPORTER
+              value: "{{ .Values.monitoring.exporter.port }}"
+{{- end}}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+{{- if .Values.monitoring.exporter.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.monitoring.exporter.port }}
+              protocol: TCP
+{{- end}}
           livenessProbe:
             httpGet:
               path: /

@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Export metrics for prometheus
 * Add recurrence
 * Add csv Import
 * Add csv export for CRUDs
