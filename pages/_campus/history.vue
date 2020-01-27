@@ -112,7 +112,7 @@
             >
               <textarea
                 id="mask"
-                v-model="csv.mask"
+                v-model.trim="csv.mask"
                 class="textarea"
               />
             </ec-field>

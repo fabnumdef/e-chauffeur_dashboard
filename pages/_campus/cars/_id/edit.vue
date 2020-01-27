@@ -36,7 +36,7 @@
       >
         <input
           id="id"
-          v-model="car.id"
+          v-model.trim="car.id"
           :disabled="!!id"
           class="input"
         >
@@ -47,7 +47,7 @@
       >
         <input
           id="label"
-          v-model="car.label"
+          v-model.trim="car.label"
           type="text"
           class="input"
         >

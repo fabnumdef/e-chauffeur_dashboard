@@ -74,7 +74,7 @@
       <ec-field label="Commentaires">
         <textarea
           id="comments"
-          v-model="timeSlot.comments"
+          v-model.trim="timeSlot.comments"
           class="textarea"
         />
       </ec-field>
