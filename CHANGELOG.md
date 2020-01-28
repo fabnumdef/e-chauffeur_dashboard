@@ -5,6 +5,7 @@
 * Add recurrence
 * Add csv Import
 * Add csv export for CRUDs
+* Add automatically trim
 ### Fix
 * Fixed logo color when connected
 ## Version 1.4.4
