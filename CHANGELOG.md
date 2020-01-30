@@ -8,6 +8,7 @@
 * Add automatically trim
 ### Fix
 * Fixed logo color when connected
+* Fix planificator modal
 ## Version 1.4.4
 ### Features
 * Add new component to enforce password strength
