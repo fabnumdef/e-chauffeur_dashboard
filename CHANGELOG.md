@@ -8,6 +8,7 @@
 * Add automatically trim
 ### Fix
 * Fixed logo color when connected
+* Fixed responsive behavior of logos in login page
 ## Version 1.4.4
 ### Features
 * Add new component to enforce password strength
