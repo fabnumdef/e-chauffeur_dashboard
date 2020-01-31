@@ -47,7 +47,7 @@ export default {
     updateSet: debounce(async function updateSet(search) {
       this.loading = true;
       try {
-        const { data } = await this.$api.categories('id,label').getCategories(0, 30, { search });
+        const { data } = await this.$api.categories('id,label').getCategories({ offset: 0, limit: 30, search });
         this.categories = data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');

@@ -20,7 +20,7 @@
         </div>
       </div>
     </header>
-    <ec-list
+    <crud-list
       :columns="columns"
       :data="drivers"
       :pagination-offset="pagination.offset"
@@ -35,20 +35,20 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
 
 const columns = { id: 'ID', email: 'E-mail' };
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
   },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api.drivers(params.campus, Object.keys(columns).join(','))
-      .getDrivers(offset, limit);
+      .getDrivers({ offset, limit });
     return {
       drivers: data,
       pagination,
@@ -66,7 +66,7 @@ export default {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(','))
-        .getDrivers(offset, limit);
+        .getDrivers({ offset, limit });
       this.drivers = updatedList.data;
       this.pagination = updatedList.pagination;
     },

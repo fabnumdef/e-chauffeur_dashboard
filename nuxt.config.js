@@ -56,6 +56,9 @@ module.exports = {
           'auth-renew',
           'user-expiration',
         ],
+        prometheus: {
+          host: '0.0.0.0',
+        },
       },
     ],
   ],
@@ -108,6 +111,7 @@ module.exports = {
           'faCar',
           'faCheckCircle',
           'faTimesCircle',
+          'faFileImport',
         ],
       },
     ],

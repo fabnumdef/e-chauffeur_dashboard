@@ -36,7 +36,7 @@
       >
         <input
           id="id"
-          v-model="category.id"
+          v-model.trim="category.id"
           :disabled="!!id"
           class="input"
         >
@@ -48,7 +48,7 @@
       >
         <input
           id="label"
-          v-model="category.label"
+          v-model.trim="category.label"
           class="input"
         >
       </ec-field>

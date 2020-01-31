@@ -39,7 +39,7 @@
         >
           <input
             id="id"
-            v-model="campus.id"
+            v-model.trim="campus.id"
             :disabled="!!campus.id"
             class="input"
           >
@@ -51,7 +51,7 @@
         >
           <input
             id="name"
-            v-model="campus.name"
+            v-model.trim="campus.name"
             class="input"
           >
         </ec-field>
@@ -63,7 +63,7 @@
             >
               <input
                 id="phone-drivers"
-                v-model="campus.phone.drivers"
+                v-model.trim="campus.phone.drivers"
                 class="input"
               >
             </ec-field>
@@ -75,7 +75,7 @@
             >
               <input
                 id="phone-everybody"
-                v-model="campus.phone.everybody"
+                v-model.trim="campus.phone.everybody"
                 class="input"
               >
             </ec-field>
@@ -98,7 +98,7 @@
             >
               <input
                 id="min-worked-hours"
-                v-model="campus.workedHours.start"
+                v-model.trim="campus.workedHours.start"
                 class="input"
                 type="number"
                 min="0"
@@ -113,7 +113,7 @@
             >
               <input
                 id="max-worked-hours"
-                v-model="campus.workedHours.end"
+                v-model.trim="campus.workedHours.end"
                 class="input"
                 type="number"
                 min="0"
@@ -138,26 +138,19 @@
           field-id="reservation-scope"
         >
           <div class="columns">
-            <div class="column select">
-              <select
-                id="select-scope"
-                @change="defineScope"
-              >
-                <option value="">
-                  Choisissez une unité :
-                </option>
-                <option value="hour">
-                  Heures
-                </option>
-                <option value="day">
-                  Jours
-                </option>
-              </select>
+            <div class="column">
+              <vue-multiselect
+                v-model="selectScope"
+                :options="multiSelectOptions"
+                placeholder="Veuillez sélectionner une unité"
+                track-by="value"
+                label="label"
+              />
             </div>
             <div class="column">
               <input
                 id="reservation-scope"
-                v-model="localReservationScope"
+                v-model.trim="localReservationScope"
                 class="input"
                 type="number"
                 :disabled="!selectScope"
@@ -193,7 +186,7 @@
         >
           <input
             id="timezone"
-            v-model="campus.timezone"
+            v-model.trim="campus.timezone"
             class="input"
           >
         </ec-field>
@@ -256,25 +249,32 @@ export default {
   },
   data() {
     return {
-      selectScope: null,
+      selectScope: {
+        label: 'Unité : heure',
+        value: 'hour',
+      },
+      multiSelectOptions: [
+        { label: 'Unité : heure', value: 'hour' },
+        { label: 'Unité : jour', value: 'day' },
+      ],
     };
   },
   computed: {
     localReservationScope: {
       get() {
-        if (this.selectScope === 'day') {
+        if (this.selectScope.value === 'day') {
           return Math.floor(this.campus.defaultReservationScope / 3600 / 24);
         }
-        if (this.selectScope === 'hour') {
+        if (this.selectScope.value === 'hour') {
           return Math.floor(this.campus.defaultReservationScope / 3600);
         }
         return null;
       },
       set(value) {
-        if (this.selectScope === 'day') {
+        if (this.selectScope.value === 'day') {
           this.campus.defaultReservationScope = value * 3600 * 24;
         }
-        if (this.selectScope === 'hour') {
+        if (this.selectScope.value === 'hour') {
           this.campus.defaultReservationScope = value * 3600;
         }
         return value;
@@ -296,9 +296,6 @@ export default {
         name: 'campus-edit',
         params: { id: data.id },
       });
-    },
-    defineScope({ target }) {
-      this.selectScope = target.value;
     },
   },
 };

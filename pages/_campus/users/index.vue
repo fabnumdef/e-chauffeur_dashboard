@@ -2,27 +2,16 @@
   <main>
     <div class="columns">
       <div class="column">
-        <header>
-          <div class="columns">
-            <div class="column">
-              <h1 class="title">
-                Chauffeurs
-              </h1>
-            </div>
-            <div class="column is-narrow">
-              <nuxt-link
-                :to="campusLink('drivers-new')"
-                class="button is-success"
-              >
-                <span class="icon is-small">
-                  <fa-icon :icon="['fas', 'plus']" />
-                </span>
-                <span>Nouveau</span>
-              </nuxt-link>
-            </div>
-          </div>
-        </header>
-        <ec-list
+        <crud-header
+          title="Chauffeurs"
+          :to-create-new="campusLink('drivers-new')"
+          export-csv
+          :mask="mask"
+          has-mask
+          :pagination="driversPagination"
+          :api-call="$api.drivers(campus.id, mask).getDrivers"
+        />
+        <crud-list
           :columns="columns"
           :data="drivers"
           :pagination-offset="driversPagination.offset"
@@ -59,30 +48,20 @@
               <span>Supprimer</span>
             </button>
           </template>
-        </ec-list>
+        </crud-list>
       </div>
       <div class="column">
-        <header>
-          <div class="columns">
-            <div class="column">
-              <h1 class="title">
-                Utilisateurs
-              </h1>
-            </div>
-            <div class="column is-narrow">
-              <nuxt-link
-                :to="campusLink('users-new')"
-                class="button is-success"
-              >
-                <span class="icon is-small">
-                  <fa-icon :icon="['fas', 'plus']" />
-                </span>
-                <span>Nouveau</span>
-              </nuxt-link>
-            </div>
-          </div>
-        </header>
-        <ec-list
+        <crud-header
+          title="Utilisateurs"
+          :to-create-new="campusLink('users-new')"
+          import-csv
+          export-csv
+          :mask="mask"
+          :pagination="usersPagination"
+          :api-call="$api.campusUsers(campus.id, mask).getUsers"
+          @importCSV="usersUploadCSV"
+        />
+        <crud-list
           :columns="columns"
           :data="users"
           :pagination-offset="usersPagination.offset"
@@ -119,7 +98,7 @@
               <span>Supprimer</span>
             </button>
           </template>
-        </ec-list>
+        </crud-list>
       </div>
     </div>
   </main>
@@ -127,20 +106,22 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 const columns = { id: 'ID', email: 'E-mail' };
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
+    crudHeader,
   },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const driversReq = $api.drivers(params.campus, Object.keys(columns).join(','))
-      .getDrivers(offset, limit);
+      .getDrivers({ offset, limit });
     const usersReq = $api.campusUsers(params.campus, Object.keys(columns).join(','))
       .getUsers(offset, limit);
     const driversRes = await driversReq;
@@ -152,6 +133,11 @@ export default {
       usersPagination: usersRes.pagination,
     };
   },
+  data() {
+    return {
+      mask: 'id,email,firstname,lastname,phone',
+    };
+  },
   computed: {
     columns: () => columns,
     ...mapGetters({
@@ -161,15 +147,23 @@ export default {
   methods: {
     async deleteDriver({ id }) {
       await this.$api.drivers(this.campus.id).deleteDriver(id);
-      const offset = parseInt(this.$route.query.offset, 10) || 0;
-      const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(','))
-        .getDrivers(offset, limit);
-      this.drivers = updatedList.data;
-      this.driversPagination = updatedList.pagination;
+      this.updateDriversList();
     },
     async deleteUser({ id }) {
       await this.$api.campusUsers(this.campus.id).deleteUser(id);
+      this.updateUsersList();
+    },
+    async usersUploadCSV({ data, params }) {
+      try {
+        await this.$api.campusUsers(this.campus.id).postUsers(data, params);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+      this.updateDriversList();
+      this.updateUsersList();
+    },
+    async updateUsersList() {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await this.$api.campusUsers(this.campus.id, Object.keys(columns).join(','))
@@ -177,15 +171,14 @@ export default {
       this.users = updatedList.data;
       this.usersPagination = updatedList.pagination;
     },
+    async updateDriversList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(','))
+        .getDrivers(offset, limit);
+      this.drivers = updatedList.data;
+      this.driversPagination = updatedList.pagination;
+    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  header {
-    margin-bottom: 1.5rem;
-    .button {
-      margin-right: 10px;
-    }
-  }
-</style>

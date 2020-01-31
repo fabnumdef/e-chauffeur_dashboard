@@ -2,7 +2,15 @@
 ## Current
 ### Features
 * Add driver connection status in planificator
+* Export metrics for prometheus
+* Add recurrence
+* Add csv Import
+* Add csv export for CRUDs
+* Add automatically trim
 ### Fix
+* Fixed logo color when connected
+* Fixed responsive behavior of logos in login page
+* Fix planificator modal
 ## Version 1.4.4
 ### Features
 * Add new component to enforce password strength
