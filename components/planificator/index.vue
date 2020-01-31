@@ -152,7 +152,7 @@ import {
   CANCELED_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 import { mapGetters } from 'vuex';
-import Modal from '~/components/modals/default.vue';
+import Modal from '~/components/modals/planificator.vue';
 import DriverHeader from './driver-header.vue';
 
 const STEP = 30;

@@ -9,6 +9,7 @@
 ### Fix
 * Fixed logo color when connected
 * Fixed responsive behavior of logos in login page
+* Fix planificator modal
 ## Version 1.4.4
 ### Features
 * Add new component to enforce password strength
