@@ -53,13 +53,12 @@
       </div>
     </form>
     <div class="logo-container">
-      <div class="logo">
-        <img
-          src="/logo_dirisi.png"
-          alt="DIRISI"
-        >
-      </div>
-      <div class="logo ">
+      <img
+        class="logo"
+        src="/logo_dirisi.png"
+        alt="DIRISI"
+      >
+      <span class="logo">
         <img
           src="/logo_ma.png"
           alt="Ministère des armées"
@@ -68,14 +67,12 @@
           src="/start_up_etat.png"
           alt="Start-up d'état"
         >
-      </div>
-
-      <div class="logo">
-        <img
-          src="/logo_fab_num.png"
-          alt="Fabrique numérique"
-        >
-      </div>
+      </span>
+      <img
+        class="logo"
+        src="/logo_fab_num.png"
+        alt="Fabrique numérique"
+      >
     </div>
   </main>
 </template>
@@ -132,65 +129,71 @@ export default {
 <style scoped lang="scss">
   @import "~assets/css/head";
 
-  .logo {
-    padding: 50px;
-    display: block;
+  main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    .logo {
+      padding: 50px;
+      align-self: start;
+    }
+    form {
+      .title {
+        margin: 2em 0;
+        color: $primary;
+      }
+      /deep/ .label {
+        color: $white;
+        text-align: left;
+        margin-left: 32px;
+        font-weight: normal;
+        font-size: $size-6;
+      }
+      /deep/ .input {
+        border: 0;
+        border-bottom: 1px solid;
+        box-shadow: none;
+      }
+      /deep/ .field.login {
+        .control {
+          width: 100%;
+        }
+        .button {
+          display: block;
+          margin-top: 2em;
+          padding: 10px 20px;
+          height: auto;
+          width: 100%;
+          background-color: $primary;
+          color: white;
+          font-weight: bold;
+        }
+      }
+    }
+    .logo-container {
+      text-align: center;
+      margin-bottom: 2em;
+      .logo {
+        padding: 0;
+        margin: 0 2em;
+      }
+    }
   }
-  .title {
-    margin: 2em 0;
-    color: $primary;
-  }
-  /deep/ .label {
-    color: $white;
-    text-align: left;
-    margin-left: 32px;
-    font-weight: normal;
-    font-size: $size-6;
-  }
-  /deep/ .input {
-    border: 0;
-    border-bottom: 1px solid;
-    box-shadow: none;
-  }
+
   .container {
     margin: 10px auto;
     width: 100%;
     max-width: 400px;
   }
-  /deep/ .field.login {
-    .control {
-      width: 100%;
-    }
-    .button {
-      display: block;
-      margin-top: 2em;
-      padding: 10px 20px;
-      height: auto;
-      width: 100%;
-      background-color: $primary;
-      color: white;
-      font-weight: bold;
-    }
-  }
-
-  .logo-container {
-    position: absolute;
-    bottom: 1em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
 
   @media screen and (max-width: 600px) {
-    .title {
-      text-align: center;
-    }
-    .logo-container {
-      flex-direction: column;
-      .logo {
-        padding: 1em;
+    main {
+      padding: 1em;
+      .title {
+        text-align: center;
       }
     }
+
   }
 </style>
