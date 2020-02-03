@@ -116,18 +116,6 @@
                 class="textarea"
               />
             </ec-field>
-            <ec-field
-              label="Ride flatten"
-              field-id="flatten"
-            >
-              <label class="checkbox">
-                <input
-                  v-model="csv.flatten"
-                  type="checkbox"
-                >
-                Oui
-              </label>
-            </ec-field>
           </fieldset>
           <hr>
           <ul>
@@ -333,7 +321,6 @@ export default {
       csv: {
         separator: ';',
         delimiter: '"',
-        flatten: true,
         mask: 'id,departure(id,label,location),arrival(id,label,location),car(id,label,model(id,label)),'
           + 'campus(id,phone(drivers,everybody)),status(*),start,end,phone,driver(id,name),category(id,label),'
           + 'passengersCount,luggage,comments,createdAt,owner(id)',
@@ -367,9 +354,6 @@ export default {
       await this.recalcDownloadLinks();
     },
     'csv.delimiter': async function csvSeparator() {
-      await this.recalcDownloadLinks();
-    },
-    'csv.flatten': async function csvSeparator() {
       await this.recalcDownloadLinks();
     },
     'csv.mask': async function csvSeparator() {
