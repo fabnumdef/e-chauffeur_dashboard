@@ -10,8 +10,8 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
-    "@fabnumdef/e-chauffeur_lib-vue": "0.0.45",
-    "@fortawesome/free-solid-svg-icons": "^5.12.0",
+    "@fabnumdef/e-chauffeur_lib-vue": "0.0.46",
+    "@fortawesome/free-solid-svg-icons": "^5.12.1",
     "@nuxtjs/auth": "^4.8.5",
     "@qonfucius/vue-cal": "^2.10.5",
     "chart.js": "^2.9.3",
@@ -33,8 +33,8 @@
     "babel-eslint": "^10.0.3",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-import-resolver-webpack": "^0.11.0",
-    "eslint-plugin-import": "^2.20.0",
+    "eslint-import-resolver-webpack": "^0.12.1",
+    "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-vue": "^6.1.2"
   },
   "peerDependencies": {
