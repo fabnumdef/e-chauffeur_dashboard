@@ -6,7 +6,7 @@
 * Add csv Import
 * Add csv export for CRUDs
 ### Fix
-* Fix memory leak
+* Fix memory leak / container restart
 * Fixed logo color when connected
 ## Version 1.4.4
 ### Features
