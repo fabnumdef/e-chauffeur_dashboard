@@ -75,8 +75,10 @@ export default {
   },
   methods: {
     async deleteUser({ id }) {
-      await this.$api.users.deleteUser(id);
-      this.updateList();
+      if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer cet utilisateur ?')) {
+        await this.$api.users.deleteUser(id);
+        this.updateList();
+      }
     },
     async importCSV({ data, params }) {
       try {
