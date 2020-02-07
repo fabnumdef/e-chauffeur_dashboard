@@ -284,7 +284,6 @@ export default {
       } else {
         ({ data } = (await this.$api.campuses.postCampus(campus, EDITABLE_FIELDS)));
       }
-      this.$store.commit('context/setCampus', data);
 
       this.$router.push({
         name: 'campuses-id-edit',
