@@ -8,6 +8,7 @@
 * Add automatically trim
 ### Fix
 * Add missing confirmation message on user deletion
+* Fix POI fetching
 * Fixed logo color when connected
 * Deleted flatten csv option for rides history export
 * Fixed responsive behavior of logos in login page
