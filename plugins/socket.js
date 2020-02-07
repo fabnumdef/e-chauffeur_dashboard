@@ -23,6 +23,11 @@ export default function ({ store, app }) {
       store.dispatch('reconnecting', true);
       watched.forEach((unwatch) => unwatch());
     });
+    ioInstance.on('updateConnectedDrivers', ({ ids, connected = true }) => {
+      const concatIds = [].concat(ids);
+      store.dispatch('updateConnectedDrivers', { ids: concatIds, connected });
+    });
+
     const autoConnect = (isLogged) => {
       if (isLogged) {
         ioInstance.open();

@@ -22,4 +22,7 @@ export const actions = {
   reconnecting({ commit }, reconnecting = true) {
     commit('reconnecting', reconnecting);
   },
+  updateConnectedDrivers({ commit }, payload) {
+    commit('realtime/setConnectedDrivers', payload);
+  },
 };
