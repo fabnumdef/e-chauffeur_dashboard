@@ -49,7 +49,7 @@
           >
             <input
               id="firstname"
-              v-model="driver.firstname"
+              v-model.trim="driver.firstname"
               class="input"
             >
           </ec-field>
@@ -61,7 +61,7 @@
           >
             <input
               id="lastname"
-              v-model="driver.lastname"
+              v-model.trim="driver.lastname"
               class="input"
             >
           </ec-field>
@@ -73,7 +73,7 @@
       >
         <input
           id="email"
-          v-model="driver.email"
+          v-model.trim="driver.email"
           type="text"
           class="input"
         >

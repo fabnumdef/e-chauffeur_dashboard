@@ -39,7 +39,7 @@
         >
           <input
             id="id"
-            v-model="campus.id"
+            v-model.trim="campus.id"
             :disabled="!!id"
             class="input"
           >
@@ -51,7 +51,7 @@
         >
           <input
             id="name"
-            v-model="campus.name"
+            v-model.trim="campus.name"
             class="input"
           >
         </ec-field>
@@ -63,7 +63,7 @@
             >
               <input
                 id="phone-drivers"
-                v-model="campus.phone.drivers"
+                v-model.trim="campus.phone.drivers"
                 class="input"
               >
             </ec-field>
@@ -75,7 +75,7 @@
             >
               <input
                 id="phone-everybody"
-                v-model="campus.phone.everybody"
+                v-model.trim="campus.phone.everybody"
                 class="input"
               >
             </ec-field>
@@ -98,7 +98,7 @@
             >
               <input
                 id="min-worked-hours"
-                v-model="campus.workedHours.start"
+                v-model.trim="campus.workedHours.start"
                 class="input"
                 type="number"
                 min="0"
@@ -113,7 +113,7 @@
             >
               <input
                 id="max-worked-hours"
-                v-model="campus.workedHours.end"
+                v-model.trim="campus.workedHours.end"
                 class="input"
                 type="number"
                 min="0"
@@ -150,7 +150,7 @@
             <div class="column">
               <input
                 id="reservation-scope"
-                v-model="localReservationScope"
+                v-model.trim="localReservationScope"
                 class="input"
                 type="number"
                 :disabled="!selectScope"
@@ -186,7 +186,7 @@
         >
           <input
             id="timezone"
-            v-model="campus.timezone"
+            v-model.trim="campus.timezone"
             class="input"
           >
         </ec-field>
@@ -284,7 +284,6 @@ export default {
       } else {
         ({ data } = (await this.$api.campuses.postCampus(campus, EDITABLE_FIELDS)));
       }
-      this.$store.commit('context/setCampus', data);
 
       this.$router.push({
         name: 'campuses-id-edit',

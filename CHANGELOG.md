@@ -1,13 +1,21 @@
 # Changelog
 ## Current
 ### Features
+* Add driver connection status in planificator
 * Export metrics for prometheus
 * Add recurrence
 * Add csv Import
 * Add csv export for CRUDs
+* Add automatically trim
 ### Fix
 * Fix memory leak / container restart
+* Add missing confirmation message on user deletion
+* Fix POI fetching
+* Fix error on campus creation
 * Fixed logo color when connected
+* Deleted flatten csv option for rides history export
+* Fixed responsive behavior of logos in login page
+* Fix planificator modal
 ## Version 1.4.4
 ### Features
 * Add new component to enforce password strength

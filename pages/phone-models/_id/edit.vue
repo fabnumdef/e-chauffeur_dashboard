@@ -36,7 +36,7 @@
       >
         <input
           id="id"
-          v-model="phoneModel.id"
+          v-model.trim="phoneModel.id"
           :disabled="!!id"
           type="text"
           class="input"
@@ -48,7 +48,7 @@
       >
         <input
           id="label"
-          v-model="phoneModel.label"
+          v-model.trim="phoneModel.label"
           type="text"
           class="input"
         >

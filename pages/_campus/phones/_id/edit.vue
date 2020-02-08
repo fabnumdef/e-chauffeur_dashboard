@@ -36,7 +36,7 @@
       >
         <input
           id="id"
-          v-model="phone.id"
+          v-model.trim="phone.id"
           :disabled="!!id"
           type="text"
           class="input"
@@ -48,7 +48,7 @@
       >
         <input
           id="imei"
-          v-model="phone.imei"
+          v-model.trim="phone.imei"
           type="text"
           class="input"
         >
@@ -68,7 +68,7 @@
       >
         <input
           id="number"
-          v-model="phone.number"
+          v-model.trim="phone.number"
           type="tel"
           class="input"
         >
@@ -88,7 +88,7 @@
       >
         <textarea
           id="comments"
-          v-model="phone.comments"
+          v-model.trim="phone.comments"
           class="textarea"
         />
       </ec-field>

@@ -146,12 +146,16 @@ export default {
   },
   methods: {
     async deleteDriver({ id }) {
-      await this.$api.drivers(this.campus.id).deleteDriver(id);
-      this.updateDriversList();
+      if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce chauffeur ?')) {
+        await this.$api.drivers(this.campus.id).deleteDriver(id);
+        this.updateDriversList();
+      }
     },
     async deleteUser({ id }) {
-      await this.$api.campusUsers(this.campus.id).deleteUser(id);
-      this.updateUsersList();
+      if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer cet utilisateur ?')) {
+        await this.$api.campusUsers(this.campus.id).deleteUser(id);
+        this.updateUsersList();
+      }
     },
     async usersUploadCSV({ data, params }) {
       try {
