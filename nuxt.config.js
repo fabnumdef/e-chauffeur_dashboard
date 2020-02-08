@@ -19,11 +19,11 @@ module.exports = {
     { src: '~assets/css/main.scss', lang: 'scss' },
   ],
   plugins: [
-    '~/plugins/multiselect.js',
-    '~/plugins/context.js',
-    { src: '~/plugins/datetime-picker.js', ssr: false },
-    { src: '~/plugins/vuecal.js', ssr: true },
-    { src: '~/plugins/realtime.js', ssr: false },
+    { src: '~/plugins/multiselect.js', mode: 'client' },
+    { src: '~/plugins/context.js', mode: 'client' },
+    { src: '~/plugins/datetime-picker.js', mode: 'client' },
+    { src: '~/plugins/vuecal.js', mode: 'client' },
+    { src: '~/plugins/realtime.js', mode: 'client' },
   ],
 
   modules: [
@@ -52,9 +52,9 @@ module.exports = {
         },
         withAuth: true,
         authPlugins: [
-          'has-right',
-          'auth-renew',
-          'user-expiration',
+          { src: 'has-right' },
+          { src: 'auth-renew', mode: 'client' },
+          { src: 'user-expiration', mode: 'client' },
         ],
         prometheus: {
           host: '0.0.0.0',
@@ -65,7 +65,10 @@ module.exports = {
 
   auth: {
     plugins: [
-      '~/plugins/socket.js',
+      {
+        src: '~/plugins/socket.js',
+        mode: 'client',
+      },
     ],
     redirect: {
       login: '/login',

@@ -8,6 +8,7 @@
 * Add csv export for CRUDs
 * Add automatically trim
 ### Fix
+* Fix memory leak / container restart
 * Add missing confirmation message on user deletion
 * Fix POI fetching
 * Fix error on campus creation
