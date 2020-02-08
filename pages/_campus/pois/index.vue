@@ -62,10 +62,11 @@ export default {
     crudList,
     crudHeader,
   },
-  async asyncData({ $api, query }) {
+  async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.pois(null, Object.keys(columns).join(','), { withDisabled: true })
+    const { data, pagination } = await $api
+      .pois({ id: params.campus }, Object.keys(columns).join(','), { withDisabled: true })
       .getPois({ offset, limit });
 
     const pois = data.map((poi) => ({

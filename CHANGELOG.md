@@ -8,6 +8,9 @@
 * Add csv export for CRUDs
 * Add automatically trim
 ### Fix
+* Add missing confirmation message on user deletion
+* Fix POI fetching
+* Fix error on campus creation
 * Fixed logo color when connected
 * Deleted flatten csv option for rides history export
 * Fixed responsive behavior of logos in login page
