@@ -29,7 +29,7 @@
         Exporter CSV
       </button>
       <nuxt-link
-        v-if="$auth.isSuperAdmin() && toCreateNew"
+        v-if="canCreateNew && toCreateNew"
         :to="toCreateNew"
         class="button is-success"
       >
@@ -74,6 +74,12 @@ export default {
     toCreateNew: {
       type: Object,
       default: () => null,
+    },
+    canCreateNew: {
+      type: Boolean,
+      default() {
+        return this.$auth.isSuperAdmin();
+      },
     },
     importCsv: {
       type: Boolean,
