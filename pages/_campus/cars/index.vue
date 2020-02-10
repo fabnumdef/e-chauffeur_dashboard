@@ -3,6 +3,7 @@
     <crud-header
       title="Véhicules"
       :to-create-new="campusLink('cars-new')"
+      :can-create-new="$auth.isRegulator(campus.id)"
       import-csv
       export-csv
       :mask="mask"
@@ -22,11 +23,11 @@
       @action-remove="deleteCar"
     >
       <template
-        v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+        v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
         #actions="{ row }"
       >
         <nuxt-link
-          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+          v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
           :to="campusLink('cars-id-edit', {
             params: { id: row.id },
           })"
@@ -38,7 +39,7 @@
           <span>Modifier</span>
         </nuxt-link>
         <button
-          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+          v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
           class="button is-danger"
           @click="deleteCar(row)"
         >
@@ -92,8 +93,10 @@ export default {
   },
   methods: {
     async deleteCar({ id }) {
-      await this.CarsAPI.deleteCar(id);
-      this.updateList();
+      if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce véhicule ?')) {
+        await this.CarsAPI.deleteCar(id);
+        this.updateList();
+      }
     },
     async importCSV({ data, params }) {
       try {
