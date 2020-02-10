@@ -18,8 +18,6 @@
           :pagination-total="driversPagination.total"
           :pagination-per-page="driversPagination.limit"
           :action-edit="campusLink('drivers-id-edit')"
-          action-remove-confirm="Voulez-vous vraiment supprimer ce chauffeur ?"
-          @action-remove="deleteDriver"
         >
           <template
             v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
@@ -68,8 +66,6 @@
           :pagination-total="usersPagination.total"
           :pagination-per-page="usersPagination.limit"
           :action-edit="campusLink('users-id-edit')"
-          action-remove-confirm="Voulez-vous vraiment supprimer cet utilisateur ?"
-          @action-remove="deleteUser"
         >
           <template
             v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"

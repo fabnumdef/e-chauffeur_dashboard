@@ -26,10 +26,35 @@
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
-      :action-edit="campusLink('drivers-id-edit')"
-      action-remove-confirm="Voulez-vous vraiment supprimer ce chauffeur ?"
-      @action-remove="deleteDriver"
-    />
+    >
+      <template
+        v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
+        #actions="{ row }"
+      >
+        <nuxt-link
+          v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
+          :to="campusLink('drivers-id-edit', {
+            params: { id: row.id },
+          })"
+          class="button is-primary"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'edit']" />
+          </span>
+          <span>Modifier</span>
+        </nuxt-link>
+        <button
+          v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
+          class="button is-danger"
+          @click="deleteDriver(row)"
+        >
+          <span class="icon is-small">
+            <fa-icon :icon="['fas', 'trash']" />
+          </span>
+          <span>Supprimer</span>
+        </button>
+      </template>
+    </crud-list>
   </main>
 </template>
 
@@ -62,13 +87,15 @@ export default {
   },
   methods: {
     async deleteDriver({ id }) {
-      await this.$api.drivers(this.campus.id).deleteDriver(id);
-      const offset = parseInt(this.$route.query.offset, 10) || 0;
-      const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(','))
-        .getDrivers({ offset, limit });
-      this.drivers = updatedList.data;
-      this.pagination = updatedList.pagination;
+      if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce chauffeur ?')) {
+        await this.$api.drivers(this.campus.id).deleteDriver(id);
+        const offset = parseInt(this.$route.query.offset, 10) || 0;
+        const limit = parseInt(this.$route.query.limit, 10) || 30;
+        const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(','))
+          .getDrivers({ offset, limit });
+        this.drivers = updatedList.data;
+        this.pagination = updatedList.pagination;
+      }
     },
   },
 };

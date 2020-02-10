@@ -102,7 +102,7 @@
           Bases
         </nuxt-link>
       </li>
-      <li v-if="$auth.isRegulator()">
+      <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
           :to="{ name: 'users' }"
         >
