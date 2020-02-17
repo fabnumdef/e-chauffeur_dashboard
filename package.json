@@ -44,5 +44,6 @@
     "leaflet": "1.x",
     "luxon": "1.x.x",
     "vue-phone-number-input": "0.2.x"
-  }
+  },
+  "version": "1.4.5"
 }
