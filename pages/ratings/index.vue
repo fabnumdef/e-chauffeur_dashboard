@@ -1,13 +1,15 @@
 <template>
   <main>
-    <header>
-      <h1 class="title">
-        Appréciations
-      </h1>
-    </header>
-    <ec-list
+    <crud-header
+      title="Appréciations"
+      export-csv
+      :mask="mask"
+      :pagination="pagination"
+      :api-call="$api.users.getUsers"
+    />
+    <crud-list
       :columns="columns"
-      :data="ratingsToDisplay"
+      :data="ratings"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
@@ -16,7 +18,8 @@
 </template>
 
 <script>
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 const columns = {
   createdAt: 'Date',
@@ -30,20 +33,29 @@ const columns = {
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
+    crudHeader,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data: ratings, pagination } = await $api.ratings('*').getRatings(offset, limit);
-    const ratingsToDisplay = ratings.map((rating) => ({
+    const { data, pagination } = await $api.ratings.getRatings(
+      'id,uxGrade,recommandationGrade,message,ride(campus),createdAt,ride',
+      { offset, limit },
+    );
+    const ratings = data.map((rating) => ({
       ...rating,
       ride: rating.ride.id,
       campus: rating.ride.campus.id,
     }));
     return {
-      ratingsToDisplay,
+      ratings,
       pagination,
+    };
+  },
+  data() {
+    return {
+      mask: 'id,uxGrade,recommandationGrade,message,ride(campus),ride,createdAt',
     };
   },
   computed: {
@@ -51,3 +63,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  #rating-header {
+    display: flex;
+    justify-content: space-between;
+  }
+</style>

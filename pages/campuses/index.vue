@@ -1,23 +1,14 @@
 <template>
   <main>
-    <header class="with-options">
-      <h1 class="title">
-        Bases
-      </h1>
-      <div class="options">
-        <nuxt-link
-          v-if="$auth.isSuperAdmin()"
-          :to="{name: 'campuses-new'}"
-          class="button is-success"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Nouveau</span>
-        </nuxt-link>
-      </div>
-    </header>
-    <ec-list
+    <crud-header
+      title="Bases"
+      :to-create-new="{name: 'campuses-new'}"
+      export-csv
+      :mask="mask"
+      :pagination="pagination"
+      :api-call="$api.campuses.getCampuses"
+    />
+    <crud-list
       :columns="{id: 'ID', name: 'Nom'}"
       :data="campuses"
       :pagination-offset="pagination.offset"
@@ -52,25 +43,32 @@
           <span>Supprimer</span>
         </button>
       </template>
-    </ec-list>
+    </crud-list>
   </main>
 </template>
 
 <script>
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
+    crudHeader,
   },
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.campuses.getCampuses('id,name', {}, offset, limit);
+    const { data, pagination } = await $api.campuses.getCampuses('id,name', { offset, limit });
     return {
       campuses: data,
       pagination,
+    };
+  },
+  data() {
+    return {
+      mask: 'id,name,workedDays,workedHours(start,end),location(coordinates),phone,timezone',
     };
   },
   methods: {
@@ -78,7 +76,7 @@ export default {
       await this.$api.campuses.deleteCampus(id);
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.$api.campuses.getCampuses('id,name', {}, offset, limit);
+      const updatedList = await this.$api.campuses.getCampuses('id,name', { offset, limit });
       this.campuses = updatedList.data;
       this.pagination = updatedList.pagination;
     },

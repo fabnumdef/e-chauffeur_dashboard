@@ -49,7 +49,7 @@
           >
             <input
               id="firstname"
-              v-model="user.firstname"
+              v-model.trim="user.firstname"
               class="input"
             >
           </ec-field>
@@ -61,7 +61,7 @@
           >
             <input
               id="lastname"
-              v-model="user.lastname"
+              v-model.trim="user.lastname"
               class="input"
             >
           </ec-field>
@@ -73,7 +73,7 @@
       >
         <input
           id="email"
-          v-model="user.email"
+          v-model.trim="user.email"
           type="text"
           class="input"
         >

@@ -1,22 +1,18 @@
 <template>
   <main>
-    <header class="with-options">
-      <h1 class="title">
-        Véhicules
-      </h1>
-      <div class="options">
-        <nuxt-link
-          :to="campusLink('cars-new')"
-          class="button is-success"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Nouveau</span>
-        </nuxt-link>
-      </div>
-    </header>
-    <ec-list
+    <crud-header
+      title="Véhicules"
+      :to-create-new="campusLink('cars-new')"
+      :can-create-new="$auth.isRegulator(campus.id)"
+      import-csv
+      export-csv
+      :mask="mask"
+      has-mask
+      :pagination="pagination"
+      :api-call="$api.cars(campus.id, mask).getCars"
+      @importCSV="importCSV"
+    />
+    <crud-list
       :columns="columns"
       :data="cars"
       :pagination-offset="pagination.offset"
@@ -27,11 +23,11 @@
       @action-remove="deleteCar"
     >
       <template
-        v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+        v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
         #actions="{ row }"
       >
         <nuxt-link
-          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+          v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
           :to="campusLink('cars-id-edit', {
             params: { id: row.id },
           })"
@@ -43,7 +39,7 @@
           <span>Modifier</span>
         </nuxt-link>
         <button
-          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+          v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
           class="button is-danger"
           @click="deleteCar(row)"
         >
@@ -53,30 +49,37 @@
           <span>Supprimer</span>
         </button>
       </template>
-    </ec-list>
+    </crud-list>
   </main>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 const columns = { id: 'ID', label: 'Label' };
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
+    crudHeader,
   },
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api
       .cars({ id: params.campus }, Object.keys(columns).join(','))
-      .getCars(offset, limit);
+      .getCars({ offset, limit });
     return {
       cars: data,
       pagination,
+    };
+  },
+  data() {
+    return {
+      mask: 'id,label,model(label),campus(name)',
     };
   },
   computed: {
@@ -90,7 +93,21 @@ export default {
   },
   methods: {
     async deleteCar({ id }) {
-      await this.CarsAPI.deleteCar(id);
+      if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce véhicule ?')) {
+        await this.CarsAPI.deleteCar(id);
+        this.updateList();
+      }
+    },
+    async importCSV({ data, params }) {
+      try {
+        await this.CarsAPI.postCars(data, params);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+      this.updateList();
+    },
+    async updateList() {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await this.CarsAPI.getCars(offset, limit);
@@ -100,16 +117,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .with-options {
-    display: flex;
-    .title {
-      flex-grow: 1;
-    }
-    .options {
-      padding: 0 10px 10px;
-      float: right;
-    }
-  }
-</style>

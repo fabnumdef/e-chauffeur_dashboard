@@ -5,7 +5,7 @@
       <nuxt-link :to="{ name: 'index' }">
         <img
           class="logo"
-          src="/logo.svg"
+          src="/logo_ec.svg"
           alt="logo"
         >
       </nuxt-link>
@@ -102,7 +102,7 @@
           Bases
         </nuxt-link>
       </li>
-      <li v-if="$auth.isRegulator()">
+      <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
           :to="{ name: 'users' }"
         >

@@ -36,7 +36,7 @@
       >
         <input
           id="id"
-          v-model="poi.id"
+          v-model.trim="poi.id"
           :disabled="!!id"
           class="input"
         >
@@ -48,7 +48,7 @@
       >
         <input
           id="label"
-          v-model="poi.label"
+          v-model.trim="poi.label"
           class="input"
         >
       </ec-field>

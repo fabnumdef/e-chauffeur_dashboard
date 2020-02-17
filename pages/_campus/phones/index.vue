@@ -1,23 +1,17 @@
 <template>
   <main>
-    <header class="with-options">
-      <h1 class="title">
-        Téléphones
-      </h1>
-      <div class="options">
-        <nuxt-link
-          v-if="$auth.isAdmin()"
-          :to="campusLink('phones-new')"
-          class="button is-success"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Créer</span>
-        </nuxt-link>
-      </div>
-    </header>
-    <ec-list
+    <crud-header
+      title="Téléphones"
+      :to-create-new="campusLink('phones-new')"
+      import-csv
+      export-csv
+      :mask="mask"
+      has-mask
+      :pagination="pagination"
+      :api-call="$api.phones(campus.id, mask).getPhones"
+      @importCSV="importCSV"
+    />
+    <crud-list
       :columns="{id: 'S/N', assignTo: 'Assigné à'}"
       :data="getPhones"
       :pagination-offset="pagination.offset"
@@ -51,13 +45,14 @@
           <span>Supprimer</span>
         </button>
       </template>
-    </ec-list>
+    </crud-list>
   </main>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import ecList from '~/components/crud/list.vue';
+import crudList from '~/components/crud/list.vue';
+import crudHeader from '~/components/crud/header.vue';
 
 const FIELDS = [
   'id',
@@ -68,16 +63,22 @@ const FIELDS = [
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
-    ecList,
+    crudList,
+    crudHeader,
   },
   async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api.phones({ id: params.campus }, FIELDS.join(','))
-      .getPhones(offset, limit);
+      .getPhones({ offset, limit });
     return {
       phones: data,
       pagination,
+    };
+  },
+  data() {
+    return {
+      mask: 'id,imei,model(label),number,owner(id),campus,state,comments',
     };
   },
   computed: {
@@ -108,26 +109,25 @@ export default {
     async deletePhone({ id }) {
       if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce téléphone ?')) {
         await this.$api.phones(this.campus).deletePhone(id);
-        const offset = parseInt(this.$route.query.offset, 10) || 0;
-        const limit = parseInt(this.$route.query.limit, 10) || 30;
-        const { data, pagination } = await this.$api.phones(this.campus, FIELDS.join(',')).getPhones(offset, limit);
-        this.phones = data;
-        this.pagination = pagination;
+        this.updateList();
       }
+    },
+    async importCSV({ data, params }) {
+      try {
+        await this.$api.phones(this.campus).postPhones(data, params);
+        this.$toast.success('Import réalisé avec succès');
+      } catch (err) {
+        this.$toast.error("Un problème est survenu pendant l'import");
+      }
+      this.updateList();
+    },
+    async updateList() {
+      const offset = parseInt(this.$route.query.offset, 10) || 0;
+      const limit = parseInt(this.$route.query.limit, 10) || 30;
+      const { data, pagination } = await this.$api.phones(this.campus, FIELDS.join(',')).getPhones(offset, limit);
+      this.phones = data;
+      this.pagination = pagination;
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .with-options {
-    display: flex;
-    .title {
-      flex-grow: 1;
-    }
-    .options {
-      padding: 0 10px 10px;
-      float: right;
-    }
-  }
-</style>

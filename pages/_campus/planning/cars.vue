@@ -67,16 +67,17 @@
 </template>
 <script>
 import { DateTime } from 'luxon';
-import planningModal from '~/components/planning/cars/modal.vue';
+import planningModal from '~/components/modals/cars-planning.vue';
 import planningCalendar from '~/components/planning/cars/calendar.vue';
 
 const CARS_DATA = 'id,label,model(label)';
-const TIMESLOT_DATA = `id,start,end,cars(${CARS_DATA})`;
+const TIMESLOT_DATA = `id,start,end,cars(${CARS_DATA}),recurrence(enabled,frequency)`;
 const newTimeSlot = () => ({
   start: null,
   end: null,
   cars: [],
   drivers: null,
+  recurrence: { frequency: null, enabled: false },
 });
 export default {
   watchQuery: ['current'],
@@ -88,7 +89,7 @@ export default {
     const before = week.endOf('week').toJSDate();
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const cars = await $api.cars({ id: params.campus }, CARS_DATA).getCars(offset, limit);
+    const cars = await $api.cars({ id: params.campus }, CARS_DATA).getCars({ offset, limit });
     const events = await $api.timeSlot(TIMESLOT_DATA, params.campus)
       .getCarsTimeSlotsBetween(after, before);
     return {
@@ -247,7 +248,7 @@ export default {
     /deep/ .fa-car {
       position: absolute;
       background: $orange;
-      right: 0px;
+      right: 0;
       color: $white;
       padding: 7px;
       box-sizing: initial;

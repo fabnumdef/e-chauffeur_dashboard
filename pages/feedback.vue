@@ -52,7 +52,7 @@
         >
           <textarea
             id="commentary"
-            v-model="message"
+            v-model.trim="message"
             class="textarea"
             placeholder="Tapez votre message"
           />

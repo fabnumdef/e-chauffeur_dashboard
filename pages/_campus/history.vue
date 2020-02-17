@@ -112,21 +112,9 @@
             >
               <textarea
                 id="mask"
-                v-model="csv.mask"
+                v-model.trim="csv.mask"
                 class="textarea"
               />
-            </ec-field>
-            <ec-field
-              label="Ride flatten"
-              field-id="flatten"
-            >
-              <label class="checkbox">
-                <input
-                  v-model="csv.flatten"
-                  type="checkbox"
-                >
-                Oui
-              </label>
             </ec-field>
           </fieldset>
           <hr>
@@ -310,8 +298,9 @@ import {
 import {
   CANCEL,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
+import generateCsvLink from '~/helpers/generateCsvLink';
 import ecDatePicker from '~/components/datepicker.vue';
-import vueModal from '~/components/modal.vue';
+import vueModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';
 
 const ROWS_PER_QUERY = 1000;
@@ -332,7 +321,6 @@ export default {
       csv: {
         separator: ';',
         delimiter: '"',
-        flatten: true,
         mask: 'id,departure(id,label,location),arrival(id,label,location),car(id,label,model(id,label)),'
           + 'campus(id,phone(drivers,everybody)),status(*),start,end,phone,driver(id,name),category(id,label),'
           + 'passengersCount,luggage,comments,createdAt,owner(id)',
@@ -368,9 +356,6 @@ export default {
     'csv.delimiter': async function csvSeparator() {
       await this.recalcDownloadLinks();
     },
-    'csv.flatten': async function csvSeparator() {
-      await this.recalcDownloadLinks();
-    },
     'csv.mask': async function csvSeparator() {
       await this.recalcDownloadLinks();
     },
@@ -386,7 +371,7 @@ export default {
       this.downloadLinks = Array
         .from({ length: Math.ceil(total / limit) })
         .map((_, i) => async () => {
-          const response = await this.$api
+          const { data } = await this.$api
             .rides(this.campus.id, this.fields.join(','))
             .getRides(
               this.filters.date[0],
@@ -398,19 +383,7 @@ export default {
                 csv,
               },
             );
-          if (window && window.document && window.btoa) {
-            const encodedUri = encodeURI(`data:text/csv;base64,${window.btoa(response.data)}`);
-            const link = window.document
-              .createElement('a');
-            link.setAttribute('href', encodedUri);
-            link.setAttribute(
-              'download',
-              `export_${this.getFormatDate(DateTime.local(), 'dd_MM_yyyy')}_part${i + 1}.csv`,
-            );
-            window.document.body.appendChild(link);
-            link.click();
-            link.remove();
-          }
+          generateCsvLink(data);
         });
     },
     toggleCsvModal(force) {
@@ -476,7 +449,7 @@ export default {
 };
 </script>
 
-<style scope lang="scss" scoped>
+<style lang="scss" scoped>
   @import "~assets/css/head";
 
   $heightHeader: 75px;

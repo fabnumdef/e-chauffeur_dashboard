@@ -37,22 +37,21 @@
           </template>
         </date-time>
       </ec-field>
-      <ec-field label="Chauffeurs">
+      <ec-field label="Voitures">
         <vue-multiselect
-          v-model="timeSlot.drivers"
-          :options="drivers.data"
+          v-model="timeSlot.cars"
+          :options="cars.data"
           track-by="id"
           multiple
-          label="name"
+          label="label"
           :show-labels="false"
         >
           <template #option="{option}">
-            {{ option.firstname }} {{ option.lastname }}
+            {{ option.id }} {{ option.label }}
           </template>
           <template #tag="{option, search, remove}">
             <span class="multiselect__tag">
-              <span v-if="option.firstname || option.lastname">{{ option.firstname }} {{ option.lastname }}</span>
-              <span v-else>{{ option.id }}</span>
+              <span>{{ option.id }} {{ option.label }}</span>
               <i
                 aria-hidden="true"
                 tabindex="1"
@@ -64,6 +63,19 @@
             <span class="multiselect-tag" />
           </template>
         </vue-multiselect>
+      </ec-field>
+      <template v-if="timeSlot.recurrence">
+        <recurring-option
+          v-model="timeSlot.recurrence"
+          :frequency="{weekly: 'Hebdomadaire', monthly: 'Mensuel'}"
+        />
+      </template>
+      <ec-field label="Commentaires">
+        <textarea
+          id="comments"
+          v-model.trim="timeSlot.comments"
+          class="textarea"
+        />
       </ec-field>
       <template
         v-if="timeSlot.id"
@@ -99,13 +111,15 @@
 </template>
 
 <script>
-import ecModal from '~/components/modal.vue';
+import ecModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';
+import recurringOption from '~/components/form/recurring-option.vue';
 
 export default {
   components: {
     ecModal,
     ecField,
+    recurringOption,
   },
   props: {
     active: {
@@ -116,7 +130,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    drivers: {
+    cars: {
       type: Object,
       default: () => ({}),
     },
