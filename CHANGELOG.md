@@ -1,6 +1,9 @@
 # Changelog
 ## Current
 ### Features
+### Fix
+## Version 1.4.5
+### Features
 * Add driver connection status in planificator
 * Export metrics for prometheus
 * Add recurrence
