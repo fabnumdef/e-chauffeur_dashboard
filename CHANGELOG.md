@@ -2,6 +2,9 @@
 ## Current
 ### Features
 ### Fix
+* Add missing create button in Phone index
+* Add missing create button in POI index
+* Add missing create button in users index
 ## Version 1.4.5
 ### Features
 * Add driver connection status in planificator
