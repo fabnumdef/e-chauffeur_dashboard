@@ -150,7 +150,7 @@
             <div class="column">
               <input
                 id="reservation-scope"
-                v-model.trim="localReservationScope"
+                v-model="localReservationScope"
                 class="input"
                 type="number"
                 :disabled="!selectScope"

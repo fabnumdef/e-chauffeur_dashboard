@@ -2,6 +2,7 @@
 ## Current
 ### Features
 ### Fix
+* Reservation scope can be set in days on base creation
 ## Version 1.4.5
 ### Features
 * Add driver connection status in planificator
