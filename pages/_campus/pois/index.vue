@@ -3,6 +3,7 @@
     <crud-header
       title="Lieux"
       :to-create-new="campusLink('pois-new')"
+      :can-create-new="$auth.isAdmin(campus.id)"
       import-csv
       export-csv
       :mask="mask"

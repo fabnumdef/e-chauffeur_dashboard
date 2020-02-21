@@ -3,6 +3,7 @@
     <crud-header
       title="Téléphones"
       :to-create-new="campusLink('phones-new')"
+      :can-create-new="$auth.isAdmin(campus.id)"
       import-csv
       export-csv
       :mask="mask"

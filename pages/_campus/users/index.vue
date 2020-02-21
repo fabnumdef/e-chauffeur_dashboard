@@ -5,6 +5,7 @@
         <crud-header
           title="Chauffeurs"
           :to-create-new="campusLink('drivers-new')"
+          :can-create-new="$auth.isAdmin(campus.id)"
           export-csv
           :mask="mask"
           has-mask
@@ -52,7 +53,7 @@
         <crud-header
           title="Utilisateurs"
           :to-create-new="campusLink('users-new')"
-          import-csv
+          :can-create-new="$auth.isAdmin(campus.id)"
           export-csv
           :mask="mask"
           :pagination="usersPagination"
@@ -84,7 +85,7 @@
               <span>Modifier</span>
             </nuxt-link>
             <button
-              v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+              v-if="$auth.isSuperAdmin()"
               class="button is-danger"
               @click="deleteUser(row)"
             >
