@@ -293,7 +293,12 @@
 import { DateTime, Interval } from 'luxon';
 import { mapGetters } from 'vuex';
 import {
-  CANCELED, DELIVERED,
+  CANCELED,
+  DELIVERED,
+  CANCELED_REQUESTED_CUSTOMER,
+  CANCELED_CUSTOMER_MISSING,
+  CANCELED_CUSTOMER_OVERLOAD,
+  CANCELED_TECHNICAL,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 import {
   CANCEL,
@@ -424,6 +429,10 @@ export default {
 
       switch (status) {
         case CANCEL:
+        case CANCELED_TECHNICAL:
+        case CANCELED_CUSTOMER_OVERLOAD:
+        case CANCELED_CUSTOMER_MISSING:
+        case CANCELED_REQUESTED_CUSTOMER:
         case CANCELED:
           statusInfos = { class: 'is-cancel', text: 'Course annulée' };
           break;
@@ -543,15 +552,14 @@ export default {
         width: 100%;
         color: white;
         text-transform: uppercase;
-
         &.is-done {
-          background-color: #8192a9;
+          background-color: $success;
         }
         &.is-cancel {
           background-color: $danger;
         }
         &.is-progress {
-          background-color: $light;
+          background-color: $primary;
         }
       }
     }
