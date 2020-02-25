@@ -106,6 +106,8 @@
         v-if="user.id"
         type="submit"
         class="button is-primary"
+        :class="loading && 'is-loading'"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -117,6 +119,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="loading && 'is-loading'"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -145,6 +149,11 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return {
+      loading: false,
+    };
+  },
   computed: {
     gprd() {
       return this.user && this.user.gprd && DateTime.fromISO(this.user.gprd).toLocaleString(DateTime.DATETIME_MED);
@@ -154,6 +163,7 @@ export default {
     async edit(user) {
       let data = {};
       try {
+        this.toggleLoading();
         if (user.id) {
           ({ data } = (await this.$api.users.patchUser(
             user.id,
@@ -169,6 +179,7 @@ export default {
           )));
         }
 
+        this.$toast.success('La donnée a bien été sauvegardée');
         this.$router.push({
           name: 'users-id-edit',
           params: { id: data.id },
@@ -183,6 +194,10 @@ export default {
         }
         this.$toast.error(message);
       }
+      this.toggleLoading();
+    },
+    toggleLoading() {
+      this.loading = !this.loading;
     },
   },
 };

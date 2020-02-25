@@ -65,6 +65,8 @@
         v-if="id"
         type="submit"
         class="button is-primary"
+        :class="loading && 'is-loading'"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -76,6 +78,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="loading && 'is-loading'"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -105,7 +109,7 @@ export default {
     },
   },
   data() {
-    return { id: this.car.id };
+    return { loading: false, id: this.car.id };
   },
   computed: {
     ...mapGetters({
@@ -119,6 +123,7 @@ export default {
     async edit(car) {
       let data = {};
       try {
+        this.toggleLoading();
         if (this.id) {
           ({ data } = (await this.CarsAPI.patchCar(car.id, car)));
         } else {
@@ -135,6 +140,10 @@ export default {
           this.$toast.error('Erreur serveur, si le problème persiste, veuillez contacter le service technique');
         }
       }
+      this.toggleLoading();
+    },
+    toggleLoading() {
+      this.loading = !this.loading;
     },
   },
 };

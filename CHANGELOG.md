@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Added loading animation and success message while creating or editing CRUD
 ### Fix
 * Add missing create button in Phone index
 * Add missing create button in POI index

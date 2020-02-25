@@ -97,6 +97,8 @@
         v-if="id"
         type="submit"
         class="button is-primary"
+        :class="loading && 'is-loading'"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -108,6 +110,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="loading && 'is-loading'"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -135,7 +139,7 @@ export default {
     },
   },
   data() {
-    return { id: this.poi.id };
+    return { loading: false, id: this.poi.id };
   },
   computed: {
     ...mapGetters({
@@ -150,6 +154,7 @@ export default {
     async edit(poi) {
       let data = {};
       try {
+        this.toggleLoading();
         if (this.id) {
           ({ data } = (await this.PoisAPI.patchPoi(this.id, poi)));
         } else {
@@ -162,6 +167,10 @@ export default {
       } catch (err) {
         this.$toast.error("L'édition du lieu n'a pas fonctionné");
       }
+      this.toggleLoading();
+    },
+    toggleLoading() {
+      this.loading = !this.loading;
     },
   },
 };

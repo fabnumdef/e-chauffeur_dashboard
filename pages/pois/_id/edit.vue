@@ -105,6 +105,8 @@
         v-if="id"
         type="submit"
         class="button is-primary"
+        :class="loading && 'is-loading'"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -116,6 +118,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="loading && 'is-loading'"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -144,12 +148,16 @@ export default {
     },
   },
   data() {
-    return { id: this.poi.id };
+    return {
+      loading: false,
+      id: this.poi.id,
+    };
   },
   methods: {
     async edit(poi) {
       let data = {};
       try {
+        this.toggleLoading();
         if (this.id) {
           ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
             .patchPoi(this.id, poi)));
@@ -158,15 +166,18 @@ export default {
             .postPoi(poi)));
         }
         this.$toast.success('Le lieu a bien été mis à jour');
+        this.$router.push({
+          name: 'pois-id-edit',
+          params: { id: data.id },
+        });
       } catch (err) {
         this.$toast.error("L'édition du lieu n'a pas fonctionné");
       }
 
-
-      this.$router.push({
-        name: 'pois-id-edit',
-        params: { id: data.id },
-      });
+      this.toggleLoading();
+    },
+    toggleLoading() {
+      this.loading = !this.loading;
     },
   },
 };
