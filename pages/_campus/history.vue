@@ -163,7 +163,7 @@
               </div>
               <div class="column">
                 <template v-if="ride.driver">
-                  {{ ride.driver.name }}
+                  {{ ride.driver.firstname }} {{ ride.driver.lastname }}
                 </template>
               </div>
               <div class="column">
