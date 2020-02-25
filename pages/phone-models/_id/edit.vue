@@ -57,7 +57,7 @@
         v-if="id"
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -70,7 +70,7 @@
         v-else
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -84,6 +84,7 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 const EDITABLE_FIELDS = [
   'id',
@@ -94,6 +95,7 @@ export default {
   components: {
     ecField,
   },
+  mixins: [toggleLoading],
   props: {
     phoneModel: {
       type: Object,
@@ -103,7 +105,6 @@ export default {
   data() {
     return {
       id: this.phoneModel.id,
-      loading: false,
     };
   },
 
@@ -111,7 +112,7 @@ export default {
     async edit(phoneModel) {
       let data = {};
       try {
-        this.toggleLoading();
+        this.toggleLoading(true);
         if (this.id) {
           ({ data } = (await this.$api.phoneModels.patchPhoneModel(
             phoneModel.id,
@@ -130,10 +131,7 @@ export default {
       } catch {
         this.$toast.error('Une erreur est survenue, merci de vérifier les champs.');
       }
-      this.toggleLoading();
-    },
-    toggleLoading() {
-      this.loading = !this.loading;
+      this.toggleLoading(false);
     },
   },
 };

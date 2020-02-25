@@ -106,7 +106,7 @@
         v-if="user.id"
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -119,7 +119,7 @@
         v-else
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -136,6 +136,7 @@ import { DateTime } from 'luxon';
 import ecField from '~/components/form/field.vue';
 import ecPassword from '~/components/form/password.vue';
 import roleRules from '~/components/form/role-rules.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 export default {
   components: {
@@ -143,16 +144,12 @@ export default {
     ecField,
     ecPassword,
   },
+  mixins: [toggleLoading],
   props: {
     user: {
       type: Object,
       default: () => ({}),
     },
-  },
-  data() {
-    return {
-      loading: false,
-    };
   },
   computed: {
     gprd() {
@@ -163,7 +160,7 @@ export default {
     async edit(user) {
       let data = {};
       try {
-        this.toggleLoading();
+        this.toggleLoading(true);
         if (user.id) {
           ({ data } = (await this.$api.users.patchUser(
             user.id,
@@ -194,10 +191,7 @@ export default {
         }
         this.$toast.error(message);
       }
-      this.toggleLoading();
-    },
-    toggleLoading() {
-      this.loading = !this.loading;
+      this.toggleLoading(false);
     },
   },
 };

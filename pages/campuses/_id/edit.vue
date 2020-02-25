@@ -196,7 +196,7 @@
           v-if="id"
           type="submit"
           class="button is-primary"
-          :class="loading && 'is-loading'"
+          :class="{'is-loading': loading}"
           :disabled="loading"
         >
           <span class="icon is-small">
@@ -209,7 +209,7 @@
           v-else
           type="submit"
           class="button is-primary"
-          :class="loading && 'is-loading'"
+          :class="{'is-loading': loading}"
           :disabled="loading"
         >
           <span class="icon is-small">
@@ -228,6 +228,7 @@ import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 import weekdaysSelect from '~/components/form/weekdays.vue';
 import rideDuration from '~/components/form/ride-duration.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
   + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
@@ -239,6 +240,7 @@ export default {
     weekdaysSelect,
     rideDuration,
   },
+  mixins: [toggleLoading],
   props: {
     campus: {
       type: Object,
@@ -247,7 +249,6 @@ export default {
   },
   data() {
     return {
-      loading: false,
       id: this.campus.id,
       selectScope: {
         label: 'Unité : heure',
@@ -285,7 +286,7 @@ export default {
     async edit(campus) {
       let data = {};
       try {
-        this.toggleLoading();
+        this.toggleLoading(true);
         if (this.id) {
           ({ data } = (await this.$api.campuses.patchCampus(campus.id, campus, EDITABLE_FIELDS)));
         } else {
@@ -299,10 +300,7 @@ export default {
       } catch {
         this.$toast.error('Une erreur est survenue, merci de vérifier les champs.');
       }
-      this.toggleLoading();
-    },
-    toggleLoading() {
-      this.loading = !this.loading;
+      this.toggleLoading(false);
     },
   },
 };

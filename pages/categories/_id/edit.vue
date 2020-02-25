@@ -57,7 +57,7 @@
         v-if="id"
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -70,7 +70,7 @@
         v-else
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -84,11 +84,13 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 export default {
   components: {
     ecField,
   },
+  mixins: [toggleLoading],
   props: {
     category: {
       type: Object,
@@ -96,14 +98,14 @@ export default {
     },
   },
   data() {
-    return { loading: false, id: this.category.id };
+    return { id: this.category.id };
   },
   methods: {
     async edit(category) {
       const ApiCategories = this.$api.categories('id,label');
       let data = {};
       try {
-        this.toggleLoading();
+        this.toggleLoading(true);
         if (this.id) {
           ({ data } = (await ApiCategories.patchCategory(category.id, category)));
         } else {
@@ -118,11 +120,9 @@ export default {
       } catch {
         this.$toast.error('Une erreur est survenue, merci de vérifier les champs.');
       }
-      this.toggleLoading();
+      this.toggleLoading(false);
     },
-    toggleLoading() {
-      this.loading = !this.loading;
-    },
+
   },
 };
 </script>

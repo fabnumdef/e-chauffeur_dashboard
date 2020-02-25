@@ -65,7 +65,7 @@
         v-if="id"
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -78,7 +78,7 @@
         v-else
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -94,6 +94,7 @@
 import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import SearchCarModels from '~/components/form/search-car-models.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 const EDITABLE_FIELDS = ['id', 'label', 'model'];
 
@@ -102,6 +103,7 @@ export default {
     SearchCarModels,
     ecField,
   },
+  mixins: [toggleLoading],
   props: {
     car: {
       type: Object,
@@ -109,7 +111,7 @@ export default {
     },
   },
   data() {
-    return { loading: false, id: this.car.id };
+    return { id: this.car.id };
   },
   computed: {
     ...mapGetters({
@@ -123,7 +125,7 @@ export default {
     async edit(car) {
       let data = {};
       try {
-        this.toggleLoading();
+        this.toggleLoading(true);
         if (this.id) {
           ({ data } = (await this.CarsAPI.patchCar(car.id, car)));
         } else {
@@ -140,10 +142,7 @@ export default {
           this.$toast.error('Erreur serveur, si le problème persiste, veuillez contacter le service technique');
         }
       }
-      this.toggleLoading();
-    },
-    toggleLoading() {
-      this.loading = !this.loading;
+      this.toggleLoading(false);
     },
   },
 };

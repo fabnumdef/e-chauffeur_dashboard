@@ -105,7 +105,7 @@
         v-if="id"
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -118,7 +118,7 @@
         v-else
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -134,6 +134,7 @@
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCampus from '~/components/form/search-campus.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 export default {
   components: {
@@ -141,6 +142,7 @@ export default {
     ecGpsPoint,
     searchCampus,
   },
+  mixins: [toggleLoading],
   props: {
     poi: {
       type: Object,
@@ -149,7 +151,6 @@ export default {
   },
   data() {
     return {
-      loading: false,
       id: this.poi.id,
     };
   },
@@ -157,7 +158,7 @@ export default {
     async edit(poi) {
       let data = {};
       try {
-        this.toggleLoading();
+        this.toggleLoading(true);
         if (this.id) {
           ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
             .patchPoi(this.id, poi)));
@@ -174,10 +175,7 @@ export default {
         this.$toast.error("L'édition du lieu n'a pas fonctionné");
       }
 
-      this.toggleLoading();
-    },
-    toggleLoading() {
-      this.loading = !this.loading;
+      this.toggleLoading(false);
     },
   },
 };

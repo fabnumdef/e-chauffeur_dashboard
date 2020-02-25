@@ -94,7 +94,7 @@
         v-if="id"
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -107,7 +107,7 @@
         v-else
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -124,6 +124,7 @@ import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import ecPassword from '~/components/form/password.vue';
 import roleRules from '~/components/form/role-only.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 const EDITABLE_FIELDS = ['id', 'email', 'password', 'name', 'firstname', 'lastname', 'roles(role)'];
 
@@ -133,6 +134,7 @@ export default {
     roleRules,
     ecPassword,
   },
+  mixins: [toggleLoading],
   props: {
     user: {
       type: Object,
@@ -140,7 +142,7 @@ export default {
     },
   },
   data() {
-    return { loading: false, id: this.user.id };
+    return { id: this.user.id };
   },
   computed: {
     ...mapGetters({
@@ -151,7 +153,7 @@ export default {
     async edit(user) {
       let data = {};
       try {
-        this.toggleLoading();
+        this.toggleLoading(true);
         if (user.id) {
           ({ data } = (await this.$api
             .campusUsers(this.campus.id, EDITABLE_FIELDS.join(','))
@@ -176,10 +178,7 @@ export default {
         }
         this.$toast.error(message);
       }
-      this.toggleLoading();
-    },
-    toggleLoading() {
-      this.loading = !this.loading;
+      this.toggleLoading(false);
     },
   },
 };

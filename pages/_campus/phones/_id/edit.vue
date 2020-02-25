@@ -97,7 +97,7 @@
         v-if="id"
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -110,7 +110,7 @@
         v-else
         type="submit"
         class="button is-primary"
-        :class="loading && 'is-loading'"
+        :class="{'is-loading': loading}"
         :disabled="loading"
       >
         <span class="icon is-small">
@@ -127,6 +127,7 @@ import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import ecSearchPhoneStates from '~/components/form/search-phone-states.vue';
 import ecSearchPhoneModels from '~/components/form/search-phone-models.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 const EDITABLE_FIELDS = [
   'id',
@@ -144,6 +145,7 @@ export default {
     ecSearchPhoneStates,
     ecSearchPhoneModels,
   },
+  mixins: [toggleLoading],
   props: {
     phone: {
       type: Object,
@@ -151,7 +153,7 @@ export default {
     },
   },
   data() {
-    return { loading: false, id: this.phone.id };
+    return { id: this.phone.id };
   },
 
   computed: {
@@ -167,7 +169,7 @@ export default {
     async edit(phone) {
       let data = {};
       try {
-        this.toggleLoading();
+        this.toggleLoading(true);
         if (this.id) {
           ({ data } = (await this.PhonesAPI.patchPhone(phone.id, phone)));
         } else {
@@ -184,10 +186,7 @@ export default {
           this.$toast.error('Erreur serveur, si le problème persiste, veuillez contacter le service technique');
         }
       }
-      this.toggleLoading();
-    },
-    toggleLoading() {
-      this.loading = !this.loading;
+      this.toggleLoading(false);
     },
   },
 };
