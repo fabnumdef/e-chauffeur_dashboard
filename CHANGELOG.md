@@ -6,6 +6,8 @@
 * Add missing create button in POI index
 * Add missing create button in users index
 * Reservation scope can be set in days on base creation
+* Status color in page history
+* Fixed status update in page history
 ## Version 1.4.5
 ### Features
 * Add driver connection status in planificator
