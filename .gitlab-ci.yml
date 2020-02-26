@@ -103,7 +103,6 @@ deploy_staging:
   variables:
     DEPLOYMENT_HOST: ${STAGING_DOMAIN}
     API_URL: ${STAGING_API_URL}
-    ALERT_ENABLED: "false"
     HELM_NAME: dashboard-staging
     REPLICA_COUNT: 3
     INGRESS_ISSUER: letsencrypt-prod
@@ -120,7 +119,6 @@ deploy_prod:
   variables:
     DEPLOYMENT_HOST: ${PRODUCTION_DOMAIN}
     API_URL: ${PRODUCTION_API_URL}
-    ALERT_ENABLED: "false"
     HELM_NAME: dashboard
     REPLICA_COUNT: 3
     INGRESS_ISSUER: letsencrypt-prod
