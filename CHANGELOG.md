@@ -9,6 +9,7 @@
 * Status color in page history
 * Fixed status update in page history
 * Fixed driver name display in history table
+* Fix SSR rendering of pages where calendar is present
 ## Version 1.4.5
 ### Features
 * Add driver connection status in planificator
