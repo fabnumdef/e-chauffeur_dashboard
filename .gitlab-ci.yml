@@ -9,7 +9,6 @@ include:
 
 variables:
   DS_DISABLE_DIND: "true"
-  URL_REVIEW: ${CI_COMMIT_REF_SLUG}.${STAGING_DOMAIN}
   KUBECONFIG: /etc/deploy/config
 
 .deploy:
@@ -89,7 +88,7 @@ build:
 deploy_review:
   extends: .deploy
   variables:
-    DEPLOYMENT_HOST: ${URL_REVIEW}
+    DEPLOYMENT_HOST: ${CI_COMMIT_REF_SLUG}.${STAGING_DOMAIN}
     API_URL: ${STAGING_API_URL}
     ALERT_ENABLED: "false"
     HELM_NAME: dashboard-${CI_COMMIT_REF_SLUG}
