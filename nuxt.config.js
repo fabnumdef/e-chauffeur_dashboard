@@ -22,7 +22,7 @@ module.exports = {
     { src: '~/plugins/multiselect.js', mode: 'client' },
     '~/plugins/context.js',
     { src: '~/plugins/datetime-picker.js', mode: 'client' },
-    { src: '~/plugins/vuecal.js', mode: 'client' },
+    '~/plugins/vuecal.js',
     { src: '~/plugins/realtime.js', mode: 'client' },
   ],
 
