@@ -1,6 +1,9 @@
 # Changelog
 ## Current
 ### Features
+* Added ratings list by campus page
+* Added rating details page
+* Added ride details page
 ### Fix
 * Add missing create button in Phone index
 * Add missing create button in POI index
