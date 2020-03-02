@@ -25,6 +25,8 @@ spec:
           env:
             - name: API_URL
               value: "{{ .Values.env.API_URL }}"
+            - name: VERSION
+              value: "{{ .Values.env.VERSION }}"
 {{- if .Values.monitoring.exporter.enabled }}
             - name: PROMETHEUS_EXPORTER
               value: "{{ .Values.monitoring.exporter.port }}"

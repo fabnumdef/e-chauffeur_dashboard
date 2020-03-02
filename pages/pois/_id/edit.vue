@@ -105,6 +105,8 @@
         v-if="id"
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -116,6 +118,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -130,6 +134,7 @@
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCampus from '~/components/form/search-campus.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 export default {
   components: {
@@ -137,6 +142,7 @@ export default {
     ecGpsPoint,
     searchCampus,
   },
+  mixins: [toggleLoading],
   props: {
     poi: {
       type: Object,
@@ -144,12 +150,15 @@ export default {
     },
   },
   data() {
-    return { id: this.poi.id };
+    return {
+      id: this.poi.id,
+    };
   },
   methods: {
     async edit(poi) {
       let data = {};
       try {
+        this.toggleLoading(true);
         if (this.id) {
           ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
             .patchPoi(this.id, poi)));
@@ -158,15 +167,15 @@ export default {
             .postPoi(poi)));
         }
         this.$toast.success('Le lieu a bien été mis à jour');
+        this.$router.push({
+          name: 'pois-id-edit',
+          params: { id: data.id },
+        });
       } catch (err) {
         this.$toast.error("L'édition du lieu n'a pas fonctionné");
       }
 
-
-      this.$router.push({
-        name: 'pois-id-edit',
-        params: { id: data.id },
-      });
+      this.toggleLoading(false);
     },
   },
 };

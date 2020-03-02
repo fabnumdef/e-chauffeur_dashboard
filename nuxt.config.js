@@ -22,7 +22,7 @@ module.exports = {
     { src: '~/plugins/multiselect.js', mode: 'client' },
     '~/plugins/context.js',
     { src: '~/plugins/datetime-picker.js', mode: 'client' },
-    { src: '~/plugins/vuecal.js', mode: 'client' },
+    '~/plugins/vuecal.js',
     { src: '~/plugins/realtime.js', mode: 'client' },
   ],
 
@@ -57,6 +57,7 @@ module.exports = {
           { src: 'user-expiration', mode: 'client' },
         ],
         prometheus: {
+          port: process.env.PROMETHEUS_EXPORTER || 9091,
           host: '0.0.0.0',
         },
       },
