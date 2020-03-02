@@ -97,6 +97,8 @@
         v-if="id"
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -108,6 +110,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -122,12 +126,14 @@
 import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 export default {
   components: {
     ecField,
     ecGpsPoint,
   },
+  mixins: [toggleLoading],
   props: {
     poi: {
       type: Object,
@@ -150,6 +156,7 @@ export default {
     async edit(poi) {
       let data = {};
       try {
+        this.toggleLoading(true);
         if (this.id) {
           ({ data } = (await this.PoisAPI.patchPoi(this.id, poi)));
         } else {
@@ -162,6 +169,7 @@ export default {
       } catch (err) {
         this.$toast.error("L'édition du lieu n'a pas fonctionné");
       }
+      this.toggleLoading(false);
     },
   },
 };

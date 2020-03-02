@@ -57,6 +57,8 @@
         v-if="id"
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -68,6 +70,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -80,6 +84,7 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 const EDITABLE_FIELDS = [
   'id',
@@ -90,6 +95,7 @@ export default {
   components: {
     ecField,
   },
+  mixins: [toggleLoading],
   props: {
     phoneModel: {
       type: Object,
@@ -97,26 +103,35 @@ export default {
     },
   },
   data() {
-    return { id: this.phoneModel.id };
+    return {
+      id: this.phoneModel.id,
+    };
   },
 
   methods: {
     async edit(phoneModel) {
       let data = {};
-      if (this.id) {
-        ({ data } = (await this.$api.phoneModels.patchPhoneModel(
-          phoneModel.id,
-          phoneModel,
-          EDITABLE_FIELDS.join(','),
-        )));
-      } else {
-        ({ data } = (await this.$api.phoneModels.postPhoneModel(phoneModel, EDITABLE_FIELDS.join(','))));
-      }
+      try {
+        this.toggleLoading(true);
+        if (this.id) {
+          ({ data } = (await this.$api.phoneModels.patchPhoneModel(
+            phoneModel.id,
+            phoneModel,
+            EDITABLE_FIELDS.join(','),
+          )));
+        } else {
+          ({ data } = (await this.$api.phoneModels.postPhoneModel(phoneModel, EDITABLE_FIELDS.join(','))));
+        }
 
-      this.$router.push({
-        name: 'phone-models-id-edit',
-        params: { id: data.id },
-      });
+        this.$toast.success('Donnée enregistrée avec succès');
+        this.$router.push({
+          name: 'phone-models-id-edit',
+          params: { id: data.id },
+        });
+      } catch {
+        this.$toast.error('Une erreur est survenue, merci de vérifier les champs.');
+      }
+      this.toggleLoading(false);
     },
   },
 };

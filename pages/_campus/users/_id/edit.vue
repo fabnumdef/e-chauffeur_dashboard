@@ -94,6 +94,8 @@
         v-if="id"
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -105,6 +107,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -120,6 +124,7 @@ import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import ecPassword from '~/components/form/password.vue';
 import roleRules from '~/components/form/role-only.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 const EDITABLE_FIELDS = ['id', 'email', 'password', 'name', 'firstname', 'lastname', 'roles(role)'];
 
@@ -129,6 +134,7 @@ export default {
     roleRules,
     ecPassword,
   },
+  mixins: [toggleLoading],
   props: {
     user: {
       type: Object,
@@ -147,6 +153,7 @@ export default {
     async edit(user) {
       let data = {};
       try {
+        this.toggleLoading(true);
         if (user.id) {
           ({ data } = (await this.$api
             .campusUsers(this.campus.id, EDITABLE_FIELDS.join(','))
@@ -154,6 +161,8 @@ export default {
         } else {
           ({ data } = (await this.$api.campusUsers(this.campus.id, EDITABLE_FIELDS.join(',')).postUser(user)));
         }
+
+        this.$toast.success('Donnée enregistrée avec succès');
         this.$router.push(
           this.$context.buildCampusLink('users-id-edit', {
             params: { id: data.id },
@@ -169,6 +178,7 @@ export default {
         }
         this.$toast.error(message);
       }
+      this.toggleLoading(false);
     },
   },
 };
