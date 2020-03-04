@@ -20,7 +20,7 @@
           {{ message }}
         </li>
         <li>Date : <strong>{{ createdAt }}</strong></li>
-        <li>
+        <li v-if="ride && ride.id">
           Id de la course : <strong>
             <nuxt-link :to="campusLink('rides-id', { params: { id: ride.id } })">{{ ride.id }}</nuxt-link>
           </strong>
