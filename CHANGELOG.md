@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Added loading animation and success message while creating or editing CRUD
 ### Fix
 * Add missing create button in Phone index
 * Add missing create button in POI index
@@ -9,6 +10,9 @@
 * Status color in page history
 * Fixed status update in page history
 * Fixed driver name display in history table
+* Fix SSR rendering of pages where calendar is present
+* Fixed rights to import csv and create new data for phones and pois
+* Fixed csv export mask to fit import template
 ## Version 1.4.5
 ### Features
 * Add driver connection status in planificator
