@@ -79,7 +79,7 @@ export default {
   },
   data() {
     return {
-      mask: 'id,label,model(label),campus(name)',
+      mask: 'id,label,model(id,label),campus(id,name)',
     };
   },
   computed: {

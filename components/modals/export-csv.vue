@@ -33,9 +33,12 @@
         label="Mask de champs"
         field-id="mask"
       >
+        <aside v-if="displayAside">
+          Ce masque par défaut génèrera un tableau compatible avec l'import de données.
+        </aside>
         <textarea
           id="mask"
-          v-model="csv.mask"
+          v-model="mask"
           class="textarea"
         />
       </ec-field>
@@ -103,6 +106,10 @@ export default {
       type: String,
       required: true,
     },
+    displayAside: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -133,7 +140,6 @@ export default {
       separator: ';',
       delimiter: '"',
       flatten: true,
-      mask: this.mask,
     };
   },
   methods: {
@@ -144,7 +150,7 @@ export default {
         .from({ length: Math.ceil(total / ROWS_PER_QUERY) })
         .map((_, i) => async () => {
           const args = [
-            csv.mask,
+            this.mask,
             {
               offset: ROWS_PER_QUERY * i,
               limit: ROWS_PER_QUERY,
@@ -168,3 +174,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  aside {
+    margin: .5em 0;
+    font-style: italic;
+    color: gray;
+  }
+</style>

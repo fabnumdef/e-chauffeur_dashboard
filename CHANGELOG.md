@@ -1,10 +1,6 @@
 # Changelog
 ## Current
 ### Features
-* Added ratings list by campus page
-* Added rating details page
-* Added ride details page
-* Added loading animation and success message while creating or editing CRUD
 ### Fix
 * Add missing create button in Phone index
 * Add missing create button in POI index
@@ -13,8 +9,6 @@
 * Status color in page history
 * Fixed status update in page history
 * Fixed driver name display in history table
-* Fix SSR rendering of pages where calendar is present
-* Fixed rights to import csv and create new data for phones and pois
 ## Version 1.4.5
 ### Features
 * Add driver connection status in planificator
