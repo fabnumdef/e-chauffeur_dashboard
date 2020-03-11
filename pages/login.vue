@@ -1,5 +1,11 @@
 <template>
   <main>
+    <div
+      v-if="isFF"
+      class="warning-banner"
+    >
+      Attention : L'application e-Chauffeur est optimisée pour Firefox
+    </div>
     <div class="logo">
       <img
         alt="e-Chauffeur"
@@ -93,6 +99,9 @@ export default {
       },
     };
   },
+  mounted() {
+    this.isFF = navigator.userAgent.includes('Firefox');
+  },
   methods: {
     async login(data) {
       try {
@@ -185,6 +194,20 @@ export default {
     margin: 10px auto;
     width: 100%;
     max-width: 400px;
+  }
+
+  .warning-banner {
+    background-color: $danger;
+    color: $white;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    padding: .8em;
+    z-index: 10;
   }
 
   @media screen and (max-width: 600px) {
