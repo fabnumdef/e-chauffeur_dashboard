@@ -1,10 +1,10 @@
 <template>
   <main>
     <div
-      v-if="isFF"
+      v-if="!isFF"
       class="warning-banner"
     >
-      Attention : L'application e-Chauffeur est optimisée pour Firefox
+      Attention : Le fonctionnement d'e-Chauffeur est garanti sur Firefox
     </div>
     <div class="logo">
       <img
@@ -97,6 +97,7 @@ export default {
         email: null,
         password: null,
       },
+      isFF: true,
     };
   },
   mounted() {
