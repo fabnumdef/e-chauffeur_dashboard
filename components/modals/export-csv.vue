@@ -42,18 +42,6 @@
           class="textarea"
         />
       </ec-field>
-      <ec-field
-        label="Ride flatten"
-        field-id="flatten"
-      >
-        <label class="checkbox">
-          <input
-            v-model="csv.flatten"
-            type="checkbox"
-          >
-          Oui
-        </label>
-      </ec-field>
     </fieldset>
     <hr>
     <ul>
@@ -127,9 +115,6 @@ export default {
     'csv.delimiter': async function csvSeparator() {
       await this.recalcDownloadLinks();
     },
-    'csv.flatten': async function csvSeparator() {
-      await this.recalcDownloadLinks();
-    },
     'csv.mask': async function csvSeparator() {
       this.$emit('updateMask', this.csv.mask);
       await this.recalcDownloadLinks();
@@ -139,7 +124,6 @@ export default {
     this.csv = {
       separator: ';',
       delimiter: '"',
-      flatten: true,
     };
   },
   methods: {
