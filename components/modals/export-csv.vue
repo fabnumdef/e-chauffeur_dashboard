@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import generateCsvLink from '~/helpers/generateCsvLink';
+import generateCsvLink from '~/helpers/generate-csv-link';
 import vueModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';
 
