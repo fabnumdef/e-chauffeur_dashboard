@@ -4,7 +4,7 @@
       v-if="!isFF"
       class="warning-banner"
     >
-      Attention : Le fonctionnement d'e-Chauffeur est garanti sur Firefox
+      Attention : e-Chauffeur ne fonctionne que sous Firefox
     </div>
     <div class="logo">
       <img
