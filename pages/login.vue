@@ -1,5 +1,11 @@
 <template>
   <main>
+    <div
+      v-if="!isFF"
+      class="warning-banner"
+    >
+      Attention : e-Chauffeur ne fonctionne que sous Firefox
+    </div>
     <div class="logo">
       <img
         alt="e-Chauffeur"
@@ -91,7 +97,11 @@ export default {
         email: null,
         password: null,
       },
+      isFF: true,
     };
+  },
+  mounted() {
+    this.isFF = navigator.userAgent.includes('Firefox');
   },
   methods: {
     async login(data) {
@@ -103,13 +113,13 @@ export default {
         switch (status) {
           case 404:
             this.$toast.error('Impossible de se connecter, l\'utilisateur n\'existe pas. '
-              + 'Merci de vérifier votre identifiant.\n'
-              + 'Si le problème persiste, contactez nous pour confirmer votre identifiant.');
+                + 'Merci de vérifier votre identifiant.\n'
+                + 'Si le problème persiste, contactez nous pour confirmer votre identifiant.');
             break;
           case 403:
             this.$toast.error('Impossible de se connecter, le mot de passe est incorrect. '
-              + 'Merci de retaper votre mot de passe.\n'
-              + 'Si le problème persiste, contactez nous pour réinitialiser votre mot de passe.');
+                + 'Merci de retaper votre mot de passe.\n'
+                + 'Si le problème persiste, contactez nous pour réinitialiser votre mot de passe.');
             this.user.password = null;
             break;
           case 401:
@@ -118,7 +128,7 @@ export default {
             break;
           default:
             this.$toast.error('Une erreur est survenue, merci de vérifier votre email et mot de passe. \n'
-            + 'Si le problème persiste, contactez nous pour réinitialiser votre mot de passe.');
+                + 'Si le problème persiste, contactez nous pour réinitialiser votre mot de passe.');
         }
       }
     },
@@ -185,6 +195,20 @@ export default {
     margin: 10px auto;
     width: 100%;
     max-width: 400px;
+  }
+
+  .warning-banner {
+    background-color: $danger;
+    color: $white;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    padding: .8em;
+    z-index: 10;
   }
 
   @media screen and (max-width: 600px) {
