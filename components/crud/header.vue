@@ -52,6 +52,7 @@
       :api-call="apiCall"
       :has-mask="hasMask"
       :mask="mask"
+      :display-aside="importCsv"
       @toggleModal="toggleExportModal"
     />
   </header>

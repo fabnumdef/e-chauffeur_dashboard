@@ -13,6 +13,7 @@
 * Fixed driver name display in history table
 * Fix SSR rendering of pages where calendar is present
 * Fixed rights to import csv and create new data for phones and pois
+* Fixed csv export mask to fit import template
 * Added format-coordinates.js to generate number compatible format
 ## Version 1.4.5
 ### Features
