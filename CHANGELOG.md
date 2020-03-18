@@ -3,6 +3,9 @@
 ### Features
 * Added loading animation and success message while creating or editing CRUD
 * Added alert message if browser is not Firefox
+* Ratings by campus with list & details page
+* Ride details page
+* Added ratings to dashboard
 ### Fix
 * Add missing create button in Phone index
 * Add missing create button in POI index

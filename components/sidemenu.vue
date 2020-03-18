@@ -30,16 +30,6 @@
           Historique
         </nuxt-link>
       </li>
-      <li v-if="hasCampus && $auth.isRegulator() && !$auth.isAdmin()">
-        <nuxt-link :to="campusLink('drivers')">
-          Chauffeurs
-        </nuxt-link>
-      </li>
-      <li v-if="hasCampus && $auth.isAdmin()">
-        <nuxt-link :to="campusLink('users')">
-          Utilisateurs
-        </nuxt-link>
-      </li>
       <li v-if="hasCampus">
         <nuxt-link :to="campusLink('planning')">
           Planning
@@ -52,6 +42,16 @@
             v-if="ridesToValidate.length > 0"
             class="red-dot"
           >{{ ridesToValidate.length }}</span>
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus && $auth.isRegulator() && !$auth.isAdmin()">
+        <nuxt-link :to="campusLink('drivers')">
+          Chauffeurs
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus && $auth.isAdmin()">
+        <nuxt-link :to="campusLink('users')">
+          Utilisateurs
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
@@ -74,6 +74,11 @@
       <li v-if="hasCampus && $auth.isAdmin(campus.id)">
         <nuxt-link :to="campusLink('edit')">
           Base
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus && $auth.isSuperAdmin()">
+        <nuxt-link :to="campusLink('ratings')">
+          Appréciations
         </nuxt-link>
       </li>
       <li v-if="hasCampus && $auth.isSuperAdmin()">
@@ -133,13 +138,6 @@
           :to="{ name: 'categories' }"
         >
           Catégories
-        </nuxt-link>
-      </li>
-      <li v-if="$auth.isSuperAdmin()">
-        <nuxt-link
-          :to="{ name: 'ratings' }"
-        >
-          Appréciations
         </nuxt-link>
       </li>
       <li v-if="$auth.isRegulator()">

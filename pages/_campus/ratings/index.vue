@@ -13,11 +13,26 @@
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
-    />
+    >
+      <template
+        #actions="{ row }"
+      >
+        <nuxt-link
+          v-if="$auth.isSuperAdmin()"
+          :to="campusLink('ratings-id', {
+            params: { id: row.id },
+          })"
+          class="button is-primary fill-height"
+        >
+          <span>Détails</span>
+        </nuxt-link>
+      </template>
+    </crud-list>
   </main>
 </template>
 
 <script>
+import { DateTime } from 'luxon';
 import crudList from '~/components/crud/list.vue';
 import crudHeader from '~/components/crud/header.vue';
 
@@ -25,10 +40,9 @@ const columns = {
   createdAt: 'Date',
   uxGrade: 'Note UX',
   recommandationGrade: 'Recommandation',
-  message: 'Message',
-  ride: 'ID de la course',
-  campus: 'Base',
 };
+
+const mask = Object.keys(columns).concat('id').join(',');
 
 export default {
   watchQuery: ['offset', 'limit'],
@@ -36,26 +50,17 @@ export default {
     crudList,
     crudHeader,
   },
-  async asyncData({ $api, query }) {
+  async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api.ratings.getRatings(
-      'id,uxGrade,recommandationGrade,message,ride(campus),createdAt,ride',
-      { offset, limit },
-    );
+    const { data, pagination } = await $api.ratings(params.campus, mask).getRatings({ offset, limit });
     const ratings = data.map((rating) => ({
       ...rating,
-      ride: rating.ride.id,
-      campus: rating.ride.campus.id,
+      createdAt: DateTime.fromISO(rating.createdAt).toLocaleString('dd LLL yyyy', { locale: 'fr' }),
     }));
     return {
       ratings,
       pagination,
-    };
-  },
-  data() {
-    return {
-      mask: 'id,uxGrade,recommandationGrade,message,ride(campus),ride,createdAt',
     };
   },
   computed: {
@@ -63,10 +68,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  #rating-header {
-    display: flex;
-    justify-content: space-between;
-  }
-</style>
