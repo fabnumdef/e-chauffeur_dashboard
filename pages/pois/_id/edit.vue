@@ -135,6 +135,7 @@ import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCampus from '~/components/form/search-campus.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
+import formatCoordinates from '~/helpers/format-coordinates';
 
 export default {
   components: {
@@ -159,12 +160,19 @@ export default {
       let data = {};
       try {
         this.toggleLoading(true);
+        const formattedPoi = {
+          ...poi,
+          location: {
+            coordinates: formatCoordinates(poi.location.coordinates),
+          },
+        };
+
         if (this.id) {
           ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
-            .patchPoi(this.id, poi)));
+            .patchPoi(this.id, formattedPoi)));
         } else {
           ({ data } = (await this.$api.pois(this.poi.campus, 'id,label,location(coordinates),campus,enabled')
-            .postPoi(poi)));
+            .postPoi(formattedPoi)));
         }
         this.$toast.success('Le lieu a bien été mis à jour');
         this.$router.push({

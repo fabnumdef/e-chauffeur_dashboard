@@ -303,7 +303,7 @@ import {
 import {
   CANCEL,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
-import generateCsvLink from '~/helpers/generateCsvLink';
+import generateCsvLink from '~/helpers/generate-csv-link';
 import ecDatePicker from '~/components/datepicker.vue';
 import vueModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';

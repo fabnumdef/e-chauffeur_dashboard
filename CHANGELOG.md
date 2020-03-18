@@ -2,6 +2,7 @@
 ## Current
 ### Features
 * Added loading animation and success message while creating or editing CRUD
+* Added alert message if browser is not Firefox
 ### Fix
 * Add missing create button in Phone index
 * Add missing create button in POI index
@@ -13,6 +14,7 @@
 * Fix SSR rendering of pages where calendar is present
 * Fixed rights to import csv and create new data for phones and pois
 * Fixed csv export mask to fit import template
+* Added format-coordinates.js to generate number compatible format
 ## Version 1.4.5
 ### Features
 * Add driver connection status in planificator
