@@ -42,7 +42,7 @@ const columns = {
   recommandationGrade: 'Recommandation',
 };
 
-const mask = 'id,uxGrade,recommandationGrade,createdAt';
+const mask = Object.keys(columns).concat('id').join(',');
 
 export default {
   watchQuery: ['offset', 'limit'],
@@ -56,7 +56,7 @@ export default {
     const { data, pagination } = await $api.ratings(params.campus, mask).getRatings({ offset, limit });
     const ratings = data.map((rating) => ({
       ...rating,
-      createdAt: DateTime.fromISO(rating.createdAt).toFormat('dd LLL yyyy', { locale: 'fr' }),
+      createdAt: DateTime.fromISO(rating.createdAt).toLocaleString('dd LLL yyyy', { locale: 'fr' }),
     }));
     return {
       ratings,
