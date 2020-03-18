@@ -229,6 +229,7 @@ import searchCategories from '~/components/form/search-categories.vue';
 import weekdaysSelect from '~/components/form/weekdays.vue';
 import rideDuration from '~/components/form/ride-duration.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
+import formatCoordinates from '~/helpers/format-coordinates';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
   + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
@@ -287,10 +288,17 @@ export default {
       let data = {};
       try {
         this.toggleLoading(true);
+        const formattedCampus = {
+          ...campus,
+          location: {
+            coordinates: formatCoordinates(campus.location.coordinates),
+          },
+        };
+
         if (this.id) {
-          ({ data } = (await this.$api.campuses.patchCampus(campus.id, campus, EDITABLE_FIELDS)));
+          ({ data } = (await this.$api.campuses.patchCampus(campus.id, formattedCampus, EDITABLE_FIELDS)));
         } else {
-          ({ data } = (await this.$api.campuses.postCampus(campus, EDITABLE_FIELDS)));
+          ({ data } = (await this.$api.campuses.postCampus(formattedCampus, EDITABLE_FIELDS)));
         }
         this.$toast.success('Donnée enregistrée avec succès');
         this.$router.push({

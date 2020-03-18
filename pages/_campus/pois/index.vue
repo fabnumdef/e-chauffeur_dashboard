@@ -83,7 +83,7 @@ export default {
   },
   data() {
     return {
-      mask: 'id,label,location(coordinates),campus(name),enabled',
+      mask: 'id,label,location(coordinates),campus(id,name)',
     };
   },
   computed: {
