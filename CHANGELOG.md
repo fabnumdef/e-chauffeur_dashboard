@@ -1,6 +1,9 @@
 # Changelog
 ## Current
 ### Features
+### Fix
+## Version 1.4.6
+### Features
 * Added loading animation and success message while creating or editing CRUD
 * Added alert message if browser is not Firefox
 ### Fix
