@@ -150,7 +150,7 @@
             <div class="column">
               <input
                 id="reservation-scope"
-                v-model.trim="localReservationScope"
+                v-model="localReservationScope"
                 class="input"
                 type="number"
                 :disabled="!selectScope"
@@ -196,6 +196,8 @@
           v-if="id"
           type="submit"
           class="button is-primary"
+          :class="{'is-loading': loading}"
+          :disabled="loading"
         >
           <span class="icon is-small">
             <fa-icon :icon="['fas', 'save']" />
@@ -207,6 +209,8 @@
           v-else
           type="submit"
           class="button is-primary"
+          :class="{'is-loading': loading}"
+          :disabled="loading"
         >
           <span class="icon is-small">
             <fa-icon :icon="['fas', 'plus']" />
@@ -224,6 +228,8 @@ import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 import weekdaysSelect from '~/components/form/weekdays.vue';
 import rideDuration from '~/components/form/ride-duration.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
+import formatCoordinates from '~/helpers/format-coordinates';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
   + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
@@ -235,6 +241,7 @@ export default {
     weekdaysSelect,
     rideDuration,
   },
+  mixins: [toggleLoading],
   props: {
     campus: {
       type: Object,
@@ -279,16 +286,29 @@ export default {
   methods: {
     async edit(campus) {
       let data = {};
-      if (this.id) {
-        ({ data } = (await this.$api.campuses.patchCampus(campus.id, campus, EDITABLE_FIELDS)));
-      } else {
-        ({ data } = (await this.$api.campuses.postCampus(campus, EDITABLE_FIELDS)));
-      }
+      try {
+        this.toggleLoading(true);
+        const formattedCampus = {
+          ...campus,
+          location: {
+            coordinates: formatCoordinates(campus.location.coordinates),
+          },
+        };
 
-      this.$router.push({
-        name: 'campuses-id-edit',
-        params: { id: data.id },
-      });
+        if (this.id) {
+          ({ data } = (await this.$api.campuses.patchCampus(campus.id, formattedCampus, EDITABLE_FIELDS)));
+        } else {
+          ({ data } = (await this.$api.campuses.postCampus(formattedCampus, EDITABLE_FIELDS)));
+        }
+        this.$toast.success('Donnée enregistrée avec succès');
+        this.$router.push({
+          name: 'campuses-id-edit',
+          params: { id: data.id },
+        });
+      } catch {
+        this.$toast.error('Une erreur est survenue, merci de vérifier les champs.');
+      }
+      this.toggleLoading(false);
     },
   },
 };

@@ -97,6 +97,8 @@
         v-if="id"
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -108,6 +110,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -122,12 +126,15 @@
 import { mapGetters } from 'vuex';
 import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
+import formatCoordinates from '~/helpers/format-coordinates';
 
 export default {
   components: {
     ecField,
     ecGpsPoint,
   },
+  mixins: [toggleLoading],
   props: {
     poi: {
       type: Object,
@@ -150,10 +157,18 @@ export default {
     async edit(poi) {
       let data = {};
       try {
+        this.toggleLoading(true);
+        const formattedPoi = {
+          ...poi,
+          location: {
+            coordinates: formatCoordinates(poi.location.coordinates),
+          },
+        };
+
         if (this.id) {
-          ({ data } = (await this.PoisAPI.patchPoi(this.id, poi)));
+          ({ data } = (await this.PoisAPI.patchPoi(this.id, formattedPoi)));
         } else {
-          ({ data } = (await this.PoisAPI.postPoi(poi)));
+          ({ data } = (await this.PoisAPI.postPoi(formattedPoi)));
         }
         this.$toast.success('Le lieu a bien été mis à jour');
         this.$router.push(this.$context.buildCampusLink('pois-id-edit', {
@@ -162,6 +177,7 @@ export default {
       } catch (err) {
         this.$toast.error("L'édition du lieu n'a pas fonctionné");
       }
+      this.toggleLoading(false);
     },
   },
 };

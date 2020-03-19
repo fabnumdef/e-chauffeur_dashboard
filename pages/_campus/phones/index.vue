@@ -3,7 +3,8 @@
     <crud-header
       title="Téléphones"
       :to-create-new="campusLink('phones-new')"
-      import-csv
+      :can-create-new="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
+      :import-csv="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
       export-csv
       :mask="mask"
       has-mask
@@ -78,7 +79,7 @@ export default {
   },
   data() {
     return {
-      mask: 'id,imei,model(label),number,owner(id),campus,state,comments',
+      mask: 'id,imei,model(id,label),number,campus(id),state,comments',
     };
   },
   computed: {

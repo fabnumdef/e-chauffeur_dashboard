@@ -106,6 +106,8 @@
         v-if="user.id"
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -117,6 +119,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -132,6 +136,7 @@ import { DateTime } from 'luxon';
 import ecField from '~/components/form/field.vue';
 import ecPassword from '~/components/form/password.vue';
 import roleRules from '~/components/form/role-rules.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 export default {
   components: {
@@ -139,6 +144,7 @@ export default {
     ecField,
     ecPassword,
   },
+  mixins: [toggleLoading],
   props: {
     user: {
       type: Object,
@@ -154,6 +160,7 @@ export default {
     async edit(user) {
       let data = {};
       try {
+        this.toggleLoading(true);
         if (user.id) {
           ({ data } = (await this.$api.users.patchUser(
             user.id,
@@ -169,6 +176,7 @@ export default {
           )));
         }
 
+        this.$toast.success('La donnée a bien été sauvegardée');
         this.$router.push({
           name: 'users-id-edit',
           params: { id: data.id },
@@ -183,6 +191,7 @@ export default {
         }
         this.$toast.error(message);
       }
+      this.toggleLoading(false);
     },
   },
 };

@@ -70,7 +70,7 @@ export default {
   },
   data() {
     return {
-      mask: 'id,email,firstname,lastname,phone',
+      mask: 'email,firstname,lastname,phone(original,canonical)',
     };
   },
   methods: {

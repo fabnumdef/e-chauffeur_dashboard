@@ -3,7 +3,8 @@
     <crud-header
       title="Lieux"
       :to-create-new="campusLink('pois-new')"
-      import-csv
+      :can-create-new="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
+      :import-csv="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
       export-csv
       :mask="mask"
       has-mask
@@ -82,7 +83,7 @@ export default {
   },
   data() {
     return {
-      mask: 'id,label,location(coordinates),campus(name),enabled',
+      mask: 'id,label,location(coordinates),campus(id,name)',
     };
   },
   computed: {

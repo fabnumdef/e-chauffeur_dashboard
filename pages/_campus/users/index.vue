@@ -5,6 +5,7 @@
         <crud-header
           title="Chauffeurs"
           :to-create-new="campusLink('drivers-new')"
+          :can-create-new="$auth.isAdmin(campus.id)"
           export-csv
           :mask="mask"
           has-mask
@@ -52,9 +53,10 @@
         <crud-header
           title="Utilisateurs"
           :to-create-new="campusLink('users-new')"
-          import-csv
+          :can-create-new="$auth.isAdmin(campus.id)"
           export-csv
           :mask="mask"
+          has-mask
           :pagination="usersPagination"
           :api-call="$api.campusUsers(campus.id, mask).getUsers"
           @importCSV="usersUploadCSV"
@@ -84,7 +86,7 @@
               <span>Modifier</span>
             </nuxt-link>
             <button
-              v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+              v-if="$auth.isSuperAdmin()"
               class="button is-danger"
               @click="deleteUser(row)"
             >
@@ -119,7 +121,7 @@ export default {
     const driversReq = $api.drivers(params.campus, Object.keys(columns).join(','))
       .getDrivers({ offset, limit });
     const usersReq = $api.campusUsers(params.campus, Object.keys(columns).join(','))
-      .getUsers(offset, limit);
+      .getUsers({ offset, limit });
     const driversRes = await driversReq;
     const usersRes = await usersReq;
     return {
@@ -131,7 +133,7 @@ export default {
   },
   data() {
     return {
-      mask: 'id,email,firstname,lastname,phone',
+      mask: 'email,firstname,lastname,phone(original,canonical)',
     };
   },
   computed: {

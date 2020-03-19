@@ -57,6 +57,8 @@
         v-if="id"
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'save']" />
@@ -68,6 +70,8 @@
         v-else
         type="submit"
         class="button is-primary"
+        :class="{'is-loading': loading}"
+        :disabled="loading"
       >
         <span class="icon is-small">
           <fa-icon :icon="['fas', 'plus']" />
@@ -80,11 +84,13 @@
 
 <script>
 import ecField from '~/components/form/field.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 export default {
   components: {
     ecField,
   },
+  mixins: [toggleLoading],
   props: {
     category: {
       type: Object,
@@ -98,17 +104,25 @@ export default {
     async edit(category) {
       const ApiCategories = this.$api.categories('id,label');
       let data = {};
-      if (this.id) {
-        ({ data } = (await ApiCategories.patchCategory(category.id, category)));
-      } else {
-        ({ data } = (await ApiCategories.postCategory(category)));
-      }
+      try {
+        this.toggleLoading(true);
+        if (this.id) {
+          ({ data } = (await ApiCategories.patchCategory(category.id, category)));
+        } else {
+          ({ data } = (await ApiCategories.postCategory(category)));
+        }
 
-      this.$router.push({
-        name: 'categories-id-edit',
-        params: { id: data.id },
-      });
+        this.$toast.success('Donnée enregistrée avec succès');
+        this.$router.push({
+          name: 'categories-id-edit',
+          params: { id: data.id },
+        });
+      } catch {
+        this.$toast.error('Une erreur est survenue, merci de vérifier les champs.');
+      }
+      this.toggleLoading(false);
     },
+
   },
 };
 </script>

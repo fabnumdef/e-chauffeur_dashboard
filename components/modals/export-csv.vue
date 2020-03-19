@@ -33,23 +33,14 @@
         label="Mask de champs"
         field-id="mask"
       >
+        <aside v-if="displayAside">
+          Ce masque par défaut génèrera un tableau compatible avec l'import de données.
+        </aside>
         <textarea
           id="mask"
-          v-model="csv.mask"
+          v-model="mask"
           class="textarea"
         />
-      </ec-field>
-      <ec-field
-        label="Ride flatten"
-        field-id="flatten"
-      >
-        <label class="checkbox">
-          <input
-            v-model="csv.flatten"
-            type="checkbox"
-          >
-          Oui
-        </label>
       </ec-field>
     </fieldset>
     <hr>
@@ -71,7 +62,7 @@
 </template>
 
 <script>
-import generateCsvLink from '~/helpers/generateCsvLink';
+import generateCsvLink from '~/helpers/generate-csv-link';
 import vueModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';
 
@@ -103,6 +94,10 @@ export default {
       type: String,
       required: true,
     },
+    displayAside: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -120,9 +115,6 @@ export default {
     'csv.delimiter': async function csvSeparator() {
       await this.recalcDownloadLinks();
     },
-    'csv.flatten': async function csvSeparator() {
-      await this.recalcDownloadLinks();
-    },
     'csv.mask': async function csvSeparator() {
       this.$emit('updateMask', this.csv.mask);
       await this.recalcDownloadLinks();
@@ -132,8 +124,6 @@ export default {
     this.csv = {
       separator: ';',
       delimiter: '"',
-      flatten: true,
-      mask: this.mask,
     };
   },
   methods: {
@@ -144,7 +134,7 @@ export default {
         .from({ length: Math.ceil(total / ROWS_PER_QUERY) })
         .map((_, i) => async () => {
           const args = [
-            csv.mask,
+            this.mask,
             {
               offset: ROWS_PER_QUERY * i,
               limit: ROWS_PER_QUERY,
@@ -168,3 +158,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  aside {
+    margin: .5em 0;
+    font-style: italic;
+    color: gray;
+  }
+</style>
