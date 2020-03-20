@@ -53,7 +53,12 @@
       <bulma-tile vertical>
         <has-phone-tile :data="stats[REQUESTABLE.hasPhone]" />
         <statuses-tile :statuses="stats[REQUESTABLE.statuses]" />
-        <ratings-tile :ratings="stats[REQUESTABLE.ratings]" />
+        <ratings-tile
+          :ratings="{
+            ux: stats[REQUESTABLE.uxGrade],
+            recommendation: stats[REQUESTABLE.recommendationGrade]
+          }"
+        />
       </bulma-tile>
       <bulma-tile vertical>
         <pois-tile
@@ -101,7 +106,8 @@ const REQUESTABLE = {
   drivers: 'drivers',
   hasPhone: 'has-phone',
   period: 'period',
-  ratings: 'ratings',
+  uxGrade: 'uxGrade',
+  recommendationGrade: 'recommendationGrade',
 };
 
 export default {
@@ -139,7 +145,7 @@ export default {
           `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
           `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
           `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
-          REQUESTABLE.period, REQUESTABLE.ratings,
+          REQUESTABLE.period, REQUESTABLE.uxGrade, REQUESTABLE.recommendationGrade,
         ].join(','),
       },
       start,

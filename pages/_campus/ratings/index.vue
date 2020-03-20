@@ -61,6 +61,7 @@ export default {
     return {
       ratings,
       pagination,
+      mask,
     };
   },
   computed: {
