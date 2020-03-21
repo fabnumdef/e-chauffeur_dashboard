@@ -97,6 +97,15 @@
         v-if="$auth.isSuperAdmin()"
       >
         <nuxt-link
+          :to="{ name: 'dashboard' }"
+        >
+          Tableau de bord
+        </nuxt-link>
+      </li>
+      <li
+        v-if="$auth.isSuperAdmin()"
+      >
+        <nuxt-link
           :to="{ name: 'campuses' }"
         >
           Bases

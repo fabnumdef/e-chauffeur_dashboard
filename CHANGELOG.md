@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Added root dashboard for multi campus
 ### Fix
 ## Version 1.4.6
 ### Features
