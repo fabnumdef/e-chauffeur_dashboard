@@ -71,6 +71,12 @@
           :time-scope="request.timeScope"
           @input="changeTimeConfig"
         />
+        <ratings-tile
+          :ratings="{
+            ux: stats[REQUESTABLE.uxGrade],
+            recommendation: stats[REQUESTABLE.recommendationGrade]
+          }"
+        />
       </bulma-tile>
     </bulma-tile>
   </main>
@@ -87,6 +93,7 @@ import overTimeTile from '~/components/dashboard/over-time.vue';
 import statusesTile from '~/components/dashboard/statuses.vue';
 import campusesSelect from '~/components/form/campuses.vue';
 import ecField from '~/components/form/field.vue';
+import ratingsTile from '~/components/dashboard/ratings.vue';
 import REQUESTABLE from '~/helpers/requestable';
 
 export default {
@@ -100,6 +107,7 @@ export default {
     overTimeTile,
     campusesSelect,
     ecField,
+    ratingsTile,
 
   },
   watchQuery: ['before', 'after', 'time-scope', 'time-unit', 'campuses'],
