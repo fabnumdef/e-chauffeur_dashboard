@@ -53,6 +53,12 @@
       <bulma-tile vertical>
         <has-phone-tile :data="stats[REQUESTABLE.hasPhone]" />
         <statuses-tile :statuses="stats[REQUESTABLE.statuses]" />
+        <ratings-tile
+          :ratings="{
+            ux: stats[REQUESTABLE.uxGrade],
+            recommendation: stats[REQUESTABLE.recommendationGrade]
+          }"
+        />
       </bulma-tile>
       <bulma-tile vertical>
         <pois-tile
@@ -88,6 +94,7 @@ import hasPhoneTile from '~/components/dashboard/has-phone.vue';
 import overTimeTile from '~/components/dashboard/over-time.vue';
 import poisTile from '~/components/dashboard/pois.vue';
 import statusesTile from '~/components/dashboard/statuses.vue';
+import ratingsTile from '~/components/dashboard/ratings.vue';
 import REQUESTABLE from '~/helpers/requestable';
 
 export default {
@@ -100,6 +107,7 @@ export default {
     hasPhoneTile,
     statusesTile,
     overTimeTile,
+    ratingsTile,
   },
   props: {
     campus: {
@@ -124,7 +132,7 @@ export default {
           `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
           `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
           `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
-          REQUESTABLE.period,
+          REQUESTABLE.period, REQUESTABLE.uxGrade, REQUESTABLE.recommendationGrade,
         ].join(','),
       },
       start,
