@@ -1,6 +1,7 @@
 # Changelog
 ## Current
 ### Features
+* Added crud filter
 ### Fix
 ## Version 1.4.6
 ### Features

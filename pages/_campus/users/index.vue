@@ -12,9 +12,21 @@
           :pagination="driversPagination"
           :api-call="$api.drivers(campus.id, mask).getDrivers"
         />
+        <crud-filter
+          :field-value="driversFilter.fieldFilter"
+          :content-value="driversFilter.contentFilter"
+          :fields-header="[
+            { id: 'id', label: 'Id' },
+            { id: 'email', label: 'E-mail' }
+          ]"
+          :field-content="fieldContentDriver"
+          @updateFieldFilter="updateFieldFilterDriver"
+          @updateContentFilter="updateContentFilterDriver"
+          @reset="resetDrivers"
+        />
         <crud-list
           :columns="columns"
-          :data="drivers"
+          :data="filteredDataDriver"
           :pagination-offset="driversPagination.offset"
           :pagination-total="driversPagination.total"
           :pagination-per-page="driversPagination.limit"
@@ -61,9 +73,21 @@
           :api-call="$api.campusUsers(campus.id, mask).getUsers"
           @importCSV="usersUploadCSV"
         />
+        <crud-filter
+          :field-value="usersFilter.fieldFilter"
+          :content-value="usersFilter.contentFilter"
+          :fields-header="[
+            { id: 'id', label: 'Id' },
+            { id: 'email', label: 'E-mail' }
+          ]"
+          :field-content="fieldContentUser"
+          @updateFieldFilter="updateFieldFilterUser"
+          @updateContentFilter="updateContentFilterUser"
+          @reset="resetUsers"
+        />
         <crud-list
           :columns="columns"
-          :data="users"
+          :data="filteredDataUser"
           :pagination-offset="usersPagination.offset"
           :pagination-total="usersPagination.total"
           :pagination-per-page="usersPagination.limit"
@@ -106,6 +130,8 @@
 import { mapGetters } from 'vuex';
 import crudList from '~/components/crud/list.vue';
 import crudHeader from '~/components/crud/header.vue';
+import crudFilter from '~/components/crud/filter.vue';
+import handleFilters from '~/components/crud/mixins/handle-filters-campus-users';
 
 const columns = { id: 'ID', email: 'E-mail' };
 
@@ -114,7 +140,9 @@ export default {
   components: {
     crudList,
     crudHeader,
+    crudFilter,
   },
+  mixins: [handleFilters],
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
@@ -125,9 +153,9 @@ export default {
     const driversRes = await driversReq;
     const usersRes = await usersReq;
     return {
-      drivers: driversRes.data,
+      driversData: driversRes.data,
       driversPagination: driversRes.pagination,
-      users: usersRes.data,
+      usersData: usersRes.data,
       usersPagination: usersRes.pagination,
     };
   },
@@ -170,7 +198,7 @@ export default {
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await this.$api.campusUsers(this.campus.id, Object.keys(columns).join(','))
         .getUsers(offset, limit);
-      this.users = updatedList.data;
+      this.usersData = updatedList.data;
       this.usersPagination = updatedList.pagination;
     },
     async updateDriversList() {
@@ -178,7 +206,7 @@ export default {
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await this.$api.drivers(this.campus.id, Object.keys(columns).join(','))
         .getDrivers(offset, limit);
-      this.drivers = updatedList.data;
+      this.driversData = updatedList.data;
       this.driversPagination = updatedList.pagination;
     },
   },

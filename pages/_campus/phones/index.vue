@@ -12,9 +12,20 @@
       :api-call="$api.phones(campus.id, mask).getPhones"
       @importCSV="importCSV"
     />
+    <crud-filter
+      :field-value="fieldFilter"
+      :content-value="contentFilter"
+      :fields-header="[
+        { id: 'id', label: 'Id'},
+      ]"
+      :field-content="fieldContent"
+      @updateFieldFilter="updateFieldFilter"
+      @updateContentFilter="updateContentFilter"
+      @reset="reset"
+    />
     <crud-list
       :columns="{id: 'S/N', assignTo: 'Assigné à'}"
-      :data="getPhones"
+      :data="filteredData"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
@@ -54,6 +65,8 @@
 import { mapGetters } from 'vuex';
 import crudList from '~/components/crud/list.vue';
 import crudHeader from '~/components/crud/header.vue';
+import crudFilter from '~/components/crud/filter.vue';
+import handleFilters from '~/components/crud/mixins/handle-filters';
 
 const FIELDS = [
   'id',
@@ -66,14 +79,16 @@ export default {
   components: {
     crudList,
     crudHeader,
+    crudFilter,
   },
+  mixins: [handleFilters],
   async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api.phones({ id: params.campus }, FIELDS.join(','))
       .getPhones({ offset, limit });
     return {
-      phones: data,
+      data,
       pagination,
     };
   },
@@ -87,7 +102,7 @@ export default {
       campus: 'context/campus',
     }),
     getPhones() {
-      return this.phones.map(
+      return this.data.map(
         (phone) => {
           const phoneComputed = phone;
 
@@ -126,7 +141,7 @@ export default {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const { data, pagination } = await this.$api.phones(this.campus, FIELDS.join(',')).getPhones(offset, limit);
-      this.phones = data;
+      this.data = data;
       this.pagination = pagination;
     },
   },
