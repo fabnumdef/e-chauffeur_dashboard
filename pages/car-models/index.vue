@@ -10,9 +10,21 @@
       :api-call="$api.carModels.getCarModels"
       @importCSV="importCSV"
     />
+    <crud-filter
+      :field-value="fieldFilter"
+      :content-value="contentFilter"
+      :fields-header="[
+        { id: 'id', label: 'Id'},
+        { id: 'label', label: 'Label'}
+      ]"
+      :field-content="fieldContent"
+      @updateFieldFilter="updateFieldFilter"
+      @updateContentFilter="updateContentFilter"
+      @reset="reset"
+    />
     <crud-list
       :columns="columns"
-      :data="carModels"
+      :data="data"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
@@ -52,6 +64,8 @@
 <script>
 import crudList from '~/components/crud/list.vue';
 import crudHeader from '~/components/crud/header.vue';
+import crudFilter from '~/components/crud/filter.vue';
+import handleFilters from '~/components/crud/mixins/handle-filters';
 
 const columns = { id: 'ID', label: 'Label' };
 
@@ -64,13 +78,15 @@ export default {
   components: {
     crudList,
     crudHeader,
+    crudFilter,
   },
+  mixins: [handleFilters],
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await getCarModels.call($api, offset, limit);
     return {
-      carModels: data,
+      data,
       pagination,
     };
   },
@@ -100,7 +116,7 @@ export default {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await getCarModels.call(this.$api, offset, limit);
-      this.carModels = updatedList.data;
+      this.data = updatedList.data;
       this.pagination = updatedList.pagination;
     },
   },

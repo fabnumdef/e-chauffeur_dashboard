@@ -1,3 +1,3 @@
 export default function (array) {
-  return array.map((item) => item.replace(',', '.'));
+  return array.map((item) => item.toString().replace(',', '.'));
 }

@@ -12,9 +12,18 @@
       :api-call="$api.pois(campus.id, mask).getPois"
       @importCSV="importCSV"
     />
+    <crud-filter
+      :field-value="fieldFilter"
+      :content-value="contentFilter"
+      :fields-header="fieldsHeaders"
+      :field-content="fieldContent"
+      @updateFieldFilter="updateFieldFilter"
+      @updateContentFilter="updateContentFilter"
+      @reset="reset"
+    />
     <crud-list
       :columns="columns"
-      :data="pois"
+      :data="filteredData"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
@@ -54,6 +63,8 @@
 import { mapGetters } from 'vuex';
 import crudList from '~/components/crud/list.vue';
 import crudHeader from '~/components/crud/header.vue';
+import crudFilter from '~/components/crud/filter.vue';
+import handleFilters from '~/components/crud/mixins/handle-filters';
 
 const columns = { id: 'ID', label: 'Label', enabled: 'Activé' };
 
@@ -62,7 +73,9 @@ export default {
   components: {
     crudList,
     crudHeader,
+    crudFilter,
   },
+  mixins: [handleFilters],
   async asyncData({ $api, query, params }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
@@ -70,14 +83,13 @@ export default {
       .pois({ id: params.campus }, Object.keys(columns).join(','), { withDisabled: true })
       .getPois({ offset, limit });
 
-    const pois = data.map((poi) => ({
-      ...poi,
-      enabled: (poi.enabled === false)
-        ? 'fas:times-circle:error'
-        : 'fas:check-circle:success',
-    }));
     return {
-      pois,
+      data: data.map((poi) => ({
+        ...poi,
+        enabled: (poi.enabled === false)
+          ? 'fas:times-circle:error'
+          : 'fas:check-circle:success',
+      })),
       pagination,
     };
   },
@@ -91,6 +103,9 @@ export default {
     ...mapGetters({
       campus: 'context/campus',
     }),
+    fieldsHeaders() {
+      return Object.keys(columns).map((key) => ({ id: key, label: columns[key] }));
+    },
   },
   methods: {
     async deletePoi({ id }) {
@@ -113,7 +128,7 @@ export default {
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await this.$api.pois(this.campus, Object.keys(columns).join(','), { withDisabled: true })
         .getPois(offset, limit);
-      this.pois = updatedList.data;
+      this.data = updatedList.data;
       this.pagination = updatedList.pagination;
     },
   },

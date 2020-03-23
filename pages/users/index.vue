@@ -10,9 +10,21 @@
       :api-call="$api.users.getUsers"
       @importCSV="importCSV"
     />
+    <crud-filter
+      :field-value="fieldFilter"
+      :content-value="contentFilter"
+      :fields-header="[
+        { id: 'id', label: 'Id' },
+        { id: 'email', label: 'E-mail' }
+      ]"
+      :field-content="fieldContent"
+      @updateFieldFilter="updateFieldFilter"
+      @updateContentFilter="updateContentFilter"
+      @reset="reset"
+    />
     <crud-list
       :columns="{id: 'ID', email: 'E-mail'}"
-      :data="users"
+      :data="filteredData"
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
@@ -52,19 +64,23 @@
 <script>
 import crudList from '~/components/crud/list.vue';
 import crudHeader from '~/components/crud/header.vue';
+import crudFilter from '~/components/crud/filter.vue';
+import handleFilter from '~/components/crud/mixins/handle-filters';
 
 export default {
   watchQuery: ['offset', 'limit'],
   components: {
     crudList,
     crudHeader,
+    crudFilter,
   },
+  mixins: [handleFilter],
   async asyncData({ $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
     const { data, pagination } = await $api.users.getUsers('id,email', { offset, limit });
     return {
-      users: data,
+      data,
       pagination,
     };
   },
@@ -93,7 +109,7 @@ export default {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
       const updatedList = await this.$api.users.getUsers('id,email', { offset, limit });
-      this.users = updatedList.data;
+      this.data = updatedList.data;
       this.pagination = updatedList.pagination;
     },
   },

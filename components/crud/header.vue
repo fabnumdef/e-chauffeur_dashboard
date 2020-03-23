@@ -136,6 +136,7 @@ export default {
   .options {
     padding: 0 10px 10px;
     float: right;
+    display: flex;
     * {
       margin: 0 .3em;
     }
