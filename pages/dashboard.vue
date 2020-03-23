@@ -4,6 +4,16 @@
       <h1 class="title">
         Tableau de bord
       </h1>
+      <ec-field
+        label="Bases :"
+        field-id="campuses"
+      >
+        <campuses-select
+          id="campuses"
+          v-model="request.selectedCampuses"
+          :campuses="campuses"
+        />
+      </ec-field>
       <div class="options">
         <div class="box">
           <client-only>
@@ -53,26 +63,8 @@
       <bulma-tile vertical>
         <has-phone-tile :data="stats[REQUESTABLE.hasPhone]" />
         <statuses-tile :statuses="stats[REQUESTABLE.statuses]" />
-        <ratings-tile
-          :ratings="{
-            ux: stats[REQUESTABLE.uxGrade],
-            recommendation: stats[REQUESTABLE.recommendationGrade]
-          }"
-        />
       </bulma-tile>
       <bulma-tile vertical>
-        <pois-tile
-          :pois="stats[REQUESTABLE.poisDeparture]"
-          title="Lieux de départ les plus utilisés"
-          sub-key="departure"
-          :map-center="campus.location.coordinates"
-        />
-        <pois-tile
-          :pois="stats[REQUESTABLE.poisArrival]"
-          title="Lieux d'arrivée les plus utilisés"
-          sub-key="arrival"
-          :map-center="campus.location.coordinates"
-        />
         <over-time-tile
           :data="stats[REQUESTABLE.period]"
           :time-unit="request.timeUnit"
@@ -92,9 +84,9 @@ import categoriesTile from '~/components/dashboard/categories.vue';
 import driversTile from '~/components/dashboard/drivers.vue';
 import hasPhoneTile from '~/components/dashboard/has-phone.vue';
 import overTimeTile from '~/components/dashboard/over-time.vue';
-import poisTile from '~/components/dashboard/pois.vue';
 import statusesTile from '~/components/dashboard/statuses.vue';
-import ratingsTile from '~/components/dashboard/ratings.vue';
+import campusesSelect from '~/components/form/campuses.vue';
+import ecField from '~/components/form/field.vue';
 import REQUESTABLE from '~/helpers/requestable';
 
 export default {
@@ -103,25 +95,22 @@ export default {
     carModelsTile,
     driversTile,
     bulmaTile,
-    poisTile,
     hasPhoneTile,
     statusesTile,
     overTimeTile,
-    ratingsTile,
+    campusesSelect,
+    ecField,
+
   },
-  props: {
-    campus: {
-      type: Object,
-      default: null,
-    },
-  },
-  watchQuery: ['before', 'after', 'time-scope', 'time-unit'],
-  async asyncData({ $api, params, query }) {
+  watchQuery: ['before', 'after', 'time-scope', 'time-unit', 'campuses'],
+  async asyncData({ $api, query }) {
     const start = (query.after ? DateTime.fromISO(query.after) : DateTime.local().startOf('weeks')).toJSDate();
     const end = (query.before ? DateTime.fromISO(query.before) : DateTime.local().endOf('weeks')).toJSDate();
     const timeScope = (query['time-scope'] ? query['time-scope'] : 'week');
     const timeUnit = (query['time-unit'] ? query['time-unit'] : 'day');
-    const { data: stats } = await $api.rides(params.campus).getStats(
+    const selectedCampuses = (query.campuses ? query.campuses : []);
+
+    const { data: stats } = await $api.rides().getStats(
       {
         timeScope,
         timeUnit,
@@ -137,14 +126,20 @@ export default {
       },
       start,
       end,
+      selectedCampuses,
     );
+
+    const { data: campuses } = await $api.campuses.getCampuses('id,name');
+
     return {
       stats,
+      campuses,
       request: {
         start,
         end,
         timeScope,
         timeUnit,
+        selectedCampuses: (selectedCampuses.length > 0 ? selectedCampuses : campuses.map(({ id }) => id)),
       },
     };
   },
@@ -172,6 +167,9 @@ export default {
     'request.timeUnit': function watchRequestTimeUnit() {
       this.updateRoute();
     },
+    'request.selectedCampuses': function watchRequestSelectedCampuses() {
+      this.updateRoute();
+    },
   },
   methods: {
     updateDates([start, end]) {
@@ -188,39 +186,47 @@ export default {
         after: this.request.start.toISOString(),
         'time-scope': this.request.timeScope,
         'time-unit': this.request.timeUnit,
+        campuses: this.request.selectedCampuses,
       };
-      this.$router.push(this.campusLink('dashboard', { query }));
+
+      this.$router.push({ path: 'dashboard', query: { ...query } });
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
-  @import "~assets/css/head";
-  $box-padding: 1.25rem !default
-  .with-options {
-    display: flex;
-    .title {
-      flex-grow: 1;
-    }
-    .options {
-      padding: 0 10px 10px;
-      float: right;
-    }
-  }
-  /deep/ .box {
-    .title {
-      background: $light-gray;
-      padding: $box-padding;
-      color: findColorInvert($light-gray);
-      font-size: $size-large;
-      margin: -$box-padding;
-      button.is-active, button:hover {
-        color: $white;
+<style lang="scss" scoped>
+    @import "~assets/css/head";
+    $box-padding: 1.25rem !default
+    .with-options {
+      display: flex;
+      .title {
+        flex-grow: 1;
+      }
+      .options {
+        padding: 0 10px 10px;
+        float: right;
       }
     }
-    .content {
-      margin-top: $box-padding * 2;
+    /deep/ .box {
+      .title {
+        background: $light-gray;
+        padding: $box-padding;
+        color: findColorInvert($light-gray);
+        font-size: $size-large;
+        margin: -$box-padding;
+        button.is-active, button:hover {
+          color: $white;
+        }
+      }
+      .content {
+        margin-top: $box-padding * 2;
+      }
+    }
+  .field {
+    width: 50%;
+    /deep/ label {
+      color: $white;
     }
   }
 </style>

@@ -1,6 +1,10 @@
 # Changelog
 ## Current
 ### Features
+* Added root dashboard for multi campus
+### Fix
+## Version 1.4.6
+### Features
 * Added loading animation and success message while creating or editing CRUD
 * Added alert message if browser is not Firefox
 * Ratings by campus with list & details page
