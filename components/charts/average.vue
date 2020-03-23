@@ -17,16 +17,14 @@ export default {
   },
   computed: {
     averageClass() {
-      switch (true) {
-        case (this.average < 25):
-          return 'low';
-        case (this.average >= 25 && this.average <= 75):
-          return 'medium';
-        case (this.average > 75):
-          return 'high';
-        default:
-          return '';
+      if (this.average < 25) {
+        return 'low';
+      } if (this.average <= 75) {
+        return 'medium';
+      } if (this.average > 75) {
+        return 'high';
       }
+      return '';
     },
   },
 };

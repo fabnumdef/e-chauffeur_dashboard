@@ -57,7 +57,7 @@
 import fragmentedTile from '~/components/dashboard/fragments.vue';
 import bgColorsMixin from '~/components/dashboard/mixins/background-colors';
 import pieChart from '~/components/charts/pie';
-import averageChart from '../charts/average.vue';
+import averageChart from '~/components/charts/average.vue';
 
 const getTotal = (array) => array.reduce((acc, rating) => acc + rating.total, 0);
 
@@ -71,7 +71,7 @@ export default {
   props: {
     ratings: {
       type: Object,
-      default: () => null,
+      default: null,
     },
   },
   computed: {
