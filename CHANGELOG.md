@@ -3,6 +3,7 @@
 ### Features
 * Added crud filter
 * Added root dashboard for multi campus
+* Added capacity to car model crud
 ### Fix
 ## Version 1.4.6
 ### Features
