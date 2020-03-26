@@ -15,7 +15,8 @@
       :content-value="contentFilter"
       :fields-header="[
         { id: 'id', label: 'Id'},
-        { id: 'label', label: 'Label'}
+        { id: 'label', label: 'Label'},
+        { id: 'capacity', label: 'Capacité' }
       ]"
       :field-content="fieldContent"
       @updateFieldFilter="updateFieldFilter"
@@ -67,7 +68,7 @@ import crudHeader from '~/components/crud/header.vue';
 import crudFilter from '~/components/crud/filter.vue';
 import handleFilters from '~/components/crud/mixins/handle-filters';
 
-const columns = { id: 'ID', label: 'Label' };
+const columns = { id: 'ID', label: 'Label', capacity: 'Capacité' };
 
 function getCarModels(offset, limit) {
   return this.carModels.getCarModels(Object.keys(columns).join(','), { offset, limit });
@@ -92,7 +93,7 @@ export default {
   },
   data() {
     return {
-      mask: 'id,label',
+      mask: 'id,label,capacity',
     };
   },
   computed: {

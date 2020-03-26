@@ -53,6 +53,18 @@
         >
       </ec-field>
 
+      <ec-field
+        label="Capacité du véhicule"
+        field-id="capacity"
+      >
+        <input
+          id="capacity"
+          v-model.number="carModel.capacity"
+          class="input"
+          type="number"
+        >
+      </ec-field>
+
       <button
         v-if="id"
         type="submit"
@@ -86,6 +98,8 @@
 import ecField from '~/components/form/field.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
 
+const mask = 'id,label,capacity';
+
 export default {
   components: {
     ecField,
@@ -106,9 +120,9 @@ export default {
       try {
         this.toggleLoading(true);
         if (this.id) {
-          ({ data } = (await this.$api.carModels.patchCarModel(this.id, carModel, 'id,label')));
+          ({ data } = (await this.$api.carModels.patchCarModel(this.id, carModel, mask)));
         } else {
-          ({ data } = (await this.$api.carModels.postCarModel(carModel, 'id,label')));
+          ({ data } = (await this.$api.carModels.postCarModel(carModel, mask)));
         }
 
         this.$toast.success('Donnée enregistrée avec succès');
