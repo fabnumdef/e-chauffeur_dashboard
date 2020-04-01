@@ -5,7 +5,7 @@
         <crud-header
           title="Chauffeurs"
           :to-create-new="campusLink('drivers-new')"
-          :can-create-new="$auth.isAdmin(campus.id)"
+          :can-create-new="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
           export-csv
           :mask="mask"
           has-mask
