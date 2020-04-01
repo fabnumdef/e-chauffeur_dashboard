@@ -3,7 +3,7 @@
     <crud-header
       title="Véhicules"
       :to-create-new="campusLink('cars-new')"
-      :can-create-new="$auth.isRegulator(campus.id)"
+      :can-create-new="$auth.isRegulator(campus.id) || $auth.isSuperAdmin()"
       import-csv
       export-csv
       :mask="mask"
