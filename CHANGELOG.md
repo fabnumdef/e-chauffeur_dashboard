@@ -5,6 +5,7 @@
 * Added root dashboard for multi campus
 * Added capacity to car model crud
 ### Fix
+* Fixed setRides to avoid keeping wrong campuses rides in rides list
 ## Version 1.4.6
 ### Features
 * Added loading animation and success message while creating or editing CRUD
