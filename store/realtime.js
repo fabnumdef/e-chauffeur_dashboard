@@ -3,6 +3,24 @@
 import { DateTime } from 'luxon';
 import { CREATED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
+const EDITABLE_FIELDS = [
+  'id',
+  'start',
+  'end',
+  'departure(id,label)',
+  'arrival(id,label)',
+  'car(id,label,model(id,label))',
+  'driver(id,name,firstname,lastname)',
+  'owner(id)',
+  'phone',
+  'status',
+  'userComments',
+  'comments',
+  'passengersCount',
+  'category(id,label)',
+  'luggage',
+].join(',');
+
 export const state = () => ({
   connectedDrivers: [],
   drivers: [],
@@ -78,29 +96,13 @@ export const actions = {
       throw new Error('Drivers fetching failed');
     }
   },
-  async setRides({ commit, getters }, { campus, start, end }) {
-    const EDITABLE_FIELDS = [
-      'id',
-      'start',
-      'end',
-      'departure(id,label)',
-      'arrival(id,label)',
-      'car(id,label,model(id,label))',
-      'driver(id,name,firstname,lastname)',
-      'owner(id)',
-      'phone',
-      'status',
-      'userComments',
-      'comments',
-      'passengersCount',
-      'category(id,label)',
-      'luggage',
-    ].join(',');
+  async setRides({ commit }, { campus, start, end }) {
     const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
-    if (getters.rides.length === 0 || rides.length === 0) {
-      commit('setRides', rides);
-    } else {
-      rides.forEach((r) => commit('pushRide', r));
-    }
+    commit('setRides', rides);
+  },
+
+  async appendRides({ commit }, { campus, start, end }) {
+    const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
+    rides.forEach((r) => commit('pushRide', r));
   },
 };

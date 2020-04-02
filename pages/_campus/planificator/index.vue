@@ -105,7 +105,7 @@ export default {
         end,
       );
       drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
-      await this.$store.dispatch('realtime/setRides', { campus: this.campus, start, end });
+      await this.$store.dispatch('realtime/appendRides', { campus: this.campus, start, end });
       this.drivers = drivers;
     },
   },
