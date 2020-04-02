@@ -78,7 +78,9 @@ export const actions = {
       throw new Error('Drivers fetching failed');
     }
   },
-  async setRides({ commit, getters }, { campus, start, end }) {
+  async setRides({ commit, getters }, {
+    campus, start, end, persist = false,
+  }) {
     const EDITABLE_FIELDS = [
       'id',
       'start',
@@ -97,10 +99,10 @@ export const actions = {
       'luggage',
     ].join(',');
     const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
-    if (getters.rides.length === 0 || rides.length === 0) {
-      commit('setRides', rides);
-    } else {
+    if (persist && getters.rides.length !== 0) {
       rides.forEach((r) => commit('pushRide', r));
+    } else {
+      commit('setRides', rides);
     }
   },
 };
