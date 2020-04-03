@@ -44,6 +44,11 @@
           >{{ ridesToValidate.length }}</span>
         </nuxt-link>
       </li>
+      <li v-if="hasCampus">
+        <nuxt-link :to="campusLink('loop-patterns')">
+          Modèle de boucles
+        </nuxt-link>
+      </li>
       <li v-if="hasCampus && $auth.isRegulator() && !$auth.isAdmin()">
         <nuxt-link :to="campusLink('drivers')">
           Chauffeurs

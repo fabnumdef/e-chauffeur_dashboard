@@ -24,6 +24,7 @@ module.exports = {
     { src: '~/plugins/datetime-picker.js', mode: 'client' },
     { src: '~/plugins/vuecal.js', mode: 'client' },
     { src: '~/plugins/realtime.js', mode: 'client' },
+    { src: '~/plugins/draggable.js', mode: 'client' },
   ],
 
   modules: [
@@ -49,6 +50,7 @@ module.exports = {
           phoneModels: 'phone-models',
           ratings: 'ratings',
           campusUsers: 'campus-users',
+          loopPatterns: 'loop-patterns',
         },
         withAuth: true,
         authPlugins: [
@@ -116,6 +118,8 @@ module.exports = {
           'faCheckCircle',
           'faTimesCircle',
           'faFileImport',
+          'faArrowUp',
+          'faArrowDown',
         ],
       },
     ],

@@ -1,7 +1,7 @@
 <template>
   <div
     class="field"
-    :class="{'is-horizontal': horizontal}"
+    :class="{'is-horizontal': horizontal }"
   >
     <div
       v-if="label || $slots.label"
@@ -10,6 +10,7 @@
       <label
         :for="fieldId"
         class="label"
+        :class="{ required }"
       >
         <slot name="label">
           {{ label }}
@@ -68,6 +69,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  @import '~assets/css/head';
+  .required:after {
+    content: '*';
+    color: $red;
+  }
+</style>
