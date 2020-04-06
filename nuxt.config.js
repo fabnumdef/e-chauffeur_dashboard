@@ -11,7 +11,6 @@ module.exports = {
   },
 
   build: {
-    parallel: true,
     transpile: ['@qonfucius/vue-cal'],
   },
 
@@ -31,7 +30,6 @@ module.exports = {
     [
       '@fabnumdef/e-chauffeur_lib-vue',
       {
-        components: {},
         api: {
           campuses: 'campuses',
           carModels: 'car-models',
@@ -50,7 +48,6 @@ module.exports = {
           ratings: 'ratings',
           campusUsers: 'campus-users',
         },
-        withAuth: true,
         authPlugins: [
           { src: 'has-right' },
           { src: 'auth-renew', mode: 'client' },

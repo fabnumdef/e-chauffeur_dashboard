@@ -130,9 +130,9 @@
         class="column"
         field-id="phone"
       >
-        <phone-number-input
-          id="phone"
+        <vue-tel-input
           v-model="ride.phone"
+          id="phone"
           v-autofocus="{
             hasBeenFocused: hasBeenFocused,
             focus: focusState.phone,
@@ -140,16 +140,9 @@
             inputName: 'phone',
             cb: focusNext
           }"
-          default-country-code="FR"
-          :preferred-countries="['FR', 'BE', 'DE']"
-          :translations="{
-            countrySelectorLabel: 'Prefix',
-            countrySelectorError: 'Choisir un pays',
-            phoneNumberLabel: '',
-            example: 'Exemple :'
-          }"
-          color="transparent"
-          valid-color="transparent"
+          name="phone"
+          default-country="FR"
+          :disabled-fetching-country="false"
           class="input input-phone"
         />
       </ec-field>
@@ -293,7 +286,7 @@
 
 <script>
 import { DateTime } from 'luxon';
-import phoneNumberInput from 'vue-phone-number-input';
+import { VueTelInput } from 'vue-tel-input';
 import Status from '@fabnumdef/e-chauffeur_lib-vue/api/status';
 import {
   VALIDATED, CREATED,
@@ -353,7 +346,7 @@ export default {
     searchCategory,
     bulmaDropdown,
     vueModal,
-    phoneNumberInput,
+    VueTelInput,
   },
 
   directives: {
