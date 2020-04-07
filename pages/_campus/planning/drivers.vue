@@ -14,22 +14,43 @@
           </nuxt-link>
         </div>
       </div>
-      <planning-modal
-        :active="isModalOpen"
+      <driver-modal
+        :active="modalOpen.driver"
         :time-slot="timeSlot"
         :drivers="drivers"
-        @toggle-modal="toggleModal"
-        @edit-time-slot="editTimeSlot(timeSlot)"
+        @toggle-modal="toggleDriversModal"
+        @edit-time-slot="editDriversTimeSlot(timeSlot)"
         @remove-time-slot="removeTimeSlot(timeSlot)"
       />
+
+      <shuttle-modal
+        :active="modalOpen.shuttle"
+        :time-slot="timeSlot"
+        :loop-patterns="patterns"
+        :drivers="drivers"
+        @toggle-modal="toggleShuttlesModal"
+        @edit-time-slot="editShuttlesTimeSlots(timeSlot)"
+        @remove-time-slot="removeTimeSlot(timeSlot, 'shuttle')"
+      />
+
       <main class="columns">
         <aside class="column is-one-quarter">
           <button
             class="button create-timeslot is-expanded"
-            @click="openCreate({})"
+            @click="openCreate({ type: 'driver' })"
           >
-            <fa-icon icon="user-circle" /> Configurer un nouveau créneau
+            <fa-icon icon="user-circle" /> Configurer un créneau
           </button>
+          <button
+            class="button create-timeslot is-expanded"
+            @click="openCreate({ type: 'shuttle' })"
+          >
+            <fa-icon
+              class="shuttle"
+              icon="user-circle"
+            /> Configurer une navette
+          </button>
+
           <div class="drivers-expander">
             <span>Chauffeurs</span>
           </div>
@@ -56,7 +77,8 @@
           :is-grabbing="isGrabbing"
           :events="calEvents"
           :drivers="drivers"
-          @edit-time-slot="editTimeSlot"
+          @edit-time-slot="editDriversTimeSlot"
+          @edit-shuttle-time-slot="editShuttlesTimeSlots"
           @open-edit="openEdit"
           @open-create="openCreate"
           @view-change="viewChange"
@@ -66,88 +88,177 @@
   </div>
 </template>
 <script>
+// eslint-disable-next-line max-classes-per-file
 import { DateTime } from 'luxon';
-import planningModal from '~/components/modals/drivers-planning.vue';
+import driverModal from '~/components/modals/planning/drivers.vue';
+import shuttleModal from '~/components/modals/planning/shuttles.vue';
 import planningCalendar from '~/components/planning/drivers/calendar.vue';
 
 const DRIVER_DATA = 'id,firstname,lastname';
 const TIMESLOT_DATA = `id,start,end,drivers(${DRIVER_DATA}),recurrence(enabled,frequency)`;
-const newTimeSlot = () => ({
-  start: null,
-  end: null,
-  drivers: [],
-  cars: null,
-  recurrence: { frequency: null, enabled: false },
-});
+const LOOP_PATTERN_DATA = 'id,label,stops';
+const LOOP_TIMESLOT_DATA = `id,start,end,title,comments,pattern(id,label),drivers(${DRIVER_DATA})`;
+
+class DriverTimeSlot {
+  drivers = [];
+
+  cars = null;
+
+  recurrence = { frequency: null, enabled: false };
+
+  constructor(start = null, end = null) {
+    this.start = start;
+    this.end = end;
+  }
+}
+
+class ShuttleTimeSlot {
+  recurrence = { frequency: null, enabled: false };
+
+  title = null;
+
+  comments = null;
+
+  constructor(start = null, end = null, pattern = { id: null, label: null }) {
+    this.start = start;
+    this.end = end;
+    this.pattern = pattern;
+  }
+}
+
+function generateCalEvents(array, vuecal, type) {
+  return array.map((event) => {
+    const start = DateTime.fromISO(event.start);
+    const end = DateTime.fromISO(event.end);
+    return {
+      start: vuecal()
+        .getVueCalFromDatetime(start),
+      end: vuecal()
+        .getVueCalFromDatetime(end),
+      content: {
+        ...event,
+        start,
+        end,
+      },
+      class: type === 'shuttle' ? 'slot-event shuttle' : 'slot-event',
+    };
+  });
+}
+
 export default {
-  components: { planningModal, planningCalendar },
+  components: {
+    driverModal,
+    shuttleModal,
+    planningCalendar,
+  },
   async asyncData({ $api, params, query }) {
-    // @todo: paginate
     const offset = parseInt(query.driver_offset, 10) || 0;
     const limit = parseInt(query.driver_limit, 10) || 30;
     const week = query.week ? DateTime.fromISO(query.week) : DateTime.local();
     const after = week.startOf('week').toJSDate();
     const before = week.endOf('week').toJSDate();
-    const drivers = await $api.drivers(params.campus, DRIVER_DATA).getDrivers({ offset, limit });
-    const events = await $api.timeSlot(TIMESLOT_DATA, params.campus)
+
+    const drivers = await $api.drivers(params.campus, DRIVER_DATA)
+      .getDrivers({ offset, limit });
+    const patterns = await $api.loopPatterns(params.campus, LOOP_PATTERN_DATA)
+      .getLoopPatterns({ offset, limit });
+    const driversEvents = await $api.timeSlot(TIMESLOT_DATA, params.campus)
       .getDriversTimeSlotsBetween(after, before);
+    const shuttleEvents = await $api.loopTimeSlots(LOOP_TIMESLOT_DATA, params.campus)
+      .getTimeSlotsBetween(after, before);
+
     return {
-      timeSlot: newTimeSlot(),
+      timeSlot: new DriverTimeSlot(),
       drivers: {
         data: drivers.data,
         pagination: drivers.pagination,
       },
-      events: {
-        data: events.data,
-        pagination: events.pagination,
+      patterns: {
+        data: patterns.data,
+        pagination: patterns.pagination,
       },
-      isModalOpen: false,
+      events: {
+        drivers: {
+          data: driversEvents.data,
+          pagination: driversEvents.pagination,
+        },
+        shuttles: {
+          data: shuttleEvents.data,
+          pagination: shuttleEvents.pagination,
+        },
+      },
+      modalOpen: {
+        driver: false,
+        shuttle: false,
+      },
       campusId: params.campus,
       isGrabbing: false,
     };
   },
   computed: {
     calEvents() {
-      return this.events.data.map((event) => {
-        const start = DateTime.fromISO(event.start);
-        const end = DateTime.fromISO(event.end);
-        return {
-          start: this.$vuecal().getVueCalFromDatetime(start),
-          end: this.$vuecal().getVueCalFromDatetime(end),
-          content: {
-            ...event,
-            start,
-            end,
-          },
-          class: 'slot-event',
-        };
-      });
+      const { data: drivers } = this.events.drivers;
+      const { data: shuttles } = this.events.shuttles;
+      return [
+        ...generateCalEvents(drivers, this.$vuecal),
+        ...generateCalEvents(shuttles, this.$vuecal, 'shuttle'),
+      ];
     },
   },
   methods: {
     async viewChange({ startDate, endDate }) {
-      const { data, pagination } = await this.$api.timeSlot(TIMESLOT_DATA, this.campusId)
+      const driversEvents = await this.$api.timeSlot(TIMESLOT_DATA, this.campusId)
         .getDriversTimeSlotsBetween(startDate, endDate);
-      this.events = { data, pagination };
+      const shuttleEvents = this.$api.loopTimeSlots(LOOP_TIMESLOT_DATA, this.campusId)
+        .getTimeSlotsBetween(startDate, endDate);
+      this.events = {
+        drivers: {
+          data: driversEvents.data,
+          pagination: driversEvents.pagination,
+        },
+        shuttles: {
+          data: shuttleEvents.data,
+          pagination: shuttleEvents.pagination,
+        },
+      };
     },
-    toggleModal(val) {
-      this.isModalOpen = typeof val !== 'undefined' ? val : this.modalOpen;
+    toggleDriversModal(val) {
+      this.modalOpen.driver = typeof val !== 'undefined' ? val : !this.modalOpen.driver;
     },
-    async editTimeSlot(timeSlot) {
+    toggleShuttlesModal(val) {
+      this.modalOpen.shuttle = typeof val !== 'undefined' ? val : !this.modalOpen.shuttle;
+    },
+    async editDriversTimeSlot(timeSlot) {
       const api = this.$api.timeSlot(TIMESLOT_DATA, this.campusId);
       if (timeSlot.id) {
-        const i = this.events.data.findIndex(({ id }) => id === timeSlot.id);
+        const i = this.events.drivers.data.findIndex(({ id }) => id === timeSlot.id);
         const { data } = await api.editTimeSlot(timeSlot.id, timeSlot);
         if (i >= 0) {
-          this.events.data.splice(i, 1, data);
+          this.events.drivers.data.splice(i, 1, data);
         } else {
-          this.events.data.push(data);
+          this.events.drivers.data.push(data);
         }
       } else {
         const { data } = await api.createTimeSlot(timeSlot);
-        this.events.data.push(data);
+        this.events.drivers.data.push(data);
       }
-      this.toggleModal(false);
+      this.toggleDriversModal(false);
+    },
+    async editShuttlesTimeSlots(timeSlot) {
+      const api = this.$api.loopTimeSlots(LOOP_TIMESLOT_DATA, this.campusId);
+      if (timeSlot.id) {
+        const i = this.events.shuttles.data.findIndex(({ id }) => id === timeSlot.id);
+        const { data } = await api.editTimeSlot(timeSlot.id, timeSlot);
+        if (i >= 0) {
+          this.events.shuttles.data.splice(i, 1, data);
+        } else {
+          this.events.shuttles.data.push(data);
+        }
+      } else {
+        const { data } = await api.createTimeSlot(timeSlot);
+        this.events.shuttles.data.push(data);
+      }
+      this.toggleShuttlesModal(false);
     },
     updateDates([start, end]) {
       this.timeSlot.start = start;
@@ -156,12 +267,15 @@ export default {
     openCreate({
       start = DateTime.fromJSDate(new Date()).startOf('hour').toJSDate(),
       end = DateTime.fromJSDate(new Date()).endOf('hour').toJSDate(),
+      type,
     }) {
-      this.timeSlot = Object.assign(
-        newTimeSlot(),
-        { start, end },
-      );
-      this.toggleModal(true);
+      if (type === 'shuttle') {
+        this.timeSlot = new ShuttleTimeSlot(start, end);
+        this.toggleShuttlesModal(true);
+      } else {
+        this.timeSlot = new DriverTimeSlot(start, end);
+        this.toggleDriversModal(true);
+      }
     },
     dragstart(event, driver) {
       this.isGrabbing = true;
@@ -178,18 +292,28 @@ export default {
       // eslint-disable-next-line no-param-reassign
       event.currentTarget.style.backgroundColor = '';
     },
-    openEdit({ content: timeSlot }) {
+    openEdit({ content: timeSlot, classes }) {
       this.timeSlot = timeSlot;
-      this.toggleModal(true);
-    },
-    async removeTimeSlot({ id }) {
-      const api = this.$api.timeSlot(TIMESLOT_DATA, this.campusId);
-      if (window && window.confirm('Voulez vous vraiment supprimer cette plage horaire ?')) {
-        await api.deleteTimeSlot(id);
-        const i = this.events.data.findIndex((e) => e.id === id);
-        this.events.data.splice(i, 1);
+      if (classes.find((cls) => cls === 'shuttle')) {
+        this.toggleShuttlesModal(true);
+      } else {
+        this.toggleDriversModal(true);
       }
-      this.toggleModal(false);
+    },
+    async removeTimeSlot({ id }, type) {
+      if (window && window.confirm('Voulez vous vraiment supprimer cette plage horaire ?')) {
+        if (type === 'shuttle') {
+          await this.$api.loopTimeSlots(LOOP_TIMESLOT_DATA, this.campusId).deleteTimeSlot(id);
+          const i = this.events.shuttles.data.findIndex((e) => e.id === id);
+          this.events.shuttles.data.splice(i, 1);
+          this.toggleShuttlesModal(false);
+        } else {
+          await this.$api.timeSlot(TIMESLOT_DATA, this.campusId).deleteTimeSlot(id);
+          const i = this.events.drivers.data.findIndex((e) => e.id === id);
+          this.events.drivers.data.splice(i, 1);
+          this.toggleDriversModal(false);
+        }
+      }
     },
   },
 };
@@ -217,6 +341,8 @@ export default {
     border-radius: $gap;
     width: 100%;
     position: relative;
+    margin-bottom: .5em;
+    padding-left: 2em;
     /deep/ .fa-user-circle {
       position: absolute;
       left: 4px;
@@ -225,6 +351,9 @@ export default {
       padding: 5px;
       box-sizing: initial;
       border-radius: $gap;
+      &.shuttle {
+        background-color: $primary;
+      }
     }
   }
 

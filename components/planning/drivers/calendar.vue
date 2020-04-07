@@ -131,7 +131,11 @@ export default {
       const driver = JSON.parse(event.dataTransfer.getData('application/json'));
       if (driver.id && content.drivers && !content.drivers.find(({ id }) => id === driver.id)) {
         content.drivers.push(driver);
-        this.$emit('edit-time-slot', content);
+        if (content.pattern) {
+          this.$emit('edit-shuttle-time-slot', content);
+        } else {
+          this.$emit('edit-time-slot', content);
+        }
       }
     },
   },
@@ -148,6 +152,9 @@ export default {
   /deep/ {
     .slot-event {
       cursor: pointer;
+      &.shuttle {
+        background-color: $primary;
+      }
     }
     .slot-event div {
       height: 100%;

@@ -51,6 +51,7 @@ module.exports = {
           ratings: 'ratings',
           campusUsers: 'campus-users',
           loopPatterns: 'loop-patterns',
+          loopTimeSlots: 'loop-time-slots',
         },
         withAuth: true,
         authPlugins: [
