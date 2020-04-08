@@ -3,6 +3,7 @@
 
 export const state = () => ({
   campus: null,
+  meta: {},
   hideMap: false,
 });
 
@@ -13,6 +14,9 @@ export const mutations = {
   hideMap: (s, hide) => {
     s.hideMap = hide;
   },
+  setMeta: (s, meta = {}) => {
+    s.meta = meta;
+  },
 };
 
 export const getters = {
@@ -20,6 +24,7 @@ export const getters = {
   isCampus: (s) => (id) => typeof s.campus === 'object' && !!s.campus && s.campus.id === id,
   campus: (s) => s.campus,
   hideMap: (s) => s.hideMap,
+  meta: (s) => s.meta,
 };
 
 export const actions = {

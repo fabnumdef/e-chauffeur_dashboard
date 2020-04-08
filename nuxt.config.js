@@ -1,13 +1,14 @@
 module.exports = {
   head: {
-    title: 'e-Chauffeur - Dashboard',
+    title: 'Dashboard',
+    titleTemplate: 'e-Chauffeur - %s',
     link: [
       { rel: 'stylesheet', href: '//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' },
     ],
   },
 
   router: {
-    middleware: ['auth'],
+    middleware: ['auth', 'meta'],
   },
 
   build: {

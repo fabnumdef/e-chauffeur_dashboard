@@ -1,16 +1,27 @@
 <template>
   <div class="columns is-gapless">
     <ec-sidemenu class="column is-narrow is-menu" />
-    <nuxt class="column content-col" />
+    <main class="column content-col">
+      <header v-if="meta.title">
+        <h1 class="title">
+          {{ meta.title }}
+        </h1>
+      </header>
+      <nuxt />
+    </main>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import ecSidemenu from '~/components/sidemenu.vue';
 
 export default {
   components: {
     ecSidemenu,
+  },
+  computed: {
+    ...mapGetters({ meta: 'context/meta' }),
   },
   head() {
     return {
