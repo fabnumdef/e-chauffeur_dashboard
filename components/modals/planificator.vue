@@ -48,18 +48,16 @@
     >
       <date-time
         lang="fr"
-        append-to-body
         input-class="input"
         type="datetime"
         range
         :value="range"
         :minute-step="5"
-        :first-day-of-week="1"
         format="YYYY-MM-DD HH:mm"
         range-separator="->"
         @input="updateDates"
       >
-        <template slot="calendar-icon">
+        <template slot="icon-calendar">
           <fa-icon icon="calendar" />
         </template>
       </date-time>
@@ -131,8 +129,8 @@
         field-id="phone"
       >
         <vue-tel-input
-          v-model="ride.phone"
           id="phone"
+          v-model="ride.phone"
           v-autofocus="{
             hasBeenFocused: hasBeenFocused,
             focus: focusState.phone,

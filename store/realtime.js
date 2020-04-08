@@ -88,21 +88,31 @@ export const getters = {
 export const actions = {
   async fetchDrivers({ commit }, campus) {
     try {
-      const { data } = await this.$api.rides(
-        campus.id,
-      ).getDriversPositions('id,name,date,position(coordinates)');
+      const { data } = await this.$api
+        .query('rides')
+        .setCampus(campus.id)
+        .setMask('id,name,date,position(coordinates)')
+        .driversPositions();
       commit('setDrivers', data);
     } catch (e) {
       throw new Error('Drivers fetching failed');
     }
   },
   async setRides({ commit }, { campus, start, end }) {
-    const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
+    const { data: rides } = await this.$api
+      .query('rides')
+      .setCampus(campus)
+      .setMask(EDITABLE_FIELDS)
+      .list(start, end);
     commit('setRides', rides);
   },
 
   async appendRides({ commit }, { campus, start, end }) {
-    const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
+    const { data: rides } = await this.$api
+      .query('rides')
+      .setCampus(campus)
+      .setMask(EDITABLE_FIELDS)
+      .list(start, end);
     rides.forEach((r) => commit('pushRide', r));
   },
 };

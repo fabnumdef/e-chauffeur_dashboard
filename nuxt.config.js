@@ -1,3 +1,5 @@
+const { version } = require('./package.json');
+
 module.exports = {
   head: {
     title: 'Dashboard',
@@ -27,7 +29,9 @@ module.exports = {
     { src: '~/plugins/vuecal.js', mode: 'client' },
     { src: '~/plugins/realtime.js', mode: 'client' },
   ],
-
+  env: {
+    version,
+  },
   modules: [
     'nuxt-leaflet',
     [

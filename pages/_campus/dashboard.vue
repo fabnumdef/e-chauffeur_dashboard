@@ -9,7 +9,6 @@
           <client-only>
             <date-time
               lang="fr"
-              append-to-body
               input-class="input"
               type="datetime"
               range
@@ -17,10 +16,9 @@
               :minute-step="5"
               format="YYYY-MM-DD HH:mm"
               range-separator="->"
-              :first-day-of-week="1"
               @input="updateDates"
             >
-              <template slot="calendar-icon">
+              <template slot="icon-calendar">
                 <fa-icon icon="calendar-alt" />
               </template>
             </date-time>

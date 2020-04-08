@@ -21,7 +21,6 @@
       <ec-field label="Dates">
         <date-time
           lang="fr"
-          append-to-body
           input-class="input"
           type="datetime"
           range
@@ -29,10 +28,9 @@
           :minute-step="5"
           format="YYYY-MM-DD HH:mm"
           range-separator="->"
-          :first-day-of-week="1"
           @input="updateDates"
         >
-          <template #calendar-icon>
+          <template #icon-calendar>
             <fa-icon icon="calendar" />
           </template>
         </date-time>

@@ -33,8 +33,11 @@ export const actions = {
       commit('setCampus', null);
       return;
     }
-    const { data } = await this.$api.campuses.getCampus(campus,
-      'id,name,location,categories(id,label),workedDays,workedHours,defaultRideDuration,defaultReservationScope');
+    const { data } = await this.$api.query('campuses')
+      .setMask(
+        'id,name,location,categories(id,label),workedDays,workedHours,defaultRideDuration,defaultReservationScope',
+      )
+      .get(campus);
     commit('setCampus', data);
   },
   hideMap({ commit }, hide) {

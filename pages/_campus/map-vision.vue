@@ -17,13 +17,11 @@
               v-model="currentTime"
               lang="fr"
               type="datetime"
-              append-to-body
               input-class="input"
               format="YYYY-MM-DD HH:mm:ss"
               :clearable="false"
-              :first-day-of-week="1"
             >
-              <template slot="calendar-icon">
+              <template slot="icon-calendar">
                 <fa-icon icon="calendar-alt" />
               </template>
             </date-time>
