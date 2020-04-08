@@ -19,6 +19,8 @@ module.exports = {
     { src: '~assets/css/main.scss', lang: 'scss' },
   ],
   plugins: [
+    '~/plugins/components.js',
+    { src: '~/plugins/custom-toasted.js', mode: 'client' },
     { src: '~/plugins/multiselect.js', mode: 'client' },
     '~/plugins/context.js',
     { src: '~/plugins/datetime-picker.js', mode: 'client' },

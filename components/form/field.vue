@@ -39,6 +39,12 @@
             <fa-icon :icon="iconRight" />
           </span>
         </div>
+        <p
+          v-if="errorMessage"
+          class="help is-danger"
+        >
+          {{ errorMessage }}
+        </p>
       </div>
     </div>
   </div>
@@ -67,6 +73,10 @@ export default {
     horizontal: {
       type: Boolean,
       default: false,
+    },
+    errorMessage: {
+      type: String,
+      default: null,
     },
   },
 };
