@@ -91,7 +91,7 @@
                 <div>
                   {{ event.timeString }}
                 </div>
-                <div v-if="event.ride.car">
+                <div v-if="event.ride.car && event.ride.car.model">
                   {{ event.ride.car.model.label }} - {{ event.ride.car.id }}
                 </div>
                 <div>
@@ -107,7 +107,7 @@
               <div>
                 {{ event.ride.departure.label }} <fa-icon icon="arrow-right" /> {{ event.ride.arrival.label }}
               </div>
-              <div v-if="event.ride.car">
+              <div v-if="event.ride.car && event.ride.car.model">
                 {{ event.ride.car.model.label }} - {{ event.ride.car.id }}
               </div>
               <div>
