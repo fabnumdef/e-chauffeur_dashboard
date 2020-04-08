@@ -6,6 +6,12 @@
         <h1 class="title">
           {{ meta.title }}
         </h1>
+        <h2
+          v-if="meta.subtitle"
+          class="subtitle"
+        >
+          {{ meta.subtitle }}
+        </h2>
       </header>
       <nuxt />
     </main>
