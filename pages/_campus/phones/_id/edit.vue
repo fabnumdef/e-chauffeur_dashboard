@@ -124,7 +124,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field.vue';
 import ecSearchPhoneStates from '~/components/form/search-phone-states.vue';
 import ecSearchPhoneModels from '~/components/form/search-phone-models.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
@@ -141,11 +140,10 @@ const EDITABLE_FIELDS = [
 
 export default {
   components: {
-    ecField,
     ecSearchPhoneStates,
     ecSearchPhoneModels,
   },
-  mixins: [toggleLoading],
+  mixins: [toggleLoading()],
   props: {
     phone: {
       type: Object,

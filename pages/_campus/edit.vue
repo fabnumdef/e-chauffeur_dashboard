@@ -219,7 +219,6 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 import weekdaysSelect from '~/components/form/weekdays.vue';
@@ -230,7 +229,6 @@ const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id
     + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
 export default {
   components: {
-    ecField,
     ecGpsPoint,
     searchCategories,
     weekdaysSelect,

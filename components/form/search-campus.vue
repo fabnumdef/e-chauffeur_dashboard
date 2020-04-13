@@ -37,7 +37,6 @@ export default {
   },
   async mounted() {
     this.loading = true;
-    this.loading = true;
     try {
       const { data } = await this.$api.campuses.getCampuses('id,name,location');
       this.campuses = data;

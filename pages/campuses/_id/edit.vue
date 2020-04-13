@@ -223,7 +223,6 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCategories from '~/components/form/search-categories.vue';
 import weekdaysSelect from '~/components/form/weekdays.vue';
@@ -235,13 +234,12 @@ const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id
   + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
 export default {
   components: {
-    ecField,
     ecGpsPoint,
     searchCategories,
     weekdaysSelect,
     rideDuration,
   },
-  mixins: [toggleLoading],
+  mixins: [toggleLoading()],
   props: {
     campus: {
       type: Object,
@@ -291,22 +289,23 @@ export default {
         const formattedCampus = {
           ...campus,
           location: {
-            coordinates: formatCoordinates(campus.location.coordinates),
+            coordinates: campus.location ? formatCoordinates(campus.location.coordinates) : null,
           },
         };
-
+        const campusesQuery = this.$api.query('campuses').setMask(EDITABLE_FIELDS);
         if (this.id) {
-          ({ data } = (await this.$api.campuses.patchCampus(campus.id, formattedCampus, EDITABLE_FIELDS)));
+          ({ data } = (await campusesQuery.edit(campus.id, formattedCampus)));
         } else {
-          ({ data } = (await this.$api.campuses.postCampus(formattedCampus, EDITABLE_FIELDS)));
+          ({ data } = (await campusesQuery.create(formattedCampus)));
         }
         this.$toast.success('Donnée enregistrée avec succès');
         this.$router.push({
           name: 'campuses-id-edit',
           params: { id: data.id },
         });
-      } catch {
-        this.$toast.error('Une erreur est survenue, merci de vérifier les champs.');
+      } catch ({ response: { status, data: { errors, message } = {} } = {} }) {
+        console.error(errors);
+        this.$toast.error([`Erreur ${status} : ${message}`, ...Object.values(errors || {}).map((e) => e.message)]);
       }
       this.toggleLoading(false);
     },

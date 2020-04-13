@@ -95,16 +95,12 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 const mask = 'id,label,capacity';
 
 export default {
-  components: {
-    ecField,
-  },
-  mixins: [toggleLoading],
+  mixins: [toggleLoading()],
   props: {
     carModel: {
       type: Object,

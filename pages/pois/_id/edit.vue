@@ -131,7 +131,6 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
 import searchCampus from '~/components/form/search-campus.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
@@ -139,11 +138,10 @@ import formatCoordinates from '~/helpers/format-coordinates';
 
 export default {
   components: {
-    ecField,
     ecGpsPoint,
     searchCampus,
   },
-  mixins: [toggleLoading],
+  mixins: [toggleLoading()],
   props: {
     poi: {
       type: Object,

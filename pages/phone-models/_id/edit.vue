@@ -83,7 +83,6 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 const EDITABLE_FIELDS = [
@@ -92,10 +91,7 @@ const EDITABLE_FIELDS = [
 ];
 
 export default {
-  components: {
-    ecField,
-  },
-  mixins: [toggleLoading],
+  mixins: [toggleLoading()],
   props: {
     phoneModel: {
       type: Object,

@@ -306,7 +306,6 @@ import {
 import generateCsvLink from '~/helpers/generate-csv-link';
 import ecDatePicker from '~/components/datepicker.vue';
 import vueModal from '~/components/modals/default.vue';
-import ecField from '~/components/form/field.vue';
 
 const ROWS_PER_QUERY = 1000;
 
@@ -314,7 +313,6 @@ export default {
   components: {
     ecDatePicker,
     vueModal,
-    ecField,
   },
 
   data() {

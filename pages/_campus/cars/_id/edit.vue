@@ -92,7 +92,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field.vue';
 import SearchCarModels from '~/components/form/search-car-models.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
 
@@ -101,9 +100,8 @@ const EDITABLE_FIELDS = ['id', 'label', 'model'];
 export default {
   components: {
     SearchCarModels,
-    ecField,
   },
-  mixins: [toggleLoading],
+  mixins: [toggleLoading()],
   props: {
     car: {
       type: Object,

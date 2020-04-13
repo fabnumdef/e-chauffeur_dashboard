@@ -121,7 +121,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field.vue';
 import ecPassword from '~/components/form/password.vue';
 import roleRules from '~/components/form/role-only.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
@@ -130,11 +129,10 @@ const EDITABLE_FIELDS = ['id', 'email', 'password', 'name', 'firstname', 'lastna
 
 export default {
   components: {
-    ecField,
     roleRules,
     ecPassword,
   },
-  mixins: [toggleLoading],
+  mixins: [toggleLoading()],
   props: {
     user: {
       type: Object,

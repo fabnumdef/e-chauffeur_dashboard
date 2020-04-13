@@ -83,14 +83,10 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
 
 export default {
-  components: {
-    ecField,
-  },
-  mixins: [toggleLoading],
+  mixins: [toggleLoading()],
   props: {
     category: {
       type: Object,
