@@ -20,11 +20,11 @@
       </template>
 
       <ec-field
-        label="Titre"
+        label="Label"
         required
       >
         <input
-          v-model="timeSlot.title"
+          v-model="timeSlot.label"
           class="input"
           type="text"
           placeholder="Renseigner un titre pour cette navette"
@@ -55,12 +55,12 @@
       </ec-field>
 
       <ec-field
-        label="Trajet a effectuer"
+        label="Trajet"
         required
       >
         <vue-multiselect
           v-model="timeSlot.pattern"
-          :options="loopPatterns.data"
+          :options="patterns.data"
           placeholder="Selectionner un trajet"
           track-by="id"
           label="label"
@@ -68,31 +68,16 @@
         />
       </ec-field>
 
-      <ec-field label="Chauffeurs">
+      <ec-field label="Chauffeur">
         <vue-multiselect
-          v-model="timeSlot.drivers"
+          v-model="timeSlot.driver"
           :options="drivers.data"
           track-by="id"
-          multiple
-          label="name"
+          label="lastname"
           :show-labels="false"
         >
           <template #option="{option}">
             {{ option.firstname }} {{ option.lastname }}
-          </template>
-          <template #tag="{option, search, remove}">
-            <span class="multiselect__tag">
-              <span v-if="option.firstname || option.lastname">{{ option.firstname }} {{ option.lastname }}</span>
-              <span v-else>{{ option.id }}</span>
-              <i
-                aria-hidden="true"
-                tabindex="1"
-                class="multiselect__tag-icon"
-                @keypress.enter.prevent="remove(option)"
-                @mousedown.prevent="remove(option)"
-              />
-            </span>
-            <span class="multiselect-tag" />
           </template>
         </vue-multiselect>
       </ec-field>
@@ -164,7 +149,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    loopPatterns: {
+    patterns: {
       type: Object,
       default: () => ({}),
     },

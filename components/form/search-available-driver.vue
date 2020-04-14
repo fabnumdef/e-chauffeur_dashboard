@@ -20,7 +20,7 @@ import debounce from 'lodash.debounce';
 const FIELDS = 'id,name,firstname,lastname';
 export default {
   props: {
-    campus: {
+    campusId: {
       type: String,
       default: null,
     },
@@ -53,7 +53,7 @@ export default {
     updateSet: debounce(async function updateSet(search) {
       this.loading = true;
       try {
-        const { data } = await this.$api.rides(this.campus).getAvailableDrivers(
+        const { data } = await this.$api.rides(this.campusId).getAvailableDrivers(
           FIELDS,
           this.start.toISO(),
           this.end.toISO(),
@@ -69,7 +69,7 @@ export default {
     async onOpen() {
       this.loading = true;
       try {
-        const { data } = await this.$api.rides(this.campus).getAvailableDrivers(
+        const { data } = await this.$api.rides(this.campusId).getAvailableDrivers(
           FIELDS,
           this.start.toISO(),
           this.end.toISO(),

@@ -17,7 +17,7 @@
         :on-event-click="openEdit"
         :min-event-width="75"
         :selected-date="shouldUseSelectedDate ? selectedDate : ''"
-        @click-and-release="openCreate"
+        @click-and-release="toggleModal"
         @view-change="viewChange"
       >
         <template #event-renderer="{ event: { content } }">
@@ -32,8 +32,12 @@
                 {{ content.start.toLocaleString(TIME_SIMPLE) }} - {{ content.end.toLocaleString(TIME_SIMPLE) }}
               </span>
               <span class="is-pulled-right">
-                <fa-icon icon="user-circle" /> <span v-if="content.drivers">
+                <fa-icon icon="user-circle" />
+                <span v-if="content.drivers">
                   {{ content.drivers.length }}({{ drivers.data.length }})
+                </span>
+                <span v-if="content.driver">
+                  {{ content.driver.lastname }}
                 </span>
               </span>
             </header>
@@ -50,18 +54,27 @@
         </template>
       </vue-cal>
     </client-only>
+    <type-choice-modal
+      :active="modalOpen"
+      @toggle-modal="toggleModal"
+      @choose-type="chooseType"
+    />
   </div>
 </template>
 
 <script>
 import { DateTime } from 'luxon';
 import { mapGetters } from 'vuex';
+import typeChoiceModal from '~/components/modals/planning/choose-type.vue';
 
 const STEP = 60;
 const START_DAY_HOUR = 0;
 const END_DAY_HOUR = 24;
 
 export default {
+  components: {
+    typeChoiceModal,
+  },
   props: {
     events: {
       type: Array,
@@ -81,6 +94,7 @@ export default {
     return {
       STEP,
       shouldUseSelectedDate: true,
+      modalOpen: false,
     };
   },
 
@@ -110,10 +124,22 @@ export default {
     },
   },
   methods: {
-    openCreate(event) {
+    chooseType(type) {
+      if (type === 'shuttle') {
+        this.openCreate(this.currentEvent, 'shuttle');
+      } else {
+        this.openCreate(this.currentEvent);
+      }
+    },
+    toggleModal(event) {
+      this.currentEvent = event;
+      this.modalOpen = !this.modalOpen;
+    },
+    openCreate(event, type = null) {
       this.$emit('open-create', {
         start: this.$vuecal(STEP).getDateTimeFloorFromVueCal(event.start).toJSDate(),
         end: this.$vuecal(STEP).getDateTimeCeilFromVueCal(event.end).toJSDate(),
+        type,
       });
     },
     openEdit(content) {
@@ -132,7 +158,7 @@ export default {
       if (driver.id && content.drivers && !content.drivers.find(({ id }) => id === driver.id)) {
         content.drivers.push(driver);
         if (content.pattern) {
-          this.$emit('edit-shuttle-time-slot', content);
+          this.$emit('edit-shuttle', content);
         } else {
           this.$emit('edit-time-slot', content);
         }

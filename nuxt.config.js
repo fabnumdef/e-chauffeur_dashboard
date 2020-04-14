@@ -50,8 +50,8 @@ module.exports = {
           phoneModels: 'phone-models',
           ratings: 'ratings',
           campusUsers: 'campus-users',
-          loopPatterns: 'loop-patterns',
-          loopTimeSlots: 'loop-time-slots',
+          patterns: 'patterns',
+          shuttles: 'shuttles',
         },
         withAuth: true,
         authPlugins: [
@@ -100,6 +100,7 @@ module.exports = {
           'faArrowRight',
           'faKey',
           'faAngleDown',
+          'faAngleUp',
           'faCalendarAlt',
           'faChevronRight',
           'faFileExport',

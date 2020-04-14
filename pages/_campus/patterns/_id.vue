@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nuxt-child :loop-pattern="loopPattern" />
+    <nuxt-child :pattern="pattern" />
   </div>
 </template>
 
@@ -9,9 +9,10 @@ const EDITABLE_FIELDS = ['id', 'label', 'category', 'stops', 'comments', 'reachD
 
 export default {
   async asyncData({ params, $api, store: { getters } }) {
+    const { data: pattern } = await $api.patterns(getters['context/campus'], EDITABLE_FIELDS.join(','))
+      .getPattern(params.id);
     return {
-      loopPattern: (await $api.loopPatterns(getters['context/campus'], EDITABLE_FIELDS.join(','))
-        .getLoopPattern(params.id)).data,
+      pattern,
     };
   },
 };

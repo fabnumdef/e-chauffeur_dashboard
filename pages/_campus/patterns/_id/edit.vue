@@ -2,15 +2,15 @@
   <main>
     <header>
       <h1 class="title">
-        Modèle de boucle <em v-if="id">{{ id }}</em>
+        Modèle de boucle <em v-if="pattern.id">{{ pattern.id }}</em>
       </h1>
       <h2 class="subtitle">
-        {{ id ? 'Modification' : 'Création' }}
+        {{ pattern.id ? 'Modification' : 'Création' }}
       </h2>
     </header>
     <form
       class="box"
-      @submit.prevent="edit(loopPattern)"
+      @submit.prevent="edit(pattern)"
     >
       <ec-field
         label="Label"
@@ -19,7 +19,7 @@
       >
         <input
           id="label"
-          v-model.trim="loopPattern.label"
+          v-model.trim="pattern.label"
           type="text"
           class="input"
         >
@@ -31,7 +31,7 @@
       >
         <search-category
           id="category"
-          v-model="loopPattern.category"
+          v-model="pattern.category"
         />
       </ec-field>
 
@@ -42,7 +42,7 @@
       >
         <input
           id="reachDuration"
-          v-model="loopPattern.reachDuration"
+          v-model="pattern.reachDuration"
           class="input"
           type="number"
         >
@@ -51,7 +51,7 @@
       <h3 class="label">
         Liste des arrêts
       </h3>
-      <p v-if="!loopPattern.stops || loopPattern.stops.length === 0">
+      <p v-if="!pattern.stops || pattern.stops.length === 0">
         Pas d'arrêts paramétrés
       </p>
       <div
@@ -69,10 +69,10 @@
         </div>
         <div class="body">
           <vue-draggable
-            v-model="formattedStops"
+            v-model="pattern.stops"
           >
             <div
-              v-for="(stop, index) in formattedStops"
+              v-for="(stop, index) in pattern.stops"
               :key="index"
               :class="index % 2 === 0 ? 'row' : 'row-darker'"
             >
@@ -143,13 +143,13 @@
       >
         <textarea
           id="comments"
-          v-model.trim="loopPattern.comments"
+          v-model.trim="pattern.comments"
           class="textarea"
         />
       </ec-field>
 
       <button
-        v-if="id"
+        v-if="pattern.id"
         type="submit"
         class="button is-primary"
         :class="{'is-loading': loading}"
@@ -184,7 +184,7 @@ import searchCategory from '~/components/form/search-campus-category.vue';
 import searchPoi from '~/components/form/search-poi.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
 
-const EDITABLE_FIELDS = ['label', 'category', 'stops', 'comments'];
+const EDITABLE_FIELDS = ['label', 'category', 'stops', 'comments', 'reachDuration'];
 
 export default {
   components: {
@@ -194,7 +194,7 @@ export default {
   },
   mixins: [toggleLoading],
   props: {
-    loopPattern: {
+    pattern: {
       type: Object,
       default: () => ({
         stops: [],
@@ -203,7 +203,6 @@ export default {
   },
   data() {
     return {
-      id: this.loopPattern.id,
       selectedPoi: null,
     };
   },
@@ -214,31 +213,23 @@ export default {
     columnKeys() {
       return [{ key: 'id', label: 'ID' }, { key: 'label', label: 'Label' }];
     },
-    loopPatternsAPI() {
+    apiCall() {
       const mask = ['id', ...EDITABLE_FIELDS].join(',');
-      return this.$api.loopPatterns(this.campus, mask);
-    },
-    formattedStops: {
-      get() {
-        return this.loopPattern.stops.map((stop) => ({ ...stop.poi }));
-      },
-      set(formattedStops) {
-        this.loopPattern.stops = formattedStops.map((stop) => this.loopPattern.stops.find((s) => s.poi.id === stop.id));
-      },
+      return this.$api.patterns(this.campus, mask);
     },
   },
   methods: {
-    async edit(loopPattern) {
+    async edit(pattern) {
       let data = {};
       try {
         this.toggleLoading(true);
-        if (this.id) {
-          ({ data } = (await this.loopPatternsAPI.patchLoopPattern(loopPattern.id, loopPattern)));
+        if (this.pattern.id) {
+          ({ data } = (await this.apiCall.patchPattern(pattern.id, pattern)));
         } else {
-          ({ data } = (await this.loopPatternsAPI.postLoopPattern(loopPattern)));
+          ({ data } = (await this.apiCall.postPattern(pattern)));
         }
         this.$toast.success('Donnée sauvegardée avec succès');
-        this.$router.push(this.$context.buildCampusLink('loop-patterns-id-edit', {
+        this.$router.push(this.$context.buildCampusLink('patterns-id-edit', {
           params: { id: data.id },
         }));
       } catch ({ response: { status } }) {
@@ -251,7 +242,7 @@ export default {
       this.toggleLoading(false);
     },
     addStop() {
-      const alreadyExists = this.loopPattern.stops.findIndex(({ poi }) => poi.label === this.selectedPoi.label);
+      const alreadyExists = this.pattern.stops.findIndex(({ label }) => label === this.selectedPoi.label);
       if (
         alreadyExists === -1
         || (
@@ -260,32 +251,32 @@ export default {
         && window.confirm
         && window.confirm('Attention, cet arrêt est déjà listé, êtes-vous sûr de vouloir l\'ajouter ?'))
       ) {
-        this.loopPattern.stops.push({ poi: this.selectedPoi });
+        this.pattern.stops.push(this.selectedPoi);
         this.selectedPoi = null;
       }
     },
     stopUp({ id }) {
-      const { stops } = this.loopPattern;
-      const stopIndex = stops.findIndex(({ poi }) => poi.id === id);
-      if (stopIndex > 0) {
-        const a = stops[stopIndex];
-        stops[stopIndex] = stops[stopIndex - 1];
-        stops[stopIndex - 1] = a;
-        this.loopPattern.stops = [...stops];
+      const { pois } = this.pattern;
+      const poiIndex = pois.findIndex((poi) => poi.id === id);
+      if (poiIndex > 0) {
+        const a = pois[poiIndex];
+        pois[poiIndex] = pois[poiIndex - 1];
+        pois[poiIndex - 1] = a;
+        this.pattern.stops = [...pois];
       }
     },
     stopDown({ id }) {
-      const { stops } = this.loopPattern;
-      const stopIndex = stops.findIndex(({ poi }) => poi.id === id);
-      if (stopIndex < stops.length - 1) {
-        const a = stops[stopIndex];
-        stops[stopIndex] = stops[stopIndex + 1];
-        stops[stopIndex + 1] = a;
-        this.loopPattern.stops = [...stops];
+      const { pois } = this.pattern;
+      const poiIndex = pois.findIndex(({ poi }) => poi.id === id);
+      if (poiIndex < pois.length - 1) {
+        const a = pois[poiIndex];
+        pois[poiIndex] = pois[poiIndex + 1];
+        pois[poiIndex + 1] = a;
+        this.pattern.stops = [...pois];
       }
     },
     deleteStop(i) {
-      this.loopPattern.stops = this.loopPattern.stops.filter((_, index) => index !== i);
+      this.pattern.stops = this.pattern.stops.filter((_, index) => index !== i);
     },
   },
 };

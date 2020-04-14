@@ -27,10 +27,11 @@
 </template>
 <script>
 
-const FIELDS = 'id,label,model(id,label)';
+const FIELDS = 'id,label,model(id,label,capacity)';
+
 export default {
   props: {
-    campus: {
+    campusId: {
       type: String,
       default: null,
     },
@@ -72,7 +73,7 @@ export default {
         };
         this.loading = true;
         try {
-          const { data } = await this.$api.rides(this.campus).getAvailableCars(
+          const { data } = await this.$api.rides(this.campusId).getAvailableCars(
             FIELDS,
             this.start.toISO(),
             this.end.toISO(),
@@ -97,7 +98,7 @@ export default {
       }
       this.loading = true;
       try {
-        const { data } = await this.$api.rides(this.campus).getAvailableCars(
+        const { data } = await this.$api.rides(this.campusId).getAvailableCars(
           FIELDS,
           this.start.toISO(),
           this.end.toISO(),

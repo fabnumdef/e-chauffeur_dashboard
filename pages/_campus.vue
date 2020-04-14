@@ -23,7 +23,7 @@ export default {
       const end = DateTime.local()
         .plus({ seconds: store.getters['context/campus'].defaultReservationScope })
         .toJSDate();
-      await store.dispatch('realtime/setRides', { campus: params.campus, start, end });
+      await store.dispatch('realtime/setDisplacements', { campus: params.campus, start, end });
     }
     return {};
   },

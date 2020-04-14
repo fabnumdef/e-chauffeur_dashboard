@@ -1,16 +1,10 @@
 <template>
   <main>
     <crud-header
-      title="Modèle de boucle"
-      :to-create-new="campusLink('loop-patterns-new')"
+      title="Trajets de navette"
+      :to-create-new="campusLink('patterns-new')"
       :can-create-new="$auth.isRegulator(campus.id) || $auth.isSuperAdmin()"
-      import-csv
-      export-csv
-      :mask="mask"
-      has-mask
       :pagination="pagination"
-      :api-call="$api.loopPatterns(campus.id, mask).getLoopPatterns"
-      @importCSV="importCSV"
     />
     <crud-filter
       :field-value="fieldFilter"
@@ -31,9 +25,9 @@
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
-      :action-edit="campusLink('loop-patterns-id-edit')"
-      action-remove-confirm="Voulez vous vraiment supprimer ce modèle de boucles ?"
-      @action-remove="deleteLoopPattern"
+      :action-edit="campusLink('patterns-id-edit')"
+      action-remove-confirm="Voulez vous vraiment supprimer ce trajet ?"
+      @action-remove="deletePattern"
     >
       <template
         v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
@@ -41,7 +35,7 @@
       >
         <nuxt-link
           v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
-          :to="campusLink('loop-patterns-id-edit', {
+          :to="campusLink('patterns-id-edit', {
             params: { id: row.id },
           })"
           class="button is-primary"
@@ -54,7 +48,7 @@
         <button
           v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
           class="button is-danger"
-          @click="deleteLoopPattern(row)"
+          @click="deletePattern(row)"
         >
           <span class="icon is-small">
             <fa-icon :icon="['fas', 'trash']" />
@@ -79,6 +73,7 @@ const columns = {
   category: 'Catégorie',
   comments: 'Commentaires',
   stops: 'Arrêts',
+  reachDuration: 'Temps moyem entre arrets',
 };
 
 export default {
@@ -91,17 +86,14 @@ export default {
   async asyncData({ params, $api, query }) {
     const offset = parseInt(query.offset, 10) || 0;
     const limit = parseInt(query.limit, 10) || 30;
+
     const { data, pagination } = await $api
-      .loopPatterns({ id: params.campus }, Object.keys(columns).join(','))
-      .getLoopPatterns({ offset, limit });
+      .patterns(params.campus, Object.keys(columns).join(','))
+      .getPatterns({ offset, limit });
+
     return {
       data,
       pagination,
-    };
-  },
-  data() {
-    return {
-      mask: 'id',
     };
   },
   computed: {
@@ -109,8 +101,8 @@ export default {
     ...mapGetters({
       campus: 'context/campus',
     }),
-    loopPatternsAPI() {
-      return this.$api.loopPatterns(this.campus, Object.keys(columns).join(','));
+    apiCall() {
+      return this.$api.patterns(this.campus, Object.keys(columns).join(','));
     },
     dataToDisplay() {
       return this.data.map((item) => {
@@ -127,32 +119,24 @@ export default {
     },
     filteredData() {
       return this.contentFilter
-        ? this.dataToDisplay.filter((user) => user[this.fieldFilter.id] === this.contentFilter)
+        ? this.dataToDisplay.filter((data) => data[this.fieldFilter.id] === this.contentFilter)
         : this.dataToDisplay;
     },
   },
   methods: {
-    async deleteLoopPattern({ id }) {
+    async deletePattern({ id }) {
       if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce modèle de boucle ?')) {
-        await this.loopPatternsAPI.deleteLoopPattern(id);
+        await this.apiCall.deletePattern(id);
         this.updateList();
       }
-    },
-    async importCSV({ data, params }) {
-      try {
-        await this.loopPatternsAPI.postLoopPattern(data, params);
-        this.$toast.success('Import réalisé avec succès');
-      } catch (err) {
-        this.$toast.error("Un problème est survenu pendant l'import");
-      }
-      this.updateList();
     },
     async updateList() {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.loopPatternsAPI.getLoopPatterns({ offset, limit });
-      this.data = updatedList.data;
-      this.pagination = updatedList.pagination;
+
+      const { data, pagination } = await this.apiCall.getPatterns({ offset, limit });
+      this.data = data;
+      this.pagination = pagination;
     },
   },
 };

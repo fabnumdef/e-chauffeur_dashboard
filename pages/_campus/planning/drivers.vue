@@ -26,10 +26,10 @@
       <shuttle-modal
         :active="modalOpen.shuttle"
         :time-slot="timeSlot"
-        :loop-patterns="patterns"
+        :patterns="patterns"
         :drivers="drivers"
         @toggle-modal="toggleShuttlesModal"
-        @edit-time-slot="editShuttlesTimeSlots(timeSlot)"
+        @edit-time-slot="editShuttles(timeSlot)"
         @remove-time-slot="removeTimeSlot(timeSlot, 'shuttle')"
       />
 
@@ -78,7 +78,7 @@
           :events="calEvents"
           :drivers="drivers"
           @edit-time-slot="editDriversTimeSlot"
-          @edit-shuttle-time-slot="editShuttlesTimeSlots"
+          @edit-shuttle="editShuttles"
           @open-edit="openEdit"
           @open-create="openCreate"
           @view-change="viewChange"
@@ -96,10 +96,11 @@ import planningCalendar from '~/components/planning/drivers/calendar.vue';
 
 const DRIVER_DATA = 'id,firstname,lastname';
 const TIMESLOT_DATA = `id,start,end,drivers(${DRIVER_DATA}),recurrence(enabled,frequency)`;
-const LOOP_PATTERN_DATA = 'id,label,stops';
-const LOOP_TIMESLOT_DATA = `id,start,end,title,comments,pattern(id,label),drivers(${DRIVER_DATA})`;
+const PATTERN_DATA = 'id,label,stops';
+const commons = 'id,label,start,end,comments';
+const SHUTTLE_DATA = `${commons},pattern(${PATTERN_DATA}),driver(${DRIVER_DATA}),recurrence(enabled,frequency)`;
 
-class DriverTimeSlot {
+class TimeSlot {
   drivers = [];
 
   cars = null;
@@ -112,14 +113,20 @@ class DriverTimeSlot {
   }
 }
 
-class ShuttleTimeSlot {
+class Shuttle {
   recurrence = { frequency: null, enabled: false };
 
   title = null;
 
+  driver = null;
+
   comments = null;
 
-  constructor(start = null, end = null, pattern = { id: null, label: null }) {
+  constructor(
+    start = null,
+    end = null,
+    pattern = { id: null, label: null, stops: [] },
+  ) {
     this.start = start;
     this.end = end;
     this.pattern = pattern;
@@ -131,10 +138,8 @@ function generateCalEvents(array, vuecal, type) {
     const start = DateTime.fromISO(event.start);
     const end = DateTime.fromISO(event.end);
     return {
-      start: vuecal()
-        .getVueCalFromDatetime(start),
-      end: vuecal()
-        .getVueCalFromDatetime(end),
+      start: vuecal().getVueCalFromDatetime(start),
+      end: vuecal().getVueCalFromDatetime(end),
       content: {
         ...event,
         start,
@@ -160,15 +165,15 @@ export default {
 
     const drivers = await $api.drivers(params.campus, DRIVER_DATA)
       .getDrivers({ offset, limit });
-    const patterns = await $api.loopPatterns(params.campus, LOOP_PATTERN_DATA)
-      .getLoopPatterns({ offset, limit });
+    const patterns = await $api.patterns(params.campus, PATTERN_DATA)
+      .getPatterns({ offset, limit });
     const driversEvents = await $api.timeSlot(TIMESLOT_DATA, params.campus)
       .getDriversTimeSlotsBetween(after, before);
-    const shuttleEvents = await $api.loopTimeSlots(LOOP_TIMESLOT_DATA, params.campus)
-      .getTimeSlotsBetween(after, before);
+    const shuttleEvents = await $api.shuttles(params.campus, SHUTTLE_DATA)
+      .getShuttles(after, before);
 
     return {
-      timeSlot: new DriverTimeSlot(),
+      timeSlot: new TimeSlot(),
       drivers: {
         data: drivers.data,
         pagination: drivers.pagination,
@@ -209,8 +214,8 @@ export default {
     async viewChange({ startDate, endDate }) {
       const driversEvents = await this.$api.timeSlot(TIMESLOT_DATA, this.campusId)
         .getDriversTimeSlotsBetween(startDate, endDate);
-      const shuttleEvents = this.$api.loopTimeSlots(LOOP_TIMESLOT_DATA, this.campusId)
-        .getTimeSlotsBetween(startDate, endDate);
+      const shuttleEvents = await this.$api.shuttles(this.campusId, SHUTTLE_DATA)
+        .getShuttles(startDate, endDate);
       this.events = {
         drivers: {
           data: driversEvents.data,
@@ -244,18 +249,18 @@ export default {
       }
       this.toggleDriversModal(false);
     },
-    async editShuttlesTimeSlots(timeSlot) {
-      const api = this.$api.loopTimeSlots(LOOP_TIMESLOT_DATA, this.campusId);
+    async editShuttles(timeSlot) {
+      const api = this.$api.shuttles(this.campusId, SHUTTLE_DATA);
       if (timeSlot.id) {
         const i = this.events.shuttles.data.findIndex(({ id }) => id === timeSlot.id);
-        const { data } = await api.editTimeSlot(timeSlot.id, timeSlot);
+        const { data } = await api.patchShuttle(timeSlot.id, timeSlot);
         if (i >= 0) {
           this.events.shuttles.data.splice(i, 1, data);
         } else {
           this.events.shuttles.data.push(data);
         }
       } else {
-        const { data } = await api.createTimeSlot(timeSlot);
+        const { data } = await api.postShuttle(timeSlot);
         this.events.shuttles.data.push(data);
       }
       this.toggleShuttlesModal(false);
@@ -270,10 +275,10 @@ export default {
       type,
     }) {
       if (type === 'shuttle') {
-        this.timeSlot = new ShuttleTimeSlot(start, end);
+        this.timeSlot = new Shuttle(start, end);
         this.toggleShuttlesModal(true);
       } else {
-        this.timeSlot = new DriverTimeSlot(start, end);
+        this.timeSlot = new TimeSlot(start, end);
         this.toggleDriversModal(true);
       }
     },
@@ -303,7 +308,7 @@ export default {
     async removeTimeSlot({ id }, type) {
       if (window && window.confirm('Voulez vous vraiment supprimer cette plage horaire ?')) {
         if (type === 'shuttle') {
-          await this.$api.loopTimeSlots(LOOP_TIMESLOT_DATA, this.campusId).deleteTimeSlot(id);
+          await this.$api.shuttles(this.campusId, SHUTTLE_DATA).deleteShuttle(id);
           const i = this.events.shuttles.data.findIndex((e) => e.id === id);
           this.events.shuttles.data.splice(i, 1);
           this.toggleShuttlesModal(false);
@@ -318,11 +323,15 @@ export default {
   },
 };
 </script>
+
 <style scoped lang="scss">
   @import "~assets/css/head";
   .box {
     .title {
       color: $black;
+    }
+    aside {
+      width: 300px;
     }
     &.driver-box {
       cursor: grab;

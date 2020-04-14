@@ -7,6 +7,7 @@ export const state = () => ({
   connectedDrivers: [],
   drivers: [],
   rides: [],
+  shuttles: [],
 });
 
 export const mutations = {
@@ -16,6 +17,10 @@ export const mutations = {
 
   setRides: (s, rides = []) => {
     s.rides = rides;
+  },
+
+  setShuttles: (s, shuttles = []) => {
+    s.shuttles = shuttles;
   },
 
   pushDriver: (s, driver) => {
@@ -42,6 +47,18 @@ export const mutations = {
     }
   },
 
+  pushShuttle: (s, shuttle) => {
+    if (!shuttle.id) {
+      throw new Error('Id is required');
+    }
+    const i = s.shuttles.findIndex(({ id }) => id === shuttle.id);
+    if (i === -1) {
+      s.shuttles.push(shuttle);
+    } else {
+      Object.assign(s.shuttles[i], shuttle);
+    }
+  },
+
   setConnectedDrivers: (s, { ids, connected }) => {
     if (ids.length > 1) {
       s.connectedDrivers = ids;
@@ -59,11 +76,20 @@ export const getters = {
   drivers: (s) => s.drivers,
   connectedDrivers: (s) => s.connectedDrivers,
   rides: (s) => s.rides,
-  ridesToValidate: (s) => s.rides.filter(({ status }) => status === CREATED),
-  todayRides: ({ rides }) => {
+  shuttles: (s) => s.shuttles,
+  displacements: (s) => [...s.rides, ...s.shuttles],
+  displacementsToValidate: (s) => [
+    ...s.rides.filter(({ status }) => status === CREATED),
+    // @todo handle shuttles statuses
+    ...s.shuttles.filter(({ status }) => status === CREATED),
+  ],
+  todayDisplacements: (s) => {
     const currentTime = DateTime.local();
-    return rides.filter((r) => DateTime.fromISO(r.start).hasSame(currentTime, 'day')
+    const rides = s.rides.filter((r) => DateTime.fromISO(r.start).hasSame(currentTime, 'day')
       || DateTime.fromISO(r.end).hasSame(currentTime, 'day'));
+    const shuttles = s.shuttles.filter((r) => DateTime.fromISO(r.start).hasSame(currentTime, 'day')
+      || DateTime.fromISO(r.end).hasSame(currentTime, 'day'));
+    return [...rides, ...shuttles];
   },
 };
 
@@ -78,7 +104,7 @@ export const actions = {
       throw new Error('Drivers fetching failed');
     }
   },
-  async setRides({ commit, getters }, { campus, start, end }) {
+  async setDisplacements({ commit, getters }, { campus, start, end }) {
     const EDITABLE_FIELDS = [
       'id',
       'start',
@@ -96,11 +122,21 @@ export const actions = {
       'category(id,label)',
       'luggage',
     ].join(',');
+
     const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
+    const { data: shuttles } = await this.$api.shuttles(campus, '*').getShuttles(start, end);
+
+
     if (getters.rides.length === 0 || rides.length === 0) {
       commit('setRides', rides);
     } else {
       rides.forEach((r) => commit('pushRide', r));
+    }
+
+    if (getters.shuttles.length === 0 || shuttles.length === 0) {
+      commit('setShuttles', shuttles);
+    } else {
+      shuttles.forEach((s) => commit('pushShuttle', s));
     }
   },
 };

@@ -14,7 +14,7 @@
       <div class="level-right">
         <div class="level-item">
           <button
-            class="button is-primary"
+            class="button"
             @click="mapToggle"
           >
             <span v-if="hideMap">Montrer la carte</span>
@@ -25,9 +25,7 @@
     </div>
     <ride-calendar
       :drivers="drivers"
-      :rides="flavoredRides"
-      :current-campus="currentCampus"
-      :campus="campus"
+      :displacements="flavoredDisplacements"
       @view-change="viewChange"
     />
   </main>
@@ -36,9 +34,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import { DateTime } from 'luxon';
-import {
-  DRAFTED,
-} from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
+import { DRAFTED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 import RideCalendar from '~/components/planificator/index.vue';
 
 const EDITABLE_FIELDS = [
@@ -57,40 +53,39 @@ const EDITABLE_FIELDS = [
   'passengersCount',
   'category(id,label)',
   'luggage',
+  'availabilities(*)',
 ].join(',');
 
 export default {
   components: {
     RideCalendar,
   },
-
   async asyncData({ params, $api }) {
     const start = DateTime.local().startOf('days').toJSDate();
     const end = DateTime.local().endOf('days').toJSDate();
     const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
     const { data: drivers } = await ridesApi.getAvailableDrivers(
-      'id,name,availabilities(start,end),firstname,lastname',
+      '*',
       start,
       end,
     );
+
     drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
+
     return {
-      campus: params.campus,
       drivers,
     };
   },
-
   computed: {
     ...mapGetters({
-      rides: 'realtime/rides',
-      currentCampus: 'context/campus',
       hideMap: 'context/hideMap',
+      campus: 'context/campus',
+      displacements: 'realtime/displacements',
     }),
-    flavoredRides() {
-      return this.rides.filter(({ status }) => status !== DRAFTED);
+    flavoredDisplacements() {
+      return this.displacements.filter(({ status }) => status !== DRAFTED);
     },
   },
-
   methods: {
     mapToggle() {
       this.$store.dispatch('context/hideMap', !this.hideMap);
@@ -100,12 +95,12 @@ export default {
       const end = DateTime.fromJSDate(obj.endDate).endOf('days').toJSDate();
       const ridesApi = this.$api.rides(this.campus, EDITABLE_FIELDS);
       const { data: drivers } = await ridesApi.getAvailableDrivers(
-        'id,name,availabilities(start,end),firstname,lastname',
+        '*',
         start,
         end,
       );
       drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
-      await this.$store.dispatch('realtime/setRides', { campus: this.campus, start, end });
+      await this.$store.dispatch('realtime/setDisplacements', { campus: this.campus, start, end });
       this.drivers = drivers;
     },
   },

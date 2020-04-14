@@ -139,7 +139,7 @@ export default {
     },
     ...mapGetters({
       realTimeDrivers: 'realtime/drivers',
-      rides: 'realtime/todayRides',
+      displacements: 'realtime/todayDisplacements',
       campus: 'context/campus',
     }),
     drivers() {
