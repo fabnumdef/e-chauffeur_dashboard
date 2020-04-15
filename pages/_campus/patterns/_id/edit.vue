@@ -256,23 +256,23 @@ export default {
       }
     },
     stopUp({ id }) {
-      const { pois } = this.pattern;
-      const poiIndex = pois.findIndex((poi) => poi.id === id);
-      if (poiIndex > 0) {
-        const a = pois[poiIndex];
-        pois[poiIndex] = pois[poiIndex - 1];
-        pois[poiIndex - 1] = a;
-        this.pattern.stops = [...pois];
+      const { stops } = this.pattern;
+      const stopIndex = stops.findIndex((stop) => stop.id === id);
+      if (stopIndex > 0) {
+        const a = stops[stopIndex];
+        stops[stopIndex] = stops[stopIndex - 1];
+        stops[stopIndex - 1] = a;
+        this.pattern.stops = [...stops];
       }
     },
     stopDown({ id }) {
-      const { pois } = this.pattern;
-      const poiIndex = pois.findIndex(({ poi }) => poi.id === id);
-      if (poiIndex < pois.length - 1) {
-        const a = pois[poiIndex];
-        pois[poiIndex] = pois[poiIndex + 1];
-        pois[poiIndex + 1] = a;
-        this.pattern.stops = [...pois];
+      const { stops } = this.pattern;
+      const stopIndex = stops.findIndex((stop) => stop.id === id);
+      if (stopIndex < stops.length - 1) {
+        const a = stops[stopIndex];
+        stops[stopIndex] = stops[stopIndex + 1];
+        stops[stopIndex + 1] = a;
+        this.pattern.stops = [...stops];
       }
     },
     deleteStop(i) {

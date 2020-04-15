@@ -19,6 +19,9 @@ export const actions = {
   socket_rideUpdate({ commit }, payload) {
     commit('realtime/pushRide', payload);
   },
+  socket_shuttleUpdate({ commit }, payload) {
+    commit('realtime/pushShuttle', payload);
+  },
   reconnecting({ commit }, reconnecting = true) {
     commit('reconnecting', reconnecting);
   },
