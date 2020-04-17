@@ -15,7 +15,7 @@
             v-if="capacity"
             :class="passengersCountClass(stop)"
           >{{ stop.passengers.length }}/{{ capacity }}<fa-icon icon="user" /></span>
-          <span v-else>Capacite du vehicule non definie</span>
+          <span v-else>Capacité du vehicule non définie</span>
           <fa-icon
             v-if="toDisplay[index]"
             icon="angle-up"
@@ -34,8 +34,15 @@
             <li
               v-for="(passenger, i) in stop.passengers"
               :key="`passengers-list--${i}`"
+              :class="{ hovered: (hover.stopIndex === index && hover.passengerIndex === i) ? 'hovered' : '' }"
+              @mouseenter="setHover(index, i)"
+              @mouseleave="setHover(-1, -1)"
             >
-              {{ passenger.email }}
+              {{
+                hover.stopIndex === index && hover.passengerIndex === i
+                  ? passenger.phone || passenger.email
+                  : passenger.email
+              }}
               <fa-icon
                 :icon="'times'"
                 @click="deletePassenger(passenger)"
@@ -59,6 +66,28 @@
             type="email"
             placeholder="Rentrer l'email du passager"
           >
+        </ec-field>
+
+        <ec-field
+          label="Téléphone"
+          class="column"
+          field-id="phone"
+        >
+          <phone-number-input
+            id="phone"
+            v-model="phone"
+            default-country-code="FR"
+            :preferred-countries="['FR', 'BE', 'DE']"
+            :translations="{
+              countrySelectorLabel: 'Prefix',
+              countrySelectorError: 'Choisir un pays',
+              phoneNumberLabel: '',
+              example: 'Exemple :'
+            }"
+            color="transparent"
+            valid-color="transparent"
+            class="input input-phone"
+          />
         </ec-field>
       </div>
       <div class="columns">
@@ -96,6 +125,7 @@
 </template>
 
 <script>
+import phoneNumberInput from 'vue-phone-number-input';
 import ecField from '~/components/form/field.vue';
 import searchStop from '~/components/form/search-stop.vue';
 import displayMixin from '~/components/modals/planificator/shuttle/mixins/display-stops';
@@ -105,6 +135,7 @@ export default {
   components: {
     ecField,
     searchStop,
+    phoneNumberInput,
   },
   mixins: [
     displayMixin(),
@@ -174,14 +205,21 @@ export default {
         flex-wrap: wrap;
         margin-bottom: 1em;
         li {
+          position: relative;
           border: 1px solid $gray;
           padding: .3em .3em .3em 1em;
           font-weight: 700;
           border-radius: 2em;
-          width: fit-content;
+          min-width: 250px;
           margin: 0 .5em .5em 0;
           text-transform: capitalize;
+          &.hovered {
+            background-color: $light-gray;
+          }
           svg {
+            position: absolute;
+            right: 1em;
+            bottom: .8em;
             cursor: pointer;
             color: $red;
             margin-left: 1em;

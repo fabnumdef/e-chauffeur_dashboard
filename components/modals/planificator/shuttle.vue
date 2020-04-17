@@ -27,6 +27,27 @@
           placeholder="Renseigner un titre pour cette navette"
         >
       </ec-field>
+
+      <ec-field
+        class="column"
+        label="Date et heure de depart"
+        field-id="start"
+      >
+        <date-time
+          lang="fr"
+          append-to-body
+          input-class="input"
+          type="datetime"
+          :value="shuttle.start"
+          :minute-step="5"
+          :first-day-of-week="1"
+          format="Le DD/MM/YYYY à HH:mm"
+        >
+          <template slot="calendar-icon">
+            <fa-icon icon="calendar" />
+          </template>
+        </date-time>
+      </ec-field>
     </div>
 
 
@@ -48,7 +69,7 @@
       <ec-field
         class="column"
         field-id="car"
-        label="Vehicule"
+        label="Véhicule"
       >
         <search-available-car
           v-model="shuttle.car"
@@ -56,51 +77,6 @@
           :end="shuttle.end"
           :campus-id="campus.id"
           :driver="shuttle.driver"
-        />
-      </ec-field>
-    </div>
-
-    <div class="columns">
-      <ec-field
-        class="column"
-        label="Date et heure de depart"
-        field-id="start"
-      >
-        <date-time
-          lang="fr"
-          append-to-body
-          input-class="input"
-          type="datetime"
-          :value="shuttle.start"
-          :minute-step="5"
-          :first-day-of-week="1"
-          format="Le DD/MM/YYYY à HH:mm"
-        >
-          <template slot="calendar-icon">
-            <fa-icon icon="calendar" />
-          </template>
-        </date-time>
-      </ec-field>
-
-      <ec-field
-        label="Téléphone"
-        class="column"
-        field-id="phone"
-      >
-        <phone-number-input
-          id="phone"
-          v-model="shuttle.phone"
-          default-country-code="FR"
-          :preferred-countries="['FR', 'BE', 'DE']"
-          :translations="{
-            countrySelectorLabel: 'Prefix',
-            countrySelectorError: 'Choisir un pays',
-            phoneNumberLabel: '',
-            example: 'Exemple :'
-          }"
-          color="transparent"
-          valid-color="transparent"
-          class="input input-phone"
         />
       </ec-field>
     </div>
@@ -156,7 +132,6 @@
 </template>
 
 <script>
-import phoneNumberInput from 'vue-phone-number-input';
 import cloneDeep from 'lodash.clonedeep';
 
 import vueModal from '~/components/modals/default.vue';
@@ -177,7 +152,6 @@ export default {
     searchAvailableDriver,
     searchAvailableCar,
     searchPattern,
-    phoneNumberInput,
     stopsManager,
   },
   mixins: [
@@ -251,6 +225,11 @@ export default {
 <style lang="scss" scoped>
   label {
     font-weight: 700;
+  }
+  .control {
+    .mx-datepicker {
+      width: 100%;
+    }
   }
   .select-pattern {
     display: flex;

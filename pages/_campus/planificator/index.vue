@@ -100,7 +100,7 @@ export default {
         end,
       );
       drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
-      await this.$store.dispatch('realtime/setDisplacements', { campus: this.campus, start, end });
+      await this.$store.dispatch('realtime/appendDisplacements', { campus: this.campus, start, end });
       this.drivers = drivers;
     },
   },

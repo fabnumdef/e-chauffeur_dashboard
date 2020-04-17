@@ -71,7 +71,7 @@ const columns = {
   category: 'Catégorie',
   comments: 'Commentaires',
   stops: 'Arrêts',
-  reachDuration: 'Temps moyem entre arrets',
+  reachDuration: 'Temps moyen entre arrêts',
 };
 
 export default {
@@ -123,7 +123,7 @@ export default {
   },
   methods: {
     async deletePattern({ id }) {
-      if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce modèle de boucle ?')) {
+      if (window && window.confirm && window.confirm('Voulez-vous vraiment supprimer ce modèle de boucle ?')) {
         await this.apiCall.deletePattern(id);
         await this.updateList();
       }

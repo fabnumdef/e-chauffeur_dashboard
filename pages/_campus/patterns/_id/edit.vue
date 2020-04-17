@@ -49,6 +49,7 @@
 
       <stops-table
         :pattern="pattern"
+        :selected-stop="selectedStop"
       />
 
       <ec-field
@@ -139,6 +140,11 @@ export default {
       }),
     },
   },
+  data() {
+    return {
+      selectedStop: null,
+    };
+  },
   computed: {
     ...mapGetters({
       campus: 'context/campus',
@@ -149,6 +155,20 @@ export default {
     },
   },
   methods: {
+    addStop() {
+      const alreadyExists = this.pattern.stops.findIndex(({ label }) => label === this.selectedStop.label);
+      if (
+        alreadyExists === -1
+        || (
+          alreadyExists !== -1
+        && window
+        && window.confirm
+        && window.confirm('Attention, cet arrêt est déjà listé, êtes-vous sûr de vouloir l\'ajouter ?'))
+      ) {
+        this.pattern.stops.push(this.selectedStop);
+        this.selectedStop = null;
+      }
+    },
     async edit(pattern) {
       let data = {};
       try {
