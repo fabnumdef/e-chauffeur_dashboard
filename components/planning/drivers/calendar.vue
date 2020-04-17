@@ -17,7 +17,7 @@
         :on-event-click="openEdit"
         :min-event-width="75"
         :selected-date="shouldUseSelectedDate ? selectedDate : ''"
-        @click-and-release="toggleModal"
+        @click-and-release="openCreate"
         @view-change="viewChange"
       >
         <template #event-renderer="{ event: { content } }">
@@ -54,27 +54,17 @@
         </template>
       </vue-cal>
     </client-only>
-    <type-choice-modal
-      :active="modalOpen"
-      @toggle-modal="toggleModal"
-      @choose-type="chooseType"
-    />
   </div>
 </template>
 
 <script>
 import { DateTime } from 'luxon';
 import { mapGetters } from 'vuex';
-import typeChoiceModal from '~/components/modals/planning/choose-type.vue';
 
 const STEP = 60;
 const START_DAY_HOUR = 0;
 const END_DAY_HOUR = 24;
-
 export default {
-  components: {
-    typeChoiceModal,
-  },
   props: {
     events: {
       type: Array,
@@ -89,15 +79,12 @@ export default {
       default: false,
     },
   },
-
   data() {
     return {
       STEP,
       shouldUseSelectedDate: true,
-      modalOpen: false,
     };
   },
-
   computed: {
     ...mapGetters({
       campus: 'context/campus',
@@ -124,22 +111,10 @@ export default {
     },
   },
   methods: {
-    chooseType(type) {
-      if (type === 'shuttle') {
-        this.openCreate(this.currentEvent, 'shuttle');
-      } else {
-        this.openCreate(this.currentEvent);
-      }
-    },
-    toggleModal(event) {
-      this.currentEvent = event;
-      this.modalOpen = !this.modalOpen;
-    },
-    openCreate(event, type = null) {
+    openCreate(event) {
       this.$emit('open-create', {
         start: this.$vuecal(STEP).getDateTimeFloorFromVueCal(event.start).toJSDate(),
         end: this.$vuecal(STEP).getDateTimeCeilFromVueCal(event.end).toJSDate(),
-        type,
       });
     },
     openEdit(content) {
@@ -157,11 +132,7 @@ export default {
       const driver = JSON.parse(event.dataTransfer.getData('application/json'));
       if (driver.id && content.drivers && !content.drivers.find(({ id }) => id === driver.id)) {
         content.drivers.push(driver);
-        if (content.pattern) {
-          this.$emit('edit-shuttle', content);
-        } else {
-          this.$emit('edit-time-slot', content);
-        }
+        this.$emit('edit-time-slot', content);
       }
     },
   },

@@ -122,6 +122,7 @@ module.exports = {
           'faFileImport',
           'faArrowUp',
           'faArrowDown',
+          'faBus',
         ],
       },
     ],

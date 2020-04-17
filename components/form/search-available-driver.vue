@@ -44,20 +44,24 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    onlyShuttle: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     drivers: [],
     loading: false,
   }),
   methods: {
-    updateSet: debounce(async function updateSet(search) {
+    updateSet: debounce(async function updateSet() {
       this.loading = true;
       try {
         const { data } = await this.$api.rides(this.campusId).getAvailableDrivers(
           FIELDS,
           this.start.toISO(),
           this.end.toISO(),
-          { search },
+          this.onlyShuttle,
         );
         this.drivers = data;
       } catch (e) {
@@ -73,6 +77,7 @@ export default {
           FIELDS,
           this.start.toISO(),
           this.end.toISO(),
+          this.onlyShuttle,
         );
         this.drivers = data;
       } catch (e) {

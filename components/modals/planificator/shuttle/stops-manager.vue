@@ -1,74 +1,115 @@
 <template>
   <div id="stop-manager">
-    <template
-      v-for="(stop, index) in stops"
-    >
-      <div
-        v-if="nextStop(index)"
-        :key="index"
-        class="stop-dropdown"
-        @click="displayDetails(index)"
+    <div>
+      <template
+        v-for="(stop, index) in stops"
       >
-        <span>{{ stop.label }}<fa-icon icon="arrow-right" />{{ nextStop(index).label }}</span>
-        <span v-if="capacity">{{ stop.passengers.length }}/{{ capacity }}<fa-icon icon="user" /></span>
-        <span v-else>Capacite du vehicule non definie</span>
-        <fa-icon
-          v-if="toDisplay[index]"
-          icon="angle-up"
-        />
-        <fa-icon
-          v-else
-          icon="angle-down"
-        />
-      </div>
-      <div
-        v-if="toDisplay[index]"
-        :key="`stops-details--${index}`"
-        class="stop-details"
-      >
-        <ul class="passengers-list">
-          <li
-            v-for="(passenger, i) in stop.passengers"
-            :key="`passengers-list--${i}`"
-          >
-            {{ passenger.email }}
-            <fa-icon :icon="'user'" />
-          </li>
-        </ul>
-        <div class="add-passenger">
-          <button
-            class="button is-dark is-small"
-            @click="displayAddFields.splice(index, 1, !displayAddFields[index])"
-          >
-            {{ displayAddFields[index] ? 'Annuler l\'ajout' : 'Ajouter un passager' }}
-          </button>
-          <form
-            v-if="displayAddFields[index]"
-            @submit.prevent="addPassenger(index, newPassenger)"
-          >
-            <label for="email">Email :</label>
-            <input
-              id="email"
-              v-model="newPassenger[index]"
-              class="input"
-              type="email"
-              placeholder="Entrer l'email du passager"
-            >
-            <button
-              class="button is-success is-small"
-              type="submit"
-            >
-              Ajouter
-            </button>
-          </form>
+        <div
+          v-if="nextStop(index)"
+          :key="index"
+          class="stop-dropdown"
+          @click="displayDetails(index)"
+        >
+          <span>{{ stop.label }}<fa-icon icon="arrow-right" />{{ nextStop(index).label }}</span>
+          <span
+            v-if="capacity"
+            :class="passengersCountClass(stop)"
+          >{{ stop.passengers.length }}/{{ capacity }}<fa-icon icon="user" /></span>
+          <span v-else>Capacite du vehicule non definie</span>
+          <fa-icon
+            v-if="toDisplay[index]"
+            icon="angle-up"
+          />
+          <fa-icon
+            v-else
+            icon="angle-down"
+          />
         </div>
+        <div
+          v-if="toDisplay[index] && stop.passengers.length > 0"
+          :key="`stops-details--${index}`"
+          class="stop-details"
+        >
+          <ul class="passengers-list">
+            <li
+              v-for="(passenger, i) in stop.passengers"
+              :key="`passengers-list--${i}`"
+            >
+              {{ passenger.email }}
+              <fa-icon
+                :icon="'times'"
+                @click="deletePassenger(passenger)"
+              />
+            </li>
+          </ul>
+        </div>
+      </template>
+    </div>
+    <form @submit.prevent="addPassenger">
+      <p>Ajouter un passager</p>
+      <div class="columns">
+        <ec-field
+          label="Email"
+          field-id="email"
+          class="column"
+        >
+          <input
+            v-model="email"
+            class="input"
+            type="email"
+            placeholder="Rentrer l'email du passager"
+          >
+        </ec-field>
       </div>
-    </template>
+      <div class="columns">
+        <ec-field
+          label="Depart"
+          field-id="departure"
+          class="column"
+        >
+          <search-stop
+            v-model="departure"
+            :pattern-id="patternId"
+          />
+        </ec-field>
+
+        <ec-field
+          label="Arrivee"
+          field-id="arrival"
+          class="column"
+        >
+          <search-stop
+            v-model="arrival"
+            :pattern-id="patternId"
+          />
+        </ec-field>
+      </div>
+
+      <button
+        class="button is-dark"
+        type="submit"
+      >
+        Ajouter
+      </button>
+    </form>
   </div>
 </template>
 
 <script>
+import ecField from '~/components/form/field.vue';
+import searchStop from '~/components/form/search-stop.vue';
+import displayMixin from '~/components/modals/planificator/shuttle/mixins/display-stops';
+import passengersHandlerMixin from '~/components/modals/planificator/shuttle/mixins/passengers-handler';
+
 export default {
+  components: {
+    ecField,
+    searchStop,
+  },
+  mixins: [
+    displayMixin(),
+    passengersHandlerMixin(),
+  ],
   props: {
     parentStops: {
       type: Array,
@@ -78,40 +119,19 @@ export default {
       type: Number,
       default: 0,
     },
+    patternId: {
+      type: String,
+      default: null,
+    },
   },
   data() {
     return {
       stops: [...this.parentStops],
-      toDisplay: this.parentStops.map(() => false),
-      displayAddFields: this.parentStops.map(() => false),
-      newPassenger: this.parentStops.map(() => ''),
     };
   },
   watch: {
     parentStops() {
       this.stops = [...this.parentStops];
-    },
-  },
-  methods: {
-    displayDetails(index) {
-      this.toDisplay.splice(index, 1, !this.toDisplay[index]);
-    },
-    nextStop(index) {
-      if (index === this.stops.length - 1) {
-        return null;
-      }
-      return this.stops[index + 1];
-    },
-    async addPassenger(index, emails) {
-      const email = emails[index];
-      const stop = this.stops[index];
-      if (stop.passengers) {
-        stop.passengers.push({ email });
-      } else {
-        stop.passengers = [{ email }];
-      }
-      this.stops.splice(index, 1, stop);
-      this.$emit('updateStops', this.stops);
     },
   },
 };
@@ -131,7 +151,7 @@ export default {
       position: relative;
       background-color: $blue-ultra-light;
       color: $white;
-      padding: .8em 1.5em;
+      padding: .6em 1.5em;
       margin-bottom: 1em;
       font-weight: 700;
       cursor: pointer;
@@ -162,31 +182,32 @@ export default {
           margin: 0 .5em .5em 0;
           text-transform: capitalize;
           svg {
-            color: $blue-ultra-light;
+            cursor: pointer;
+            color: $red;
             margin-left: 1em;
           }
         }
       }
-      .add-passenger {
-        display: flex;
-        align-items: center;
-        form {
-          padding: 0 1em;
-          display: flex;
-          align-items: center;
-          width: 100%;
-          label, input {
-            margin-right: 1em;
-          }
-          label {
-            width: 80px;
-            font-weight: 700;
-          }
-          .input {
-            padding: 0;
-          }
-        }
+    }
+    form {
+      margin: 1em 0;
+      width: 100%;
+      p {
+        font-weight: 700;
+        text-transform: uppercase;
+        color: $dark-gray;
+      }
+      button {
+        margin: -1em 0;
+        padding: 0 2em;
       }
     }
+  }
+
+  .warning {
+    color: $orange;
+  }
+  .error {
+    color: $red;
   }
 </style>

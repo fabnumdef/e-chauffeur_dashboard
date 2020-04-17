@@ -1,14 +1,16 @@
 <template>
-  <!-- @todo display driver header color depending on current or next mission -->
   <div
     v-if="driver.name !== 'Requêtes utilisateur'"
     class="driver-header"
-    :class="!!driver.availabilities.find((a) => a.pattern) ? 'shuttle-driver' : ''"
+    :class="{ 'shuttle-driver': driver.heavyLicence }"
   >
     <div class="driver">
       <div class="name">
         {{ driver.name }}
-        <div :class="isConnected ? 'badge badge-active' : 'badge'" />
+        <div
+          class="badge"
+          :class="{ 'badge-active': isConnected }"
+        />
       </div>
       <div v-if="ride && ride.car">
         <p v-if="ride.car.model">

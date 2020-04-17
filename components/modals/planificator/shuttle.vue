@@ -6,13 +6,28 @@
     @toggle-modal="toggleModal"
   >
     <template slot="title">
-      <template v-if="shuttle.label">
+      <template v-if="shuttle.id">
         Modifier navette <strong style="color: inherit">{{ shuttle.label }}</strong>
       </template>
       <template v-else>
         Nouvelle navette
       </template>
     </template>
+
+    <div class="columns">
+      <ec-field
+        label="Label"
+        required
+        class="column"
+      >
+        <input
+          v-model="shuttle.label"
+          class="input"
+          type="text"
+          placeholder="Renseigner un titre pour cette navette"
+        >
+      </ec-field>
+    </div>
 
 
     <div class="columns">
@@ -26,6 +41,7 @@
           :start="shuttle.start"
           :end="shuttle.end"
           :campus-id="campus.id"
+          only-shuttle
         />
       </ec-field>
 
@@ -89,51 +105,51 @@
       </ec-field>
     </div>
 
-    <div class="columns">
-      <ec-field
-        class="column"
-        field-id="departure"
-        label="Depart"
+    <label for="pattern">Trajet</label>
+    <div class="select-pattern">
+      <search-pattern
+        id="pattern"
+        v-model="shuttle.pattern"
+        :disabled="shuttle.stops.length > 0"
+      />
+      <button
+        v-if="shuttle.stops.length === 0"
+        class="button is-dark"
+        type="button"
+        @click="validatePattern"
       >
-        <vue-multiselect
-          v-model="departure"
-          placeholder="Selectionner un arret"
-          :options="stops"
-          track-by="id"
-          label="label"
-        />
-      </ec-field>
-
-      <ec-field
-        class="column"
-        field-id="departure"
-        label="Arrivee"
-      >
-        <vue-multiselect
-          v-model="arrival"
-          placeholder="Selectionner un arret"
-          :options="stops"
-          track-by="id"
-          label="label"
-        />
-      </ec-field>
+        Valider le trajet
+      </button>
     </div>
+
 
     <div class="columns">
       <stops-manager
+        v-if="shuttle.stops.length > 0"
         :parent-stops="shuttle.stops"
         :capacity="capacity"
+        :pattern-id="shuttle.pattern.id"
+        @update-stops="updateStops"
       />
     </div>
+
+    <div class="columns" />
 
     <template slot="submit">
       <button
         class="button is-success"
-        :class="loading ? 'is-loading' : ''"
         type="button"
         @click="edit(shuttle)"
       >
         Sauvegarder
+      </button>
+
+      <button
+        type="button"
+        class="button is-danger"
+        @click="remove(shuttle)"
+      >
+        Supprimer
       </button>
     </template>
   </vue-modal>
@@ -145,11 +161,14 @@ import cloneDeep from 'lodash.clonedeep';
 
 import vueModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';
+import searchPattern from '~/components/form/search-pattern.vue';
 import searchAvailableDriver from '~/components/form/search-available-driver.vue';
 import searchAvailableCar from '~/components/form/search-available-car.vue';
 import stopsManager from '~/components/modals/planificator/shuttle/stops-manager.vue';
 import stopsHandlerMixin from '~/components/modals/planificator/shuttle/mixins/stops-handler';
 import toggleModalMixin from '~/components/modals/planificator/shuttle/mixins/toggle-modal';
+
+const mask = 'id,label,status,start,end,campus,pattern,stops,comments,driver,car';
 
 export default {
   components: {
@@ -157,6 +176,7 @@ export default {
     ecField,
     searchAvailableDriver,
     searchAvailableCar,
+    searchPattern,
     phoneNumberInput,
     stopsManager,
   },
@@ -202,17 +222,42 @@ export default {
   },
   methods: {
     async edit(data) {
-      this.loading = true;
       try {
-        // @todo websockets to trigger to pushShuttle in events
-        // @todo fix mask
-        await this.$api.shuttles(null, '*').patchShuttle(data.id, data);
+        if (data.id) {
+          await this.$api.shuttles(this.campus.id, mask)
+            .patchShuttle(data.id, data);
+        } else {
+          await this.$api.shuttles(this.campus.id, mask)
+            .postShuttle(data);
+        }
+        this.$toast.success(`La navette a été ${data.id ? 'modifiée' : 'créée'} avec succès`);
       } catch (e) {
-        this.$toast.error('Probleme a la sauvegarde, veuillez verifier vos donnes');
-      } finally {
-        this.loading = false;
+        this.$toast.error('Problème à la sauvegarde, veuillez vérifier vos données');
+      }
+    },
+    // Facilitates tests before state machine implementation
+    async remove(data) {
+      try {
+        await this.$api.shuttles(this.campus.id, mask).deleteShuttle(data.id);
+        this.$toast.success('La navette a été supprimée avec succès');
+      } catch {
+        this.$toast.error('Problème à la sauvegarde, veuillez vérifier vos données');
       }
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  label {
+    font-weight: 700;
+  }
+  .select-pattern {
+    display: flex;
+    align-items: center;
+    margin: .5em 0 2em;
+    button {
+      margin-left: 2em;
+    }
+  }
+</style>

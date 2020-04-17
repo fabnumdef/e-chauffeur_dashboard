@@ -14,43 +14,22 @@
           </nuxt-link>
         </div>
       </div>
-      <driver-modal
-        :active="modalOpen.driver"
+      <planning-modal
+        :active="isModalOpen"
         :time-slot="timeSlot"
         :drivers="drivers"
-        @toggle-modal="toggleDriversModal"
-        @edit-time-slot="editDriversTimeSlot(timeSlot)"
+        @toggle-modal="toggleModal"
+        @edit-time-slot="editTimeSlot(timeSlot)"
         @remove-time-slot="removeTimeSlot(timeSlot)"
       />
-
-      <shuttle-modal
-        :active="modalOpen.shuttle"
-        :time-slot="timeSlot"
-        :patterns="patterns"
-        :drivers="drivers"
-        @toggle-modal="toggleShuttlesModal"
-        @edit-time-slot="editShuttles(timeSlot)"
-        @remove-time-slot="removeTimeSlot(timeSlot, 'shuttle')"
-      />
-
       <main class="columns">
         <aside class="column is-one-quarter">
           <button
             class="button create-timeslot is-expanded"
-            @click="openCreate({ type: 'driver' })"
+            @click="openCreate({})"
           >
-            <fa-icon icon="user-circle" /> Configurer un créneau
+            <fa-icon icon="user-circle" /> Configurer un nouveau créneau
           </button>
-          <button
-            class="button create-timeslot is-expanded"
-            @click="openCreate({ type: 'shuttle' })"
-          >
-            <fa-icon
-              class="shuttle"
-              icon="user-circle"
-            /> Configurer une navette
-          </button>
-
           <div class="drivers-expander">
             <span>Chauffeurs</span>
           </div>
@@ -63,7 +42,12 @@
               @dragstart="dragstart($event, driver)"
               @dragend="dragend"
             >
-              {{ driver.firstname }} {{ driver.lastname }}
+              <span>{{ driver.firstname }} {{ driver.lastname }}</span>
+              <fa-icon
+                v-if="driver.heavyLicence"
+                class="bus-icon"
+                icon="bus"
+              />
               <nuxt-link
                 class="config-button is-pulled-right"
                 :to="campusLink('drivers-id-edit', {params:{id: driver.id}})"
@@ -77,8 +61,7 @@
           :is-grabbing="isGrabbing"
           :events="calEvents"
           :drivers="drivers"
-          @edit-time-slot="editDriversTimeSlot"
-          @edit-shuttle="editShuttles"
+          @edit-time-slot="editTimeSlot"
           @open-edit="openEdit"
           @open-create="openCreate"
           @view-change="viewChange"
@@ -88,182 +71,87 @@
   </div>
 </template>
 <script>
-// eslint-disable-next-line max-classes-per-file
 import { DateTime } from 'luxon';
-import driverModal from '~/components/modals/planning/drivers.vue';
-import shuttleModal from '~/components/modals/planning/shuttles.vue';
+import planningModal from '~/components/modals/planning/drivers.vue';
 import planningCalendar from '~/components/planning/drivers/calendar.vue';
 
-const DRIVER_DATA = 'id,firstname,lastname';
+const DRIVER_DATA = 'id,firstname,lastname,heavyLicence';
 const TIMESLOT_DATA = `id,start,end,drivers(${DRIVER_DATA}),recurrence(enabled,frequency)`;
-const PATTERN_DATA = 'id,label,stops';
-const commons = 'id,label,start,end,comments';
-const SHUTTLE_DATA = `${commons},pattern(${PATTERN_DATA}),driver(${DRIVER_DATA}),recurrence(enabled,frequency)`;
-
-class TimeSlot {
-  drivers = [];
-
-  cars = null;
-
-  recurrence = { frequency: null, enabled: false };
-
-  constructor(start = null, end = null) {
-    this.start = start;
-    this.end = end;
-  }
-}
-
-class Shuttle {
-  recurrence = { frequency: null, enabled: false };
-
-  title = null;
-
-  driver = null;
-
-  comments = null;
-
-  constructor(
-    start = null,
-    end = null,
-    pattern = { id: null, label: null, stops: [] },
-  ) {
-    this.start = start;
-    this.end = end;
-    this.pattern = pattern;
-  }
-}
-
-function generateCalEvents(array, vuecal, type) {
-  return array.map((event) => {
-    const start = DateTime.fromISO(event.start);
-    const end = DateTime.fromISO(event.end);
-    return {
-      start: vuecal().getVueCalFromDatetime(start),
-      end: vuecal().getVueCalFromDatetime(end),
-      content: {
-        ...event,
-        start,
-        end,
-      },
-      class: type === 'shuttle' ? 'slot-event shuttle' : 'slot-event',
-    };
-  });
-}
-
+const newTimeSlot = () => ({
+  start: null,
+  end: null,
+  drivers: [],
+  cars: null,
+  recurrence: { frequency: null, enabled: false },
+});
 export default {
-  components: {
-    driverModal,
-    shuttleModal,
-    planningCalendar,
-  },
+  components: { planningModal, planningCalendar },
   async asyncData({ $api, params, query }) {
     const offset = parseInt(query.driver_offset, 10) || 0;
     const limit = parseInt(query.driver_limit, 10) || 30;
     const week = query.week ? DateTime.fromISO(query.week) : DateTime.local();
     const after = week.startOf('week').toJSDate();
     const before = week.endOf('week').toJSDate();
-
-    const drivers = await $api.drivers(params.campus, DRIVER_DATA)
-      .getDrivers({ offset, limit });
-    const patterns = await $api.patterns(params.campus, PATTERN_DATA)
-      .getPatterns({ offset, limit });
-    const driversEvents = await $api.timeSlot(TIMESLOT_DATA, params.campus)
+    const drivers = await $api.drivers(params.campus, DRIVER_DATA).getDrivers({ offset, limit });
+    const events = await $api.timeSlot(TIMESLOT_DATA, params.campus)
       .getDriversTimeSlotsBetween(after, before);
-    const shuttleEvents = await $api.shuttles(params.campus, SHUTTLE_DATA)
-      .getShuttles(after, before);
-
     return {
-      timeSlot: new TimeSlot(),
+      timeSlot: newTimeSlot(),
       drivers: {
         data: drivers.data,
         pagination: drivers.pagination,
       },
-      patterns: {
-        data: patterns.data,
-        pagination: patterns.pagination,
-      },
       events: {
-        drivers: {
-          data: driversEvents.data,
-          pagination: driversEvents.pagination,
-        },
-        shuttles: {
-          data: shuttleEvents.data,
-          pagination: shuttleEvents.pagination,
-        },
+        data: events.data,
+        pagination: events.pagination,
       },
-      modalOpen: {
-        driver: false,
-        shuttle: false,
-      },
+      isModalOpen: false,
       campusId: params.campus,
       isGrabbing: false,
     };
   },
   computed: {
     calEvents() {
-      const { data: drivers } = this.events.drivers;
-      const { data: shuttles } = this.events.shuttles;
-      return [
-        ...generateCalEvents(drivers, this.$vuecal),
-        ...generateCalEvents(shuttles, this.$vuecal, 'shuttle'),
-      ];
+      return this.events.data.map((event) => {
+        const start = DateTime.fromISO(event.start);
+        const end = DateTime.fromISO(event.end);
+        return {
+          start: this.$vuecal().getVueCalFromDatetime(start),
+          end: this.$vuecal().getVueCalFromDatetime(end),
+          content: {
+            ...event,
+            start,
+            end,
+          },
+          class: 'slot-event',
+        };
+      });
     },
   },
   methods: {
     async viewChange({ startDate, endDate }) {
-      const driversEvents = await this.$api.timeSlot(TIMESLOT_DATA, this.campusId)
+      const { data, pagination } = await this.$api.timeSlot(TIMESLOT_DATA, this.campusId)
         .getDriversTimeSlotsBetween(startDate, endDate);
-      const shuttleEvents = await this.$api.shuttles(this.campusId, SHUTTLE_DATA)
-        .getShuttles(startDate, endDate);
-      this.events = {
-        drivers: {
-          data: driversEvents.data,
-          pagination: driversEvents.pagination,
-        },
-        shuttles: {
-          data: shuttleEvents.data,
-          pagination: shuttleEvents.pagination,
-        },
-      };
+      this.events = { data, pagination };
     },
-    toggleDriversModal(val) {
-      this.modalOpen.driver = typeof val !== 'undefined' ? val : !this.modalOpen.driver;
+    toggleModal(val) {
+      this.isModalOpen = typeof val !== 'undefined' ? val : this.modalOpen;
     },
-    toggleShuttlesModal(val) {
-      this.modalOpen.shuttle = typeof val !== 'undefined' ? val : !this.modalOpen.shuttle;
-    },
-    async editDriversTimeSlot(timeSlot) {
+    async editTimeSlot(timeSlot) {
       const api = this.$api.timeSlot(TIMESLOT_DATA, this.campusId);
       if (timeSlot.id) {
-        const i = this.events.drivers.data.findIndex(({ id }) => id === timeSlot.id);
+        const i = this.events.data.findIndex(({ id }) => id === timeSlot.id);
         const { data } = await api.editTimeSlot(timeSlot.id, timeSlot);
         if (i >= 0) {
-          this.events.drivers.data.splice(i, 1, data);
+          this.events.data.splice(i, 1, data);
         } else {
-          this.events.drivers.data.push(data);
+          this.events.data.push(data);
         }
       } else {
         const { data } = await api.createTimeSlot(timeSlot);
-        this.events.drivers.data.push(data);
+        this.events.data.push(data);
       }
-      this.toggleDriversModal(false);
-    },
-    async editShuttles(timeSlot) {
-      const api = this.$api.shuttles(this.campusId, SHUTTLE_DATA);
-      if (timeSlot.id) {
-        const i = this.events.shuttles.data.findIndex(({ id }) => id === timeSlot.id);
-        const { data } = await api.patchShuttle(timeSlot.id, timeSlot);
-        if (i >= 0) {
-          this.events.shuttles.data.splice(i, 1, data);
-        } else {
-          this.events.shuttles.data.push(data);
-        }
-      } else {
-        const { data } = await api.postShuttle(timeSlot);
-        this.events.shuttles.data.push(data);
-      }
-      this.toggleShuttlesModal(false);
+      this.toggleModal(false);
     },
     updateDates([start, end]) {
       this.timeSlot.start = start;
@@ -272,15 +160,12 @@ export default {
     openCreate({
       start = DateTime.fromJSDate(new Date()).startOf('hour').toJSDate(),
       end = DateTime.fromJSDate(new Date()).endOf('hour').toJSDate(),
-      type,
     }) {
-      if (type === 'shuttle') {
-        this.timeSlot = new Shuttle(start, end);
-        this.toggleShuttlesModal(true);
-      } else {
-        this.timeSlot = new TimeSlot(start, end);
-        this.toggleDriversModal(true);
-      }
+      this.timeSlot = Object.assign(
+        newTimeSlot(),
+        { start, end },
+      );
+      this.toggleModal(true);
     },
     dragstart(event, driver) {
       this.isGrabbing = true;
@@ -297,33 +182,22 @@ export default {
       // eslint-disable-next-line no-param-reassign
       event.currentTarget.style.backgroundColor = '';
     },
-    openEdit({ content: timeSlot, classes }) {
+    openEdit({ content: timeSlot }) {
       this.timeSlot = timeSlot;
-      if (classes.find((cls) => cls === 'shuttle')) {
-        this.toggleShuttlesModal(true);
-      } else {
-        this.toggleDriversModal(true);
-      }
+      this.toggleModal(true);
     },
-    async removeTimeSlot({ id }, type) {
+    async removeTimeSlot({ id }) {
+      const api = this.$api.timeSlot(TIMESLOT_DATA, this.campusId);
       if (window && window.confirm('Voulez vous vraiment supprimer cette plage horaire ?')) {
-        if (type === 'shuttle') {
-          await this.$api.shuttles(this.campusId, SHUTTLE_DATA).deleteShuttle(id);
-          const i = this.events.shuttles.data.findIndex((e) => e.id === id);
-          this.events.shuttles.data.splice(i, 1);
-          this.toggleShuttlesModal(false);
-        } else {
-          await this.$api.timeSlot(TIMESLOT_DATA, this.campusId).deleteTimeSlot(id);
-          const i = this.events.drivers.data.findIndex((e) => e.id === id);
-          this.events.drivers.data.splice(i, 1);
-          this.toggleDriversModal(false);
-        }
+        await api.deleteTimeSlot(id);
+        const i = this.events.data.findIndex((e) => e.id === id);
+        this.events.data.splice(i, 1);
       }
+      this.toggleModal(false);
     },
   },
 };
 </script>
-
 <style scoped lang="scss">
   @import "~assets/css/head";
   .box {
@@ -338,6 +212,16 @@ export default {
       border-radius: $gap;
       padding: $size-small;
       font-weight: bold;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      span {
+        margin-right: auto;
+      }
+      .bus-icon {
+        color: $blue-ultra-light;
+        margin-right:  1em;
+      }
       .config-button {
         color: $dark-gray;
         &:hover {
@@ -348,10 +232,9 @@ export default {
   }
   .create-timeslot {
     border-radius: $gap;
+    padding-left: 2em;
     width: 100%;
     position: relative;
-    margin-bottom: .5em;
-    padding-left: 2em;
     /deep/ .fa-user-circle {
       position: absolute;
       left: 4px;
@@ -360,9 +243,6 @@ export default {
       padding: 5px;
       box-sizing: initial;
       border-radius: $gap;
-      &.shuttle {
-        background-color: $primary;
-      }
     }
   }
 

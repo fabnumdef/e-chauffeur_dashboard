@@ -87,6 +87,34 @@
           v-model="user.password"
         />
       </ec-field>
+      <ec-field
+        v-if="isDriver"
+        id="heavyLicence"
+        label="Autorisation tranports en commun"
+      >
+        <label
+          for="heavyLicence"
+          class="radio"
+        >Oui
+          <input
+            id="status-enabled"
+            v-model="user.heavyLicence"
+            type="radio"
+            :value="true"
+          >
+        </label>
+        <label
+          for="status-disabled"
+          class="radio"
+        >Non
+          <input
+            id="status-disabled"
+            v-model="user.heavyLicence"
+            type="radio"
+            :value="false"
+          >
+        </label>
+      </ec-field>
       <ec-field label="Rôles">
         <role-rules v-model="user.roles" />
       </ec-field>
@@ -148,6 +176,9 @@ export default {
     ...mapGetters({
       campus: 'context/campus',
     }),
+    isDriver() {
+      return this.user.roles && !!this.user.roles.find(({ role }) => role === 'ROLE_DRIVER');
+    },
   },
   methods: {
     async edit(user) {

@@ -123,9 +123,10 @@ export const actions = {
       'luggage',
     ].join(',');
 
-    const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
-    const { data: shuttles } = await this.$api.shuttles(campus, '*').getShuttles(start, end);
+    const shuttleMask = 'id,label,status,start,end,campus,pattern,comments,stops,driver,car';
 
+    const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
+    const { data: shuttles } = await this.$api.shuttles(campus, shuttleMask).getShuttles(start, end);
 
     if (getters.rides.length === 0 || rides.length === 0) {
       commit('setRides', rides);

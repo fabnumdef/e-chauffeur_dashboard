@@ -19,7 +19,7 @@
         :on-event-click="onClickEvent"
         :min-event-width="75"
         :min-split-width="MIN_SPLIT_WIDTH"
-        @click-and-release="onClickAndRelease"
+        @click-and-release="openTypeModal"
         @view-change="viewChange"
         @event-mouse-enter="eventMouseEnter"
         @event-mouse-leave="eventMouseLeave"
@@ -124,7 +124,6 @@
                 v-show="eventHovered[event.index]"
                 class="event-hover"
               >
-                <!-- @todo add dynamic stops display -->
                 <div v-if="event.shuttle.stops && event.shuttle.stops.length > 0">
                   {{ event.shuttle.stops[0].label }}
                   <fa-icon icon="arrow-right" />
@@ -137,14 +136,12 @@
                 <div v-if="event.shuttle.car && event.shuttle.car.model">
                   {{ event.shuttle.car.model.label }} - {{ event.shuttle.car.id }}
                 </div>
-                <!-- @todo add dynamic passengers count here -->
                 <div v-if="event.shuttle.phone">
                   {{ event.shuttle.phone }}
                 </div>
               </div>
             </div>
             <div class="overflow-hidden">
-              <!-- @todo add dynamic stops display -->
               <div class="event-title">
                 Navette {{ event.shuttle.label }}
               </div>
@@ -156,7 +153,6 @@
               <div v-if="event.shuttle.car && event.shuttle.car.model">
                 {{ event.shuttle.car.model.label }} - {{ event.shuttle.car.id }}
               </div>
-              <!-- @todo add dynamic passengers count here -->
             </div>
           </div>
         </template>
@@ -172,6 +168,11 @@
           </div>
         </template>
       </vue-cal>
+      <type-modal
+        :active="modalOpen.type"
+        @choose-type="newDisplacement"
+        @toggle-modal="closeTypeModal"
+      />
       <ride-modal
         :current-ride="ride"
         :campus="campus"
@@ -189,7 +190,6 @@
 </template>
 
 <script>
-
 import { DateTime, Interval } from 'luxon';
 
 import { mapGetters } from 'vuex';
@@ -197,6 +197,7 @@ import cloneDeep from 'lodash.clonedeep';
 import rideModal from '~/components/modals/planificator/ride.vue';
 import shuttleModal from '~/components/modals/planificator/shuttle.vue';
 import driverHeader from './driver-header.vue';
+import typeModal from '~/components/modals/planificator/choose-type.vue';
 import dateRelatedMixin from '~/components/planificator/mixins/date-related';
 import toggleModalsMixin from '~/components/planificator/mixins/toggle-modals';
 import shuttleHandlerMixin from '~/components/planificator/mixins/shuttle-handler';
@@ -210,6 +211,7 @@ export default {
     rideModal,
     shuttleModal,
     driverHeader,
+    typeModal,
   },
   mixins: [
     dateRelatedMixin(),
@@ -241,7 +243,7 @@ export default {
     }),
     splitDrivers() {
       return this.drivers.map((driver) => ({
-        class: 'driver-col',
+        class: driver.heavyLicence ? 'driver-col heavy-weight' : 'driver-col',
         label: driver.name,
         driver,
       }));
@@ -302,19 +304,19 @@ export default {
   },
 
   methods: {
-    onClickAndRelease(event) {
-      if (event.split > 1) {
+    newDisplacement(type) {
+      if (this.event && this.event.split > 1) {
         const {
           id, name, firstname, lastname,
-        } = this.drivers[event.split - 1];
+        } = this.drivers[this.event.split - 1];
 
         const driverInfos = {
           id, name, firstname, lastname,
         };
-        const start = this.$vuecal(this.step).getDateTimeFloorFromVueCal(event.start);
-        const end = this.$vuecal(this.step).getDateTimeCeilFromVueCal(event.end);
+        const start = this.$vuecal(this.step).getDateTimeFloorFromVueCal(this.event.start);
+        const end = this.$vuecal(this.step).getDateTimeCeilFromVueCal(this.event.end);
 
-        if (this.isShuttle(event)) {
+        if (type === 'shuttle') {
           this.newShuttle(start, end, driverInfos);
         } else {
           this.newRide(start, end, driverInfos);
@@ -445,7 +447,7 @@ export default {
           overflow: hidden;
           text-align: left;
           padding: .3em 1em;
-          event-title {
+          .event-title {
             font-size: 1em;
             text-transform: capitalize;
             font-weight: 700;
@@ -456,7 +458,7 @@ export default {
         border-color: $white;
       }
       &__event.not-working {
-        background-color: $gray-20;/* IE 10+ */
+        background-color: $gray;/* IE 10+ */
         color: #999;
         display: flex;
         justify-content: center;
@@ -464,6 +466,7 @@ export default {
         cursor: default;
         width: calc(100% + 15px) !important;
         opacity: 1;
+        z-index: 10;
       }
       &__event.not-working &__event-time {
         align-items: center;
@@ -472,6 +475,10 @@ export default {
     .driver-col {
       border-right: 1px solid black;
       overflow: visible;
+
+    }
+    .heavy-weight {
+      background-color: rgba($blue-ultra-light, .2);
     }
     .hours {
       font-size: 15px;

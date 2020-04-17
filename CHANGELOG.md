@@ -4,6 +4,9 @@
 * Added crud filter
 * Added root dashboard for multi campus
 * Added capacity to car model crud
+* Added crud for patterns
+* Added shuttle licence information to drivers in planning
+* Added shuttle creation and update to planificator
 ### Fix
 ## Version 1.4.6
 ### Features

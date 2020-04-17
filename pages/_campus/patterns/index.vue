@@ -26,7 +26,7 @@
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
       :action-edit="campusLink('patterns-id-edit')"
-      action-remove-confirm="Voulez vous vraiment supprimer ce trajet ?"
+      action-remove-confirm="Voulez-vous vraiment supprimer ce trajet ?"
       @action-remove="deletePattern"
     >
       <template
@@ -34,7 +34,6 @@
         #actions="{ row }"
       >
         <nuxt-link
-          v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
           :to="campusLink('patterns-id-edit', {
             params: { id: row.id },
           })"
@@ -46,7 +45,6 @@
           <span>Modifier</span>
         </nuxt-link>
         <button
-          v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
           class="button is-danger"
           @click="deletePattern(row)"
         >
@@ -127,7 +125,7 @@ export default {
     async deletePattern({ id }) {
       if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce modèle de boucle ?')) {
         await this.apiCall.deletePattern(id);
-        this.updateList();
+        await this.updateList();
       }
     },
     async updateList() {
