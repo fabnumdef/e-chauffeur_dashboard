@@ -3,6 +3,27 @@
 import { DateTime } from 'luxon';
 import { CREATED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
+const rideMask = [
+  'id',
+  'start',
+  'end',
+  'departure(id,label)',
+  'arrival(id,label)',
+  'car(id,label,model(id,label))',
+  'driver(id,name,firstname,lastname)',
+  'owner(id)',
+  'phone',
+  'status',
+  'userComments',
+  'comments',
+  'passengersCount',
+  'category(id,label)',
+  'luggage',
+].join(',');
+
+const shuttleMask = 'id,label,status,start,end,campus,pattern,comments,stops,driver,car';
+
+
 export const state = () => ({
   connectedDrivers: [],
   drivers: [],
@@ -104,40 +125,21 @@ export const actions = {
       throw new Error('Drivers fetching failed');
     }
   },
-  async setDisplacements({ commit, getters }, { campus, start, end }) {
-    const EDITABLE_FIELDS = [
-      'id',
-      'start',
-      'end',
-      'departure(id,label)',
-      'arrival(id,label)',
-      'car(id,label,model(id,label))',
-      'driver(id,name,firstname,lastname)',
-      'owner(id)',
-      'phone',
-      'status',
-      'userComments',
-      'comments',
-      'passengersCount',
-      'category(id,label)',
-      'luggage',
-    ].join(',');
+  async setDisplacements({ commit }, { campus, start, end }) {
+    const { data: rides } = await this.$api.rides(campus, rideMask)
+      .getRides(start, end);
+    const { data: shuttles } = await this.$api.shuttles(campus, shuttleMask)
+      .getShuttles(start, end);
+    commit('setShuttles', shuttles);
+    commit('setRides', rides);
+  },
 
-    const shuttleMask = 'id,label,status,start,end,campus,pattern,comments,stops,driver,car';
-
-    const { data: rides } = await this.$api.rides(campus, EDITABLE_FIELDS).getRides(start, end);
-    const { data: shuttles } = await this.$api.shuttles(campus, shuttleMask).getShuttles(start, end);
-
-    if (getters.rides.length === 0 || rides.length === 0) {
-      commit('setRides', rides);
-    } else {
-      rides.forEach((r) => commit('pushRide', r));
-    }
-
-    if (getters.shuttles.length === 0 || shuttles.length === 0) {
-      commit('setShuttles', shuttles);
-    } else {
-      shuttles.forEach((s) => commit('pushShuttle', s));
-    }
+  async appendDisplacements({ commit }, { campus, start, end }) {
+    const { data: rides } = await this.$api.rides(campus, rideMask)
+      .getRides(start, end);
+    const { data: shuttles } = await this.$api.shuttles(campus, shuttleMask)
+      .getShuttles(start, end);
+    shuttles.forEach((s) => commit('pushShuttle', s));
+    rides.forEach((r) => commit('pushRide', r));
   },
 };

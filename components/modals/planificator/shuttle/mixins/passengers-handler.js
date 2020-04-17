@@ -1,9 +1,19 @@
+function resetState() {
+  return {
+    departure: null,
+    arrival: null,
+    email: '',
+    phone: '',
+  };
+}
+
 export default () => ({
   data() {
     return {
       departure: null,
       arrival: null,
       email: '',
+      phone: '',
     };
   },
   methods: {
@@ -15,15 +25,15 @@ export default () => ({
             skip = true;
           }
           if (!skip && index >= this.departure.index && index < this.arrival.index) {
-            stop.passengers.push({
-              email: this.email,
-            });
+            const passenger = { email: this.email };
+            if (this.phone) {
+              passenger.phone = this.phone;
+            }
+            stop.passengers.push(passenger);
           }
           return stop;
         });
-        this.departure = null;
-        this.arrival = null;
-        this.email = '';
+        resetState();
         this.$emit('update-stops', this.stops);
       } else {
         this.$toast.error('Veuillez completer l\'email, l\'arret de depart et l\'arret d\'arrivee');

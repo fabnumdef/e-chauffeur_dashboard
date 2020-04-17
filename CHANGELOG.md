@@ -8,6 +8,7 @@
 * Added shuttle licence information to drivers in planning
 * Added shuttle creation and update to planificator
 ### Fix
+* Fixed setRides to avoid keeping wrong campuses rides in rides list
 ## Version 1.4.6
 ### Features
 * Added loading animation and success message while creating or editing CRUD

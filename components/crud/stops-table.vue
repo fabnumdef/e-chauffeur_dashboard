@@ -78,11 +78,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
-  },
-  data() {
-    return {
-      selectedStop: null,
-    };
+    selectedStop: {
+      type: Object,
+      default: null,
+    },
   },
   computed: {
     columnKeys() {
@@ -90,20 +89,6 @@ export default {
     },
   },
   methods: {
-    addStop() {
-      const alreadyExists = this.pattern.stops.findIndex(({ label }) => label === this.selectedStop.label);
-      if (
-        alreadyExists === -1
-        || (
-          alreadyExists !== -1
-        && window
-        && window.confirm
-        && window.confirm('Attention, cet arrêt est déjà listé, êtes-vous sûr de vouloir l\'ajouter ?'))
-      ) {
-        this.pattern.stops.push(this.selectedStop);
-        this.selectedStop = null;
-      }
-    },
     stopUp({ id }) {
       const { stops } = this.pattern;
       const stopIndex = stops.findIndex((stop) => stop.id === id);
