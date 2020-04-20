@@ -7,7 +7,7 @@ export default function ({ app }) {
     return oldError.call(app.$toast, message, {
       action: [
         messagesArray.length ? {
-          text: '?',
+          text: '…',
           onClick: (_, { remove }) => {
             remove();
             app.$toast.error(messagesArray);

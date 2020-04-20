@@ -33,7 +33,7 @@
     </ec-field>
     <ec-button
       type="submit"
-      primary
+      is-primary
       :loading="loading"
       icon-right="arrow-right"
     >

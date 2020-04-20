@@ -56,7 +56,7 @@
     <ec-button
       type="submit"
       class="button"
-      primary
+      is-primary
       :loading="loading"
       icon-right="save"
     >
