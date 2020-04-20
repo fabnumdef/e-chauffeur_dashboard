@@ -143,6 +143,7 @@ module.exports = {
           'faCheckCircle',
           'faTimesCircle',
           'faFileImport',
+          'faSearch',
         ],
       },
     ],
