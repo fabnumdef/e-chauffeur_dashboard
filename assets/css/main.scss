@@ -12,30 +12,17 @@
 @import "~bulma/sass/elements/content.sass";
 @import "elements/form";
 @import "~bulma/sass/elements/icon.sass";
-//@import "~bulma/sass/elements/image.sass";
-//@import "~bulma/sass/elements/notification.sass";
-//@import "~bulma/sass/elements/progress.sass";
 
 @import "elements/table";
 @import "~bulma/sass/elements/tag.sass";
 @import "elements/title";
-//@import "~bulma/sass/elements/other.sass";
 
-//@import "~bulma/sass/components/breadcrumb.sass";
-//@import "~bulma/sass/components/card.sass";
-//@import "~bulma/sass/components/level.sass";
-//@import "~bulma/sass/components/media.sass";
-//@import "~bulma/sass/components/message.sass";
+@import "~bulma/sass/components/dropdown.sass";
 @import "~bulma/sass/components/pagination.sass";
-//@import "~bulma/sass/components/panel.sass";
 @import "~bulma/sass/components/tabs.sass";
 @import "components/tabs";
 
 @import "~bulma/sass/grid/columns.sass";
-//@import "~bulma/sass/grid/tiles.sass";
-
-//@import "~bulma/sass/layout/hero.sass";
-//@import "~bulma/sass/layout/section.sass";
 
 @import "components/vue-multiselect.scss";
 @import '~vue2-datepicker/scss/index';
