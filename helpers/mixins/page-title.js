@@ -1,9 +1,21 @@
-export default (title = null, subtitle = null) => ({
+import { mapMutations } from 'vuex';
+
+export default (defaultTitle = null, defaultSubtitle = null) => ({
   meta: {
-    title,
-    subtitle,
+    title: defaultTitle,
+    subtitle: defaultSubtitle,
   },
-  head: {
-    title,
+  head() {
+    return {
+      title: defaultTitle,
+    };
+  },
+  methods: {
+    ...mapMutations({
+      setMeta: 'context/setMeta',
+    }),
+    setTitle(title, subtitle) {
+      this.setMeta({ title, subtitle });
+    },
   },
 });

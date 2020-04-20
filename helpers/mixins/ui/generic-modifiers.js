@@ -24,10 +24,17 @@ export const STATES = [
 
 export const TEXT = 'text';
 
+function capitalize(curr) {
+  return `${curr[0].toUpperCase()}${curr.substring(1)}`;
+}
+
 export default (key, ...classModifiers) => ({
   props: {
     ...classModifiers.reduce(
-      (acc, curr) => Object.assign(acc, { [curr]: { type: Boolean, default: false } }),
+      (acc, curr) => Object.assign(
+        acc,
+        { [`is${capitalize(curr)}`]: { type: Boolean, default: false } },
+      ),
       {},
     ),
   },
@@ -35,7 +42,7 @@ export default (key, ...classModifiers) => ({
     [key]() {
       return {
         ...classModifiers.reduce(
-          (acc, curr) => Object.assign(acc, { [`is-${curr}`]: !!this[curr] }),
+          (acc, curr) => Object.assign(acc, { [`is-${curr}`]: !!this[`is${capitalize(curr)}`] }),
           {},
         ),
       };

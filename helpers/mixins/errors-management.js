@@ -34,7 +34,7 @@ export default () => ({
         this.$toast.error([
           ...customMessages,
           [status ? `Erreur ${status}` : undefined, message].join(' : '),
-          ...Object.values(errors || {}).map((e) => e.message),
+          ...Array.isArray(errors) ? errors : Object.values(errors || {}).map((e) => e.message),
         ]);
       }
     },
