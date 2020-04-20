@@ -23,13 +23,11 @@
   </div>
 </template>
 <script>
-import ecField from '~/components/form/field.vue';
 import ecSwitch from '~/components/form/switch.vue';
 import ecSwitchOptions from '~/components/form/switch-options.vue';
 
 export default {
   components: {
-    ecField,
     ecSwitch,
     ecSwitchOptions,
   },

@@ -64,14 +64,12 @@
 <script>
 import generateCsvLink from '~/helpers/generate-csv-link';
 import vueModal from '~/components/modals/default.vue';
-import ecField from '~/components/form/field.vue';
 
 const ROWS_PER_QUERY = 1000;
 
 export default {
   components: {
     vueModal,
-    ecField,
   },
   props: {
     pagination: {

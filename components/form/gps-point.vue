@@ -32,12 +32,7 @@
 </template>
 
 <script>
-import ecField from './field.vue';
-
 export default {
-  components: {
-    ecField,
-  },
   props: {
     value: {
       type: Object,

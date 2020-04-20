@@ -110,13 +110,11 @@
 
 <script>
 import ecModal from '~/components/modals/default.vue';
-import ecField from '~/components/form/field.vue';
 import recurringOption from '~/components/form/recurring-option.vue';
 
 export default {
   components: {
     ecModal,
-    ecField,
     recurringOption,
   },
   props: {

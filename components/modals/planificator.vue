@@ -298,7 +298,6 @@ import {
   CANCEL_CUSTOMER_OVERLOAD,
   CANCEL_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
-import ecField from '~/components/form/field.vue';
 import searchPoi from '~/components/form/search-poi.vue';
 import searchCategory from '~/components/form/search-campus-category.vue';
 import searchAvailableCar from '~/components/form/search-available-car.vue';
@@ -338,7 +337,6 @@ const actions = {
 export default {
   components: {
     searchPoi,
-    ecField,
     searchAvailableCar,
     searchAvailableDriver,
     searchCategory,
