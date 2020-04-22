@@ -15,7 +15,7 @@
             v-if="capacity"
             :class="passengersCountClass(stop)"
           >{{ stop.passengers.length }}/{{ capacity }}<fa-icon icon="user" /></span>
-          <span v-else>Capacite du vehicule non definie</span>
+          <span v-else>Capacité du vehicule non définie</span>
           <fa-icon
             v-if="toDisplay[index]"
             icon="angle-up"

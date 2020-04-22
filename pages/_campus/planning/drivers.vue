@@ -188,7 +188,7 @@ export default {
     },
     async removeTimeSlot({ id }) {
       const api = this.$api.timeSlot(TIMESLOT_DATA, this.campusId);
-      if (window && window.confirm('Voulez vous vraiment supprimer cette plage horaire ?')) {
+      if (window && window.confirm('Voulez-vous vraiment supprimer cette plage horaire ?')) {
         await api.deleteTimeSlot(id);
         const i = this.events.data.findIndex((e) => e.id === id);
         this.events.data.splice(i, 1);

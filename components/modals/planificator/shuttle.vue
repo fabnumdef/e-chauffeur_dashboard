@@ -69,7 +69,7 @@
       <ec-field
         class="column"
         field-id="car"
-        label="Vehicule"
+        label="Véhicule"
       >
         <search-available-car
           v-model="shuttle.car"
