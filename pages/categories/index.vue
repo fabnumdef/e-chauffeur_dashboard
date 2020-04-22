@@ -1,7 +1,7 @@
 <template>
   <crud-list
     :columns="{id: 'ID', label: 'Label'}"
-    :data="filteredData"
+    :data="data"
     :pagination="pagination"
   >
     <template #intro>
@@ -63,7 +63,6 @@
 
 <script>
 import crudList from '~/components/crud/list.vue';
-import handleFilters from '~/components/crud/mixins/handle-filters';
 import updateListMixin from '~/helpers/mixins/crud/update-list';
 import searchFilterMixin from '~/helpers/mixins/crud/search-filter';
 import deleteInListMixin from '~/helpers/mixins/crud/delete-in-list';
@@ -80,10 +79,9 @@ export default {
   },
   mixins: [
     titleMixin('Catégories'),
-    handleFilters(),
     searchFilterMixin(),
     updateListMixin(CATEGORIES, { mask: DEFAULT_MASK }),
-    deleteInListMixin(CATEGORIES),
+    deleteInListMixin(CATEGORIES, { confirmation: 'Voulez vous vraiment supprimer cette catégorie ?' }),
     importCSVMixin(CATEGORIES),
     exportCSVMixin(CATEGORIES, { mask: DEFAULT_MASK }),
   ],
