@@ -11,7 +11,7 @@ export default () => ({
       await this.$router.push({
         name: this.$route.name,
         params: this.$route.params,
-        query: { ...this.$route.query, search: val },
+        query: { ...this.$route.query, search: val, offset: undefined },
       });
     },
   },

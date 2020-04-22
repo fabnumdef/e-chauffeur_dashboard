@@ -1,4 +1,4 @@
-export default (queryName, { confirmation = 'Voulez vous vraiment supprimer cette catégorie ?' } = {}) => ({
+export default (queryName, { confirmation = 'Voulez vous vraiment supprimer cette donnée ?' } = {}) => ({
   methods: {
     async deleteRow({ id }) {
       if (window && window.confirm(confirmation)) {
