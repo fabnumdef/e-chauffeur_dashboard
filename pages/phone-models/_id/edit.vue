@@ -1,97 +1,63 @@
 <template>
-  <main>
-    <header>
-      <h1
-        v-if="id"
-        class="title"
-      >
-        Modèle de téléphone <em class="is-size-6">#{{ phoneModel.id }}</em>
-      </h1>
-      <h1
-        v-else
-        class="title"
-      >
-        Modèle de téléphone
-      </h1>
-      <h2
-        v-if="id"
-        class="subtitle"
-      >
-        Modification
-      </h2>
-      <h2
-        v-else
-        class="subtitle"
-      >
-        Création
-      </h2>
-    </header>
-    <form
-      class="box"
-      @submit.prevent="edit(phoneModel)"
+  <form
+    class="box"
+    @submit.prevent="edit(data, $event)"
+  >
+    <ec-field
+      label="ID"
+      field-id="id"
+      :error-message="getErrorMessage('id')"
     >
-      <ec-field
-        label="ID"
-        field-id="id"
+      <input
+        id="id"
+        v-model.trim="data.id"
+        :disabled="!!id"
+        class="input"
+        :class="getErrorClass('id')"
       >
-        <input
-          id="id"
-          v-model.trim="phoneModel.id"
-          :disabled="!!id"
-          type="text"
-          class="input"
-        >
-      </ec-field>
-      <ec-field
-        label="Label"
-        field-id="label"
-      >
-        <input
-          id="label"
-          v-model.trim="phoneModel.label"
-          type="text"
-          class="input"
-        >
-      </ec-field>
-      <button
-        v-if="id"
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
-        </span>
-        <span>Sauvegarder</span>
-      </button>
+    </ec-field>
 
-      <button
-        v-else
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
+    <ec-field
+      label="Label"
+      field-id="label"
+      :error-message="getErrorMessage('label')"
+    >
+      <input
+        id="label"
+        v-model.trim="data.label"
+        class="input"
+        :class="getErrorClass('label')"
       >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
-        </span>
-        <span>Créer</span>
-      </button>
-    </form>
-  </main>
+    </ec-field>
+    <save-button
+      :loading="loading"
+      :is-new="!id"
+      has-alt
+    />
+  </form>
 </template>
 
 <script>
 import toggleLoading from '~/helpers/mixins/toggle-loading';
-
-const EDITABLE_FIELDS = [
-  'id',
-  'label',
-];
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import titleMixin from '~/helpers/mixins/page-title';
+import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
 
 export default {
-  mixins: [toggleLoading()],
+  components: {
+    saveButton,
+  },
+  mixins: [
+    toggleLoading(),
+    titleMixin('Modèle de téléphone', 'Création'),
+    errorsManagementMixin(),
+    resetableMixin(function reset() {
+      return {
+        data: { ...this.phoneModel },
+      };
+    }),
+  ],
   props: {
     phoneModel: {
       type: Object,
@@ -99,35 +65,38 @@ export default {
     },
   },
   data() {
-    return {
-      id: this.phoneModel.id,
-    };
+    const { label, id } = this.phoneModel;
+    this.setTitle(id ? `Modèle de téléphone #${id}: ${label}` : 'Modèle de téléphone', id ? 'Édition' : 'Création');
+    return { id };
   },
-
   methods: {
-    async edit(phoneModel) {
-      let data = {};
-      try {
-        this.toggleLoading(true);
+    async edit(phoneModel, { submitter }) {
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        const ApiPhoneModels = this.$api.query('phoneModels').setMask('id,label');
+        let data = {};
         if (this.id) {
-          ({ data } = (await this.$api.phoneModels.patchPhoneModel(
-            phoneModel.id,
-            phoneModel,
-            EDITABLE_FIELDS.join(','),
-          )));
+          ({ data } = (await ApiPhoneModels.edit(phoneModel.id, phoneModel)));
         } else {
-          ({ data } = (await this.$api.phoneModels.postPhoneModel(phoneModel, EDITABLE_FIELDS.join(','))));
+          ({ data } = (await ApiPhoneModels.create(phoneModel)));
         }
-
-        this.$toast.success('Donnée enregistrée avec succès');
-        this.$router.push({
-          name: 'phone-models-id-edit',
-          params: { id: data.id },
-        });
-      } catch {
-        this.$toast.error('Une erreur est survenue, merci de vérifier les champs.');
-      }
-      this.toggleLoading(false);
+        this.$toast.success('Modèle de véhicule enregistrée avec succès');
+        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
+          case NEXT_ACTION_NEW:
+            this.reset();
+            return this.$router.push({
+              name: 'phone-models-new',
+            });
+          case NEXT_ACTION_LIST:
+            return this.$router.push({
+              name: 'phone-models',
+            });
+          default:
+            return this.$router.push({
+              name: 'phone-models-id-edit',
+              params: { id: data.id },
+            });
+        }
+      }));
     },
   },
 };
