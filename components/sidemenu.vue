@@ -45,7 +45,7 @@
         </nuxt-link>
       </li>
       <li v-if="hasCampus">
-        <nuxt-link :to="campusLink('patterns')">
+        <nuxt-link :to="campusLink('shuttle-factories')">
           Trajets de navette
         </nuxt-link>
       </li>

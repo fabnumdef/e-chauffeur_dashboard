@@ -89,31 +89,14 @@
       </ec-field>
       <ec-field
         v-if="isDriver"
-        id="heavyLicence"
-        label="Autorisation tranports en commun"
+        id="licences"
+        label="Permis"
       >
-        <label
-          for="heavyLicence"
-          class="radio"
-        >Oui
-          <input
-            id="status-enabled"
-            v-model="user.heavyLicence"
-            type="radio"
-            :value="true"
-          >
-        </label>
-        <label
-          for="status-disabled"
-          class="radio"
-        >Non
-          <input
-            id="status-disabled"
-            v-model="user.heavyLicence"
-            type="radio"
-            :value="false"
-          >
-        </label>
+        <vue-multiselect
+          v-model="user.licences"
+          multiple
+          :options="['B', 'C', 'D']"
+        ></vue-multiselect>
       </ec-field>
       <ec-field label="Rôles">
         <role-rules v-model="user.roles" />

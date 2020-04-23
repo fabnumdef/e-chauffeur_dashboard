@@ -53,7 +53,7 @@ const EDITABLE_FIELDS = [
   'passengersCount',
   'category(id,label)',
   'luggage',
-  'availabilities(*)',
+  'availabilities',
 ].join(',');
 
 export default {
@@ -65,7 +65,7 @@ export default {
     const end = DateTime.local().endOf('days').toJSDate();
     const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
     const { data: drivers } = await ridesApi.getAvailableDrivers(
-      '*',
+      'id,name,availabilities,firstname,lastname,licences',
       start,
       end,
     );
@@ -95,7 +95,7 @@ export default {
       const end = DateTime.fromJSDate(obj.endDate).endOf('days').toJSDate();
       const ridesApi = this.$api.rides(this.campus, EDITABLE_FIELDS);
       const { data: drivers } = await ridesApi.getAvailableDrivers(
-        '*',
+        'id,name,availabilities,firstname,lastname,licences',
         start,
         end,
       );

@@ -3,7 +3,7 @@
     <h3 class="label">
       Liste des arrêts
     </h3>
-    <p v-if="!pattern.stops || pattern.stops.length === 0">
+    <p v-if="!shuttleFactory.stops || shuttleFactory.stops.length === 0">
       Pas d'arrêts paramétrés
     </p>
     <div
@@ -21,10 +21,10 @@
       </div>
       <div class="body">
         <vue-draggable
-          v-model="pattern.stops"
+          v-model="shuttleFactory.stops"
         >
           <div
-            v-for="(stop, index) in pattern.stops"
+            v-for="(stop, index) in shuttleFactory.stops"
             :key="index"
             :class="index % 2 === 0 ? 'row' : 'row-darker'"
           >
@@ -74,7 +74,7 @@
 <script>
 export default {
   props: {
-    pattern: {
+    shuttleFactory: {
       type: Object,
       default: () => ({}),
     },
@@ -90,27 +90,27 @@ export default {
   },
   methods: {
     stopUp({ id }) {
-      const { stops } = this.pattern;
+      const { stops } = this.shuttleFactory;
       const stopIndex = stops.findIndex((stop) => stop.id === id);
       if (stopIndex > 0) {
         const a = stops[stopIndex];
         stops[stopIndex] = stops[stopIndex - 1];
         stops[stopIndex - 1] = a;
-        this.pattern.stops = [...stops];
+        this.shuttleFactory.stops = [...stops];
       }
     },
     stopDown({ id }) {
-      const { stops } = this.pattern;
+      const { stops } = this.shuttleFactory;
       const stopIndex = stops.findIndex((stop) => stop.id === id);
       if (stopIndex < stops.length - 1) {
         const a = stops[stopIndex];
         stops[stopIndex] = stops[stopIndex + 1];
         stops[stopIndex + 1] = a;
-        this.pattern.stops = [...stops];
+        this.shuttleFactory.stops = [...stops];
       }
     },
     deleteStop(i) {
-      this.pattern.stops = this.pattern.stops.filter((_, index) => index !== i);
+      this.shuttleFactory.stops = this.shuttleFactory.stops.filter((_, index) => index !== i);
     },
   },
 };

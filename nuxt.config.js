@@ -50,7 +50,7 @@ module.exports = {
           phoneModels: 'phone-models',
           ratings: 'ratings',
           campusUsers: 'campus-users',
-          patterns: 'patterns',
+          shuttleFactories: 'shuttle-factories',
           shuttles: 'shuttles',
         },
         withAuth: true,

@@ -2,7 +2,7 @@
   <main>
     <crud-header
       title="Trajets de navette"
-      :to-create-new="campusLink('patterns-new')"
+      :to-create-new="campusLink('shuttle-factories-new')"
       :can-create-new="$auth.isRegulator(campus.id) || $auth.isSuperAdmin()"
       :pagination="pagination"
     />
@@ -25,16 +25,16 @@
       :pagination-offset="pagination.offset"
       :pagination-total="pagination.total"
       :pagination-per-page="pagination.limit"
-      :action-edit="campusLink('patterns-id-edit')"
+      :action-edit="campusLink('shuttle-factories-id-edit')"
       action-remove-confirm="Voulez-vous vraiment supprimer ce trajet ?"
-      @action-remove="deletePattern"
+      @action-remove="deleteShuttleFactory"
     >
       <template
         v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
         #actions="{ row }"
       >
         <nuxt-link
-          :to="campusLink('patterns-id-edit', {
+          :to="campusLink('shuttle-factories-id-edit', {
             params: { id: row.id },
           })"
           class="button is-primary"
@@ -46,7 +46,7 @@
         </nuxt-link>
         <button
           class="button is-danger"
-          @click="deletePattern(row)"
+          @click="deleteShuttleFactory(row)"
         >
           <span class="icon is-small">
             <fa-icon :icon="['fas', 'trash']" />
@@ -86,8 +86,8 @@ export default {
     const limit = parseInt(query.limit, 10) || 30;
 
     const { data, pagination } = await $api
-      .patterns(params.campus, Object.keys(columns).join(','))
-      .getPatterns({ offset, limit });
+      .shuttleFactories(params.campus, Object.keys(columns).join(','))
+      .getShuttleFactories({ offset, limit });
 
     return {
       data,
@@ -100,7 +100,7 @@ export default {
       campus: 'context/campus',
     }),
     apiCall() {
-      return this.$api.patterns(this.campus, Object.keys(columns).join(','));
+      return this.$api.shuttleFactories(this.campus, Object.keys(columns).join(','));
     },
     dataToDisplay() {
       return this.data.map((item) => {
@@ -122,9 +122,9 @@ export default {
     },
   },
   methods: {
-    async deletePattern({ id }) {
+    async deleteShuttleFactory({ id }) {
       if (window && window.confirm && window.confirm('Voulez-vous vraiment supprimer ce modèle de boucle ?')) {
-        await this.apiCall.deletePattern(id);
+        await this.apiCall.deleteShuttleFactory(id);
         await this.updateList();
       }
     },
@@ -132,7 +132,7 @@ export default {
       const offset = parseInt(this.$route.query.offset, 10) || 0;
       const limit = parseInt(this.$route.query.limit, 10) || 30;
 
-      const { data, pagination } = await this.apiCall.getPatterns({ offset, limit });
+      const { data, pagination } = await this.apiCall.getShuttleFactories({ offset, limit });
       this.data = data;
       this.pagination = pagination;
     },

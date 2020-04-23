@@ -44,7 +44,7 @@
             >
               <span>{{ driver.firstname }} {{ driver.lastname }}</span>
               <fa-icon
-                v-if="driver.heavyLicence"
+                v-if="driver.licences && driver.licences.includes('D')"
                 class="bus-icon"
                 icon="bus"
               />
@@ -75,7 +75,7 @@ import { DateTime } from 'luxon';
 import planningModal from '~/components/modals/planning/drivers.vue';
 import planningCalendar from '~/components/planning/drivers/calendar.vue';
 
-const DRIVER_DATA = 'id,firstname,lastname,heavyLicence';
+const DRIVER_DATA = 'id,firstname,lastname,licences';
 const TIMESLOT_DATA = `id,start,end,drivers(${DRIVER_DATA}),recurrence(enabled,frequency)`;
 const newTimeSlot = () => ({
   start: null,

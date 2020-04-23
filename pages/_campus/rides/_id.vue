@@ -39,7 +39,23 @@ import {
   WAITING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
-const mask = '*';
+const mask = [
+  'id',
+  'start',
+  'end',
+  'departure(id,label)',
+  'arrival(id,label)',
+  'car(id,label,model(id,label))',
+  'driver(id,name,firstname,lastname)',
+  'owner(id)',
+  'phone',
+  'status',
+  'userComments',
+  'comments',
+  'passengersCount',
+  'category(id,label)',
+  'luggage',
+].join(',');
 const formatDate = (ISODate) => DateTime.fromISO(ISODate).toFormat('dd LLL yyyy à HH:mm', { locale: 'fr' });
 
 export default {

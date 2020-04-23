@@ -2,19 +2,18 @@
   <div id="stop-manager">
     <div>
       <template
-        v-for="(stop, index) in stops"
+        v-for="(interStop, index) in interStops"
       >
         <div
-          v-if="nextStop(index)"
           :key="index"
           class="stop-dropdown"
           @click="displayDetails(index)"
         >
-          <span>{{ stop.label }}<fa-icon icon="arrow-right" />{{ nextStop(index).label }}</span>
+          <span>{{ interStop.departure.label }}<fa-icon icon="arrow-right" />{{ interStop.arrival.label }}</span>
           <span
             v-if="capacity"
-            :class="passengersCountClass(stop)"
-          >{{ stop.passengers.length }}/{{ capacity }}<fa-icon icon="user" /></span>
+            :class="passengersCountClass(interStop.passengers)"
+          >{{ interStop.passengers.length }}/{{ capacity }}<fa-icon icon="user" /></span>
           <span v-else>Capacité du vehicule non définie</span>
           <fa-icon
             v-if="toDisplay[index]"
@@ -26,13 +25,13 @@
           />
         </div>
         <div
-          v-if="toDisplay[index] && stop.passengers.length > 0"
+          v-if="toDisplay[index] && interStop.passengers.length > 0"
           :key="`stops-details--${index}`"
           class="stop-details"
         >
           <ul class="passengers-list">
             <li
-              v-for="(passenger, i) in stop.passengers"
+              v-for="(passenger, i) in interStop.passengers"
               :key="`passengers-list--${i}`"
               :class="{ hovered: (hover.stopIndex === index && hover.passengerIndex === i) ? 'hovered' : '' }"
               @mouseenter="setHover(index, i)"
@@ -98,7 +97,7 @@
         >
           <search-stop
             v-model="departure"
-            :pattern-id="patternId"
+            :shuttle-factory-id="shuttleFactoryId"
           />
         </ec-field>
 
@@ -109,7 +108,7 @@
         >
           <search-stop
             v-model="arrival"
-            :pattern-id="patternId"
+            :shuttle-factory-id="shuttleFactoryId"
           />
         </ec-field>
       </div>
@@ -146,11 +145,15 @@ export default {
       type: Array,
       default: () => [],
     },
+    parentPassengers: {
+      type: Array,
+      default: () => [],
+    },
     capacity: {
       type: Number,
       default: 0,
     },
-    patternId: {
+    shuttleFactoryId: {
       type: String,
       default: null,
     },
@@ -158,11 +161,15 @@ export default {
   data() {
     return {
       stops: [...this.parentStops],
+      passengers: [...this.parentPassengers],
     };
   },
   watch: {
     parentStops() {
       this.stops = [...this.parentStops];
+    },
+    parentPassengers() {
+      this.passengers = [...this.parentPassengers];
     },
   },
 };

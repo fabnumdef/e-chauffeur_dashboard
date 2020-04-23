@@ -12,14 +12,42 @@ export default () => ({
     isHovered(stopIndex, passengerIndex) {
       return this.hover.stopIndex === stopIndex && this.hover.passengerIndex === passengerIndex;
     },
+    interStops() {
+      return this.stops.reduce((acc, stop, index) => {
+        const departure = stop;
+        const arrival = this.nextStop(index);
+        const incomingPassengers = this.passengers.filter((passenger) => passenger.departure.id === departure.id);
+        if (index === 0) {
+          acc.push({ departure, arrival, passengers: incomingPassengers });
+        } else if (arrival) {
+          let previousPassengers = [];
+          if (acc[index - 1].passengers.length > 0) {
+            previousPassengers = acc[index - 1].passengers.filter((passenger) => passenger.arrival.id !== departure.id);
+          }
+          const passengers = [
+            ...previousPassengers,
+            ...incomingPassengers,
+          ];
+          acc.push({ departure, arrival, passengers });
+        }
+
+        return acc;
+      }, []);
+    },
   },
   methods: {
+    resetState() {
+      this.departure = null;
+      this.arrival = null;
+      this.email = '';
+      this.phone = '';
+    },
     setHover(stopIndex, passengerIndex) {
       this.hover.stopIndex = stopIndex;
       this.hover.passengerIndex = passengerIndex;
     },
-    passengersCountClass(stop) {
-      const diff = this.capacity - stop.passengers.length;
+    passengersCountClass(passengers) {
+      const diff = this.capacity - passengers.length;
       if (diff < 3 && diff > 0) {
         return 'warning';
       }

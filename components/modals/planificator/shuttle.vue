@@ -81,31 +81,23 @@
       </ec-field>
     </div>
 
-    <label for="pattern">Trajet</label>
-    <div class="select-pattern">
-      <search-pattern
-        id="pattern"
-        v-model="shuttle.pattern"
-        :disabled="shuttle.stops.length > 0"
+    <label for="shuttleFactory">Trajet</label>
+    <div class="select-shuttle-factory">
+      <search-shuttle-factory
+        id="shuttleFactory"
+        v-model="shuttle.shuttleFactory"
+        :disabled="shuttle.shuttleFactory.stops.length > 0"
       />
-      <button
-        v-if="shuttle.stops.length === 0"
-        class="button is-dark"
-        type="button"
-        @click="validatePattern"
-      >
-        Valider le trajet
-      </button>
     </div>
-
 
     <div class="columns">
       <stops-manager
-        v-if="shuttle.stops.length > 0"
-        :parent-stops="shuttle.stops"
+        v-if="shuttle.shuttleFactory.stops.length > 0"
+        :parent-stops="shuttle.shuttleFactory.stops"
+        :parent-passengers="shuttle.passengers"
         :capacity="capacity"
-        :pattern-id="shuttle.pattern.id"
-        @update-stops="updateStops"
+        :shuttle-factory-id="shuttle.shuttleFactory.id"
+        @update-passengers="updatePassengers"
       />
     </div>
 
@@ -136,14 +128,14 @@ import cloneDeep from 'lodash.clonedeep';
 
 import vueModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';
-import searchPattern from '~/components/form/search-pattern.vue';
+import searchShuttleFactory from '~/components/form/search-shuttle-factory.vue';
 import searchAvailableDriver from '~/components/form/search-available-driver.vue';
 import searchAvailableCar from '~/components/form/search-available-car.vue';
 import stopsManager from '~/components/modals/planificator/shuttle/stops-manager.vue';
 import stopsHandlerMixin from '~/components/modals/planificator/shuttle/mixins/stops-handler';
 import toggleModalMixin from '~/components/modals/planificator/shuttle/mixins/toggle-modal';
 
-const mask = 'id,label,status,start,end,campus,pattern,stops,comments,driver,car';
+const mask = 'id,label,status,start,end,campus,shuttleFactory,stops,comments,driver,car';
 
 export default {
   components: {
@@ -151,7 +143,7 @@ export default {
     ecField,
     searchAvailableDriver,
     searchAvailableCar,
-    searchPattern,
+    searchShuttleFactory,
     stopsManager,
   },
   mixins: [
@@ -166,7 +158,9 @@ export default {
     currentShuttle: {
       type: Object,
       default: () => ({
-        stops: [],
+        shuttleFactory: {
+          stops: [],
+        },
         passengers: [],
       }),
     },
@@ -195,6 +189,9 @@ export default {
     },
   },
   methods: {
+    updatePassengers(passengers) {
+      this.shuttle.passengers = passengers;
+    },
     async edit(data) {
       try {
         if (data.id) {
@@ -231,7 +228,7 @@ export default {
       width: 100%;
     }
   }
-  .select-pattern {
+  .select-shuttle-factory {
     display: flex;
     align-items: center;
     margin: .5em 0 2em;

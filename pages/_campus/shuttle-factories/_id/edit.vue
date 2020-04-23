@@ -2,15 +2,15 @@
   <main>
     <header>
       <h1 class="title">
-        Trajet <em v-if="pattern.id">{{ pattern.id }}</em>
+        Trajet <em v-if="shuttleFactory.id">{{ shuttleFactory.id }}</em>
       </h1>
       <h2 class="subtitle">
-        {{ pattern.id ? 'Modification' : 'Création' }}
+        {{ shuttleFactory.id ? 'Modification' : 'Création' }}
       </h2>
     </header>
     <form
       class="box"
-      @submit.prevent="edit(pattern)"
+      @submit.prevent="edit(shuttleFactory)"
     >
       <ec-field
         label="Label"
@@ -19,7 +19,7 @@
       >
         <input
           id="label"
-          v-model.trim="pattern.label"
+          v-model.trim="shuttleFactory.label"
           type="text"
           class="input"
         >
@@ -31,7 +31,7 @@
       >
         <search-category
           id="category"
-          v-model="pattern.category"
+          v-model="shuttleFactory.category"
         />
       </ec-field>
 
@@ -41,14 +41,14 @@
       >
         <input
           id="reachDuration"
-          v-model="pattern.reachDuration"
+          v-model="shuttleFactory.reachDuration"
           class="input"
           type="number"
         >
       </ec-field>
 
       <stops-table
-        :pattern="pattern"
+        :shuttle-factory="shuttleFactory"
         :selected-stop="selectedStop"
       />
 
@@ -78,13 +78,13 @@
       >
         <textarea
           id="comments"
-          v-model.trim="pattern.comments"
+          v-model.trim="shuttleFactory.comments"
           class="textarea"
         />
       </ec-field>
 
       <button
-        v-if="pattern.id"
+        v-if="shuttleFactory.id"
         type="submit"
         class="button is-primary"
         :class="{'is-loading': loading}"
@@ -133,7 +133,7 @@ export default {
     toggleLoadingMixin,
   ],
   props: {
-    pattern: {
+    shuttleFactory: {
       type: Object,
       default: () => ({
         stops: [],
@@ -151,12 +151,12 @@ export default {
     }),
     apiCall() {
       const mask = ['id', ...EDITABLE_FIELDS].join(',');
-      return this.$api.patterns(this.campus, mask);
+      return this.$api.shuttleFactories(this.campus, mask);
     },
   },
   methods: {
     addStop() {
-      const alreadyExists = this.pattern.stops.findIndex(({ label }) => label === this.selectedStop.label);
+      const alreadyExists = this.shuttleFactory.stops.findIndex(({ label }) => label === this.selectedStop.label);
       if (
         alreadyExists === -1
         || (
@@ -165,21 +165,21 @@ export default {
         && window.confirm
         && window.confirm('Attention, cet arrêt est déjà listé, êtes-vous sûr de vouloir l\'ajouter ?'))
       ) {
-        this.pattern.stops.push(this.selectedStop);
+        this.shuttleFactory.stops.push(this.selectedStop);
         this.selectedStop = null;
       }
     },
-    async edit(pattern) {
+    async edit(shuttleFactory) {
       let data = {};
       try {
         this.toggleLoading(true);
-        if (this.pattern.id) {
-          ({ data } = (await this.apiCall.patchPattern(pattern.id, pattern)));
+        if (this.shuttleFactory.id) {
+          ({ data } = (await this.apiCall.patchShuttleFactory(shuttleFactory.id, shuttleFactory)));
         } else {
-          ({ data } = (await this.apiCall.postPattern(pattern)));
+          ({ data } = (await this.apiCall.postShuttleFactory(shuttleFactory)));
         }
         this.$toast.success('Donnée sauvegardée avec succès');
-        this.$router.push(this.$context.buildCampusLink('patterns-id-edit', {
+        this.$router.push(this.$context.buildCampusLink('shuttle-factories-id-edit', {
           params: { id: data.id },
         }));
       } catch ({ response: { status } }) {

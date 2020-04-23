@@ -327,7 +327,7 @@ export default {
         separator: ';',
         delimiter: '"',
         mask: 'id,departure(id,label,location),arrival(id,label,location),car(id,label,model(id,label)),'
-          + 'campus(id,phone(drivers,everybody)),status(*),start,end,phone,driver(id,name),category(id,label),'
+          + 'campus(id,phone(drivers,everybody)),status,start,end,phone,driver(id,name),category(id,label),'
           + 'passengersCount,luggage,comments,createdAt,owner(id)',
       },
       filters: {

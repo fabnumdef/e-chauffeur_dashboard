@@ -2,7 +2,7 @@
   <div
     v-if="driver.name !== 'Requêtes utilisateur'"
     class="driver-header"
-    :class="{ 'shuttle-driver': driver.heavyLicence }"
+    :class="{ 'shuttle-driver': driver.licences.includes('D') }"
   >
     <div class="driver">
       <div class="name">

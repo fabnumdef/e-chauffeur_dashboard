@@ -5,9 +5,22 @@ import {
   CANCELED_TECHNICAL,
   CANCELED_REQUESTED_CUSTOMER,
   CANCELED_CUSTOMER_OVERLOAD,
-  CANCELED_CUSTOMER_MISSING,
+  CANCELED_CUSTOMER_MISSING, CREATED,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
-import { generateEmptyRide } from '../helpers/generate-empty';
+
+const generateEmptyRide = () => ({
+  start: null,
+  end: null,
+  phone: null,
+  departure: null,
+  arrival: null,
+  driver: null,
+  status: CREATED,
+  category: null,
+  passengersCount: 1,
+  luggage: false,
+  comments: '',
+});
 
 export default () => ({
   data() {
@@ -17,7 +30,7 @@ export default () => ({
   },
   methods: {
     isRide(item) {
-      return (item.departure && item.arrival);
+      return item.departure && item.arrival;
     },
     initRide() {
       this.ride = generateEmptyRide();

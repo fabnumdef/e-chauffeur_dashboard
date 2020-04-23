@@ -21,7 +21,7 @@ const rideMask = [
   'luggage',
 ].join(',');
 
-const shuttleMask = 'id,label,status,start,end,campus,pattern,comments,stops,driver,car';
+const shuttleMask = 'id,label,status,start,end,campus,shuttleFactory,comments,stops,driver,car,passengers';
 
 
 export const state = () => ({

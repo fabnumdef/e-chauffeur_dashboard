@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nuxt-child :pattern="pattern" />
+    <nuxt-child :shuttle-factory="shuttleFactory" />
   </div>
 </template>
 
@@ -9,10 +9,10 @@ const EDITABLE_FIELDS = ['id', 'label', 'category', 'stops', 'comments', 'reachD
 
 export default {
   async asyncData({ params, $api, store: { getters } }) {
-    const { data: pattern } = await $api.patterns(getters['context/campus'], EDITABLE_FIELDS.join(','))
-      .getPattern(params.id);
+    const { data: shuttleFactory } = await $api.shuttleFactories(getters['context/campus'], EDITABLE_FIELDS.join(','))
+      .getShuttleFactory(params.id);
     return {
-      pattern,
+      shuttleFactory,
     };
   },
 };

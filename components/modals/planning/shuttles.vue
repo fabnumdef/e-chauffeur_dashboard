@@ -59,8 +59,8 @@
         required
       >
         <vue-multiselect
-          v-model="timeSlot.pattern"
-          :options="patterns.data"
+          v-model="timeSlot.shuttleFactory"
+          :options="shuttleFactories.data"
           placeholder="Selectionner un trajet"
           track-by="id"
           label="label"
@@ -149,7 +149,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    patterns: {
+    shuttleFactories: {
       type: Object,
       default: () => ({}),
     },

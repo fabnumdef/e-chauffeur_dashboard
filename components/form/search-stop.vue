@@ -18,7 +18,7 @@ import { mapGetters } from 'vuex';
 
 export default {
   props: {
-    patternId: {
+    shuttleFactoryId: {
       type: String,
       default: null,
     },
@@ -42,8 +42,11 @@ export default {
     async onOpen() {
       this.loading = true;
       try {
-        const { data: pattern } = await this.$api.patterns(this.campus.id, 'id,stops').getPattern(this.patternId);
-        this.stops = pattern.stops.map(({ id, label }, index) => ({ id, index, label: `${index + 1}: ${label}` }));
+        const { data: shuttleFactory } = await
+        this.$api.shuttleFactories(this.campus.id, 'id,stops').getShuttleFactory(this.shuttleFactoryId);
+        this.stops = shuttleFactory.stops.map(
+          ({ id, label }, index) => ({ id, index, label: `${index + 1}: ${label}` }),
+        );
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');
       } finally {
@@ -56,7 +59,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

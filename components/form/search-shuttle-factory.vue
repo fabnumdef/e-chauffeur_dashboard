@@ -1,10 +1,10 @@
 <template>
   <vue-multiselect
     :value="value"
-    :options="patterns"
+    :options="shuttleFactories"
     track-by="id"
     label="label"
-    placeholder="Selectionner le trajet a effectuer"
+    placeholder="Sélectionner le trajet à effectuer"
     :loading="loading"
     :disabled="disabled"
     :allow-empty="false"
@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       loading: false,
-      patterns: [],
+      shuttleFactories: [],
     };
   },
   computed: {
@@ -49,8 +49,9 @@ export default {
       if (this.campus.id) {
         this.loading = true;
         try {
-          const { data } = await this.$api.patterns(this.campus.id, 'id,label,stops(id,label)').getPatterns();
-          this.patterns = data;
+          const { data } = await
+          this.$api.shuttleFactories(this.campus.id, 'id,label,stops(id,label)').getShuttleFactories();
+          this.shuttleFactories = data;
         } catch (e) {
           this.$toast.error('Une erreur est survenue lors de la récupération des données.');
         } finally {
@@ -61,7 +62,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

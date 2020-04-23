@@ -194,6 +194,7 @@ import { DateTime, Interval } from 'luxon';
 
 import { mapGetters } from 'vuex';
 import cloneDeep from 'lodash.clonedeep';
+import { CREATED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 import rideModal from '~/components/modals/planificator/ride.vue';
 import shuttleModal from '~/components/modals/planificator/shuttle.vue';
 import driverHeader from './driver-header.vue';
@@ -203,6 +204,38 @@ import toggleModalsMixin from '~/components/planificator/mixins/toggle-modals';
 import shuttleHandlerMixin from '~/components/planificator/mixins/shuttle-handler';
 import rideHandlerMixin from '~/components/planificator/mixins/ride-handler';
 import mouseEventsMixin from '~/components/planificator/mixins/mouse-events';
+
+export const generateEmptyRide = () => ({
+  start: null,
+  end: null,
+  phone: null,
+  departure: null,
+  arrival: null,
+  driver: null,
+  status: CREATED,
+  category: null,
+  passengersCount: 1,
+  luggage: false,
+  comments: '',
+});
+
+export const generateEmptyShuttle = () => ({
+  start: null,
+  end: null,
+  phone: null,
+  driver: null,
+  status: CREATED,
+  stops: [],
+  category: null,
+  passengers: [],
+  comments: '',
+  shuttleFactory: {
+    id: null,
+    label: null,
+    stops: [],
+  },
+});
+
 
 const MIN_SPLIT_WIDTH = 200;
 
@@ -243,7 +276,7 @@ export default {
     }),
     splitDrivers() {
       return this.drivers.map((driver) => ({
-        class: driver.heavyLicence ? 'driver-col heavy-weight' : 'driver-col',
+        class: driver.licences && driver.licences.includes('D') ? 'driver-col heavy-weight' : 'driver-col',
         label: driver.name,
         driver,
       }));
@@ -253,13 +286,13 @@ export default {
         const start = this.$vuecal(this.step).getVueCalFloorDateFromISO(d.start);
         const end = this.$vuecal(this.step).getVueCalCeilDateFromISO(d.end);
         const split = d.driver ? this.drivers.findIndex((driver) => driver.id === d.driver.id) + 1 : 1;
-        const clas = d.pattern ? 'shuttle-event' : `ride-event ${this.eventStatusClass(d)}`;
+        const clas = d.shuttleFactory ? 'shuttle-event' : `ride-event ${this.eventStatusClass(d)}`;
         const timeString = `${DateTime.fromISO(d.start).toLocaleString(DateTime.TIME_SIMPLE)} à `
           + `${DateTime.fromISO(d.end).toLocaleString(DateTime.TIME_SIMPLE)}`;
         return {
           start,
           end,
-          [d.pattern ? 'shuttle' : 'ride']: d,
+          [d.shuttleFactory ? 'shuttle' : 'ride']: d,
           split,
           class: clas,
           index,
