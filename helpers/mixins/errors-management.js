@@ -29,11 +29,11 @@ export default () => ({
       this.setErrors();
       try {
         await callback();
-      } catch ({ response: { status, data: { errors, message } = {} } = {} }) {
+      } catch ({ message: errorMessage, response: { status, data: { errors, message } = {} } = {} }) {
         this.setErrors(errors);
         this.$toast.error([
           ...customMessages,
-          [status ? `Erreur ${status}` : undefined, message].join(' : '),
+          [`Erreur ${status || ''}`, message || errorMessage].join(' : '),
           ...Array.isArray(errors) ? errors : Object.values(errors || {}).map((e) => e.message),
         ]);
       }
