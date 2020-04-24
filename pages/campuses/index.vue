@@ -1,12 +1,4 @@
 <template>
-  <!--    <crud-header-->
-  <!--      title="Bases"-->
-  <!--      :to-create-new="{name: 'campuses-new'}"-->
-  <!--      export-csv-->
-  <!--      :mask="mask"-->
-  <!--      :pagination="pagination"-->
-  <!--    />-->
-  <!--      :api-call="$api.campuses.getCampuses"-->
   <crud-list
     :columns="{id: 'ID', name: 'Nom'}"
     :data="data"

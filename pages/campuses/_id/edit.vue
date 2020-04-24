@@ -127,7 +127,7 @@
         field-id="reservation-scope"
         :error-message="getErrorMessage('defaultReservationScope')"
       >
-        {{data.defaultReservationScope}}
+        {{ data.defaultReservationScope }}
         <reservation-scope
           v-model="data.defaultReservationScope"
           :class="getErrorClass('defaultReservationScope')"

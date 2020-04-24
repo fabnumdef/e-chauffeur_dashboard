@@ -140,11 +140,6 @@
         </nuxt-link>
       </li>
       <li v-if="$auth.isSuperAdmin()">
-        <nuxt-link :to="{ name: 'pois' }">
-          Lieux
-        </nuxt-link>
-      </li>
-      <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
           :to="{ name: 'categories' }"
         >
