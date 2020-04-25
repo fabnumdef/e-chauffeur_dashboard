@@ -34,9 +34,18 @@ export const actions = {
       return;
     }
     const { data } = await this.$api.query('campuses')
-      .setMask(
-        'id,name,location,categories(id,label),workedDays,workedHours,defaultRideDuration,defaultReservationScope',
-      )
+      .setMask([
+        'id',
+        'name',
+        'location',
+        'phone(drivers,everybody)',
+        'categories(id,label)',
+        'timezone',
+        'workedDays',
+        'workedHours',
+        'defaultRideDuration',
+        'defaultReservationScope',
+      ])
       .get(campus);
     commit('setCampus', data);
   },

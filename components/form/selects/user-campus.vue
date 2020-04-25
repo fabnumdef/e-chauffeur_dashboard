@@ -19,12 +19,6 @@ const JWT = 'jwt';
 const mask = 'id,name,location';
 
 export default {
-  props: {
-    value: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
   mixins: [
     lazyDataset(JWT, {
       mask,
@@ -33,5 +27,11 @@ export default {
         .accessibleCampuses(),
     }),
   ],
+  props: {
+    value: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
 };
 </script>
