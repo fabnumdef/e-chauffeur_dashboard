@@ -2,7 +2,14 @@ import debounce from 'lodash.debounce';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 
-export default (entity, { key = entity, mask = ',' } = {}) => ({
+export default (entity, {
+  key = entity, mask = ',', listQuery = ((api, options = {}) => api.query(entity)
+    .setMask(mask)
+    .list()
+    .setOffset(0)
+    .setLimit(30)
+    .setSearchTerm(options.search)),
+} = {}) => ({
   mixins: [
     toggleLoading(),
     errorsManagementMixin(),
@@ -15,7 +22,7 @@ export default (entity, { key = entity, mask = ',' } = {}) => ({
   },
   data() {
     return {
-      list: this[key] || this.value || [],
+      list: this[key] || (this.value ? [].concat(this.value) : []),
     };
   },
   async mounted() {
@@ -24,7 +31,7 @@ export default (entity, { key = entity, mask = ',' } = {}) => ({
     }
     this.toggleLoading(true);
     await this.handleCommonErrorsBehavior(async () => {
-      const { data } = await this.$api.query(entity).setMask(mask).list();
+      const { data } = await listQuery(this.$api);
       this.list = data;
     });
     this.toggleLoading(false);
@@ -33,12 +40,7 @@ export default (entity, { key = entity, mask = ',' } = {}) => ({
     updateList: debounce(async function updateList(search) {
       this.toggleLoading(true);
       await this.handleCommonErrorsBehavior(async () => {
-        const { data } = await this.$api.query(entity)
-          .setMask(mask)
-          .list()
-          .setOffset(0)
-          .setLimit(30)
-          .setSearchTerm(search);
+        const { data } = await listQuery(this.$api, { search });
         this.list = data;
       });
       this.toggleLoading(false);

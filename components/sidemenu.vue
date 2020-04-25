@@ -180,7 +180,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import { DateTime } from 'luxon';
-import searchUserCampus from '~/components/form/search-user-campus.vue';
+import searchUserCampus from '~/components/form/selects/user-campus.vue';
 import reconnectingHero from '~/components/reconnecting-hero.vue';
 
 export default {
