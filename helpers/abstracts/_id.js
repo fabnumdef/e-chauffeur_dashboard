@@ -1,6 +1,8 @@
-export default ({ query, mask, key }) => ({
-  async asyncData({ params, $api }) {
-    const { data } = await $api.query(query).setMask(mask).get(params.id);
+export default ({
+  query, mask, key, customGet = (q) => q, customQuery = (q) => q,
+}) => ({
+  async asyncData({ $api, store, params }) {
+    const { data } = await customGet(customQuery($api.query(query).setMask(mask)).get(params.id), { store, params });
     return {
       [key]: data,
     };

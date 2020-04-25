@@ -1,17 +1,17 @@
 const { version } = require('./package.json');
 
-function addNewToRoutes(routes, name) {
-  const routeParent = routes.find((r) => r.name === `${name}-id`);
+function addNewToRoutes(routes, prepend, name) {
+  const routeParent = routes.find((r) => r.name === `${prepend}${name}-id`);
   if (!routeParent) {
     return;
   }
-  const routeEdit = routeParent.children.find((r) => r.name === `${name}-id-edit`);
+  const routeEdit = routeParent.children.find((r) => r.name === `${prepend}${name}-id-edit`);
   if (!routeEdit) {
     return;
   }
   routes.unshift({
-    name: `${name}-new`,
-    path: `/${name}/new`,
+    name: `${prepend}${name}-new`,
+    path: prepend ? `${name}/new` : `/${name}/new`,
     component: routeEdit.component,
     chunkName: routeEdit.chunkName,
   });
@@ -29,10 +29,10 @@ module.exports = {
   router: {
     middleware: ['auth', 'meta'],
     extendRoutes(routes) {
-      const autoNewRoot = ['campuses', 'car-models', 'categories', 'phone-models', 'pois', 'users'];
-      autoNewRoot.forEach(addNewToRoutes.bind(this, routes));
+      const autoNewRoot = ['campuses', 'car-models', 'categories', 'phone-models', 'users'];
+      autoNewRoot.forEach(addNewToRoutes.bind(this, routes, ''));
       const autoNewCampus = ['cars', 'drivers', 'phones', 'pois', 'users'];
-      autoNewCampus.forEach(addNewToRoutes.bind(this, routes.find((r) => r.path === '/:campus').children));
+      autoNewCampus.forEach(addNewToRoutes.bind(this, routes.find((r) => r.path === '/:campus').children, 'campus-'));
     },
   },
 

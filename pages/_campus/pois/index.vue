@@ -1,136 +1,108 @@
 <template>
-  <main>
-    <crud-header
-      title="Lieux"
-      :to-create-new="campusLink('pois-new')"
-      :can-create-new="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
-      :import-csv="$auth.isAdmin(campus.id) || $auth.isSuperAdmin()"
-      export-csv
-      :mask="mask"
-      has-mask
-      :pagination="pagination"
-      :api-call="$api.pois(campus.id, mask).getPois"
-      @importCSV="importCSV"
-    />
-    <crud-filter
-      :field-value="fieldFilter"
-      :content-value="contentFilter"
-      :fields-header="fieldsHeaders"
-      :field-content="fieldContent"
-      @updateFieldFilter="updateFieldFilter"
-      @updateContentFilter="updateContentFilter"
-      @reset="reset"
-    />
-    <crud-list
-      :columns="columns"
-      :data="filteredData"
-      :pagination-offset="pagination.offset"
-      :pagination-total="pagination.total"
-      :pagination-per-page="pagination.limit"
+  <crud-list
+    :columns="{ id: 'ID', label: 'Label', enabled: 'Activé' }"
+    :data="data"
+    :pagination="pagination"
+  >
+    <template #intro>
+      <div class="columns">
+        <div class="column">
+          <search-filter
+            :value="searchTerms"
+            @update="search"
+          />
+        </div>
+        <export-button
+          :pagination="pagination"
+          :export-query="exportQuery"
+          class="column is-narrow"
+        />
+        <import-button
+          v-if="$auth.isAdmin(campus.id)"
+          class="column is-narrow"
+          @import="importCSV"
+        />
+        <div
+          class="column is-narrow"
+        >
+          <ec-button
+            v-if="$auth.isAdmin(campus.id)"
+            :to="campusLink('pois-new')"
+            is-success
+            icon-left="plus"
+          >
+            Créer
+          </ec-button>
+        </div>
+      </div>
+    </template>
+    <template
+      v-if="$auth.isAdmin(campus.id)"
+      #actions="{ row }"
     >
-      <template
-        v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
-        #actions="{ row }"
+      <ec-button
+        v-if="$auth.isAdmin(campus.id)"
+        :to="campusLink('pois-id-edit', {
+          params: { id: row.id },
+        })"
+        is-primary
+        icon-left="edit"
       >
-        <nuxt-link
-          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
-          :to="campusLink('pois-id-edit', {
-            params: { id: row.id },
-          })"
-          class="button is-primary"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'edit']" />
-          </span>
-          <span>Modifier</span>
-        </nuxt-link>
-        <button
-          v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
-          class="button is-danger"
-          @click="deletePoi(row)"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'trash']" />
-          </span>
-          <span>Supprimer</span>
-        </button>
-      </template>
-    </crud-list>
-  </main>
+        Modifier
+      </ec-button>
+      <ec-button
+        v-if="$auth.isAdmin(campus.id)"
+        is-danger
+        icon-left="trash"
+        @click="deleteRow(row)"
+      >
+        Supprimer
+      </ec-button>
+    </template>
+  </crud-list>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import crudList from '~/components/crud/list.vue';
-import crudHeader from '~/components/crud/header.vue';
-import crudFilter from '~/components/crud/filter.vue';
-import handleFilters from '~/components/crud/mixins/handle-filters';
+import updateListMixin from '~/helpers/mixins/crud/update-list';
+import searchFilterMixin from '~/helpers/mixins/crud/search-filter';
+import deleteInListMixin from '~/helpers/mixins/crud/delete-in-list';
+import importCSVMixin from '~/helpers/mixins/crud/import-csv';
+import exportCSVMixin from '~/helpers/mixins/crud/export-csv';
+import titleMixin from '~/helpers/mixins/page-title';
 
-const columns = { id: 'ID', label: 'Label', enabled: 'Activé' };
+const POIS = 'pois';
+const DEFAULT_MASK = ['id', 'label', 'enabled'];
 
 export default {
-  watchQuery: ['offset', 'limit'],
   components: {
     crudList,
-    crudHeader,
-    crudFilter,
   },
-  mixins: [handleFilters],
-  async asyncData({ $api, query, params }) {
-    const offset = parseInt(query.offset, 10) || 0;
-    const limit = parseInt(query.limit, 10) || 30;
-    const { data, pagination } = await $api
-      .pois({ id: params.campus }, Object.keys(columns).join(','), { withDisabled: true })
-      .getPois({ offset, limit });
-
-    return {
-      data: data.map((poi) => ({
-        ...poi,
-        enabled: (poi.enabled === false)
-          ? 'fas:times-circle:error'
-          : 'fas:check-circle:success',
-      })),
-      pagination,
-    };
-  },
-  data() {
-    return {
-      mask: 'id,label,location(coordinates),campus(id,name)',
-    };
-  },
+  mixins: [
+    titleMixin('Lieux'),
+    searchFilterMixin(),
+    updateListMixin(POIS, {
+      mask: DEFAULT_MASK,
+      customList: async (l, { params }) => {
+        const list = await l.setFilter('withDisabled', true).setFilter('campus', params.campus);
+        list.data = list.data.map((poi) => ({
+          ...poi,
+          enabled: (poi.enabled === false)
+            ? 'fas:times-circle:error'
+            : 'fas:check-circle:success',
+        }));
+        return list;
+      },
+    }),
+    deleteInListMixin(POIS, { confirmation: 'Voulez vous vraiment supprimer ce lieu ?' }),
+    importCSVMixin(POIS),
+    exportCSVMixin(POIS, { mask: DEFAULT_MASK }),
+  ],
   computed: {
-    columns() { return columns; },
     ...mapGetters({
       campus: 'context/campus',
     }),
-    fieldsHeaders() {
-      return Object.keys(columns).map((key) => ({ id: key, label: columns[key] }));
-    },
-  },
-  methods: {
-    async deletePoi({ id }) {
-      if (window && window.confirm && window.confirm('Voulez vous vraiment supprimer ce lieu ?')) {
-        await this.$api.pois(this.campus).deletePoi(id);
-        this.updateList();
-      }
-    },
-    async importCSV({ data, params }) {
-      try {
-        await this.$api.pois(this.campus).postPois(data, params);
-        this.$toast.success('Import réalisé avec succès');
-      } catch (err) {
-        this.$toast.error("Un problème est survenu pendant l'import");
-      }
-      this.updateList();
-    },
-    async updateList() {
-      const offset = parseInt(this.$route.query.offset, 10) || 0;
-      const limit = parseInt(this.$route.query.limit, 10) || 30;
-      const updatedList = await this.$api.pois(this.campus, Object.keys(columns).join(','), { withDisabled: true })
-        .getPois(offset, limit);
-      this.data = updatedList.data;
-      this.pagination = updatedList.pagination;
-    },
   },
 };
 </script>
