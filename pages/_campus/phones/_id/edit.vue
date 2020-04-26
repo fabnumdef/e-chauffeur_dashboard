@@ -1,132 +1,100 @@
 <template>
-  <main>
-    <header>
-      <h1
-        v-if="id"
-        class="title"
-      >
-        Téléphone <em class="is-size-6">#{{ phone.id }}</em>
-      </h1>
-      <h1
-        v-else
-        class="title"
-      >
-        Téléphone
-      </h1>
-      <h2
-        v-if="id"
-        class="subtitle"
-      >
-        Modification
-      </h2>
-      <h2
-        v-else
-        class="subtitle"
-      >
-        Création
-      </h2>
-    </header>
-    <form
-      class="box"
-      @submit.prevent="edit(phone)"
+  <form
+    class="box"
+    @submit.prevent="edit(data, $event)"
+  >
+    <ec-field
+      label="S/N"
+      field-id="id"
+      :error-message="getErrorMessage('id')"
     >
-      <ec-field
-        label="S/N"
-        field-id="id"
+      <input
+        id="id"
+        v-model.trim="data.id"
+        :disabled="!!id"
+        type="text"
+        class="input"
+        :class="getErrorClass('id')"
       >
-        <input
-          id="id"
-          v-model.trim="phone.id"
-          :disabled="!!id"
-          type="text"
-          class="input"
-        >
-      </ec-field>
-      <ec-field
-        label="IMEI"
-        field-id="imei"
+    </ec-field>
+    <ec-field
+      label="IMEI"
+      field-id="imei"
+      :error-message="getErrorMessage('imei')"
+    >
+      <input
+        id="imei"
+        v-model.trim="data.imei"
+        type="text"
+        class="input"
+        :class="getErrorClass('imei')"
       >
-        <input
-          id="imei"
-          v-model.trim="phone.imei"
-          type="text"
-          class="input"
-        >
-      </ec-field>
-      <ec-field
-        label="Modèle"
-        field-id="model"
+    </ec-field>
+    <ec-field
+      label="Modèle"
+      field-id="model"
+      :error-message="getErrorMessage('model')"
+    >
+      <ec-search-phone-models
+        id="model"
+        v-model="data.model"
+        :class="getErrorClass('model')"
+      />
+    </ec-field>
+    <ec-field
+      label="N° de téléphone"
+      field-id="number"
+      :error-message="getErrorMessage('number')"
+    >
+      <input
+        id="number"
+        v-model.trim="data.number"
+        type="tel"
+        class="input"
+        :class="getErrorClass('number')"
       >
-        <ec-search-phone-models
-          id="model"
-          v-model="phone.model"
-        />
-      </ec-field>
-      <ec-field
-        label="N° de téléphone"
-        field-id="number"
-      >
-        <input
-          id="number"
-          v-model.trim="phone.number"
-          type="tel"
-          class="input"
-        >
-      </ec-field>
-      <ec-field
-        label="Etat"
-        field-id="state"
-      >
-        <ec-search-phone-states
-          id="state"
-          v-model="phone.state"
-        />
-      </ec-field>
-      <ec-field
-        label="Commentaires"
-        field-id="comments"
-      >
-        <textarea
-          id="comments"
-          v-model.trim="phone.comments"
-          class="textarea"
-        />
-      </ec-field>
-
-      <button
-        v-if="id"
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
-        </span>
-        <span>Sauvegarder</span>
-      </button>
-
-      <button
-        v-else
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
-        </span>
-        <span>Créer</span>
-      </button>
-    </form>
-  </main>
+    </ec-field>
+    <ec-field
+      label="Etat"
+      field-id="state"
+      :error-message="getErrorMessage('state')"
+    >
+      <ec-search-phone-states
+        id="state"
+        v-model="data.state"
+        :class="getErrorClass('state')"
+      />
+    </ec-field>
+    <ec-field
+      label="Commentaires"
+      field-id="comments"
+      :error-message="getErrorMessage('comments')"
+    >
+      <textarea
+        id="comments"
+        v-model.trim="data.comments"
+        class="textarea"
+        :class="getErrorClass('comments')"
+      />
+    </ec-field>
+    <save-button
+      :loading="loading"
+      :is-new="!id"
+      has-alt
+    />
+  </form>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import ecSearchPhoneStates from '~/components/form/search-phone-states.vue';
-import ecSearchPhoneModels from '~/components/form/search-phone-models.vue';
+import ecSearchPhoneStates from '~/components/form/selects/phone-states.vue';
+import ecSearchPhoneModels from '~/components/form/selects/phone-models.vue';
+
 import toggleLoading from '~/helpers/mixins/toggle-loading';
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import titleMixin from '~/helpers/mixins/page-title';
+import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
 
 const EDITABLE_FIELDS = [
   'id',
@@ -137,13 +105,27 @@ const EDITABLE_FIELDS = [
   'state',
   'comments',
 ];
-
 export default {
   components: {
+    saveButton,
     ecSearchPhoneStates,
     ecSearchPhoneModels,
   },
-  mixins: [toggleLoading()],
+  mixins: [
+    toggleLoading(),
+    titleMixin('Téléphone', 'Création'),
+    errorsManagementMixin(),
+    resetableMixin(function reset() {
+      return {
+        data: {
+          location: {
+            coordinates: [],
+          },
+          ...this.phone,
+        },
+      };
+    }),
+  ],
   props: {
     phone: {
       type: Object,
@@ -151,40 +133,44 @@ export default {
     },
   },
   data() {
-    return { id: this.phone.id };
+    const { id } = this.phone;
+    this.setTitle(id ? `Téléphone #${id}` : 'Téléphone', id ? 'Édition' : 'Création');
+    return { id };
   },
-
   computed: {
     ...mapGetters({
       campus: 'context/campus',
     }),
-    PhonesAPI() {
-      return this.$api.phones(this.campus, EDITABLE_FIELDS.join(','));
-    },
   },
-
   methods: {
-    async edit(phone) {
-      let data = {};
-      try {
-        this.toggleLoading(true);
+    async edit(phone, { submitter }) {
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        const ApiPhones = this.$api.query('phones').setMask(EDITABLE_FIELDS);
+        let data = {};
+
         if (this.id) {
-          ({ data } = (await this.PhonesAPI.patchPhone(phone.id, phone)));
+          ({ data } = (await ApiPhones.edit(phone.id, { ...phone, campus: this.campus })));
         } else {
-          ({ data } = (await this.PhonesAPI.postPhone(phone)));
+          ({ data } = (await ApiPhones.create({ ...phone, campus: this.campus })));
         }
-        this.$toast.success('Donnée sauvegardée avec succès');
-        this.$router.push(this.$context.buildCampusLink('phones-id-edit', {
-          params: { id: data.id },
-        }));
-      } catch ({ response: { status } }) {
-        if (status === 400) {
-          this.$toast.error('Erreur de création ou de mise à jour, merci de vérifier tous les champs');
-        } else {
-          this.$toast.error('Erreur serveur, si le problème persiste, veuillez contacter le service technique');
+        this.$toast.success('Téléphone enregistré avec succès');
+        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
+          case NEXT_ACTION_NEW:
+            this.reset();
+
+            return this.$router.push(this.$context.buildCampusLink('phones-new', {
+              params: { id: data.id },
+            }));
+          case NEXT_ACTION_LIST:
+            return this.$router.push(this.$context.buildCampusLink('phones', {
+              params: { id: data.id },
+            }));
+          default:
+            return this.$router.push(this.$context.buildCampusLink('phones-id-edit', {
+              params: { id: data.id },
+            }));
         }
-      }
-      this.toggleLoading(false);
+      }));
     },
   },
 };
