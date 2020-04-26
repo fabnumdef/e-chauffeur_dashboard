@@ -17,14 +17,14 @@ import lazyDataset from '~/components/form/selects/mixins/lazy-dataset';
 const PHONE_MODELS = 'phoneModels';
 
 export default {
+  mixins: [
+    lazyDataset(PHONE_MODELS, { mask: ['id', 'label'] }),
+  ],
   props: {
     value: {
       type: Object,
       default: () => ({}),
     },
   },
-  mixins: [
-    lazyDataset(PHONE_MODELS, { mask: ['id', 'label'] }),
-  ],
 };
 </script>

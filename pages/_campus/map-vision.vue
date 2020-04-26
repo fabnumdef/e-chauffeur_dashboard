@@ -45,12 +45,12 @@ import titleMixin from '~/helpers/mixins/page-title';
 
 export default {
   watchQuery: ['date'],
-  mixins: [
-    titleMixin('Map vision'),
-  ],
   components: {
     driverPositions,
   },
+  mixins: [
+    titleMixin('Map vision'),
+  ],
   props: {
     campus: {
       type: Object,

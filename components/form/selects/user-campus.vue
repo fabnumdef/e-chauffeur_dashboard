@@ -8,6 +8,7 @@
     :loading="loading"
     :searchable="false"
     placeholder="Choisir une base"
+    :value="getObjectValue"
     v-on="$listeners"
   />
 </template>

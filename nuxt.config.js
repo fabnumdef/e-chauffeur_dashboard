@@ -76,7 +76,6 @@ module.exports = {
           phones: 'phones',
           phoneModels: 'phone-models',
           ratings: 'ratings',
-          campusUsers: 'campus-users',
         },
         authPlugins: [
           { src: 'has-right' },
