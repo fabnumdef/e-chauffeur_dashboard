@@ -1,107 +1,84 @@
 <template>
-  <main>
-    <header>
-      <h1
-        v-if="id"
-        class="title"
-      >
-        Véhicule <em>{{ id }}</em>
-      </h1>
-      <h1
-        v-else
-        class="title"
-      >
-        Véhicule
-      </h1>
-      <h2
-        v-if="id"
-        class="subtitle"
-      >
-        Modification
-      </h2>
-      <h2
-        v-else
-        class="subtitle"
-      >
-        Création
-      </h2>
-    </header>
-    <form
-      class="box"
-      @submit.prevent="edit(car)"
+  <form
+    class="box"
+    @submit.prevent="edit(data, $event)"
+  >
+    <ec-field
+      label="Immatriculation"
+      field-id="id"
+      :error-message="getErrorMessage('id')"
     >
-      <ec-field
-        label="Immatriculation"
-        field-id="id"
+      <input
+        id="id"
+        v-model.trim="data.id"
+        :disabled="!!id"
+        class="input"
+        :class="getErrorClass('id')"
       >
-        <input
-          id="id"
-          v-model.trim="car.id"
-          :disabled="!!id"
-          class="input"
-        >
-      </ec-field>
-      <ec-field
-        label="Label"
-        field-id="label"
+    </ec-field>
+    <ec-field
+      label="Label"
+      field-id="label"
+      :error-message="getErrorMessage('label')"
+    >
+      <input
+        id="label"
+        v-model.trim="data.label"
+        type="text"
+        class="input"
+        :class="getErrorClass('label')"
       >
-        <input
-          id="label"
-          v-model.trim="car.label"
-          type="text"
-          class="input"
-        >
-      </ec-field>
-      <ec-field
-        label="Modèle"
-        field-id="model"
-      >
-        <search-car-models
-          v-model="car.model"
-          placeholder="Modèle"
-        />
-      </ec-field>
-      <button
-        v-if="id"
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
-        </span>
-        <span>Sauvegarder</span>
-      </button>
-
-      <button
-        v-else
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
-        </span>
-        <span>Créer</span>
-      </button>
-    </form>
-  </main>
+    </ec-field>
+    <ec-field
+      label="Modèle"
+      field-id="model"
+      :error-message="getErrorMessage('model')"
+    >
+      <search-car-models
+        v-model="data.model"
+        placeholder="Modèle"
+        :class="getErrorClass('model')"
+      />
+    </ec-field>
+    <save-button
+      :loading="loading"
+      :is-new="!id"
+      has-alt
+    />
+  </form>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import SearchCarModels from '~/components/form/search-car-models.vue';
+import searchCarModels from '~/components/form/selects/car-models.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import titleMixin from '~/helpers/mixins/page-title';
+import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
 
 const EDITABLE_FIELDS = ['id', 'label', 'model'];
 
 export default {
   components: {
-    SearchCarModels,
+    saveButton,
+    searchCarModels,
   },
-  mixins: [toggleLoading()],
+  mixins: [
+    toggleLoading(),
+    titleMixin('Véhicule', 'Création'),
+    errorsManagementMixin(),
+    resetableMixin(function reset() {
+      return {
+        data: {
+          location: {
+            coordinates: [],
+          },
+          ...this.car,
+        },
+      };
+    }),
+  ],
   props: {
     car: {
       type: Object,
@@ -109,38 +86,39 @@ export default {
     },
   },
   data() {
-    return { id: this.car.id };
+    const { id } = this.car;
+    this.setTitle(id ? `Véhicule #${id}` : 'Véhicule', id ? 'Édition' : 'Création');
+    return { id };
   },
   computed: {
     ...mapGetters({
       campus: 'context/campus',
     }),
-    CarsAPI() {
-      return this.$api.cars(this.campus, EDITABLE_FIELDS.join(','));
-    },
   },
   methods: {
-    async edit(car) {
-      let data = {};
-      try {
-        this.toggleLoading(true);
+    async edit(car, { submitter }) {
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        const ApiCars = this.$api.query('cars').setMask(EDITABLE_FIELDS);
+        let data = {};
+
         if (this.id) {
-          ({ data } = (await this.CarsAPI.patchCar(car.id, car)));
+          ({ data } = (await ApiCars.edit(car.id, { ...car, campus: this.campus })));
         } else {
-          ({ data } = (await this.CarsAPI.postCar(car)));
+          ({ data } = (await ApiCars.create({ ...car, campus: this.campus })));
         }
-        this.$toast.success('Donnée sauvegardée avec succès');
-        this.$router.push(this.$context.buildCampusLink('cars-id-edit', {
-          params: { id: data.id },
-        }));
-      } catch ({ response: { status } }) {
-        if (status === 400) {
-          this.$toast.error('Erreur de création ou de mise à jour, merci de vérifier tous les champs');
-        } else {
-          this.$toast.error('Erreur serveur, si le problème persiste, veuillez contacter le service technique');
+        this.$toast.success('Véhicule enregistré avec ssuccès');
+        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
+          case NEXT_ACTION_NEW:
+            this.reset();
+            return this.$router.push(this.$context.buildCampusLink('cars-new'));
+          case NEXT_ACTION_LIST:
+            return this.$router.push(this.$context.buildCampusLink('cars'));
+          default:
+            return this.$router.push(this.$context.buildCampusLink('cars-id-edit', {
+              params: { id: data.id },
+            }));
         }
-      }
-      this.toggleLoading(false);
+      }));
     },
   },
 };

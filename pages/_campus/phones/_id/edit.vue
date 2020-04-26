@@ -157,14 +157,9 @@ export default {
         switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
           case NEXT_ACTION_NEW:
             this.reset();
-
-            return this.$router.push(this.$context.buildCampusLink('phones-new', {
-              params: { id: data.id },
-            }));
+            return this.$router.push(this.$context.buildCampusLink('phones-new'));
           case NEXT_ACTION_LIST:
-            return this.$router.push(this.$context.buildCampusLink('phones', {
-              params: { id: data.id },
-            }));
+            return this.$router.push(this.$context.buildCampusLink('phones'));
           default:
             return this.$router.push(this.$context.buildCampusLink('phones-id-edit', {
               params: { id: data.id },
