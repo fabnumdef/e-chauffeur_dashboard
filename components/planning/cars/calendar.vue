@@ -39,8 +39,8 @@
             </header>
             <ul class="drivers-list">
               <li
-                v-for="car of content.cars"
-                :key="car.id"
+                v-for="(car, index) of content.cars"
+                :key="index"
               >
                 <span>{{ car.id }} {{ car.label }}</span>
               </li>

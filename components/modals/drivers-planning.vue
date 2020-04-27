@@ -80,30 +80,30 @@
         v-if="timeSlot.id"
         #submit
       >
-        <button
+        <ec-button
           type="submit"
-          class="button is-primary"
+          is-primary
         >
           Modifier
-        </button>
-        <button
+        </ec-button>
+        <ec-button
           type="button"
-          class="button is-danger"
+          is-danger
           @click="removeTimeSlot"
         >
           Supprimer
-        </button>
+        </ec-button>
       </template>
       <template
         v-else
         #submit
       >
-        <button
+        <ec-button
           type="submit"
-          class="button is-success"
+          is-success
         >
           Créer
-        </button>
+        </ec-button>
       </template>
     </ec-modal>
   </client-only>
@@ -134,9 +134,10 @@ export default {
   },
   computed: {
     range() {
+      const { start = null, end = null } = this.timeSlot;
       return [
-        this.timeSlot.start || null,
-        this.timeSlot.end || null,
+        (start && start.toJSDate) ? start.toJSDate() : start,
+        (end && end.toJSDate) ? end.toJSDate() : end,
       ];
     },
   },
@@ -151,8 +152,7 @@ export default {
       this.$emit('remove-time-slot');
     },
     updateDates([start, end]) {
-      this.timeSlot.start = start;
-      this.timeSlot.end = end;
+      Object.assign(this.timeSlot, { start, end });
     },
   },
 };

@@ -133,9 +133,10 @@ export default {
   },
   computed: {
     range() {
+      const { start = null, end = null } = this.timeSlot;
       return [
-        this.timeSlot.start || null,
-        this.timeSlot.end || null,
+        (start && start.toJSDate) ? start.toJSDate() : start,
+        (end && end.toJSDate) ? end.toJSDate() : end,
       ];
     },
   },
