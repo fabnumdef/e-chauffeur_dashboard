@@ -483,29 +483,19 @@ export default {
     },
 
     async edit(ride, action) {
+      const api = this.$api.query('rides').setMask(EDITABLE_FIELDS);
       try {
         if (ride.id) {
-          await this.$api.rides(
-            this.campus,
-            EDITABLE_FIELDS,
-          ).patchRide(ride.id, ride);
+          await api.edit(ride.id, { ...ride, campus: this.currentCampus });
           if (action) {
-            await this.$api.rides(
-              this.campus,
-              EDITABLE_FIELDS,
-            ).mutateRide(ride, action);
+            await api.mutate(ride.id, action);
           }
           this.$toasted.success('La course a bien été mise à jour.');
         } else {
-          const { data: newRide } = await this.$api.rides(
-            this.campus,
-            EDITABLE_FIELDS,
-          ).postRide(ride);
+          const { data: newRide } = await api.create({ ...ride, campus: this.currentCampus });
+
           if (action) {
-            await this.$api.rides(
-              this.campus,
-              EDITABLE_FIELDS,
-            ).mutateRide(newRide, action);
+            await api.mutate(newRide.id, action);
           }
           this.$toasted.success('La course a bien été créée.');
         }
@@ -520,10 +510,7 @@ export default {
         this.$toasted.error('Changement de status possible uniquement pour une course sauvegardée');
       }
       try {
-        await this.$api.rides(
-          this.campus,
-          EDITABLE_FIELDS,
-        ).mutateRide(ride, action);
+        await this.$api.query('rides').setMask(EDITABLE_FIELDS).mutate(ride.id, action);
         this.$toasted.success('Status modifié.');
         this.toggleModal(false);
       } catch (e) {

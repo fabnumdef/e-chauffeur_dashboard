@@ -40,7 +40,7 @@ export default {
   async mounted() {
     this.loading = true;
     try {
-      const { data } = await this.$api.campuses.getCampuses('id,name,location');
+      const { data } = await this.$api.query('campuses').setMask('id,name,location').list();
       this.campuses = data;
     } catch (e) {
       this.$toast.error('Une erreur est survenue lors de la récupération des données.');
@@ -51,7 +51,7 @@ export default {
   methods: {
     updateSet: debounce(async function updateSet(search) {
       try {
-        const { data } = await this.$api.campuses.getCampuses('id,name,location', { search });
+        const { data } = await this.$api.query('campuses').setMask('id,name,location').list().setSearchTerm(search);
         this.campuses = data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');

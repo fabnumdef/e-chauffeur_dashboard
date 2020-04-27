@@ -65,19 +65,23 @@ export default {
   }),
   watch: {
     async driver() {
-      let sort = null;
       if (this.driver && (!this.value || Object.keys(this.value).length === 0)) {
-        sort = {
-          'last-driver-ride': this.driver.id,
-        };
         this.loading = true;
         try {
-          const { data } = await this.$api.rides(this.campus).getAvailableCars(
-            FIELDS,
-            this.start.toISO(),
-            this.end.toISO(),
-            sort,
-          );
+          const { data } = await this.$api.query('rides')
+            .setCampus(this.campus)
+            .setMask(FIELDS)
+            .availableCars(
+              this.start.toISO(),
+              this.end.toISO(),
+              {
+                params: {
+                  sort: {
+                    'last-driver-ride': this.driver.id,
+                  },
+                },
+              },
+            );
           this.$emit('input', data[0]);
         } catch (e) {
           this.$toast.error('Une erreur est survenue lors de la récupération des données.');
@@ -89,20 +93,22 @@ export default {
   },
   methods: {
     async onOpen() {
-      let sort = null;
-      if (this.driver) {
-        sort = {
-          'last-driver-ride': this.driver.id,
-        };
-      }
       this.loading = true;
       try {
-        const { data } = await this.$api.rides(this.campus).getAvailableCars(
-          FIELDS,
-          this.start.toISO(),
-          this.end.toISO(),
-          sort,
-        );
+        const { data } = await this.$api.query('rides')
+          .setCampus(this.campus)
+          .setMask(FIELDS)
+          .availableCars(
+            this.start.toISO(),
+            this.end.toISO(),
+            this.driver ? {
+              params: {
+                sort: {
+                  'last-driver-ride': this.driver.id,
+                },
+              },
+            } : undefined,
+          );
         this.cars = data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');

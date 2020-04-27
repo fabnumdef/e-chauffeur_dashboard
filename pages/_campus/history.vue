@@ -374,18 +374,13 @@ export default {
       this.downloadLinks = Array
         .from({ length: Math.ceil(total / limit) })
         .map((_, i) => async () => {
-          const { data } = await this.$api
-            .rides(this.campus.id, this.fields.join(','))
-            .getRides(
-              this.filters.date[0],
-              this.filters.date[1],
-              {
-                format: 'text/csv',
-                offset: ROWS_PER_QUERY * i,
-                limit: ROWS_PER_QUERY,
-                csv,
-              },
-            );
+          const { data } = await this.$api.query('rides')
+            .setMask(this.fields.join(','))
+            .list(this.filters.date[0], this.filters.date[1])
+            .setFilter('campus', this.campus.id)
+            .setOffset(ROWS_PER_QUERY * i)
+            .setLimit(ROWS_PER_QUERY)
+            .toCSV(csv);
           generateCsvLink(data);
         });
     },
@@ -393,12 +388,12 @@ export default {
       this.csvStatus = force || !this.csvStatus;
     },
     async getRides() {
-      const { data, pagination } = await this.$api
-        .rides(this.campus.id, this.fields.join(','))
-        .getRides(this.filters.date[0], this.filters.date[1], {
-          offset: 0,
-          limit: ROWS_PER_QUERY,
-        });
+      const { data, pagination } = await this.$api.query('rides')
+        .setMask(this.fields.join(','))
+        .list(this.filters.date[0], this.filters.date[1])
+        .setFilter('campus', this.campus.id)
+        .setOffset(0)
+        .setLimit(ROWS_PER_QUERY);
       this.rides = data;
       this.pagination = pagination;
       this.show = Array(this.rides.length).fill(false);

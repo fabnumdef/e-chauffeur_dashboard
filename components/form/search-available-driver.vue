@@ -53,12 +53,14 @@ export default {
     updateSet: debounce(async function updateSet(search) {
       this.loading = true;
       try {
-        const { data } = await this.$api.rides(this.campus).getAvailableDrivers(
-          FIELDS,
-          this.start.toISO(),
-          this.end.toISO(),
-          { search },
-        );
+        const { data } = await this.$api.query('rides')
+          .setCampus(this.campus)
+          .setMask(FIELDS)
+          .availableDrivers(
+            this.start.toISO(),
+            this.end.toISO(),
+            { params: { search } },
+          );
         this.drivers = data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');
@@ -69,11 +71,13 @@ export default {
     async onOpen() {
       this.loading = true;
       try {
-        const { data } = await this.$api.rides(this.campus).getAvailableDrivers(
-          FIELDS,
-          this.start.toISO(),
-          this.end.toISO(),
-        );
+        const { data } = await this.$api.query('rides')
+          .setCampus(this.campus)
+          .setMask(FIELDS)
+          .availableDrivers(
+            this.start.toISO(),
+            this.end.toISO(),
+          );
         this.drivers = data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');

@@ -46,4 +46,9 @@ export default (entity, {
       this.toggleLoading(false);
     }, 500),
   },
+  computed: {
+    getObjectValue() {
+      return this.list.find(({ id } = {}) => this.value && (id === this.value.id));
+    },
+  },
 });
