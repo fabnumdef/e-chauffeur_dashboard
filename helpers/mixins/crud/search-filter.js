@@ -2,16 +2,16 @@ import searchFilter from '~/components/form/search-filter.vue';
 
 /* Due to limited mixin features of nuxt, this search filter needs update-list mixin. */
 /* Add it in template with this code : <search-filter @update="search" :value="searchTerms"/> */
-export default () => ({
+export default ({ methodName = 'search', querySearch = 'search' } = {}) => ({
   components: {
     searchFilter,
   },
   methods: {
-    async search(val) {
+    async [methodName](val) {
       await this.$router.push({
         name: this.$route.name,
         params: this.$route.params,
-        query: { ...this.$route.query, search: val, offset: undefined },
+        query: { ...this.$route.query, [querySearch]: val, offset: undefined },
       });
     },
   },

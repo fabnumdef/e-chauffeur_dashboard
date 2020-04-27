@@ -162,6 +162,7 @@ export default {
     crudList,
   },
   mixins: [
+    // @todo: Add custom key for offset query
     searchFilterMixin({ methodName: 'searchUsers', querySearch: 'searchUsers' }),
     searchFilterMixin({ methodName: 'searchDrivers', querySearch: 'searchDrivers' }),
     updateDriversMixin,
@@ -170,11 +171,13 @@ export default {
       confirmation: 'Voulez vous vraiment supprimer ce chauffeur ?',
       deleteMethod: 'deleteDriver',
       updateMethod: UPDATE_DRIVERS_METHOD,
+      customQuery,
     }),
     deleteInListMixin(USERS, {
       confirmation: 'Voulez vous vraiment supprimer cet utilisateur ?',
       deleteMethod: 'deleteUser',
       updateMethod: UPDATE_USERS_METHOD,
+      customQuery,
     }),
     exportCSVMixin(DRIVERS, {
       mask: DEFAULT_MASK,
