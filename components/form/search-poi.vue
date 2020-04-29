@@ -68,7 +68,13 @@ export default {
     updateSet: debounce(async function updateSet(search) {
       this.loading = true;
       try {
-        const { data } = await this.$api.pois(this.currentCampus, FIELDS).getPois({ offset: 0, limit: 1000, search });
+        const { data } = await this.$api.query('pois')
+          .setMask(FIELDS)
+          .list()
+          .setOffset(0)
+          .setLimit(1000)
+          .setSearchTerm(search)
+          .setFilter('campus', this.currentCampus.id);
         this.pois = data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');
@@ -82,7 +88,12 @@ export default {
     async onOpen() {
       this.loading = true;
       try {
-        const { data } = await this.$api.pois(this.currentCampus, FIELDS).getPois();
+        const { data } = await this.$api.query('pois')
+          .setMask(FIELDS)
+          .list()
+          .setOffset(0)
+          .setLimit(1000)
+          .setFilter('campus', this.currentCampus.id);
         this.pois = data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');

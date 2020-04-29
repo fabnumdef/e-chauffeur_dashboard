@@ -1,15 +1,17 @@
 <template>
   <nav class="menu">
     <reconnecting-hero />
-    <p class="menu-label">
+    <div class="logo">
       <nuxt-link :to="{ name: 'index' }">
         <img
-          class="logo"
           src="/logo_ec.svg"
           alt="logo"
         >
       </nuxt-link>
-    </p>
+      <small class="version">
+        Version {{ version }}
+      </small>
+    </div>
     <p
       v-if="hasCampus"
       class="menu-label"
@@ -138,11 +140,6 @@
         </nuxt-link>
       </li>
       <li v-if="$auth.isSuperAdmin()">
-        <nuxt-link :to="{ name: 'pois' }">
-          Lieux
-        </nuxt-link>
-      </li>
-      <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
           :to="{ name: 'categories' }"
         >
@@ -183,7 +180,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import { DateTime } from 'luxon';
-import searchUserCampus from '~/components/form/search-user-campus.vue';
+import searchUserCampus from '~/components/form/selects/user-campus.vue';
 import reconnectingHero from '~/components/reconnecting-hero.vue';
 
 export default {
@@ -196,6 +193,9 @@ export default {
       campus: 'context/campus',
       ridesToValidate: 'realtime/ridesToValidate',
     }),
+    version() {
+      return process.env.version;
+    },
   },
   watch: {
     campus(c) {
@@ -246,7 +246,14 @@ export default {
   }
 
   .logo {
-    padding: 20px;
+    margin: 20px;
+    position: relative;
+    .version {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      color: $dark-gray;
+    }
   }
 
   .red-dot {

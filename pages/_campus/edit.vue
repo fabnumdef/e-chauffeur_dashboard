@@ -1,309 +1,260 @@
 <template>
-  <main>
-    <header>
-      <h1
-        v-if="campus.id"
-        class="title"
+  <form
+    @submit.prevent="edit(data, $event)"
+  >
+    <fieldset class="box">
+      <legend class="subtitle">
+        Configuration basique
+      </legend>
+      <ec-field
+        label="ID"
+        field-id="id"
+        :error-message="getErrorMessage('id')"
       >
-        Base #{{ campus.id }} : {{ campus.name }}
-      </h1>
-      <h1
-        v-else
-        class="title"
-      >
-        Base
-      </h1>
-      <h2
-        v-if="campus.id"
-        class="subtitle"
-      >
-        Modification
-      </h2>
-      <h2
-        v-else
-        class="subtitle"
-      >
-        Nouveau
-      </h2>
-    </header>
-    <form
-      @submit.prevent="edit(campus)"
-    >
-      <fieldset class="box">
-        <legend class="subtitle">
-          Configuration basique
-        </legend>
-        <ec-field
-          label="ID"
-          field-id="id"
+        <input
+          id="id"
+          v-model.trim="data.id"
+          :disabled="!!id"
+          class="input"
+          :class="getErrorClass('id')"
         >
-          <input
-            id="id"
-            v-model.trim="campus.id"
-            :disabled="!!campus.id"
-            class="input"
-          >
-        </ec-field>
+      </ec-field>
 
-        <ec-field
-          label="Nom"
-          field-id="name"
+      <ec-field
+        label="Nom"
+        field-id="name"
+        :error-message="getErrorMessage('name')"
+      >
+        <input
+          id="name"
+          v-model.trim="data.name"
+          class="input"
+          :class="getErrorClass('name')"
         >
-          <input
-            id="name"
-            v-model.trim="campus.name"
-            class="input"
+      </ec-field>
+      <div class="columns">
+        <div class="column">
+          <ec-field
+            label="Numéro de téléphone (chauffeurs)"
+            field-id="phone-drivers"
+            :error-message="getErrorMessage('phone.drivers')"
           >
-        </ec-field>
-        <div class="columns">
-          <div class="column">
-            <ec-field
-              label="Numéro de téléphone (chauffeurs)"
-              field-id="phone-drivers"
+            <input
+              id="phone-drivers"
+              v-model.trim="data.phone.drivers"
+              class="input"
+              :class="getErrorClass('phone.drivers')"
             >
-              <input
-                id="phone-drivers"
-                v-model.trim="campus.phone.drivers"
-                class="input"
-              >
-            </ec-field>
-          </div>
-          <div class="column">
-            <ec-field
-              label="Numéro de téléphone (public)"
-              field-id="phone-everybody"
-            >
-              <input
-                id="phone-everybody"
-                v-model.trim="campus.phone.everybody"
-                class="input"
-              >
-            </ec-field>
-          </div>
+          </ec-field>
         </div>
-        <ec-field
-          label="Jours ouvrés"
-          field-id="workedDays"
-        >
-          <weekdays-select
-            id="workedDays"
-            v-model="campus.workedDays"
-          />
-        </ec-field>
-        <div class="columns">
-          <div class="column">
-            <ec-field
-              label="Heure d'embauche"
-              field-id="min-worked-hours"
-            >
-              <input
-                id="min-worked-hours"
-                v-model.trim="campus.workedHours.start"
-                class="input"
-                type="number"
-                min="0"
-                max="24"
-              >
-            </ec-field>
-          </div>
-          <div class="column">
-            <ec-field
-              label="Heure de débauche"
-              field-id="max-worked-hours"
-            >
-              <input
-                id="max-worked-hours"
-                v-model.trim="campus.workedHours.end"
-                class="input"
-                type="number"
-                min="0"
-                max="24"
-              >
-            </ec-field>
-          </div>
-          <div class="column">
-            <ec-field
-              label="Durée d'une course par défaut"
-              field-id="ride-duration"
-            >
-              <ride-duration
-                id="ride-duration"
-                v-model="campus.defaultRideDuration"
-              />
-            </ec-field>
-          </div>
-        </div>
-        <ec-field
-          label="Distance à laquelle le soutenu peut réserver une course"
-          field-id="reservation-scope"
-        >
-          <div class="columns">
-            <div class="column">
-              <vue-multiselect
-                v-model="selectScope"
-                :options="multiSelectOptions"
-                placeholder="Veuillez sélectionner une unité"
-                track-by="value"
-                label="label"
-              />
-            </div>
-            <div class="column">
-              <input
-                id="reservation-scope"
-                v-model.trim="localReservationScope"
-                class="input"
-                type="number"
-                :disabled="!selectScope"
-                :placeholder="!selectScope && 'Veuillez sélectionner une unité'"
-              >
-            </div>
-          </div>
-        </ec-field>
-        <ec-field
-          label="Catégories"
-          field-id="categories"
-        >
-          <search-categories v-model="campus.categories" />
-        </ec-field>
-        <ec-field
-          label="Coordonnées GPS"
-          field-id="location"
-        >
-          <ec-gps-point
-            id="location"
-            v-model="campus.location"
-          />
-        </ec-field>
-      </fieldset>
-      <fieldset class="box">
-        <legend class="subtitle">
-          Configuration avancée
-        </legend>
-        <p>Ne modifiez cette rubrique uniquement en connaissance de cause.</p>
-        <ec-field
-          label="Timezone"
-          field-id="timezone"
-        >
-          <input
-            id="timezone"
-            v-model.trim="campus.timezone"
-            class="input"
+        <div class="column">
+          <ec-field
+            label="Numéro de téléphone (public)"
+            field-id="phone-everybody"
+            :error-message="getErrorMessage('phone.everybody')"
           >
-        </ec-field>
-      </fieldset>
-      <fieldset class="box">
-        <button
-          v-if="campus.id"
-          type="submit"
-          class="button is-primary"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'save']" />
-          </span>
-          <span>Modifier</span>
-        </button>
+            <input
+              id="phone-everybody"
+              v-model.trim="data.phone.everybody"
+              class="input"
+              :class="getErrorClass('phone.everybody')"
+            >
+          </ec-field>
+        </div>
+      </div>
+      <ec-field
+        label="Jours ouvrés"
+        field-id="workedDays"
+        :error-message="getErrorMessage('workedDays')"
+      >
+        <weekdays-select
+          id="workedDays"
+          v-model="data.workedDays"
+          :class="getErrorClass('workedDays')"
+        />
+      </ec-field>
+      <div class="columns">
+        <div class="column">
+          <ec-field
+            label="Heure d'embauche"
+            field-id="min-worked-hours"
+            :error-message="getErrorMessage('workedHours.start')"
+          >
+            <input
+              id="min-worked-hours"
+              v-model.trim="data.workedHours.start"
+              class="input"
+              type="number"
+              min="0"
+              max="24"
+              :class="getErrorClass('workedHours.start')"
+            >
+          </ec-field>
+        </div>
+        <div class="column">
+          <ec-field
+            label="Heure de débauche"
+            field-id="max-worked-hours"
+            :error-message="getErrorMessage('workedHours.end')"
+          >
+            <input
+              id="max-worked-hours"
+              v-model.trim="data.workedHours.end"
+              class="input"
+              type="number"
+              min="0"
+              max="24"
+              :class="getErrorClass('workedHours.end')"
+            >
+          </ec-field>
+        </div>
+        <div class="column">
+          <ec-field
+            label="Durée d'une course par défaut"
+            field-id="ride-duration"
+            :error-message="getErrorMessage('defaultRideDuration')"
+          >
+            <ride-duration
+              id="ride-duration"
+              v-model="data.defaultRideDuration"
+              :class="getErrorClass('defaultRideDuration')"
+            />
+          </ec-field>
+        </div>
+      </div>
+      <ec-field
+        label="Distance à laquelle le soutenu peut réserver une course"
+        field-id="reservation-scope"
+        :error-message="getErrorMessage('defaultReservationScope')"
+      >
+        <reservation-scope
+          v-model="data.defaultReservationScope"
+          :class="getErrorClass('defaultReservationScope')"
+        />
+      </ec-field>
+      <ec-field
+        label="Catégories"
+        field-id="categories"
+        :error-message="getErrorMessage('categories')"
+      >
+        <search-categories
+          v-model="data.categories"
+          :class="getErrorClass('categories')"
+        />
+      </ec-field>
+      <ec-field
+        label="Coordonnées GPS"
+        field-id="location"
+        :error-message="getErrorMessage('location.coordinates')"
+      >
+        <ec-gps-point
+          id="location"
+          v-model="data.location"
+          :class="getErrorClass('location.coordinates')"
+        />
+      </ec-field>
+    </fieldset>
+    <fieldset class="box">
+      <legend class="subtitle">
+        Configuration avancée
+      </legend>
+      <p>Ne modifiez cette rubrique uniquement en connaissance de cause.</p>
+      <ec-field
+        label="Timezone"
+        field-id="timezone"
+        :error-message="getErrorMessage('timezone')"
+      >
+        <input
+          id="timezone"
+          v-model.trim="data.timezone"
+          class="input"
+          :class="getErrorClass('timezone')"
 
-        <button
-          v-else
-          type="submit"
-          class="button is-primary"
+          placeholder="Laissez vide pour garder la valeur par défaut"
         >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'plus']" />
-          </span>
-          <span>Créer</span>
-        </button>
-      </fieldset>
-    </form>
-  </main>
+      </ec-field>
+    </fieldset>
+    <fieldset class="box">
+      <save-button
+        :loading="loading"
+        :is-new="!id"
+        has-alt
+      />
+    </fieldset>
+  </form>
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import ecGpsPoint from '~/components/form/gps-point.vue';
-import searchCategories from '~/components/form/search-categories.vue';
+import searchCategories from '~/components/form/selects/categories.vue';
 import weekdaysSelect from '~/components/form/weekdays.vue';
+import reservationScope from '~/components/form/reservation-scope.vue';
 import rideDuration from '~/components/form/ride-duration.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
+import titleMixin from '~/helpers/mixins/page-title';
 import formatCoordinates from '~/helpers/format-coordinates';
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import saveButton from '~/components/crud/save-button.vue';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
     + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
 export default {
   components: {
-    ecField,
     ecGpsPoint,
     searchCategories,
     weekdaysSelect,
     rideDuration,
+    reservationScope,
+    saveButton,
   },
-  async asyncData({ app, params, $api }) {
-    if (!app.$auth.isRegulator()) {
-      throw new Error('Vous n\'avez pas les droits pour récupérer les informations d\'une base.');
-    }
-    return {
-      campus: {
-        phone: {},
-        categories: [],
-        ...(await $api.campuses.getCampus(params.campus, EDITABLE_FIELDS)).data,
-      },
-    };
+  mixins: [
+    toggleLoading(),
+    titleMixin('Base', 'Création'),
+    errorsManagementMixin(),
+    resetableMixin(function reset() {
+      return {
+        data: {
+          phone: {},
+          categories: [],
+          workedHours: { start: 5, end: 23 },
+          ...this.campus,
+        },
+      };
+    }),
+  ],
+  props: {
+    campus: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
+    const { name, id } = this.campus;
+    this.setTitle(`Base #${id}: ${name}`, 'Édition');
     return {
-      selectScope: {
-        label: 'Unité : heure',
-        value: 'hour',
-      },
-      multiSelectOptions: [
-        { label: 'Unité : heure', value: 'hour' },
-        { label: 'Unité : jour', value: 'day' },
-      ],
+      id,
     };
-  },
-  computed: {
-    localReservationScope: {
-      get() {
-        if (this.selectScope.value === 'day') {
-          return Math.floor(this.campus.defaultReservationScope / 3600 / 24);
-        }
-        if (this.selectScope.value === 'hour') {
-          return Math.floor(this.campus.defaultReservationScope / 3600);
-        }
-        return null;
-      },
-      set(value) {
-        if (this.selectScope.value === 'day') {
-          this.campus.defaultReservationScope = value * 3600 * 24;
-        }
-        if (this.selectScope.value === 'hour') {
-          this.campus.defaultReservationScope = value * 3600;
-        }
-        return value;
-      },
-    },
   },
   methods: {
     async edit(campus) {
-      let data = {};
-      const formattedCampus = {
-        ...campus,
-        location: {
-          coordinates: formatCoordinates(campus.location.coordinates),
-        },
-      };
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        const ApiCampuses = this.$api.query('campuses').setMask(EDITABLE_FIELDS);
+        const formattedCampus = {
+          ...campus,
+          location: {
+            coordinates: campus.location ? formatCoordinates(campus.location.coordinates) : null,
+          },
+        };
+        const { data } = await ApiCampuses.edit(campus.id, formattedCampus);
+        this.$toast.success('Base enregistrée avec succès');
+        this.$store.commit('context/setCampus', data);
 
-      if (this.campus.id) {
-        ({ data } = (await this.$api.campuses.patchCampus(campus.id, formattedCampus, EDITABLE_FIELDS)));
-      } else {
-        ({ data } = (await this.$api.campuses.postCampus(formattedCampus, EDITABLE_FIELDS)));
-      }
-
-      this.$store.commit('context/setCampus', data);
-
-      this.$router.push({
-        name: 'campus-edit',
-        params: { id: data.id },
-      });
+        this.$router.push({
+          name: 'campus-edit',
+          params: { id: data.id },
+        });
+      }));
     },
   },
 };
@@ -317,9 +268,5 @@ export default {
     padding: $size-small/2 $size-small;
     margin: 0;
     border-radius: $radius-small;
-  }
-
-  .select select {
-    width: 100%;
   }
 </style>

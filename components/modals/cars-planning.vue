@@ -21,7 +21,6 @@
       <ec-field label="Dates">
         <date-time
           lang="fr"
-          append-to-body
           input-class="input"
           type="datetime"
           range
@@ -29,10 +28,9 @@
           :minute-step="5"
           format="YYYY-MM-DD HH:mm"
           range-separator="->"
-          :first-day-of-week="1"
           @input="updateDates"
         >
-          <template #calendar-icon>
+          <template #icon-calendar>
             <fa-icon icon="calendar" />
           </template>
         </date-time>
@@ -112,13 +110,11 @@
 
 <script>
 import ecModal from '~/components/modals/default.vue';
-import ecField from '~/components/form/field.vue';
 import recurringOption from '~/components/form/recurring-option.vue';
 
 export default {
   components: {
     ecModal,
-    ecField,
     recurringOption,
   },
   props: {
@@ -137,9 +133,10 @@ export default {
   },
   computed: {
     range() {
+      const { start = null, end = null } = this.timeSlot;
       return [
-        this.timeSlot.start || null,
-        this.timeSlot.end || null,
+        (start && start.toJSDate) ? start.toJSDate() : start,
+        (end && end.toJSDate) ? end.toJSDate() : end,
       ];
     },
   },

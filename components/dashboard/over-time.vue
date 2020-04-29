@@ -22,14 +22,12 @@
 
 <script>
 import fragmentedTile from '~/components/dashboard/fragments.vue';
-import ecField from '~/components/form/field.vue';
 import timeConfigs from '~/components/form/time-configs.vue';
 import barChart from '~/components/charts/bar';
 
 export default {
   components: {
     fragmentedTile,
-    ecField,
     timeConfigs,
     barChart,
   },

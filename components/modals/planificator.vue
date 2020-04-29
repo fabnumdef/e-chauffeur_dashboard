@@ -48,18 +48,16 @@
     >
       <date-time
         lang="fr"
-        append-to-body
         input-class="input"
         type="datetime"
         range
         :value="range"
         :minute-step="5"
-        :first-day-of-week="1"
         format="YYYY-MM-DD HH:mm"
         range-separator="->"
         @input="updateDates"
       >
-        <template slot="calendar-icon">
+        <template slot="icon-calendar">
           <fa-icon icon="calendar" />
         </template>
       </date-time>
@@ -130,7 +128,7 @@
         class="column"
         field-id="phone"
       >
-        <phone-number-input
+        <vue-tel-input
           id="phone"
           v-model="ride.phone"
           v-autofocus="{
@@ -140,16 +138,9 @@
             inputName: 'phone',
             cb: focusNext
           }"
-          default-country-code="FR"
-          :preferred-countries="['FR', 'BE', 'DE']"
-          :translations="{
-            countrySelectorLabel: 'Prefix',
-            countrySelectorError: 'Choisir un pays',
-            phoneNumberLabel: '',
-            example: 'Exemple :'
-          }"
-          color="transparent"
-          valid-color="transparent"
+          name="phone"
+          default-country="FR"
+          :disabled-fetching-country="false"
           class="input input-phone"
         />
       </ec-field>
@@ -293,7 +284,7 @@
 
 <script>
 import { DateTime } from 'luxon';
-import phoneNumberInput from 'vue-phone-number-input';
+import { VueTelInput } from 'vue-tel-input';
 import Status from '@fabnumdef/e-chauffeur_lib-vue/api/status';
 import {
   VALIDATED, CREATED,
@@ -307,7 +298,6 @@ import {
   CANCEL_CUSTOMER_OVERLOAD,
   CANCEL_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/transitions';
-import ecField from '~/components/form/field.vue';
 import searchPoi from '~/components/form/search-poi.vue';
 import searchCategory from '~/components/form/search-campus-category.vue';
 import searchAvailableCar from '~/components/form/search-available-car.vue';
@@ -347,13 +337,12 @@ const actions = {
 export default {
   components: {
     searchPoi,
-    ecField,
     searchAvailableCar,
     searchAvailableDriver,
     searchCategory,
     bulmaDropdown,
     vueModal,
-    phoneNumberInput,
+    VueTelInput,
   },
 
   directives: {
@@ -494,29 +483,19 @@ export default {
     },
 
     async edit(ride, action) {
+      const api = this.$api.query('rides').setMask(EDITABLE_FIELDS);
       try {
         if (ride.id) {
-          await this.$api.rides(
-            this.campus,
-            EDITABLE_FIELDS,
-          ).patchRide(ride.id, ride);
+          await api.edit(ride.id, { ...ride, campus: this.currentCampus });
           if (action) {
-            await this.$api.rides(
-              this.campus,
-              EDITABLE_FIELDS,
-            ).mutateRide(ride, action);
+            await api.mutate(ride.id, action);
           }
           this.$toasted.success('La course a bien été mise à jour.');
         } else {
-          const { data: newRide } = await this.$api.rides(
-            this.campus,
-            EDITABLE_FIELDS,
-          ).postRide(ride);
+          const { data: newRide } = await api.create({ ...ride, campus: this.currentCampus });
+
           if (action) {
-            await this.$api.rides(
-              this.campus,
-              EDITABLE_FIELDS,
-            ).mutateRide(newRide, action);
+            await api.mutate(newRide.id, action);
           }
           this.$toasted.success('La course a bien été créée.');
         }
@@ -531,10 +510,7 @@ export default {
         this.$toasted.error('Changement de status possible uniquement pour une course sauvegardée');
       }
       try {
-        await this.$api.rides(
-          this.campus,
-          EDITABLE_FIELDS,
-        ).mutateRide(ride, action);
+        await this.$api.query('rides').setMask(EDITABLE_FIELDS).mutate(ride.id, action);
         this.$toasted.success('Status modifié.');
         this.toggleModal(false);
       } catch (e) {

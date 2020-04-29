@@ -1,129 +1,97 @@
 <template>
-  <main>
-    <header>
-      <h1
-        v-if="driver && id"
-        class="title"
-      >
-        Chauffeur <em class="is-size-6">#{{ driver.id }} : {{ driver.email }}</em>
-      </h1>
-      <h1
-        v-else
-        class="title"
-      >
-        Chauffeur
-      </h1>
-      <h2
-        v-if="id"
-        class="subtitle"
-      >
-        Modification
-      </h2>
-      <h2
-        v-else
-        class="subtitle"
-      >
-        Création
-      </h2>
-    </header>
-    <form
-      class="box"
-      @submit.prevent="edit(driver)"
-    >
-      <ec-field
-        label="Nom (obsolète)"
-        field-id="name"
-      >
-        <input
-          id="name"
-          :value="driver.name"
-          class="input"
-          disabled
+  <form
+    class="box"
+    @submit.prevent="edit(data, $event)"
+  >
+    <div class="columns">
+      <div class="column">
+        <ec-field
+          label="Prénom"
+          field-id="firstname"
+          :error-message="getErrorMessage('firstname')"
         >
-      </ec-field>
-      <div class="columns">
-        <div class="column">
-          <ec-field
-            label="Prénom"
-            field-id="firstname"
+          <input
+            id="firstname"
+            v-model.trim="data.firstname"
+            class="input"
+            :class="getErrorClass('firstname')"
           >
-            <input
-              id="firstname"
-              v-model.trim="driver.firstname"
-              class="input"
-            >
-          </ec-field>
-        </div>
-        <div class="column">
-          <ec-field
-            label="Nom de famille"
-            field-id="lastname"
-          >
-            <input
-              id="lastname"
-              v-model.trim="driver.lastname"
-              class="input"
-            >
-          </ec-field>
-        </div>
+        </ec-field>
       </div>
-      <ec-field
-        label="Email"
-        field-id="email"
-      >
-        <input
-          id="email"
-          v-model.trim="driver.email"
-          type="text"
-          class="input"
+      <div class="column">
+        <ec-field
+          label="Nom de famille"
+          field-id="lastname"
+          :error-message="getErrorMessage('lastname')"
         >
-      </ec-field>
-      <ec-field
-        label="Mot de passe"
-        field-id="password"
+          <input
+            id="lastname"
+            v-model.trim="data.lastname"
+            class="input"
+            :class="getErrorClass('lastname')"
+          >
+        </ec-field>
+      </div>
+    </div>
+    <ec-field
+      label="Email"
+      field-id="email"
+      :error-message="getErrorMessage('email')"
+    >
+      <input
+        id="email"
+        v-model.trim="data.email"
+        type="text"
+        class="input"
+        :class="getErrorClass('email')"
       >
-        <ec-password
-          id="password"
-          v-model="driver.password"
-        />
-      </ec-field>
-      <button
-        v-if="id"
-        type="submit"
-        class="button is-primary"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
-        </span>
-        <span>Sauvegarder</span>
-      </button>
-
-      <button
-        v-else
-        type="submit"
-        class="button is-primary"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
-        </span>
-        <span>Créer</span>
-      </button>
-    </form>
-  </main>
+    </ec-field>
+    <ec-field
+      label="Mot de passe"
+      field-id="password"
+      :error-message="getErrorMessage('password')"
+    >
+      <ec-password
+        id="password"
+        v-model="data.password"
+        :class="getErrorClass('password')"
+      />
+    </ec-field>
+    <save-button
+      :loading="loading"
+      :is-new="!id"
+      has-alt
+    />
+  </form>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field.vue';
 import ecPassword from '~/components/form/password.vue';
-
-const EDITABLE_FIELDS = ['id', 'email', 'password', 'name'];
+import toggleLoading from '~/helpers/mixins/toggle-loading';
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import titleMixin from '~/helpers/mixins/page-title';
+import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
 
 export default {
   components: {
-    ecField,
     ecPassword,
+
+    saveButton,
   },
+  mixins: [
+    toggleLoading(),
+    titleMixin('Chauffeur', 'Création'),
+    errorsManagementMixin(),
+    resetableMixin(function reset() {
+      return {
+        data: {
+          ...this.driver,
+        },
+      };
+    }),
+  ],
   props: {
     driver: {
       type: Object,
@@ -131,7 +99,9 @@ export default {
     },
   },
   data() {
-    return { id: this.driver.id };
+    const { id } = this.driver;
+    this.setTitle(id ? `Chauffeur #${id}` : 'Chauffeur', id ? 'Édition' : 'Création');
+    return { id };
   },
   computed: {
     ...mapGetters({
@@ -139,31 +109,33 @@ export default {
     }),
   },
   methods: {
-    async edit(driver) {
-      let data = {};
-      try {
-        if (driver.id) {
-          ({ data } = (await this.$api
-            .drivers(this.campus.id, EDITABLE_FIELDS.join(','))
-            .patchDriver(driver.id, driver)));
+    async edit(driver, { submitter }) {
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        const ApiDrivers = this.$api.query('drivers').setMask('id,email,firstname,lastname').setCampus(this.campus.id);
+        const formattedDriver = {
+          ...driver,
+          campus: this.campus,
+        };
+        let data = {};
+        if (this.id) {
+          ({ data } = (await ApiDrivers.edit(driver.id, formattedDriver)));
         } else {
-          ({ data } = (await this.$api.drivers(this.campus.id, EDITABLE_FIELDS.join(',')).postDriver(driver)));
+          ({ data } = (await ApiDrivers.create(formattedDriver)));
         }
-        this.$router.push(
-          this.$context.buildCampusLink('drivers-id-edit', {
-            params: { id: data.id },
-          }),
-        );
-      } catch (e) {
-        let message = 'Une erreur est survenue durant la création / édition de l\'utilisateur';
-        if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.email
-          && e.response.data.whitelistDomains) {
-          message += ` :
-          ${e.response.data.errors.email.value} devrait se terminer par `
-            + `"${e.response.data.whitelistDomains.join(' ou ')}"`;
+        this.$toast.success('Chauffeur enregistré avec succès');
+        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
+          case NEXT_ACTION_NEW:
+            this.reset();
+
+            return this.$router.push(this.$context.buildCampusLink('drivers-new'));
+          case NEXT_ACTION_LIST:
+            return this.$router.push(this.$context.buildCampusLink('drivers'));
+          default:
+            return this.$router.push(this.$context.buildCampusLink('drivers-id-edit', {
+              params: { id: data.id },
+            }));
         }
-        this.$toast.error(message);
-      }
+      }));
     },
   },
 };

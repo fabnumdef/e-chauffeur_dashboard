@@ -37,9 +37,8 @@ export default {
   },
   async mounted() {
     this.loading = true;
-    this.loading = true;
     try {
-      const { data } = await this.$api.campuses.getCampuses('id,name,location');
+      const { data } = await this.$api.query('campuses').setMask('id,name,location').list();
       this.campuses = data;
     } catch (e) {
       this.$toast.error('Une erreur est survenue lors de la récupération des données.');

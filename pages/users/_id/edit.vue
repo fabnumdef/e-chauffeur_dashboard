@@ -1,31 +1,7 @@
 <template>
-  <main>
-    <header>
-      <h1
-        v-if="user.id"
-        class="title"
-      >
-        Utilisateur <em class="is-size-6">#{{ user.id }} : {{ user.email }}</em>
-      </h1>
-      <h1
-        v-else
-        class="title"
-      >
-        Utilisateur
-      </h1>
-      <h2
-        v-if="user.id"
-        class="subtitle"
-      >
-        Modifier
-      </h2>
-      <h2
-        v-else
-        class="subtitle"
-      >
-        Créer
-      </h2>
-    </header>
+  <form
+    @submit.prevent="edit(data, $event)"
+  >
     <div class="box">
       <ul>
         <li v-if="gprd">
@@ -36,31 +12,19 @@
         </li>
       </ul>
     </div>
-    <form
-      class="box"
-      @submit.prevent="edit(user)"
-    >
-      <ec-field
-        label="Nom (obsolète)"
-        field-id="name"
-      >
-        <input
-          id="name"
-          :value="user.name"
-          class="input"
-          disabled
-        >
-      </ec-field>
+    <div class="box">
       <div class="columns">
         <div class="column">
           <ec-field
             label="Prénom"
             field-id="firstname"
+            :error-message="getErrorMessage('firstname')"
           >
             <input
               id="firstname"
-              v-model.trim="user.firstname"
+              v-model.trim="data.firstname"
               class="input"
+              :class="getErrorClass('firstname')"
             >
           </ec-field>
         </div>
@@ -68,11 +32,13 @@
           <ec-field
             label="Nom de famille"
             field-id="lastname"
+            :error-message="getErrorMessage('lastname')"
           >
             <input
               id="lastname"
-              v-model.trim="user.lastname"
+              v-model.trim="data.lastname"
               class="input"
+              :class="getErrorClass('lastname')"
             >
           </ec-field>
         </div>
@@ -80,76 +46,84 @@
       <ec-field
         label="Email"
         field-id="email"
+        :error-message="getErrorMessage('email')"
       >
         <input
           id="email"
-          v-model.trim="user.email"
+          v-model.trim="data.email"
           class="input"
+          :class="getErrorClass('email')"
         >
       </ec-field>
 
       <ec-field
         label="Mot de passe"
         field-id="password"
+        :error-message="getErrorMessage('password')"
       >
         <ec-password
           id="password"
-          v-model="user.password"
+          v-model="data.password"
+          :class="getErrorClass('password')"
         />
       </ec-field>
 
-      <ec-field label="Rôles">
-        <role-rules v-model="user.roles" />
+      <ec-field
+        label="Rôles"
+        :error-message="getErrorMessage('roles')"
+      >
+        <role-rules
+          v-model="data.roles"
+          :class="getErrorClass('roles')"
+        />
       </ec-field>
 
-      <button
-        v-if="user.id"
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
-        </span>
-        <span>Sauvegarder</span>
-      </button>
-
-      <button
-        v-else
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
-        </span>
-        <span>Créer</span>
-      </button>
-    </form>
-  </main>
+      <save-button
+        :loading="loading"
+        :is-new="!id"
+        has-alt
+      />
+    </div>
+  </form>
 </template>
+
 
 <script>
 import { DateTime } from 'luxon';
-import ecField from '~/components/form/field.vue';
 import ecPassword from '~/components/form/password.vue';
 import roleRules from '~/components/form/role-rules.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import titleMixin from '~/helpers/mixins/page-title';
+import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
 
 export default {
   components: {
-    roleRules,
-    ecField,
+    saveButton,
     ecPassword,
+    roleRules,
   },
-  mixins: [toggleLoading],
+  mixins: [
+    toggleLoading(),
+    titleMixin('Utilisateur', 'Création'),
+    errorsManagementMixin(),
+    resetableMixin(function reset() {
+      return {
+        data: { ...this.user },
+      };
+    }),
+  ],
   props: {
     user: {
       type: Object,
       default: () => ({}),
     },
+  },
+  data() {
+    const { id } = this.user;
+    this.setTitle(id ? `Utilisateur #${id}` : 'Utilisateur', id ? 'Édition' : 'Création');
+    return { id };
   },
   computed: {
     gprd() {
@@ -157,41 +131,33 @@ export default {
     },
   },
   methods: {
-    async edit(user) {
-      let data = {};
-      try {
-        this.toggleLoading(true);
-        if (user.id) {
-          ({ data } = (await this.$api.users.patchUser(
-            user.id,
-            user,
-            'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
-            {},
-          )));
+    async edit(user, { submitter }) {
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        const ApiUsers = this.$api.query('users').setMask('id,firstname,lastname,email,roles(role,campuses(id,name))');
+        let data = {};
+        if (this.id) {
+          ({ data } = (await ApiUsers.edit(user.id, user)));
         } else {
-          ({ data } = (await this.$api.users.postUser(
-            user,
-            'id,name,firstname,lastname,email,roles(role,campuses(id,name)',
-            {},
-          )));
+          ({ data } = (await ApiUsers.create(user)));
         }
-
-        this.$toast.success('La donnée a bien été sauvegardée');
-        this.$router.push({
-          name: 'users-id-edit',
-          params: { id: data.id },
-        });
-      } catch (e) {
-        let message = 'Une erreur est survenue durant la création / édition de l\'utilisateur';
-        if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.email
-          && e.response.data.whitelistDomains) {
-          message += ` :
-          ${e.response.data.errors.email.value} devrait se terminer par `
-            + `"${e.response.data.whitelistDomains.join(' ou ')}"`;
+        this.$toast.success('Utilisateur enregistrée avec succès');
+        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
+          case NEXT_ACTION_NEW:
+            this.reset();
+            return this.$router.push({
+              name: 'users-new',
+            });
+          case NEXT_ACTION_LIST:
+            return this.$router.push({
+              name: 'users',
+            });
+          default:
+            return this.$router.push({
+              name: 'users-id-edit',
+              params: { id: data.id },
+            });
         }
-        this.$toast.error(message);
-      }
-      this.toggleLoading(false);
+      }));
     },
   },
 };

@@ -10,11 +10,12 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
-    "@fabnumdef/e-chauffeur_lib-vue": "0.0.47",
-    "@fortawesome/free-solid-svg-icons": "^5.12.1",
+    "@fabnumdef/e-chauffeur_lib-vue": "0.1.0-rc.1",
+    "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@nuxtjs/auth": "^4.8.5",
     "@qonfucius/vue-cal": "^2.10.5",
     "chart.js": "^2.9.3",
+    "core-js": "^2.6.11",
     "i18next-client": "^1.11.4",
     "lodash.debounce": "^4.0.8",
     "lodash.get": "^4.4.2",
@@ -22,19 +23,19 @@
     "lodash.range": "^3.2.0",
     "moment": "^2.24.0",
     "node-sass": "^4.13.0",
-    "nuxt": "^2.11.0",
-    "nuxt-leaflet": "0.0.19",
+    "nuxt": "^2.12.2",
+    "nuxt-leaflet": "0.0.21",
     "sass-loader": "^8.0.2",
     "vue-chartjs": "^3.5.0",
     "vue-multiselect": "^2.1.6",
-    "vue2-datepicker": "^2.13.4"
+    "vue2-datepicker": "^3.4.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-import-resolver-webpack": "^0.12.1",
-    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-vue": "^6.1.2"
   },
   "peerDependencies": {
@@ -43,7 +44,7 @@
     "qs": "6.x",
     "leaflet": "1.x",
     "luxon": "1.x.x",
-    "vue-phone-number-input": "0.2.x"
+    "vue-tel-input": "4.x.x"
   },
   "version": "1.4.6"
 }

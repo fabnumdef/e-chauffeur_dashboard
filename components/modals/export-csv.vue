@@ -30,12 +30,10 @@
         >
       </ec-field>
       <ec-field
-        label="Mask de champs"
+        label="Masque de champs"
         field-id="mask"
       >
-        <aside v-if="displayAside">
-          Ce masque par défaut génèrera un tableau compatible avec l'import de données.
-        </aside>
+        <p>Ce masque par défaut génèrera un tableau compatible avec l'import de données.</p>
         <textarea
           id="mask"
           v-model="mask"
@@ -64,14 +62,12 @@
 <script>
 import generateCsvLink from '~/helpers/generate-csv-link';
 import vueModal from '~/components/modals/default.vue';
-import ecField from '~/components/form/field.vue';
 
 const ROWS_PER_QUERY = 1000;
 
 export default {
   components: {
     vueModal,
-    ecField,
   },
   props: {
     pagination: {
@@ -82,27 +78,19 @@ export default {
       type: Boolean,
       required: true,
     },
-    apiCall: {
-      type: Function,
+    exportQuery: {
+      type: Object,
       required: true,
-    },
-    hasMask: {
-      type: Boolean,
-      default: false,
-    },
-    mask: {
-      type: String,
-      required: true,
-    },
-    displayAside: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
     return {
       downloadLinks: [],
-      csv: {},
+      csv: {
+        separator: ';',
+        delimiter: '"',
+      },
+      mask: this.exportQuery.getMask(),
     };
   },
   watch: {
@@ -115,54 +103,30 @@ export default {
     'csv.delimiter': async function csvSeparator() {
       await this.recalcDownloadLinks();
     },
-    'csv.mask': async function csvSeparator() {
-      this.$emit('updateMask', this.csv.mask);
-      await this.recalcDownloadLinks();
-    },
   },
-  async created() {
-    this.csv = {
-      separator: ';',
-      delimiter: '"',
-    };
+  mounted() {
+    this.recalcDownloadLinks();
   },
   methods: {
     async recalcDownloadLinks() {
       const { pagination: { total }, csv } = this;
 
+      // @todo: Double check pagination logic
       this.downloadLinks = Array
         .from({ length: Math.ceil(total / ROWS_PER_QUERY) })
         .map((_, i) => async () => {
-          const args = [
-            this.mask,
-            {
-              offset: ROWS_PER_QUERY * i,
-              limit: ROWS_PER_QUERY,
-              format: 'text/csv',
-              csv,
-            },
-          ];
-          if (this.hasMask) {
-            args.shift();
-          }
-          const { data } = await this.apiCall(...args);
+          const { data } = await this.exportQuery
+            .setMask(this.mask)
+            .list()
+            .setOffset(ROWS_PER_QUERY * i)
+            .setLimit(ROWS_PER_QUERY)
+            .toCSV(csv);
           generateCsvLink(data, i + 1);
         });
     },
     toggle(force) {
       this.$emit('toggleModal', force);
     },
-    emitUpdateMask(mask) {
-      this.$emit('updateMask', mask);
-    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  aside {
-    margin: .5em 0;
-    font-style: italic;
-    color: gray;
-  }
-</style>

@@ -39,8 +39,8 @@
             </header>
             <ul class="drivers-list">
               <li
-                v-for="driver of content.drivers"
-                :key="driver.id"
+                v-for="(driver, index) of content.drivers"
+                :key="index"
               >
                 <span v-if="driver.firstname || driver.lastname">{{ driver.firstname }} {{ driver.lastname }}</span>
                 <span v-else>{{ driver.id }}</span>

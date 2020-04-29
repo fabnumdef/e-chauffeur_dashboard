@@ -1,64 +1,68 @@
 <template>
-  <table class="table is-fullwidth is-striped is-bordered is-hoverable">
-    <thead>
-      <tr>
-        <th
-          v-for="label in columnLabels"
-          :key="label"
+  <section>
+    <header class="intro">
+      <slot name="intro" />
+    </header>
+    <table class="table is-fullwidth is-striped is-bordered is-hoverable">
+      <thead>
+        <tr>
+          <th
+            v-for="label in columnLabels"
+            :key="label"
+          >
+            {{ label }}
+          </th>
+          <th
+            v-if="hasSlot('actions')"
+            class="actions"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="row in data"
+          :key="row[id]"
         >
-          {{ label }}
-        </th>
-        <th
-          v-if="hasSlot('actions')"
-          class="actions"
-        >
-          Actions
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="row in data"
-        :key="row[id]"
-      >
-        <td
-          v-for="key in columnKeys"
-          :key="key"
-        >
-          <span v-if="isIcon(row[key])">
-            <fa-icon
-              :class="getIcon(row[key]).type"
-              :icon="[getIcon(row[key]).pre, getIcon(row[key]).name]"
+          <td
+            v-for="key in columnKeys"
+            :key="key"
+          >
+            <span v-if="isIcon(row[key])">
+              <fa-icon
+                :class="getIcon(row[key]).type"
+                :icon="[getIcon(row[key]).pre, getIcon(row[key]).name]"
+              />
+            </span>
+            <span v-else>
+              {{ row[key] }}
+            </span>
+          </td>
+          <td v-if="hasSlot('actions')">
+            <slot
+              name="actions"
+              :row="row"
             />
-          </span>
-          <span v-else>
-            {{ row[key] }}
-          </span>
-        </td>
-        <td v-if="hasSlot('actions')">
-          <slot
-            name="actions"
-            :row="row"
-          />
-        </td>
-      </tr>
-    </tbody>
-    <tfoot v-if="data.length > 0">
-      <tr>
-        <td :colspan="columnNumber">
-          <ec-pagination
-            :total="paginationTotal"
-            :offset="paginationOffset"
-            :per-page="paginationPerPage"
-          />
-        </td>
-      </tr>
-    </tfoot>
-  </table>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot v-if="data.length > 0">
+        <tr>
+          <td :colspan="columnNumber">
+            <ec-pagination
+              :total="pagination.total"
+              :offset="pagination.offset"
+              :per-page="pagination.limit"
+            />
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
 </template>
 
 <script>
-import merge from 'lodash.merge';
 import ecPagination from '../pagination.vue';
 
 export default {
@@ -78,25 +82,9 @@ export default {
       type: Array,
       default: () => ([]),
     },
-    paginationTotal: {
-      type: Number,
-      default: 0,
-    },
-    paginationOffset: {
-      type: Number,
-      default: 0,
-    },
-    paginationPerPage: {
-      type: Number,
-      default: 100,
-    },
-    actionEdit: {
-      type: [Object, String],
-      default: null,
-    },
-    actionRemoveConfirm: {
-      type: String,
-      default: 'Voulez vous vraiment supprimer cette ligne ?',
+    pagination: {
+      type: Object,
+      default: () => ({}),
     },
   },
   computed: {
@@ -109,33 +97,8 @@ export default {
     columnKeys() {
       return Object.keys(this.columns);
     },
-    routeActionEdit() {
-      return (row) => {
-        if (!this.actionEdit) {
-          return null;
-        }
-        let route = {};
-        if (typeof this.actionEdit === 'string') {
-          route = {
-            name: this.actionEdit,
-          };
-        } else {
-          route = this.actionEdit;
-        }
-        return merge({}, route, {
-          params: { id: row.id },
-        });
-      };
-    },
   },
   methods: {
-    confirmRemove(row) {
-      // @todo: refactor to put modal and remove confirm
-      // eslint-disable-next-line no-alert
-      if (window && window.confirm && window.confirm(this.actionRemoveConfirm)) {
-        this.$emit('action-remove', row);
-      }
-    },
     hasSlot(name) {
       return !!this.$slots[name] || !!this.$scopedSlots[name];
     },
@@ -158,14 +121,17 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+  @import "~assets/css/head";
   .actions {
     width: 250px;
   }
-
   svg.success {
     color: #23d160;
   }
   svg.error {
     color: #ff3860;
+  }
+  .intro {
+    margin: $size-small 0;
   }
 </style>

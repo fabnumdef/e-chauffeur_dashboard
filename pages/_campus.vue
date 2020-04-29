@@ -8,13 +8,15 @@ import { DateTime } from 'luxon';
 
 export default {
   layout: ({ route: { name } }) => {
-    let layout = 'default';
-    if (name === 'campus-rides' || name === 'campus-planificator') {
-      layout = 'with-map';
-    } else if (name === 'campus-map') {
-      layout = 'simple';
+    switch (name) {
+      case 'campus-rides':
+      case 'campus-planificator':
+        return 'with-map';
+      case 'campus-map':
+        return 'simple';
+      default:
+        return 'default';
     }
-    return layout;
   },
   async asyncData({ params, store }) {
     if (!store.getters['context/isCampus'](params.campus)) {

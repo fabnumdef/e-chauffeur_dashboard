@@ -4,22 +4,11 @@
       <h1 class="title">
         Tableau de bord
       </h1>
-      <ec-field
-        label="Bases :"
-        field-id="campuses"
-      >
-        <campuses-select
-          id="campuses"
-          v-model="request.selectedCampuses"
-          :campuses="campuses"
-        />
-      </ec-field>
       <div class="options">
         <div class="box">
           <client-only>
             <date-time
               lang="fr"
-              append-to-body
               input-class="input"
               type="datetime"
               range
@@ -27,10 +16,9 @@
               :minute-step="5"
               format="YYYY-MM-DD HH:mm"
               range-separator="->"
-              :first-day-of-week="1"
               @input="updateDates"
             >
-              <template slot="calendar-icon">
+              <template slot="icon-calendar">
                 <fa-icon icon="calendar-alt" />
               </template>
             </date-time>
@@ -91,8 +79,6 @@ import driversTile from '~/components/dashboard/drivers.vue';
 import hasPhoneTile from '~/components/dashboard/has-phone.vue';
 import overTimeTile from '~/components/dashboard/over-time.vue';
 import statusesTile from '~/components/dashboard/statuses.vue';
-import campusesSelect from '~/components/form/campuses.vue';
-import ecField from '~/components/form/field.vue';
 import ratingsTile from '~/components/dashboard/ratings.vue';
 import REQUESTABLE from '~/helpers/requestable';
 
@@ -105,49 +91,34 @@ export default {
     hasPhoneTile,
     statusesTile,
     overTimeTile,
-    campusesSelect,
-    ecField,
     ratingsTile,
 
   },
-  watchQuery: ['before', 'after', 'time-scope', 'time-unit', 'campuses'],
+  watchQuery: ['before', 'after', 'time-scope', 'time-unit'],
   async asyncData({ $api, query }) {
     const start = (query.after ? DateTime.fromISO(query.after) : DateTime.local().startOf('weeks')).toJSDate();
     const end = (query.before ? DateTime.fromISO(query.before) : DateTime.local().endOf('weeks')).toJSDate();
     const timeScope = (query['time-scope'] ? query['time-scope'] : 'week');
     const timeUnit = (query['time-unit'] ? query['time-unit'] : 'day');
-    const selectedCampuses = (query.campuses ? query.campuses : []);
-
-    const { data: stats } = await $api.rides().getStats(
-      {
-        timeScope,
-        timeUnit,
-        mask: [
-          REQUESTABLE.total, REQUESTABLE.categories, REQUESTABLE.carModels,
-          REQUESTABLE.hasPhone,
-          REQUESTABLE.statuses,
-          `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
-          `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
-          `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
-          REQUESTABLE.period, REQUESTABLE.uxGrade, REQUESTABLE.recommendationGrade,
-        ].join(','),
-      },
-      start,
-      end,
-      selectedCampuses,
-    );
-
-    const { data: campuses } = await $api.campuses.getCampuses('id,name');
+    const { data: stats } = await $api.query('rides')
+      .setMask([
+        REQUESTABLE.total, REQUESTABLE.categories, REQUESTABLE.carModels,
+        REQUESTABLE.hasPhone,
+        REQUESTABLE.statuses,
+        `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
+        `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
+        `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
+        REQUESTABLE.period, REQUESTABLE.uxGrade, REQUESTABLE.recommendationGrade,
+      ])
+      .stats(start, end, { timeScope, timeUnit });
 
     return {
       stats,
-      campuses,
       request: {
         start,
         end,
         timeScope,
         timeUnit,
-        selectedCampuses: (selectedCampuses.length > 0 ? selectedCampuses : campuses.map(({ id }) => id)),
       },
     };
   },
@@ -175,9 +146,6 @@ export default {
     'request.timeUnit': function watchRequestTimeUnit() {
       this.updateRoute();
     },
-    'request.selectedCampuses': function watchRequestSelectedCampuses() {
-      this.updateRoute();
-    },
   },
   methods: {
     updateDates([start, end]) {
@@ -194,7 +162,6 @@ export default {
         after: this.request.start.toISOString(),
         'time-scope': this.request.timeScope,
         'time-unit': this.request.timeUnit,
-        campuses: this.request.selectedCampuses,
       };
 
       this.$router.push({ path: 'dashboard', query: { ...query } });
