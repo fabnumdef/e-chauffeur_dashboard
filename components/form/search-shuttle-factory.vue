@@ -49,8 +49,11 @@ export default {
       if (this.campus.id) {
         this.loading = true;
         try {
-          const { data } = await
-          this.$api.shuttleFactories(this.campus.id, 'id,label,stops(id,label)').getShuttleFactories();
+          const { data } = await this.$api.query('shuttleFactories')
+            .setMask('id,label,stops(id,label)')
+            .list()
+            .setFilter('campus', this.campus.id);
+
           this.shuttleFactories = data;
         } catch (e) {
           this.$toast.error('Une erreur est survenue lors de la récupération des données.');

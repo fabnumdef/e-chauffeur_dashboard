@@ -68,12 +68,10 @@
 
 <script>
 import ecModal from '~/components/modals/default.vue';
-import ecField from '~/components/form/field.vue';
 
 export default {
   components: {
     ecModal,
-    ecField,
   },
   props: {
     display: {

@@ -156,8 +156,12 @@ export default {
     },
   },
   async mounted() {
-    this.pois = (await this.$api.pois(this.campus, 'label,location(coordinates),id')
-      .getPois({ offset: 0, limit: 1000 })).data;
+    const { data } = await this.$api.query('pois')
+      .setMask('label,location(coordinates),id')
+      .list()
+      .setLimit(1000)
+      .setFilter('campus', this.campus.id);
+    this.pois = data;
   },
   methods: {
     hideMap() {

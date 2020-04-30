@@ -1,140 +1,119 @@
 <template>
-  <main>
-    <header>
-      <h1
-        v-if="id"
-        class="title"
-      >
-        Lieu #{{ id }}
-      </h1>
-      <h1
-        v-else
-        class="title"
-      >
-        Lieu
-      </h1>
-      <h2
-        v-if="id"
-        class="subtitle"
-      >
-        Modification
-      </h2>
-      <h2
-        v-else
-        class="subtitle"
-      >
-        Création
-      </h2>
-    </header>
-    <form
-      class="box"
-      @submit.prevent="edit(poi)"
+  <form
+    class="box"
+    @submit.prevent="edit(data, $event)"
+  >
+    <ec-field
+      label="ID"
+      field-id="id"
+      :error-message="getErrorMessage('id')"
     >
-      <ec-field
-        label="ID"
-        field-id="id"
+      <input
+        id="id"
+        v-model.trim="data.id"
+        :disabled="!!id"
+        class="input"
+        :class="getErrorClass('id')"
       >
-        <input
-          id="id"
-          v-model.trim="poi.id"
-          :disabled="!!id"
-          class="input"
-        >
-      </ec-field>
+    </ec-field>
 
-      <ec-field
-        label="Label"
-        field-id="label"
+    <ec-field
+      label="Label"
+      field-id="label"
+      :error-message="getErrorMessage('label')"
+    >
+      <input
+        id="label"
+        v-model.trim="data.label"
+        class="input"
+        :class="getErrorClass('label')"
       >
-        <input
-          id="label"
-          v-model.trim="poi.label"
-          class="input"
-        >
-      </ec-field>
+    </ec-field>
 
-      <ec-field
-        id="status"
-        label="Statut"
-      >
-        <div>
-          <label
-            for="status-enabled"
-            class="radio"
-          >Activé
-            <input
-              id="status-enabled"
-              v-model="poi.enabled"
-              type="radio"
-              :value="true"
-            >
-          </label>
-          <label
-            for="status-disabled"
-            class="radio"
-          >Désactivé
-            <input
-              id="status-disabled"
-              v-model="poi.enabled"
-              type="radio"
-              :value="false"
-            >
-          </label>
-        </div>
-      </ec-field>
+    <ec-field
+      id="status"
+      label="Statut"
+      :error-message="getErrorMessage('enabled')"
+    >
+      <div>
+        <label
+          for="status-enabled"
+          class="radio"
+        >Activé
+          <input
+            id="status-enabled"
+            v-model="data.enabled"
+            type="radio"
+            :value="true"
+            :class="getErrorClass('enabled')"
+          >
+        </label>
+        <label
+          for="status-disabled"
+          class="radio"
+        >Désactivé
+          <input
+            id="status-disabled"
+            v-model="data.enabled"
+            type="radio"
+            :value="false"
+            :class="getErrorClass('enabled')"
+          >
+        </label>
+      </div>
+    </ec-field>
 
-      <ec-field
-        label="Coordonnées GPS"
-        field-id="location"
-      >
-        <ec-gps-point
-          id="location"
-          v-model="poi.location"
-        />
-      </ec-field>
+    <ec-field
+      label="Coordonnées GPS"
+      field-id="location"
+      :error-message="getErrorMessage('location')"
+    >
+      <ec-gps-point
+        id="location"
+        v-model="data.location"
+        :class="getErrorClass('location')"
+      />
+    </ec-field>
 
-      <button
-        v-if="id"
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
-        </span>
-        <span>Sauvegarder</span>
-      </button>
-
-      <button
-        v-else
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
-        </span>
-        <span>Créer</span>
-      </button>
-    </form>
-  </main>
+    <save-button
+      :loading="loading"
+      :is-new="!id"
+      has-alt
+    />
+  </form>
 </template>
-
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field.vue';
-import ecGpsPoint from '~/components/form/gps-point.vue';
-import toggleLoading from '~/helpers/mixins/toggle-loading';
 import formatCoordinates from '~/helpers/format-coordinates';
+
+import ecGpsPoint from '~/components/form/gps-point.vue';
+
+import toggleLoading from '~/helpers/mixins/toggle-loading';
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import titleMixin from '~/helpers/mixins/page-title';
+import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
 
 export default {
   components: {
-    ecField,
     ecGpsPoint,
+    saveButton,
   },
-  mixins: [toggleLoading],
+  mixins: [
+    toggleLoading(),
+    titleMixin('Lieu', 'Création'),
+    errorsManagementMixin(),
+    resetableMixin(function reset() {
+      return {
+        data: {
+          location: {
+            coordinates: [],
+          },
+          ...this.poi,
+        },
+      };
+    }),
+  ],
   props: {
     poi: {
       type: Object,
@@ -142,42 +121,50 @@ export default {
     },
   },
   data() {
-    return { id: this.poi.id };
+    const { id } = this.poi;
+    this.setTitle(id ? `Lieu #${id}` : 'Lieu', id ? 'Édition' : 'Création');
+    return { id };
   },
   computed: {
     ...mapGetters({
       campus: 'context/campus',
     }),
-    PoisAPI() {
-      const { id, name } = this.campus;
-      return this.$api.pois({ id, name }, 'id,label,location(coordinates),campus');
-    },
   },
   methods: {
-    async edit(poi) {
-      let data = {};
-      try {
-        this.toggleLoading(true);
+    async edit(poi, { submitter }) {
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        const ApiPois = this.$api.query('pois').setMask('id,label,location(coordinates),campus');
         const formattedPoi = {
           ...poi,
+          campus: this.campus,
           location: {
             coordinates: formatCoordinates(poi.location.coordinates),
           },
         };
-
+        let data = {};
         if (this.id) {
-          ({ data } = (await this.PoisAPI.patchPoi(this.id, formattedPoi)));
+          ({ data } = (await ApiPois.edit(poi.id, formattedPoi)));
         } else {
-          ({ data } = (await this.PoisAPI.postPoi(formattedPoi)));
+          ({ data } = (await ApiPois.create(formattedPoi)));
         }
-        this.$toast.success('Le lieu a bien été mis à jour');
-        this.$router.push(this.$context.buildCampusLink('pois-id-edit', {
-          params: { id: data.id },
-        }));
-      } catch (err) {
-        this.$toast.error("L'édition du lieu n'a pas fonctionné");
-      }
-      this.toggleLoading(false);
+        this.$toast.success('Lieu enregistré avec succès');
+        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
+          case NEXT_ACTION_NEW:
+            this.reset();
+
+            return this.$router.push(this.$context.buildCampusLink('pois-new', {
+              params: { id: data.id },
+            }));
+          case NEXT_ACTION_LIST:
+            return this.$router.push(this.$context.buildCampusLink('pois', {
+              params: { id: data.id },
+            }));
+          default:
+            return this.$router.push(this.$context.buildCampusLink('pois-id-edit', {
+              params: { id: data.id },
+            }));
+        }
+      }));
     },
   },
 };

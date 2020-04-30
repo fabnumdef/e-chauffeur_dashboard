@@ -32,12 +32,7 @@
 </template>
 
 <script>
-import ecField from './field.vue';
-
 export default {
-  components: {
-    ecField,
-  },
   props: {
     value: {
       type: Object,
@@ -61,3 +56,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  @import "~assets/css/head";
+
+  .is-danger input {
+    border-color: $danger;
+  }
+</style>

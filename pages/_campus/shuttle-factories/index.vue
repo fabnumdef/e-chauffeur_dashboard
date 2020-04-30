@@ -1,141 +1,101 @@
 <template>
-  <main>
-    <crud-header
-      title="Trajets de navette"
-      :to-create-new="campusLink('shuttle-factories-new')"
-      :can-create-new="$auth.isRegulator(campus.id) || $auth.isSuperAdmin()"
-      :pagination="pagination"
-    />
-    <crud-filter
-      :field-value="fieldFilter"
-      :content-value="contentFilter"
-      :fields-header="[
-        { id: 'id', label: 'Id'},
-        { id: 'label', label: 'Label' },
-        { id: 'category', label: 'Catégorie'},
-      ]"
-      :field-content="fieldContent"
-      @updateFieldFilter="updateFieldFilter"
-      @updateContentFilter="updateContentFilter"
-      @reset="reset"
-    />
-    <crud-list
-      :columns="columns"
-      :data="filteredData"
-      :pagination-offset="pagination.offset"
-      :pagination-total="pagination.total"
-      :pagination-per-page="pagination.limit"
-      :action-edit="campusLink('shuttle-factories-id-edit')"
-      action-remove-confirm="Voulez-vous vraiment supprimer ce trajet ?"
-      @action-remove="deleteShuttleFactory"
+  <crud-list
+    :columns="{
+      id: 'ID',
+      label: 'Label',
+      category: 'Catégorie',
+      comments: 'Commentaires',
+      stops: 'Arrêts',
+      reachDuration: 'Temps moyen entre arrêts',
+    }"
+    :data="data"
+    :pagination="pagination"
+  >
+    <template #intro>
+      <div class="columns">
+        <div class="column">
+          <search-filter
+            :value="searchTerms"
+            @update="search"
+          />
+        </div>
+        <div
+          class="column is-narrow"
+        >
+          <ec-button
+            v-if="$auth.isAdmin(campus.id)"
+            :to="campusLink('shuttle-factories-new')"
+            is-success
+            icon-left="plus"
+          >
+            Créer
+          </ec-button>
+        </div>
+      </div>
+    </template>
+    <template
+      v-if="$auth.isAdmin(campus.id)"
+      #actions="{ row }"
     >
-      <template
-        v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)"
-        #actions="{ row }"
+      <ec-button
+        :to="campusLink('shuttle-factories-id-edit', {
+          params: { id: row.id },
+        })"
+        is-primary
+        icon-left="edit"
       >
-        <nuxt-link
-          :to="campusLink('shuttle-factories-id-edit', {
-            params: { id: row.id },
-          })"
-          class="button is-primary"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'edit']" />
-          </span>
-          <span>Modifier</span>
-        </nuxt-link>
-        <button
-          class="button is-danger"
-          @click="deleteShuttleFactory(row)"
-        >
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'trash']" />
-          </span>
-          <span>Supprimer</span>
-        </button>
-      </template>
-    </crud-list>
-  </main>
+        Modifier
+      </ec-button>
+      <ec-button
+        is-danger
+        icon-left="trash"
+        @click="deleteRow(row)"
+      >
+        Supprimer
+      </ec-button>
+    </template>
+  </crud-list>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import crudList from '~/components/crud/list.vue';
-import crudHeader from '~/components/crud/header.vue';
-import crudFilter from '~/components/crud/filter.vue';
-import handleFilters from '~/components/crud/mixins/handle-filters';
+import updateListMixin from '~/helpers/mixins/crud/update-list';
+import searchFilterMixin from '~/helpers/mixins/crud/search-filter';
+import deleteInListMixin from '~/helpers/mixins/crud/delete-in-list';
+import titleMixin from '~/helpers/mixins/page-title';
 
-const columns = {
-  id: 'ID',
-  label: 'Label',
-  category: 'Catégorie',
-  comments: 'Commentaires',
-  stops: 'Arrêts',
-  reachDuration: 'Temps moyen entre arrêts',
-};
+const SHUTTLE_FACTORIES = 'shuttleFactories';
+const DEFAULT_MASK = 'id,label,category,comments,stops,reachDuration';
 
 export default {
   components: {
-    crudHeader,
-    crudFilter,
     crudList,
   },
-  mixins: [handleFilters],
-  async asyncData({ params, $api, query }) {
-    const offset = parseInt(query.offset, 10) || 0;
-    const limit = parseInt(query.limit, 10) || 30;
+  mixins: [
+    titleMixin('Trajets de navette'),
+    searchFilterMixin(),
+    updateListMixin(SHUTTLE_FACTORIES, {
+      mask: DEFAULT_MASK,
+      customList: async (l, { params }) => {
+        const list = await l.setFilter('campus', params.campus);
+        list.data = list.data.map((shuttleFactory) => ({
+          ...shuttleFactory,
+          category: shuttleFactory.category.label,
+          stops: shuttleFactory.stops.length > 0
+            ? shuttleFactory.stops.length
+            : 'Pas d\'arrêts définis',
+        }));
+        return list;
+      },
+    }),
+    deleteInListMixin(SHUTTLE_FACTORIES, { confirmation: 'Voulez vous vraiment supprimer ce trajet ?' }),
+  ],
 
-    const { data, pagination } = await $api
-      .shuttleFactories(params.campus, Object.keys(columns).join(','))
-      .getShuttleFactories({ offset, limit });
-
-    return {
-      data,
-      pagination,
-    };
-  },
   computed: {
-    columns: () => columns,
     ...mapGetters({
       campus: 'context/campus',
     }),
-    apiCall() {
-      return this.$api.shuttleFactories(this.campus, Object.keys(columns).join(','));
-    },
-    dataToDisplay() {
-      return this.data.map((item) => {
-        const newItem = { ...item };
-        if (item.category) {
-          newItem.category = item.category.label;
-        }
-        if (item.stops) {
-          newItem.stops = item.stops.length > 0 ? item.stops.length : 'Pas d\'arrêts définis';
-        }
-
-        return newItem;
-      });
-    },
-    filteredData() {
-      return this.contentFilter
-        ? this.dataToDisplay.filter((data) => data[this.fieldFilter.id] === this.contentFilter)
-        : this.dataToDisplay;
-    },
-  },
-  methods: {
-    async deleteShuttleFactory({ id }) {
-      if (window && window.confirm && window.confirm('Voulez-vous vraiment supprimer ce modèle de boucle ?')) {
-        await this.apiCall.deleteShuttleFactory(id);
-        await this.updateList();
-      }
-    },
-    async updateList() {
-      const offset = parseInt(this.$route.query.offset, 10) || 0;
-      const limit = parseInt(this.$route.query.limit, 10) || 30;
-
-      const { data, pagination } = await this.apiCall.getShuttleFactories({ offset, limit });
-      this.data = data;
-      this.pagination = pagination;
-    },
   },
 };
 </script>

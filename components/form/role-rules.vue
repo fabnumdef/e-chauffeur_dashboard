@@ -49,11 +49,9 @@
 <script>
 import searchRole from './search-role.vue';
 import searchCampuses from './search-campuses.vue';
-import ecField from '~/components/form/field.vue';
 
 export default {
   components: {
-    ecField,
     searchCampuses,
     searchRole,
   },

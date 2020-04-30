@@ -42,8 +42,9 @@ export default {
     async onOpen() {
       this.loading = true;
       try {
-        const { data: shuttleFactory } = await
-        this.$api.shuttleFactories(this.campus.id, 'id,stops').getShuttleFactory(this.shuttleFactoryId);
+        const { data: shuttleFactory } = await this.$api.query('shuttleFactories')
+          .setMask('id,stops')
+          .get(this.shuttleFactoryId);
         this.stops = shuttleFactory.stops.map(
           ({ id, label }, index) => ({ id, index, label: `${index + 1}: ${label}` }),
         );

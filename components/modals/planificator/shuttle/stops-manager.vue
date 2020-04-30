@@ -72,19 +72,12 @@
           class="column"
           field-id="phone"
         >
-          <phone-number-input
+          <vue-tel-input
             id="phone"
             v-model="phone"
-            default-country-code="FR"
-            :preferred-countries="['FR', 'BE', 'DE']"
-            :translations="{
-              countrySelectorLabel: 'Prefix',
-              countrySelectorError: 'Choisir un pays',
-              phoneNumberLabel: '',
-              example: 'Exemple :'
-            }"
-            color="transparent"
-            valid-color="transparent"
+            name="phone"
+            default-country="FR"
+            :disabled-fetching-country="false"
             class="input input-phone"
           />
         </ec-field>
@@ -124,7 +117,7 @@
 </template>
 
 <script>
-import phoneNumberInput from 'vue-phone-number-input';
+import { VueTelInput } from 'vue-tel-input';
 import ecField from '~/components/form/field.vue';
 import searchStop from '~/components/form/search-stop.vue';
 import displayMixin from '~/components/modals/planificator/shuttle/mixins/display-stops';
@@ -134,7 +127,7 @@ export default {
   components: {
     ecField,
     searchStop,
-    phoneNumberInput,
+    VueTelInput,
   },
   mixins: [
     displayMixin(),

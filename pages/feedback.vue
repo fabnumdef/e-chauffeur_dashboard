@@ -1,109 +1,73 @@
 <template>
-  <main>
-    <header class="with-options">
-      <h1 class="title">
-        Contactez-nous
-      </h1>
-    </header>
-    <div>
-      <form
-        class="box"
-        @submit.prevent="sendFeedback"
-      >
-        <ec-field>
-          <p>
-            Si vous rencontrez la moindre difficulté ou souhaitez nous partager une
-            idée d’amélioration du service e-Chauffeur, n’hésitez pas à remplir le formulaire ci-dessous.
-            Nous tâcherons de revenir vers vous dans les plus brefs délais.
-          </p>
-        </ec-field>
-        <ec-field label="Votre type de retour">
-          <label class="radio">
-            <input
-              v-model="type"
-              value="Amélioration"
-              type="radio"
-              name="type"
-            >
-            Amélioration
-          </label>
-          <label class="radio">
-            <input
-              v-model="type"
-              value="Bug"
-              type="radio"
-              name="type"
-            >
-            Bug
-          </label>
-          <label class="radio">
-            <input
-              v-model="type"
-              value="Question"
-              type="radio"
-              name="type"
-            >
-            Question
-          </label>
-        </ec-field>
-        <ec-field
-          label="Votre message"
-          field-id="commentary"
-        >
-          <textarea
-            id="commentary"
-            v-model.trim="message"
-            class="textarea"
-            placeholder="Tapez votre message"
-          />
-        </ec-field>
-
-        <button
-          type="submit"
-          class="button is-primary"
-        >
-          <span>Envoyer mon message</span>
-          <span class="icon is-small">
-            <fa-icon :icon="['fas', 'arrow-right']" />
-          </span>
-        </button>
-      </form>
-    </div>
-  </main>
+  <form
+    class="box"
+    @submit.prevent="sendFeedback"
+  >
+    <p>
+      Si vous rencontrez la moindre difficulté ou souhaitez nous partager une
+      idée d’amélioration du service e-Chauffeur, n’hésitez pas à remplir le formulaire ci-dessous.
+      Nous tâcherons de revenir vers vous dans les plus brefs délais.
+    </p>
+    <ec-field
+      label="Votre type de retour"
+      :error-message="getErrorMessage('type')"
+    >
+      <ec-choice
+        v-model="data.type"
+        expanded
+        :choices="['Amélioration', 'Bug', 'Question']"
+      />
+    </ec-field>
+    <ec-field
+      label="Votre message"
+      field-id="message"
+      :error-message="getErrorMessage('message')"
+    >
+      <textarea
+        id="message"
+        v-model.trim="data.message"
+        class="textarea"
+        :class="getErrorClass('message')"
+        placeholder="Tapez votre message"
+      />
+    </ec-field>
+    <ec-button
+      type="submit"
+      is-primary
+      :loading="loading"
+      icon-right="arrow-right"
+    >
+      Envoyer mon message
+    </ec-button>
+  </form>
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
+import toggleLoadingMixin from '~/helpers/mixins/toggle-loading';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import titleMixin from '~/helpers/mixins/page-title';
 
 export default {
-  components: {
-    ecField,
-  },
-  data: () => ({
-    type: 'Amélioration',
-    message: '',
-  }),
+  mixins: [
+    toggleLoadingMixin(),
+    errorsManagementMixin(),
+    titleMixin('Contactez-nous'),
+    resetableMixin(() => ({
+      data: {
+        type: 'Amélioration',
+        message: '',
+      },
+    })),
+  ],
   methods: {
     async sendFeedback() {
-      try {
-        await this.$api.feedback.postFeedback(this.message, this.type);
-        this.$toast.success('Message envoyé');
-        this.message = '';
-      } catch (e) {
-        this.$toast.error('Une erreur est survenue lord de l\'envoi de votre message.'
-          + 'Merci de réessayer.\n'
-          + 'Si le problème persiste, contactez nous.');
-      }
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        await this.$api.query('feedback').send(this.data);
+        this.$toast.success('Message envoyé.');
+        this.reset();
+      }));
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .with-options {
-    display: flex;
-    .title {
-      flex-grow: 1;
-    }
-  }
-</style>

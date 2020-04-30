@@ -15,7 +15,9 @@
         <li>Départ : <strong>{{ departure.label }}</strong> le <strong>{{ start }}</strong></li>
         <li>Arrivée : <strong>{{ arrival.label }}</strong> le <strong>{{ end }}</strong></li>
         <li>Chauffeur : <strong>{{ driver.firstname }} {{ driver.lastname }}</strong></li>
-        <li>Véhicule : <strong>{{ car.id }}</strong></li>
+        <li v-if="car">
+          Véhicule : <strong>{{ car.id }}</strong>
+        </li>
         <li>Statut : <strong>{{ convertStatus(status) }}</strong></li>
         <li>Nombre de passagers : <strong>{{ passengersCount }}</strong></li>
         <li>Présence de bagages : <strong>{{ luggage ? 'Oui' : 'Non' }}</strong></li>
@@ -41,26 +43,24 @@ import {
 
 const mask = [
   'id',
+  'category(label)',
+  'departure(label)',
+  'arrival(label)',
   'start',
   'end',
-  'departure(id,label)',
-  'arrival(id,label)',
-  'car(id,label,model(id,label))',
-  'driver(id,name,firstname,lastname)',
-  'owner(id)',
-  'phone',
+  'driver(firstname,lastname)',
+  'car(id)',
   'status',
-  'userComments',
-  'comments',
   'passengersCount',
-  'category(id,label)',
   'luggage',
-].join(',');
+  'createdAt',
+  'comments',
+];
 const formatDate = (ISODate) => DateTime.fromISO(ISODate).toFormat('dd LLL yyyy à HH:mm', { locale: 'fr' });
 
 export default {
   async asyncData({ params, $api }) {
-    const { data } = await $api.rides(params.campus, mask).getRide(params.id);
+    const { data } = await $api.query('rides').setMask(mask).get(params.id);
     const ride = {
       ...data,
       start: formatDate(data.start),

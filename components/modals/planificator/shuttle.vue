@@ -38,10 +38,11 @@
           append-to-body
           input-class="input"
           type="datetime"
-          :value="shuttle.start"
+          :value="start"
           :minute-step="5"
           :first-day-of-week="1"
           format="Le DD/MM/YYYY à HH:mm"
+          @input="updateStart"
         >
           <template slot="calendar-icon">
             <fa-icon icon="calendar" />
@@ -126,6 +127,7 @@
 <script>
 import cloneDeep from 'lodash.clonedeep';
 
+import { DateTime } from 'luxon';
 import vueModal from '~/components/modals/default.vue';
 import ecField from '~/components/form/field.vue';
 import searchShuttleFactory from '~/components/form/search-shuttle-factory.vue';
@@ -173,6 +175,7 @@ export default {
     return {
       shuttle: cloneDeep(this.currentShuttle),
       loading: false,
+      ApiShuttle: this.$api.query('shuttles').setMask(mask),
     };
   },
   computed: {
@@ -182,6 +185,17 @@ export default {
       }
       return 0;
     },
+    start: {
+      get() {
+        if (this.shuttle.start) {
+          return this.shuttle.start.toJSDate();
+        }
+        return null;
+      },
+      set(start) {
+        this.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
+      },
+    },
   },
   watch: {
     currentShuttle() {
@@ -189,19 +203,24 @@ export default {
     },
   },
   methods: {
+    updateStart(start) {
+      this.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
+    },
     updatePassengers(passengers) {
       this.shuttle.passengers = passengers;
     },
     async edit(data) {
       try {
-        if (data.id) {
-          await this.$api.shuttles(this.campus.id, mask)
-            .patchShuttle(data.id, data);
+        const formattedData = {
+          ...data,
+          campus: this.campus,
+        };
+        if (formattedData.id) {
+          await this.ApiShuttle.edit(formattedData.id, formattedData);
         } else {
-          await this.$api.shuttles(this.campus.id, mask)
-            .postShuttle(data);
+          await this.ApiShuttle.create(formattedData);
         }
-        this.$toast.success(`La navette a été ${data.id ? 'modifiée' : 'créée'} avec succès`);
+        this.$toast.success(`La navette a été ${formattedData.id ? 'modifiée' : 'créée'} avec succès`);
       } catch (e) {
         this.$toast.error('Problème à la sauvegarde, veuillez vérifier vos données');
       }
@@ -209,7 +228,7 @@ export default {
     // Facilitates tests before state machine implementation
     async remove(data) {
       try {
-        await this.$api.shuttles(this.campus.id, mask).deleteShuttle(data.id);
+        await this.ApiShuttle.delete(data.id);
         this.$toast.success('La navette a été supprimée avec succès');
       } catch {
         this.$toast.error('Problème à la sauvegarde, veuillez vérifier vos données');

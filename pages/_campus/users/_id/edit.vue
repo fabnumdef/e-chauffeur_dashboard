@@ -1,151 +1,108 @@
 <template>
-  <main>
-    <header>
-      <h1
-        v-if="user && id"
-        class="title"
-      >
-        Chauffeur <em class="is-size-6">#{{ user.id }} : {{ user.email }}</em>
-      </h1>
-      <h1
-        v-else
-        class="title"
-      >
-        Utilisateur
-      </h1>
-      <h2
-        v-if="id"
-        class="subtitle"
-      >
-        Modification
-      </h2>
-      <h2
-        v-else
-        class="subtitle"
-      >
-        Création
-      </h2>
-    </header>
-    <form
-      class="box"
-      @submit.prevent="edit(user)"
-    >
-      <ec-field
-        label="Nom (obsolète)"
-        field-id="name"
-      >
-        <input
-          id="name"
-          :value="user.name"
-          class="input"
-          disabled
+  <form
+    class="box"
+    @submit.prevent="edit(data, $event)"
+  >
+    <div class="columns">
+      <div class="column">
+        <ec-field
+          label="Prénom"
+          field-id="firstname"
+          :error-message="getErrorMessage('firstname')"
         >
-      </ec-field>
-      <div class="columns">
-        <div class="column">
-          <ec-field
-            label="Prénom"
-            field-id="firstname"
+          <input
+            id="firstname"
+            v-model.trim="data.firstname"
+            class="input"
+            :class="getErrorClass('firstname')"
           >
-            <input
-              id="firstname"
-              v-model.trim="user.firstname"
-              class="input"
-            >
-          </ec-field>
-        </div>
-        <div class="column">
-          <ec-field
-            label="Nom de famille"
-            field-id="lastname"
-          >
-            <input
-              id="lastname"
-              v-model.trim="user.lastname"
-              class="input"
-            >
-          </ec-field>
-        </div>
+        </ec-field>
       </div>
-      <ec-field
-        label="Email"
-        field-id="email"
-      >
-        <input
-          id="email"
-          v-model.trim="user.email"
-          type="text"
-          class="input"
+      <div class="column">
+        <ec-field
+          label="Nom de famille"
+          field-id="lastname"
+          :error-message="getErrorMessage('lastname')"
         >
-      </ec-field>
-      <ec-field
-        label="Mot de passe"
-        field-id="password"
+          <input
+            id="lastname"
+            v-model.trim="data.lastname"
+            class="input"
+            :class="getErrorClass('lastname')"
+          >
+        </ec-field>
+      </div>
+    </div>
+    <ec-field
+      label="Email"
+      field-id="email"
+      :error-message="getErrorMessage('email')"
+    >
+      <input
+        id="email"
+        v-model.trim="data.email"
+        type="text"
+        class="input"
+        :class="getErrorClass('email')"
       >
-        <ec-password
-          id="password"
-          v-model="user.password"
-        />
-      </ec-field>
-      <ec-field
-        v-if="isDriver"
-        id="licences"
-        label="Permis"
-      >
-        <vue-multiselect
-          v-model="user.licences"
-          multiple
-          :options="['B', 'C', 'D']"
-        ></vue-multiselect>
-      </ec-field>
-      <ec-field label="Rôles">
-        <role-rules v-model="user.roles" />
-      </ec-field>
-      <button
-        v-if="id"
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
-        </span>
-        <span>Sauvegarder</span>
-      </button>
-
-      <button
-        v-else
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
-        </span>
-        <span>Créer</span>
-      </button>
-    </form>
-  </main>
+    </ec-field>
+    <ec-field
+      label="Mot de passe"
+      field-id="password"
+      :error-message="getErrorMessage('password')"
+    >
+      <ec-password
+        id="password"
+        v-model="data.password"
+        :class="getErrorClass('password')"
+      />
+    </ec-field>
+    <ec-field
+      label="Rôles"
+      :error-message="getErrorMessage('roles')"
+    >
+      <role-rules
+        v-model="data.roles"
+        :class="getErrorClass('roles')"
+      />
+    </ec-field>
+    <save-button
+      :loading="loading"
+      :is-new="!id"
+      has-alt
+    />
+  </form>
 </template>
+
 
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field.vue';
 import ecPassword from '~/components/form/password.vue';
-import roleRules from '~/components/form/role-only.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
-
-const EDITABLE_FIELDS = ['id', 'email', 'password', 'name', 'firstname', 'lastname', 'roles(role)'];
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import titleMixin from '~/helpers/mixins/page-title';
+import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import roleRules from '~/components/form/role-only.vue';
 
 export default {
   components: {
-    ecField,
-    roleRules,
     ecPassword,
+    roleRules,
+    saveButton,
   },
-  mixins: [toggleLoading],
+  mixins: [
+    toggleLoading(),
+    titleMixin('Utilisateur', 'Création'),
+    errorsManagementMixin(),
+    resetableMixin(function reset() {
+      return {
+        data: {
+          ...this.user,
+        },
+      };
+    }),
+  ],
   props: {
     user: {
       type: Object,
@@ -153,7 +110,9 @@ export default {
     },
   },
   data() {
-    return { id: this.user.id };
+    const { id } = this.user;
+    this.setTitle(id ? `Utilisateur #${id}` : 'Utilisateur', id ? 'Édition' : 'Création');
+    return { id };
   },
   computed: {
     ...mapGetters({
@@ -164,35 +123,35 @@ export default {
     },
   },
   methods: {
-    async edit(user) {
-      let data = {};
-      try {
-        this.toggleLoading(true);
-        if (user.id) {
-          ({ data } = (await this.$api
-            .campusUsers(this.campus.id, EDITABLE_FIELDS.join(','))
-            .patchUser(user.id, user)));
+    async edit(user, { submitter }) {
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        const ApiUsers = this.$api.query('users')
+          .setMask('id,email,firstname,lastname,roles(role)')
+          .setCampus(this.campus.id);
+        const formattedUser = {
+          ...user,
+          campus: this.campus,
+        };
+        let data = {};
+        if (this.id) {
+          ({ data } = (await ApiUsers.edit(user.id, formattedUser)));
         } else {
-          ({ data } = (await this.$api.campusUsers(this.campus.id, EDITABLE_FIELDS.join(',')).postUser(user)));
+          ({ data } = (await ApiUsers.create(formattedUser)));
         }
+        this.$toast.success('Chauffeur enregistré avec succès');
+        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
+          case NEXT_ACTION_NEW:
+            this.reset();
 
-        this.$toast.success('Donnée enregistrée avec succès');
-        this.$router.push(
-          this.$context.buildCampusLink('users-id-edit', {
-            params: { id: data.id },
-          }),
-        );
-      } catch (e) {
-        let message = 'Une erreur est survenue durant la création / édition de l\'utilisateur';
-        if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.email
-          && e.response.data.whitelistDomains) {
-          message += ` :
-          ${e.response.data.errors.email.value} devrait se terminer par `
-            + `"${e.response.data.whitelistDomains.join(' ou ')}"`;
+            return this.$router.push(this.$context.buildCampusLink('users-new'));
+          case NEXT_ACTION_LIST:
+            return this.$router.push(this.$context.buildCampusLink('users'));
+          default:
+            return this.$router.push(this.$context.buildCampusLink('users-id-edit', {
+              params: { id: data.id },
+            }));
         }
-        this.$toast.error(message);
-      }
-      this.toggleLoading(false);
+      }));
     },
   },
 };

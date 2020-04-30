@@ -52,18 +52,26 @@ export default {
   data: () => ({
     drivers: [],
     loading: false,
+    ApiRides: this.$api.query('rides').setCampus(this.campusId).setMask(FIELDS),
   }),
   methods: {
-    updateSet: debounce(async function updateSet() {
+    updateSet: debounce(async function updateSet(search) {
       this.loading = true;
       try {
-        const { data } = await this.$api.rides(this.campusId).getAvailableDrivers(
-          FIELDS,
-          this.start.toISO(),
-          this.end.toISO(),
-          this.onlyShuttle,
-        );
-        this.drivers = data;
+        let res;
+        if (this.onlyShuttle) {
+          res = await this.ApiRides.availableDrivers(
+            this.start.toISO(),
+            this.end.toISO(),
+            { params: { search } },
+          ).setFilter('licences', 'D').data;
+        } else {
+          res = await this.ApiRides.availableDrivers(
+            this.start.toISO(),
+            this.end.toISO(),
+          ).data;
+        }
+        this.drivers = res.data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');
       } finally {
@@ -73,13 +81,16 @@ export default {
     async onOpen() {
       this.loading = true;
       try {
-        const { data } = await this.$api.rides(this.campusId).getAvailableDrivers(
-          FIELDS,
-          this.start.toISO(),
-          this.end.toISO(),
-          this.onlyShuttle,
-        );
-        this.drivers = data;
+        let res;
+        if (this.onlyShuttle) {
+          res = await this.ApiRides
+            .availableDrivers(this.start.toISO(), this.end.toISO())
+            .setFilter('licences', 'D');
+        } else {
+          res = await this.ApiRides
+            .availableDrivers(this.start.toISO(), this.end.toISO());
+        }
+        this.drivers = res.data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');
       } finally {

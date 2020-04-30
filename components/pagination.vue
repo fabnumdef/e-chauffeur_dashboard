@@ -23,7 +23,7 @@
         </span>
         <nuxt-link
           v-else
-          :to="`?offset=${(p - 1) * perPage}`"
+          :to="pageRoute((p - 1) * perPage)"
           :class="{'is-current': currentPage === p}"
           :aria-label="`Goto page ${p}`"
           :aria-current="currentPage === p ? 'page' : false"
@@ -87,6 +87,11 @@ export default {
         (result, v, i, arr) => (result.push(v), (v < arr[i + 1] - 1 ? result.push(null) : false), result),
         [],
       );
+    },
+  },
+  methods: {
+    pageRoute(offset) {
+      return { ...this.$route, query: { ...this.$route.query, offset } };
     },
   },
 };

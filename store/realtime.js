@@ -3,7 +3,7 @@
 import { DateTime } from 'luxon';
 import { CREATED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
-const rideMask = [
+const RIDE_MASK = [
   'id',
   'start',
   'end',
@@ -21,7 +21,7 @@ const rideMask = [
   'luggage',
 ].join(',');
 
-const shuttleMask = 'id,label,status,start,end,campus,shuttleFactory,comments,stops,driver,car,passengers';
+const SHUTTLE_MASK = 'id,label,status,start,end,campus,shuttleFactory,comments,stops,driver,car,passengers';
 
 
 export const state = () => ({
@@ -117,29 +117,44 @@ export const getters = {
 export const actions = {
   async fetchDrivers({ commit }, campus) {
     try {
-      const { data } = await this.$api.rides(
-        campus.id,
-      ).getDriversPositions('id,name,date,position(coordinates)');
+      const { data } = await this.$api
+        .query('rides')
+        .setCampus(campus.id)
+        .setMask('id,name,date,position(coordinates)')
+        .driversPositions();
       commit('setDrivers', data);
     } catch (e) {
       throw new Error('Drivers fetching failed');
     }
   },
   async setDisplacements({ commit }, { campus, start, end }) {
-    const { data: rides } = await this.$api.rides(campus, rideMask)
-      .getRides(start, end);
-    const { data: shuttles } = await this.$api.shuttles(campus, shuttleMask)
-      .getShuttles(start, end);
-    commit('setShuttles', shuttles);
+    const { data: rides } = await this.$api
+      .query('rides')
+      .setCampus(campus)
+      .setMask(RIDE_MASK)
+      .list(start, end);
+    const { data: shuttles } = await this.$api
+      .query('shuttles')
+      .setCampus(campus)
+      .setMask(SHUTTLE_MASK)
+      .list(start, end);
+
     commit('setRides', rides);
+    commit('setShuttles', shuttles);
   },
 
-  async appendDisplacements({ commit }, { campus, start, end }) {
-    const { data: rides } = await this.$api.rides(campus, rideMask)
-      .getRides(start, end);
-    const { data: shuttles } = await this.$api.shuttles(campus, shuttleMask)
-      .getShuttles(start, end);
-    shuttles.forEach((s) => commit('pushShuttle', s));
+  async appendRides({ commit }, { campus, start, end }) {
+    const { data: rides } = await this.$api
+      .query('rides')
+      .setCampus(campus)
+      .setMask(RIDE_MASK)
+      .list(start, end);
+    const { data: shuttles } = await this.$api
+      .query('shuttles')
+      .setCampus(campus)
+      .setMask(SHUTTLE_MASK)
+      .list(start, end);
     rides.forEach((r) => commit('pushRide', r));
+    shuttles.forEach((s) => commit('pushShuttle', s));
   },
 };

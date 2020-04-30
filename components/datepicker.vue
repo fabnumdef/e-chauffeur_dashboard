@@ -8,7 +8,6 @@
       :format="format"
       :width="width"
       :range-separator="rangeSeparator"
-      :first-day-of-week="1"
       :placeholder="placeholder"
       @confirm="emitToParentDate"
     />

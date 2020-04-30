@@ -303,21 +303,17 @@ export default {
     events() {
       const evts = this.ridesCalendar;
       const openingHoursEvents = [];
-
       this.drivers.forEach((driver, index) => {
         if (driver.availabilities && driver.availabilities.length > 0) {
-          const availibilites = driver.availabilities.map(({ interval: a }) => (typeof a.s === 'string'
+          const availibilites = driver.availabilities.map((a) => (typeof a.s === 'string'
             ? Interval.fromDateTimes(DateTime.fromISO(a.s), DateTime.fromISO(a.e)) : a));
-
           const todayInterval = Interval.fromDateTimes(DateTime.fromJSDate(this.day).set({
             hour: this.startDayHour,
           }).startOf('hour'),
           DateTime.fromJSDate(this.day).set({
             hour: this.endDayHour,
           }).startOf('hour'));
-
           const notWorkingIntervals = todayInterval.difference(...Interval.merge(availibilites));
-
           notWorkingIntervals.forEach((avail) => {
             const start = this.$vuecal(this.step).getVueCalCeilDateFromISO(avail.start.toISO());
             const end = this.$vuecal(this.step).getVueCalCeilDateFromISO(avail.end.toISO());

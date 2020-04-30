@@ -9,7 +9,6 @@
           <client-only>
             <date-time
               lang="fr"
-              append-to-body
               input-class="input"
               type="datetime"
               range
@@ -17,10 +16,9 @@
               :minute-step="5"
               format="YYYY-MM-DD HH:mm"
               range-separator="->"
-              :first-day-of-week="1"
               @input="updateDates"
             >
-              <template slot="calendar-icon">
+              <template slot="icon-calendar">
                 <fa-icon icon="calendar-alt" />
               </template>
             </date-time>
@@ -121,23 +119,18 @@ export default {
     const end = (query.before ? DateTime.fromISO(query.before) : DateTime.local().endOf('weeks')).toJSDate();
     const timeScope = (query['time-scope'] ? query['time-scope'] : 'week');
     const timeUnit = (query['time-unit'] ? query['time-unit'] : 'day');
-    const { data: stats } = await $api.rides(params.campus).getStats(
-      {
-        timeScope,
-        timeUnit,
-        mask: [
-          REQUESTABLE.total, REQUESTABLE.categories, REQUESTABLE.carModels,
-          REQUESTABLE.hasPhone,
-          REQUESTABLE.statuses,
-          `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
-          `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
-          `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
-          REQUESTABLE.period, REQUESTABLE.uxGrade, REQUESTABLE.recommendationGrade,
-        ].join(','),
-      },
-      start,
-      end,
-    );
+    const { data: stats } = await $api.query('rides')
+      .setCampus(params.campus)
+      .setMask([
+        REQUESTABLE.total, REQUESTABLE.categories, REQUESTABLE.carModels,
+        REQUESTABLE.hasPhone,
+        REQUESTABLE.statuses,
+        `${REQUESTABLE.poisDeparture}(id,departure(location(coordinates),label),total)`,
+        `${REQUESTABLE.poisArrival}(id,arrival(location(coordinates),label),total)`,
+        `${REQUESTABLE.drivers}(id,driver(name,firstname,lastname),total)`,
+        REQUESTABLE.period, REQUESTABLE.uxGrade, REQUESTABLE.recommendationGrade,
+      ])
+      .stats(start, end, { timeScope, timeUnit });
     return {
       stats,
       request: {

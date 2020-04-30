@@ -39,11 +39,9 @@
 </template>
 <script>
 import searchRole from './search-role.vue';
-import ecField from '~/components/form/field.vue';
 
 export default {
   components: {
-    ecField,
     searchRole,
   },
   props: {

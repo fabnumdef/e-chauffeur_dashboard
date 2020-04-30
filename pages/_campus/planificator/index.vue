@@ -37,39 +37,19 @@ import { DateTime } from 'luxon';
 import { DRAFTED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 import RideCalendar from '~/components/planificator/index.vue';
 
-const EDITABLE_FIELDS = [
-  'id',
-  'start',
-  'end',
-  'departure(id,label)',
-  'arrival(id,label)',
-  'car(id,label,model(id,label))',
-  'driver(id,name,firstname,lastname)',
-  'owner(id)',
-  'phone',
-  'status',
-  'userComments',
-  'comments',
-  'passengersCount',
-  'category(id,label)',
-  'luggage',
-  'availabilities',
-].join(',');
-
+const DRIVER_MASK = 'id,name,availabilities(start,end),firstname,lastname,licences';
 export default {
   components: {
     RideCalendar,
   },
+
   async asyncData({ params, $api }) {
     const start = DateTime.local().startOf('days').toJSDate();
     const end = DateTime.local().endOf('days').toJSDate();
-    const ridesApi = $api.rides(params.campus, EDITABLE_FIELDS);
-    const { data: drivers } = await ridesApi.getAvailableDrivers(
-      'id,name,availabilities,firstname,lastname,licences',
-      start,
-      end,
-    );
-
+    const { data: drivers } = await $api.query('rides')
+      .setMask(DRIVER_MASK)
+      .setCampus(params.campus)
+      .availableDrivers(start, end);
     drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
 
     return {
@@ -93,12 +73,10 @@ export default {
     async viewChange(obj) {
       const start = DateTime.fromJSDate(obj.startDate).startOf('days').toJSDate();
       const end = DateTime.fromJSDate(obj.endDate).endOf('days').toJSDate();
-      const ridesApi = this.$api.rides(this.campus, EDITABLE_FIELDS);
-      const { data: drivers } = await ridesApi.getAvailableDrivers(
-        'id,name,availabilities,firstname,lastname,licences',
-        start,
-        end,
-      );
+      const { data: drivers } = await this.$api.query('rides')
+        .setCampus(this.campus.id)
+        .setMask(DRIVER_MASK)
+        .availableDrivers(start, end);
       drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
       await this.$store.dispatch('realtime/appendDisplacements', { campus: this.campus, start, end });
       this.drivers = drivers;

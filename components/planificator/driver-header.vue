@@ -60,7 +60,7 @@ export default {
       return this.connectedDrivers.reduce((acc, driverId) => acc || (driverId === this.driver.id), false);
     },
     isAvailable() {
-      return this.driver.availabilities.some(({ interval: avail }) => {
+      return this.driver.availabilities.some((avail) => {
         if (typeof avail.s === 'string') {
           // eslint-disable-next-line no-param-reassign
           avail = Interval.fromDateTimes(DateTime.fromISO(avail.s), DateTime.fromISO(avail.e));

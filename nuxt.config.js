@@ -1,17 +1,42 @@
+const { version } = require('./package.json');
+
+function addNewToRoutes(routes, prepend, name) {
+  const routeParent = routes.find((r) => r.name === `${prepend}${name}-id`);
+  if (!routeParent) {
+    return;
+  }
+  const routeEdit = routeParent.children.find((r) => r.name === `${prepend}${name}-id-edit`);
+  if (!routeEdit) {
+    return;
+  }
+  routes.unshift({
+    name: `${prepend}${name}-new`,
+    path: prepend ? `${name}/new` : `/${name}/new`,
+    component: routeEdit.component,
+    chunkName: routeEdit.chunkName,
+  });
+}
+
 module.exports = {
   head: {
-    title: 'e-Chauffeur - Dashboard',
+    title: 'Dashboard',
+    titleTemplate: 'e-Chauffeur - %s',
     link: [
       { rel: 'stylesheet', href: '//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' },
     ],
   },
 
   router: {
-    middleware: ['auth'],
+    middleware: ['auth', 'meta'],
+    extendRoutes(routes) {
+      const autoNewRoot = ['campuses', 'car-models', 'categories', 'phone-models', 'users'];
+      autoNewRoot.forEach(addNewToRoutes.bind(this, routes, ''));
+      const autoNewCampus = ['cars', 'drivers', 'phones', 'pois', 'users', 'shuttle-factories'];
+      autoNewCampus.forEach(addNewToRoutes.bind(this, routes.find((r) => r.path === '/:campus').children, 'campus-'));
+    },
   },
 
   build: {
-    parallel: true,
     transpile: ['@qonfucius/vue-cal'],
   },
 
@@ -19,20 +44,23 @@ module.exports = {
     { src: '~assets/css/main.scss', lang: 'scss' },
   ],
   plugins: [
+    '~/plugins/components.js',
+    { src: '~/plugins/custom-toasted.js', mode: 'client' },
     { src: '~/plugins/multiselect.js', mode: 'client' },
     '~/plugins/context.js',
     { src: '~/plugins/datetime-picker.js', mode: 'client' },
-    { src: '~/plugins/vuecal.js', mode: 'client' },
+    { src: '~/plugins/vuecal.js' },
     { src: '~/plugins/realtime.js', mode: 'client' },
     { src: '~/plugins/draggable.js', mode: 'client' },
   ],
-
+  env: {
+    version,
+  },
   modules: [
     'nuxt-leaflet',
     [
       '@fabnumdef/e-chauffeur_lib-vue',
       {
-        components: {},
         api: {
           campuses: 'campuses',
           carModels: 'car-models',
@@ -49,11 +77,9 @@ module.exports = {
           phones: 'phones',
           phoneModels: 'phone-models',
           ratings: 'ratings',
-          campusUsers: 'campus-users',
           shuttleFactories: 'shuttle-factories',
           shuttles: 'shuttles',
         },
-        withAuth: true,
         authPlugins: [
           { src: 'has-right' },
           { src: 'auth-renew', mode: 'client' },
@@ -123,6 +149,7 @@ module.exports = {
           'faArrowUp',
           'faArrowDown',
           'faBus',
+          'faSearch',
         ],
       },
     ],

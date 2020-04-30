@@ -84,13 +84,8 @@
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
-
 export default {
   layout: 'side-picture',
-  components: {
-    ecField,
-  },
   async asyncData() {
     return {
       user: {

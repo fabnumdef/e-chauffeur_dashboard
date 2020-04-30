@@ -1,115 +1,95 @@
 <template>
-  <main>
-    <header>
-      <h1 class="title">
-        Trajet <em v-if="shuttleFactory.id">{{ shuttleFactory.id }}</em>
-      </h1>
-      <h2 class="subtitle">
-        {{ shuttleFactory.id ? 'Modification' : 'Création' }}
-      </h2>
-    </header>
-    <form
-      class="box"
-      @submit.prevent="edit(shuttleFactory)"
+  <form
+    class="box"
+    @submit.prevent="edit(shuttleFactory, $event)"
+  >
+    <ec-field
+      label="Label"
+      field-id="label"
+      :error-message="getErrorMessage('label')"
+      required
     >
-      <ec-field
-        label="Label"
-        field-id="label"
-        required
+      <input
+        id="label"
+        v-model.trim="shuttleFactory.label"
+        type="text"
+        class="input"
+        :class="getErrorClass('label')"
       >
-        <input
-          id="label"
-          v-model.trim="shuttleFactory.label"
-          type="text"
-          class="input"
-        >
-      </ec-field>
+    </ec-field>
 
-      <ec-field
-        label="Catégorie"
-        field-id="category"
-      >
-        <search-category
-          id="category"
-          v-model="shuttleFactory.category"
-        />
-      </ec-field>
-
-      <ec-field
-        label="Temps moyen entre chaque arrêt (en minutes)"
-        field-id="reachDuration"
-      >
-        <input
-          id="reachDuration"
-          v-model="shuttleFactory.reachDuration"
-          class="input"
-          type="number"
-        >
-      </ec-field>
-
-      <stops-table
-        :shuttle-factory="shuttleFactory"
-        :selected-stop="selectedStop"
+    <ec-field
+      label="Catégorie"
+      field-id="category"
+      :error-message="getErrorMessage('category')"
+    >
+      <search-category
+        id="category"
+        v-model="shuttleFactory.category"
+        :class="getErrorClass('category')"
       />
+    </ec-field>
 
-      <ec-field
-        label="Ajouter un nouvel arrêt"
-        field-id="stop"
+    <ec-field
+      label="Temps moyen entre chaque arrêt (en minutes)"
+      field-id="reachDuration"
+      :error-message="getErrorMessage('reachDuration')"
+    >
+      <input
+        id="reachDuration"
+        v-model="shuttleFactory.reachDuration"
+        class="input"
+        type="number"
+        :class="getErrorClass('reachDuration')"
       >
-        <search-poi
-          v-model="selectedStop"
-          placeholder="Sélectionner un lieu"
-          :current-campus="campus"
-        />
-      </ec-field>
+    </ec-field>
 
-      <button
-        class="button is-info"
-        type="button"
-        :disabled="!selectedStop"
-        @click="addStop"
-      >
-        Ajouter
-      </button>
+    <stops-table
+      :shuttle-factory="shuttleFactory"
+      :selected-stop="selectedStop"
+    />
 
-      <ec-field
-        label="Commentaires"
-        field-id="comments"
-      >
-        <textarea
-          id="comments"
-          v-model.trim="shuttleFactory.comments"
-          class="textarea"
-        />
-      </ec-field>
+    <ec-field
+      label="Ajouter un nouvel arrêt"
+      field-id="stop"
+      :error-message="getErrorMessage('stops')"
+    >
+      <search-poi
+        v-model="selectedStop"
+        placeholder="Sélectionner un lieu"
+        :current-campus="campus"
+        :class="getErrorClass('stops')"
+      />
+    </ec-field>
 
-      <button
-        v-if="shuttleFactory.id"
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
-        </span>
-        <span>Sauvegarder</span>
-      </button>
+    <button
+      class="button is-info"
+      type="button"
+      :disabled="!selectedStop"
+      @click="addStop"
+    >
+      Ajouter
+    </button>
 
-      <button
-        v-else
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
-        </span>
-        <span>Créer</span>
-      </button>
-    </form>
-  </main>
+    <ec-field
+      label="Commentaires"
+      field-id="comments"
+      :error-message="getErrorMessage('comments')"
+    >
+      <textarea
+        id="comments"
+        v-model.trim="shuttleFactory.comments"
+        class="textarea"
+        :class="getErrorClass('comments')"
+      />
+    </ec-field>
+
+    <save-button
+      :loading="loading"
+      :is-new="!id"
+      has-alt
+    />
+  </form>
 </template>
 
 <script>
@@ -118,9 +98,13 @@ import ecField from '~/components/form/field.vue';
 import stopsTable from '~/components/crud/stops-table.vue';
 import searchCategory from '~/components/form/search-campus-category.vue';
 import searchPoi from '~/components/form/search-poi.vue';
-import toggleLoadingMixin from '~/helpers/mixins/toggle-loading';
+import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import toggleLoading from '~/helpers/mixins/toggle-loading';
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import titleMixin from '~/helpers/mixins/page-title';
 
-const EDITABLE_FIELDS = ['label', 'category', 'stops', 'comments', 'reachDuration'];
+const EDITABLE_FIELDS = ['id', 'label', 'category', 'stops', 'comments', 'reachDuration'];
 
 export default {
   components: {
@@ -128,9 +112,17 @@ export default {
     ecField,
     searchCategory,
     searchPoi,
+    saveButton,
   },
   mixins: [
-    toggleLoadingMixin,
+    toggleLoading(),
+    titleMixin('Trajet de navette', 'Création'),
+    errorsManagementMixin(),
+    resetableMixin(function reset() {
+      return {
+        data: { ...this.shuttleFactory },
+      };
+    }),
   ],
   props: {
     shuttleFactory: {
@@ -141,18 +133,14 @@ export default {
     },
   },
   data() {
-    return {
-      selectedStop: null,
-    };
+    const { label, id } = this.shuttleFactory;
+    this.setTitle(id ? `Trajet de navette #${label}` : 'Trajet de navette', id ? 'Édition' : 'Création');
+    return { id, selectedStop: null };
   },
   computed: {
     ...mapGetters({
       campus: 'context/campus',
     }),
-    apiCall() {
-      const mask = ['id', ...EDITABLE_FIELDS].join(',');
-      return this.$api.shuttleFactories(this.campus, mask);
-    },
   },
   methods: {
     addStop() {
@@ -169,27 +157,34 @@ export default {
         this.selectedStop = null;
       }
     },
-    async edit(shuttleFactory) {
-      let data = {};
-      try {
-        this.toggleLoading(true);
-        if (this.shuttleFactory.id) {
-          ({ data } = (await this.apiCall.patchShuttleFactory(shuttleFactory.id, shuttleFactory)));
+    async edit(shuttleFactory, { submitter }) {
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        const ApiShuttleFactories = this.$api.query('shuttleFactories').setMask(EDITABLE_FIELDS.join(','));
+        const formattedShuttleFactory = { ...shuttleFactory, campus: this.campus };
+        let data = {};
+        if (this.id) {
+          ({ data } = (await ApiShuttleFactories.edit(formattedShuttleFactory.id, formattedShuttleFactory)));
         } else {
-          ({ data } = (await this.apiCall.postShuttleFactory(shuttleFactory)));
+          ({ data } = (await ApiShuttleFactories.create(formattedShuttleFactory)));
         }
-        this.$toast.success('Donnée sauvegardée avec succès');
-        this.$router.push(this.$context.buildCampusLink('shuttle-factories-id-edit', {
-          params: { id: data.id },
-        }));
-      } catch ({ response: { status } }) {
-        if (status === 400) {
-          this.$toast.error('Erreur de création ou de mise à jour, merci de vérifier tous les champs');
-        } else {
-          this.$toast.error('Erreur serveur, si le problème persiste, veuillez contacter le service technique');
+        this.$toast.success('Trajet enregistré avec succès');
+        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
+          case NEXT_ACTION_NEW:
+            this.reset();
+
+            return this.$router.push(this.$context.buildCampusLink('shuttle-factories-new', {
+              params: { id: data.id },
+            }));
+          case NEXT_ACTION_LIST:
+            return this.$router.push(this.$context.buildCampusLink('shuttle-factories', {
+              params: { id: data.id },
+            }));
+          default:
+            return this.$router.push(this.$context.buildCampusLink('shuttle-factories-id-edit', {
+              params: { id: data.id },
+            }));
         }
-      }
-      this.toggleLoading(false);
+      }));
     },
   },
 };

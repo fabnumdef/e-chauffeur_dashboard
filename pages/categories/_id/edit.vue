@@ -1,96 +1,63 @@
 <template>
-  <main>
-    <header>
-      <h1
-        v-if="id"
-        class="title"
-      >
-        Catégorie #{{ id }}
-      </h1>
-      <h1
-        v-else
-        class="title"
-      >
-        Catégorie
-      </h1>
-      <h2
-        v-if="id"
-        class="subtitle"
-      >
-        Modification
-      </h2>
-      <h2
-        v-else
-        class="subtitle"
-      >
-        Création
-      </h2>
-    </header>
-    <form
-      class="box"
-      @submit.prevent="edit(category)"
+  <form
+    class="box"
+    @submit.prevent="edit(data, $event)"
+  >
+    <ec-field
+      label="ID"
+      field-id="id"
+      :error-message="getErrorMessage('id')"
     >
-      <ec-field
-        label="ID"
-        field-id="id"
+      <input
+        id="id"
+        v-model.trim="data.id"
+        :disabled="!!id"
+        class="input"
+        :class="getErrorClass('id')"
       >
-        <input
-          id="id"
-          v-model.trim="category.id"
-          :disabled="!!id"
-          class="input"
-        >
-      </ec-field>
+    </ec-field>
 
-      <ec-field
-        label="Label"
-        field-id="label"
+    <ec-field
+      label="Label"
+      field-id="label"
+      :error-message="getErrorMessage('label')"
+    >
+      <input
+        id="label"
+        v-model.trim="data.label"
+        class="input"
+        :class="getErrorClass('label')"
       >
-        <input
-          id="label"
-          v-model.trim="category.label"
-          class="input"
-        >
-      </ec-field>
-
-      <button
-        v-if="id"
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'save']" />
-        </span>
-        <span>Sauvegarder</span>
-      </button>
-
-      <button
-        v-else
-        type="submit"
-        class="button is-primary"
-        :class="{'is-loading': loading}"
-        :disabled="loading"
-      >
-        <span class="icon is-small">
-          <fa-icon :icon="['fas', 'plus']" />
-        </span>
-        <span>Créer</span>
-      </button>
-    </form>
-  </main>
+    </ec-field>
+    <save-button
+      :loading="loading"
+      :is-new="!id"
+      has-alt
+    />
+  </form>
 </template>
 
 <script>
-import ecField from '~/components/form/field.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
+import errorsManagementMixin from '~/helpers/mixins/errors-management';
+import resetableMixin from '~/helpers/mixins/reset-data';
+import titleMixin from '~/helpers/mixins/page-title';
+import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
 
 export default {
   components: {
-    ecField,
+    saveButton,
   },
-  mixins: [toggleLoading],
+  mixins: [
+    toggleLoading(),
+    titleMixin('Catégorie', 'Création'),
+    errorsManagementMixin(),
+    resetableMixin(function reset() {
+      return {
+        data: { ...this.category },
+      };
+    }),
+  ],
   props: {
     category: {
       type: Object,
@@ -98,29 +65,38 @@ export default {
     },
   },
   data() {
-    return { id: this.category.id };
+    const { label, id } = this.category;
+    this.setTitle(id ? `Catégorie #${id}: ${label}` : 'Catégorie', id ? 'Édition' : 'Création');
+    return { id };
   },
   methods: {
-    async edit(category) {
-      const ApiCategories = this.$api.categories('id,label');
-      let data = {};
-      try {
-        this.toggleLoading(true);
+    async edit(category, { submitter }) {
+      return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
+        const ApiCategories = this.$api.query('categories').setMask('id,label');
+        let data = {};
         if (this.id) {
-          ({ data } = (await ApiCategories.patchCategory(category.id, category)));
+          ({ data } = (await ApiCategories.edit(category.id, category)));
         } else {
-          ({ data } = (await ApiCategories.postCategory(category)));
+          ({ data } = (await ApiCategories.create(category)));
         }
-
-        this.$toast.success('Donnée enregistrée avec succès');
-        this.$router.push({
-          name: 'categories-id-edit',
-          params: { id: data.id },
-        });
-      } catch {
-        this.$toast.error('Une erreur est survenue, merci de vérifier les champs.');
-      }
-      this.toggleLoading(false);
+        this.$toast.success('Catégorie enregistrée avec succès');
+        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
+          case NEXT_ACTION_NEW:
+            this.reset();
+            return this.$router.push({
+              name: 'categories-new',
+            });
+          case NEXT_ACTION_LIST:
+            return this.$router.push({
+              name: 'categories',
+            });
+          default:
+            return this.$router.push({
+              name: 'categories-id-edit',
+              params: { id: data.id },
+            });
+        }
+      }));
     },
 
   },
