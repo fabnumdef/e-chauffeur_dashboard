@@ -118,6 +118,9 @@ export default {
     ...mapGetters({
       campus: 'context/campus',
     }),
+    isDriver() {
+      return this.user.roles && !!this.user.roles.find(({ role }) => role === 'ROLE_DRIVER');
+    },
   },
   methods: {
     async edit(user, { submitter }) {

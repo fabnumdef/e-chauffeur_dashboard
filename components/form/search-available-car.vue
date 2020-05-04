@@ -27,10 +27,11 @@
 </template>
 <script>
 
-const FIELDS = 'id,label,model(id,label)';
+const FIELDS = 'id,label,model(id,label,capacity)';
+
 export default {
   props: {
-    campus: {
+    campusId: {
       type: String,
       default: null,
     },
@@ -96,7 +97,7 @@ export default {
       this.loading = true;
       try {
         const { data } = await this.$api.query('rides')
-          .setCampus(this.campus)
+          .setCampus(this.campusId)
           .setMask(FIELDS)
           .availableCars(
             this.start.toISO(),

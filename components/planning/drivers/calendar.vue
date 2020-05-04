@@ -32,8 +32,12 @@
                 {{ content.start.toLocaleString(TIME_SIMPLE) }} - {{ content.end.toLocaleString(TIME_SIMPLE) }}
               </span>
               <span class="is-pulled-right">
-                <fa-icon icon="user-circle" /> <span v-if="content.drivers">
+                <fa-icon icon="user-circle" />
+                <span v-if="content.drivers">
                   {{ content.drivers.length }}({{ drivers.data.length }})
+                </span>
+                <span v-if="content.driver">
+                  {{ content.driver.lastname }}
                 </span>
               </span>
             </header>
@@ -60,7 +64,6 @@ import { mapGetters } from 'vuex';
 const STEP = 60;
 const START_DAY_HOUR = 0;
 const END_DAY_HOUR = 24;
-
 export default {
   props: {
     events: {
@@ -76,14 +79,12 @@ export default {
       default: false,
     },
   },
-
   data() {
     return {
       STEP,
       shouldUseSelectedDate: true,
     };
   },
-
   computed: {
     ...mapGetters({
       campus: 'context/campus',
@@ -148,6 +149,9 @@ export default {
   /deep/ {
     .slot-event {
       cursor: pointer;
+      &.shuttle {
+        background-color: $primary;
+      }
     }
     .slot-event div {
       height: 100%;

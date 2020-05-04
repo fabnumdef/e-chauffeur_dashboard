@@ -31,7 +31,6 @@
       #actions="{ row }"
     >
       <ec-button
-        v-if="$auth.isRegulator(campus.id)"
         :to="campusLink('drivers-id-edit', {
           params: { id: row.id },
         })"
@@ -41,7 +40,6 @@
         Modifier
       </ec-button>
       <button
-        v-if="$auth.isRegulator(campus.id)"
         class="button is-danger"
         @click="deleteRow(row)"
       >

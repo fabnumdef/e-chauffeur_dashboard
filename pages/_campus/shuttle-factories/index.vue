@@ -1,6 +1,13 @@
 <template>
   <crud-list
-    :columns="{id: 'S/N', assignTo: 'Assigné à'}"
+    :columns="{
+      id: 'ID',
+      label: 'Label',
+      category: 'Catégorie',
+      comments: 'Commentaires',
+      stops: 'Arrêts',
+      reachDuration: 'Temps moyen entre arrêts',
+    }"
     :data="data"
     :pagination="pagination"
   >
@@ -12,22 +19,12 @@
             @update="search"
           />
         </div>
-        <export-button
-          :pagination="pagination"
-          :export-query="exportQuery"
-          class="column is-narrow"
-        />
-        <import-button
-          v-if="$auth.isAdmin(campus.id)"
-          class="column is-narrow"
-          @import="importCSV"
-        />
         <div
           class="column is-narrow"
         >
           <ec-button
             v-if="$auth.isAdmin(campus.id)"
-            :to="campusLink('phones-new')"
+            :to="campusLink('shuttle-factories-new')"
             is-success
             icon-left="plus"
           >
@@ -37,11 +34,11 @@
       </div>
     </template>
     <template
-      v-if="$auth.isSuperAdmin() || $auth.isAdmin(campus.id)"
+      v-if="$auth.isAdmin(campus.id)"
       #actions="{ row }"
     >
       <ec-button
-        :to="campusLink('phones-id-edit', {
+        :to="campusLink('shuttle-factories-id-edit', {
           params: { id: row.id },
         })"
         is-primary
@@ -66,28 +63,35 @@ import crudList from '~/components/crud/list.vue';
 import updateListMixin from '~/helpers/mixins/crud/update-list';
 import searchFilterMixin from '~/helpers/mixins/crud/search-filter';
 import deleteInListMixin from '~/helpers/mixins/crud/delete-in-list';
-import importCSVMixin from '~/helpers/mixins/crud/import-csv';
-import exportCSVMixin from '~/helpers/mixins/crud/export-csv';
 import titleMixin from '~/helpers/mixins/page-title';
 
-const PHONES = 'phones';
-const DEFAULT_MASK = 'id,imei,model(id,label),number,campus(id),state,comments';
+const SHUTTLE_FACTORIES = 'shuttleFactories';
+const DEFAULT_MASK = 'id,label,category,comments,stops,reachDuration';
 
 export default {
   components: {
     crudList,
   },
   mixins: [
-    titleMixin('Téléphones'),
+    titleMixin('Trajets de navette'),
     searchFilterMixin(),
-    updateListMixin(PHONES, {
+    updateListMixin(SHUTTLE_FACTORIES, {
       mask: DEFAULT_MASK,
-      customList: async (l, { params }) => l.setFilter('campus', params.campus),
+      customList: async (l, { params }) => {
+        const list = await l.setFilter('campus', params.campus);
+        list.data = list.data.map((shuttleFactory) => ({
+          ...shuttleFactory,
+          category: shuttleFactory.category.label,
+          stops: shuttleFactory.stops.length > 0
+            ? shuttleFactory.stops.length
+            : 'Pas d\'arrêts définis',
+        }));
+        return list;
+      },
     }),
-    deleteInListMixin(PHONES, { confirmation: 'Voulez vous vraiment supprimer ce téléphone ?' }),
-    importCSVMixin(PHONES),
-    exportCSVMixin(PHONES, { mask: DEFAULT_MASK }),
+    deleteInListMixin(SHUTTLE_FACTORIES, { confirmation: 'Voulez vous vraiment supprimer ce trajet ?' }),
   ],
+
   computed: {
     ...mapGetters({
       campus: 'context/campus',

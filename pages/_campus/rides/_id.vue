@@ -15,7 +15,9 @@
         <li>Départ : <strong>{{ departure.label }}</strong> le <strong>{{ start }}</strong></li>
         <li>Arrivée : <strong>{{ arrival.label }}</strong> le <strong>{{ end }}</strong></li>
         <li>Chauffeur : <strong>{{ driver.firstname }} {{ driver.lastname }}</strong></li>
-        <li v-if="car">Véhicule : <strong>{{ car.id }}</strong></li>
+        <li v-if="car">
+          Véhicule : <strong>{{ car.id }}</strong>
+        </li>
         <li>Statut : <strong>{{ convertStatus(status) }}</strong></li>
         <li>Nombre de passagers : <strong>{{ passengersCount }}</strong></li>
         <li>Présence de bagages : <strong>{{ luggage ? 'Oui' : 'Non' }}</strong></li>
@@ -59,7 +61,6 @@ const formatDate = (ISODate) => DateTime.fromISO(ISODate).toFormat('dd LLL yyyy 
 export default {
   async asyncData({ params, $api }) {
     const { data } = await $api.query('rides').setMask(mask).get(params.id);
-    console.log(data);
     const ride = {
       ...data,
       start: formatDate(data.start),

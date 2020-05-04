@@ -2,15 +2,17 @@
  *   Colors   *
  **************/
 $blue-medium: #0053b3;
-$blue-light: #006be6;
-$blue-dark: #003b80;
+$blue-light: #005CEE;
+$blue-dark: #003385;
+$blue-ultra-light: #007AFF;
 
 $white: hsl(0, 0%, 100%);
 $white-20: rgba($white, 0.2);
 $black: #1c1c1c;
 $gray: hsl(0, 0%, 90%);
-$light-gray: hsl(0, 0%, 94%);
 $dark-gray: #8192a9;
+$gray-20: rgba($dark-gray, 0.2);
+$light-gray: hsl(0, 0%, 94%);
 $orange: #FF961D;
 
 /*************
@@ -18,7 +20,7 @@ $orange: #FF961D;
  *************/
 $text: $black;
 $text-strong: $black;
-$background: $blue-light;
+$background: $blue-medium;
 $primary: $blue-medium;
 $family-sans-serif: 'Source Sans Pro', sans-serif;
 $link: $white;

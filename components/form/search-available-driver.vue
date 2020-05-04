@@ -20,7 +20,7 @@ import debounce from 'lodash.debounce';
 const FIELDS = 'id,name,firstname,lastname';
 export default {
   props: {
-    campus: {
+    campusId: {
       type: String,
       default: null,
     },
@@ -44,24 +44,40 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    onlyShuttle: {
+      type: Boolean,
+      default: false,
+    },
   },
-  data: () => ({
-    drivers: [],
-    loading: false,
-  }),
+  data() {
+    return {
+      drivers: [],
+      loading: false,
+    };
+  },
+  computed: {
+    ApiRides() {
+      return this.$api.query('rides').setCampus(this.campusId).setMask(FIELDS);
+    },
+  },
   methods: {
     updateSet: debounce(async function updateSet(search) {
       this.loading = true;
       try {
-        const { data } = await this.$api.query('rides')
-          .setCampus(this.campus)
-          .setMask(FIELDS)
-          .availableDrivers(
+        let res;
+        if (this.onlyShuttle) {
+          res = await this.ApiRides.availableDrivers(
             this.start.toISO(),
             this.end.toISO(),
             { params: { search } },
+          ).setFilter('licences', 'D');
+        } else {
+          res = await this.ApiRides.availableDrivers(
+            this.start.toISO(),
+            this.end.toISO(),
           );
-        this.drivers = data;
+        }
+        this.drivers = res.data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');
       } finally {
@@ -71,14 +87,16 @@ export default {
     async onOpen() {
       this.loading = true;
       try {
-        const { data } = await this.$api.query('rides')
-          .setCampus(this.campus)
-          .setMask(FIELDS)
-          .availableDrivers(
-            this.start.toISO(),
-            this.end.toISO(),
-          );
-        this.drivers = data;
+        let res;
+        if (this.onlyShuttle) {
+          res = await this.ApiRides
+            .availableDrivers(this.start.toISO(), this.end.toISO())
+            .setFilter('licences', 'D');
+        } else {
+          res = await this.ApiRides
+            .availableDrivers(this.start.toISO(), this.end.toISO());
+        }
+        this.drivers = res.data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');
       } finally {

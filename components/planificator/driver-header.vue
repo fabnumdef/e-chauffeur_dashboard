@@ -2,11 +2,15 @@
   <div
     v-if="driver.name !== 'Requêtes utilisateur'"
     class="driver-header"
+    :class="{ 'shuttle-driver': driver.licences.includes('D') }"
   >
     <div class="driver">
       <div class="name">
         {{ driver.name }}
-        <div :class="isConnected ? 'badge badge-active' : 'badge'" />
+        <div
+          class="badge"
+          :class="{ 'badge-active': isConnected }"
+        />
       </div>
       <div v-if="ride && ride.car">
         <p v-if="ride.car.model">
@@ -78,6 +82,10 @@ export default {
     text-align: left;
     border-right: 1px solid black;
     height: 100%;
+    .driver {
+      padding: .8em;
+
+    }
     .name {
       font-weight: bold;
       display: flex;
@@ -93,13 +101,17 @@ export default {
         background-color: $green;
       }
     }
-    .driver {
-      padding: 0 5px;
-    }
   }
-
+  .ride-status {
+    padding: .2em .8em;
+  }
+  .shuttle-driver {
+    background-color: $blue-ultra-light;
+    color: $white;
+  }
   .first-col-header {
     display: flex;
+    border-right: 1px solid black;
     justify-content: center;
     align-items: center;
     text-align: center;

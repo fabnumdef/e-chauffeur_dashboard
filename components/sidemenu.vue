@@ -41,9 +41,14 @@
         <nuxt-link :to="campusLink('planificator')">
           Planificateur
           <span
-            v-if="ridesToValidate.length > 0"
+            v-if="displacementsToValidate.length > 0"
             class="red-dot"
-          >{{ ridesToValidate.length }}</span>
+          >{{ displacementsToValidate.length }}</span>
+        </nuxt-link>
+      </li>
+      <li v-if="hasCampus">
+        <nuxt-link :to="campusLink('shuttle-factories')">
+          Trajets de navette
         </nuxt-link>
       </li>
       <li v-if="hasCampus && $auth.isRegulator() && !$auth.isAdmin()">
@@ -191,7 +196,7 @@ export default {
   computed: {
     ...mapGetters({
       campus: 'context/campus',
-      ridesToValidate: 'realtime/ridesToValidate',
+      displacementsToValidate: 'realtime/displacementsToValidate',
     }),
     version() {
       return process.env.version;
@@ -214,7 +219,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions({ fetchCampus: 'context/fetchCampus', setRides: 'realtime/setRides' }),
+    ...mapActions({ fetchCampus: 'context/fetchCampus', setDisplacements: 'realtime/setDisplacements' }),
     async setCampus(campus) {
       await this.fetchCampus(campus ? campus.id : null);
       if (campus) {
@@ -222,7 +227,7 @@ export default {
         const end = DateTime.local()
           .plus({ seconds: this.campus.defaultReservationScope })
           .toJSDate();
-        await this.setRides({ campus: this.campus.id, start, end });
+        await this.setDisplacements({ campus: this.campus.id, start, end });
       }
     },
     logout() {

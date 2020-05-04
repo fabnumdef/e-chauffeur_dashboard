@@ -14,7 +14,7 @@
       <div class="level-right">
         <div class="level-item">
           <button
-            class="button is-primary"
+            class="button"
             @click="mapToggle"
           >
             <span v-if="hideMap">Montrer la carte</span>
@@ -25,9 +25,7 @@
     </div>
     <ride-calendar
       :drivers="drivers"
-      :rides="flavoredRides"
-      :current-campus="currentCampus"
-      :campus="campus"
+      :displacements="flavoredDisplacements"
       @view-change="viewChange"
     />
   </main>
@@ -36,12 +34,10 @@
 <script>
 import { mapGetters } from 'vuex';
 import { DateTime } from 'luxon';
-import {
-  DRAFTED,
-} from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
+import { DRAFTED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 import RideCalendar from '~/components/planificator/index.vue';
 
-const DRIVER_MASK = 'id,name,availabilities(start,end),firstname,lastname';
+const DRIVER_MASK = 'id,name,availabilities(start,end),firstname,lastname,licences';
 export default {
   components: {
     RideCalendar,
@@ -55,23 +51,21 @@ export default {
       .setCampus(params.campus)
       .availableDrivers(start, end);
     drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
+
     return {
-      campus: params.campus,
       drivers,
     };
   },
-
   computed: {
     ...mapGetters({
-      rides: 'realtime/rides',
-      currentCampus: 'context/campus',
       hideMap: 'context/hideMap',
+      campus: 'context/campus',
+      displacements: 'realtime/displacements',
     }),
-    flavoredRides() {
-      return this.rides.filter(({ status }) => status !== DRAFTED);
+    flavoredDisplacements() {
+      return this.displacements.filter(({ status }) => status !== DRAFTED);
     },
   },
-
   methods: {
     mapToggle() {
       this.$store.dispatch('context/hideMap', !this.hideMap);
@@ -80,11 +74,11 @@ export default {
       const start = DateTime.fromJSDate(obj.startDate).startOf('days').toJSDate();
       const end = DateTime.fromJSDate(obj.endDate).endOf('days').toJSDate();
       const { data: drivers } = await this.$api.query('rides')
+        .setCampus(this.campus.id)
         .setMask(DRIVER_MASK)
-        .setCampus(this.currentCampus.id)
         .availableDrivers(start, end);
       drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
-      await this.$store.dispatch('realtime/appendRides', { campus: this.campus, start, end });
+      await this.$store.dispatch('realtime/appendDisplacements', { campus: this.campus, start, end });
       this.drivers = drivers;
     },
   },

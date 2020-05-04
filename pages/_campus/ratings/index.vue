@@ -3,7 +3,7 @@
     :columns="{
       createdAt: 'Date',
       uxGrade: 'Note UX',
-      recommandationGrade: 'Recommandation',
+      recommandationGrade: 'Recommandation'
     }"
     :data="data"
     :pagination="pagination"
@@ -20,10 +20,10 @@
       </div>
     </template>
     <template
+      v-if="$auth.isSuperAdmin()"
       #actions="{ row }"
     >
       <ec-button
-        v-if="$auth.isSuperAdmin()"
         :to="campusLink('ratings-id', {
           params: { id: row.id },
         })"

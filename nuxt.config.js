@@ -31,7 +31,7 @@ module.exports = {
     extendRoutes(routes) {
       const autoNewRoot = ['campuses', 'car-models', 'categories', 'phone-models', 'users'];
       autoNewRoot.forEach(addNewToRoutes.bind(this, routes, ''));
-      const autoNewCampus = ['cars', 'drivers', 'phones', 'pois', 'users'];
+      const autoNewCampus = ['cars', 'drivers', 'phones', 'pois', 'users', 'shuttle-factories'];
       autoNewCampus.forEach(addNewToRoutes.bind(this, routes.find((r) => r.path === '/:campus').children, 'campus-'));
     },
   },
@@ -51,6 +51,7 @@ module.exports = {
     { src: '~/plugins/datetime-picker.js', mode: 'client' },
     { src: '~/plugins/vuecal.js' },
     { src: '~/plugins/realtime.js', mode: 'client' },
+    { src: '~/plugins/draggable.js', mode: 'client' },
   ],
   env: {
     version,
@@ -76,6 +77,8 @@ module.exports = {
           phones: 'phones',
           phoneModels: 'phone-models',
           ratings: 'ratings',
+          shuttleFactories: 'shuttle-factories',
+          shuttles: 'shuttles',
         },
         authPlugins: [
           { src: 'has-right' },
@@ -123,6 +126,7 @@ module.exports = {
           'faArrowRight',
           'faKey',
           'faAngleDown',
+          'faAngleUp',
           'faCalendarAlt',
           'faChevronRight',
           'faFileExport',
@@ -142,6 +146,9 @@ module.exports = {
           'faCheckCircle',
           'faTimesCircle',
           'faFileImport',
+          'faArrowUp',
+          'faArrowDown',
+          'faBus',
           'faSearch',
         ],
       },

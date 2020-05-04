@@ -39,7 +39,6 @@
       #actions="{ row }"
     >
       <ec-button
-        v-if="$auth.isSuperAdmin()"
         :to="{
           name: 'categories-id-edit',
           params: row,
@@ -50,7 +49,6 @@
         Modifier
       </ec-button>
       <ec-button
-        v-if="$auth.isSuperAdmin()"
         is-danger
         icon-left="trash"
         @click="deleteRow(row)"

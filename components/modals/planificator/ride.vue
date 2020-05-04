@@ -78,7 +78,7 @@
             inputName: 'rideDeparture',
             cb: focusNext
           }"
-          :current-campus="currentCampus"
+          :current-campus="campus"
         />
       </ec-field>
 
@@ -96,7 +96,7 @@
             inputName: 'rideArrival',
             cb: focusNext
           }"
-          :current-campus="currentCampus"
+          :current-campus="campus"
         />
       </ec-field>
     </div>
@@ -181,7 +181,7 @@
           v-model="ride.driver"
           :start="ride.start"
           :end="ride.end"
-          :campus="campus"
+          :campus-id="campus.id"
         />
       </ec-field>
       <ec-field
@@ -193,7 +193,7 @@
           v-model="ride.car"
           :start="ride.start"
           :end="ride.end"
-          :campus="campus"
+          :campus-id="campus.id"
           :driver="ride.driver"
         />
       </ec-field>
@@ -383,13 +383,9 @@ export default {
         comments: '',
       }),
     },
-    currentCampus: {
+    campus: {
       type: Object,
       default: () => ({}),
-    },
-    campus: {
-      type: String,
-      default: '',
     },
     modalOpen: {
       type: Boolean,
@@ -492,7 +488,10 @@ export default {
           }
           this.$toasted.success('La course a bien été mise à jour.');
         } else {
-          const { data: newRide } = await api.create({ ...ride, campus: this.currentCampus });
+          const { data: newRide } = await api.create({
+            ...ride,
+            campus: { id: this.$route.params.campus },
+          });
 
           if (action) {
             await api.mutate(newRide.id, action);

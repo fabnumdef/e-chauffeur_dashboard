@@ -41,7 +41,6 @@
         #actions="{ row }"
       >
         <ec-button
-          v-if="$auth.isAdmin(campus.id)"
           :to="campusLink('users-id-edit', {
             params: { id: row.id },
           })"
@@ -52,7 +51,6 @@
           Modifier
         </ec-button>
         <ec-button
-          v-if="$auth.isAdmin(campus.id)"
           is-danger
           icon-left="trash"
           @click="deleteDriver(row)"
@@ -102,7 +100,6 @@
         #actions="{ row }"
       >
         <ec-button
-          v-if="$auth.isAdmin(campus.id)"
           :to="campusLink('users-id-edit', {
             params: { id: row.id },
           })"
@@ -112,7 +109,6 @@
           Modifier
         </ec-button>
         <ec-button
-          v-if="$auth.isSuperAdmin()"
           is-danger
           icon-left="trash"
           @click="deleteUser(row)"

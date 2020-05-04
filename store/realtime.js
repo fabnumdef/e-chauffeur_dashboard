@@ -3,7 +3,7 @@
 import { DateTime } from 'luxon';
 import { CREATED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
-const EDITABLE_FIELDS = [
+const RIDE_MASK = [
   'id',
   'start',
   'end',
@@ -21,10 +21,14 @@ const EDITABLE_FIELDS = [
   'luggage',
 ].join(',');
 
+const SHUTTLE_MASK = 'id,label,status,start,end,campus,shuttleFactory,comments,stops,driver,car,passengers';
+
+
 export const state = () => ({
   connectedDrivers: [],
   drivers: [],
   rides: [],
+  shuttles: [],
 });
 
 export const mutations = {
@@ -34,6 +38,10 @@ export const mutations = {
 
   setRides: (s, rides = []) => {
     s.rides = rides;
+  },
+
+  setShuttles: (s, shuttles = []) => {
+    s.shuttles = shuttles;
   },
 
   pushDriver: (s, driver) => {
@@ -60,6 +68,18 @@ export const mutations = {
     }
   },
 
+  pushShuttle: (s, shuttle) => {
+    if (!shuttle.id) {
+      throw new Error('Id is required');
+    }
+    const i = s.shuttles.findIndex(({ id }) => id === shuttle.id);
+    if (i === -1) {
+      s.shuttles.push(shuttle);
+    } else {
+      Object.assign(s.shuttles[i], shuttle);
+    }
+  },
+
   setConnectedDrivers: (s, { ids, connected }) => {
     if (ids.length > 1) {
       s.connectedDrivers = ids;
@@ -77,11 +97,20 @@ export const getters = {
   drivers: (s) => s.drivers,
   connectedDrivers: (s) => s.connectedDrivers,
   rides: (s) => s.rides,
-  ridesToValidate: (s) => s.rides.filter(({ status }) => status === CREATED),
-  todayRides: ({ rides }) => {
+  shuttles: (s) => s.shuttles,
+  displacements: (s) => [...s.rides, ...s.shuttles],
+  displacementsToValidate: (s) => [
+    ...s.rides.filter(({ status }) => status === CREATED),
+    // @todo handle shuttles statuses
+    ...s.shuttles.filter(({ status }) => status === CREATED),
+  ],
+  todayDisplacements: (s) => {
     const currentTime = DateTime.local();
-    return rides.filter((r) => DateTime.fromISO(r.start).hasSame(currentTime, 'day')
+    const rides = s.rides.filter((r) => DateTime.fromISO(r.start).hasSame(currentTime, 'day')
       || DateTime.fromISO(r.end).hasSame(currentTime, 'day'));
+    const shuttles = s.shuttles.filter((r) => DateTime.fromISO(r.start).hasSame(currentTime, 'day')
+      || DateTime.fromISO(r.end).hasSame(currentTime, 'day'));
+    return [...rides, ...shuttles];
   },
 };
 
@@ -98,21 +127,36 @@ export const actions = {
       throw new Error('Drivers fetching failed');
     }
   },
-  async setRides({ commit }, { campus, start, end }) {
+  async setDisplacements({ commit }, { campus, start, end }) {
     const { data: rides } = await this.$api
       .query('rides')
       .setCampus(campus)
-      .setMask(EDITABLE_FIELDS)
+      .setMask(RIDE_MASK)
       .list(start, end);
+    const { data: shuttles } = await this.$api
+      .query('shuttles')
+      .setCampus(campus)
+      .setMask(SHUTTLE_MASK)
+      .list(start, end);
+
     commit('setRides', rides);
+    commit('setShuttles', shuttles);
   },
 
-  async appendRides({ commit }, { campus, start, end }) {
+  async appendDisplacements({ commit }, { campus, start, end }) {
     const { data: rides } = await this.$api
       .query('rides')
+      .setMask(RIDE_MASK)
       .setCampus(campus)
-      .setMask(EDITABLE_FIELDS)
       .list(start, end);
+
+    const { data: shuttles } = await this.$api
+      .query('shuttles')
+      .setMask(SHUTTLE_MASK)
+      .setCampus(campus)
+      .list(start, end);
+
     rides.forEach((r) => commit('pushRide', r));
+    shuttles.forEach((s) => commit('pushShuttle', s));
   },
 };

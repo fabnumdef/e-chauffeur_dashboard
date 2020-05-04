@@ -71,7 +71,7 @@
 // Disable no-param-reassign on events
 /* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["event"] }] */
 import { DateTime } from 'luxon';
-import planningModal from '~/components/modals/cars-planning.vue';
+import planningModal from '~/components/modals/planning/cars.vue';
 import planningCalendar from '~/components/planning/cars/calendar.vue';
 import commonPlanning, { newTimeSlot } from './common';
 
@@ -193,7 +193,7 @@ export default {
     background-color: $gray;
     /deep/ .fa-user-circle {
       position: absolute;
-      left: 0px;
+      left: 0;
       color: $grey;
       padding: 7px;
       box-sizing: initial;

@@ -42,7 +42,12 @@
               @dragstart="dragstart($event, driver)"
               @dragend="dragend"
             >
-              {{ driver.firstname }} {{ driver.lastname }}
+              <span>{{ driver.firstname }} {{ driver.lastname }}</span>
+              <fa-icon
+                v-if="driver.licences && driver.licences.includes('D')"
+                class="bus-icon"
+                icon="bus"
+              />
               <nuxt-link
                 class="config-button is-pulled-right"
                 :to="campusLink('drivers-id-edit', {params:{id: driver.id}})"
@@ -71,11 +76,11 @@
 // Disable no-param-reassign on events
 /* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["event"] }] */
 import { DateTime } from 'luxon';
-import planningModal from '~/components/modals/drivers-planning.vue';
+import planningModal from '~/components/modals/planning/drivers.vue';
 import planningCalendar from '~/components/planning/drivers/calendar.vue';
 import commonPlanning, { newTimeSlot } from './common';
 
-const DRIVER_DATA = 'id,firstname,lastname';
+const DRIVER_DATA = 'id,firstname,lastname,licences';
 const TIMESLOT_DATA = `id,start,end,comments,drivers(${DRIVER_DATA}),recurrence(enabled,frequency)`;
 const TYPE = 'drivers';
 export default {
@@ -158,11 +163,24 @@ export default {
     .title {
       color: $black;
     }
+    aside {
+      width: 300px;
+    }
     &.driver-box {
       cursor: grab;
       border-radius: $gap;
       padding: $size-small;
       font-weight: bold;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      span {
+        margin-right: auto;
+      }
+      .bus-icon {
+        color: $blue-ultra-light;
+        margin-right:  1em;
+      }
       .config-button {
         color: $dark-gray;
         &:hover {
@@ -173,6 +191,7 @@ export default {
   }
   .create-timeslot {
     border-radius: $gap;
+    padding-left: 2em;
     width: 100%;
     position: relative;
     /deep/ .fa-user-circle {
