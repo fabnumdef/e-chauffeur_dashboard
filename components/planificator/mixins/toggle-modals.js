@@ -19,11 +19,12 @@ export default () => ({
     openTypeModal(event = {}) {
       if (event.split && event.split > 1) {
         const isShuttleSplit = !!this.splitDrivers[event.split - 1].class.includes('heavy-weight');
+        this.event = event;
         if (isShuttleSplit) {
-          this.event = event;
           this.modalOpen.type = true;
         } else {
-          this.modalOpen.ride = true;
+          const args = this.formatArgsForEvent();
+          this.newRide(...args);
         }
       }
     },

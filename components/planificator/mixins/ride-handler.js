@@ -5,35 +5,18 @@ import {
   CANCELED_TECHNICAL,
   CANCELED_REQUESTED_CUSTOMER,
   CANCELED_CUSTOMER_OVERLOAD,
-  CANCELED_CUSTOMER_MISSING, CREATED,
+  CANCELED_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
-const generateEmptyRide = () => ({
-  start: null,
-  end: null,
-  phone: null,
-  departure: null,
-  arrival: null,
-  driver: null,
-  status: CREATED,
-  category: null,
-  passengersCount: 1,
-  luggage: false,
-  comments: '',
-});
+const RIDE = 'ride';
 
 export default () => ({
-  data() {
-    return {
-      ride: generateEmptyRide(),
-    };
-  },
   methods: {
     isRide(item) {
       return item.departure && item.arrival;
     },
     initRide() {
-      this.ride = generateEmptyRide();
+      this.reset(RIDE);
       if (this.campus.categories.length > 0) {
         [this.ride.category] = this.campus.categories;
       }
@@ -44,7 +27,11 @@ export default () => ({
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
     updateRide(ride) {
-      this.ride = Object.assign(generateEmptyRide(), ride);
+      this.reset(RIDE);
+      this.ride = {
+        ...this.ride,
+        ...ride,
+      };
       this.toggleRideModal(true);
     },
     newRide(...args) {

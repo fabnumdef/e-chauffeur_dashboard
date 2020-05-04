@@ -14,7 +14,7 @@
             v-if="capacity"
             :class="passengersCountClass(interStop.passengers)"
           >{{ interStop.passengers.length }}/{{ capacity }}<fa-icon icon="user" /></span>
-          <span v-else>Capacité du vehicule non définie</span>
+          <span v-else>Capacité du véhicule non définie</span>
           <fa-icon
             v-if="toDisplay[index]"
             icon="angle-up"
@@ -30,6 +30,7 @@
           class="stop-details"
         >
           <ul class="passengers-list">
+            <!-- @todo relevant to test on touchable device -->
             <li
               v-for="(passenger, i) in interStop.passengers"
               :key="`passengers-list--${i}`"
@@ -118,14 +119,12 @@
 
 <script>
 import { VueTelInput } from 'vue-tel-input';
-import ecField from '~/components/form/field.vue';
-import searchStop from '~/components/form/search-stop.vue';
+import searchStop from '~/components/form/selects/stops.vue';
 import displayMixin from '~/components/modals/planificator/shuttle/mixins/display-stops';
 import passengersHandlerMixin from '~/components/modals/planificator/shuttle/mixins/passengers-handler';
 
 export default {
   components: {
-    ecField,
     searchStop,
     VueTelInput,
   },

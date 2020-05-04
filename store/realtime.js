@@ -143,17 +143,19 @@ export const actions = {
     commit('setShuttles', shuttles);
   },
 
-  async appendRides({ commit }, { campus, start, end }) {
+  async appendDisplacements({ commit }, { campus, start, end }) {
     const { data: rides } = await this.$api
       .query('rides')
-      .setCampus(campus)
       .setMask(RIDE_MASK)
+      .setCampus(campus)
       .list(start, end);
+
     const { data: shuttles } = await this.$api
       .query('shuttles')
-      .setCampus(campus)
       .setMask(SHUTTLE_MASK)
+      .setCampus(campus)
       .list(start, end);
+
     rides.forEach((r) => commit('pushRide', r));
     shuttles.forEach((s) => commit('pushShuttle', s));
   },

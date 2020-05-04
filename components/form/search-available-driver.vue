@@ -49,11 +49,17 @@ export default {
       default: false,
     },
   },
-  data: () => ({
-    drivers: [],
-    loading: false,
-    ApiRides: this.$api.query('rides').setCampus(this.campusId).setMask(FIELDS),
-  }),
+  data() {
+    return {
+      drivers: [],
+      loading: false,
+    };
+  },
+  computed: {
+    ApiRides() {
+      return this.$api.query('rides').setCampus(this.campusId).setMask(FIELDS);
+    },
+  },
   methods: {
     updateSet: debounce(async function updateSet(search) {
       this.loading = true;
@@ -64,12 +70,12 @@ export default {
             this.start.toISO(),
             this.end.toISO(),
             { params: { search } },
-          ).setFilter('licences', 'D').data;
+          ).setFilter('licences', 'D');
         } else {
           res = await this.ApiRides.availableDrivers(
             this.start.toISO(),
             this.end.toISO(),
-          ).data;
+          );
         }
         this.drivers = res.data;
       } catch (e) {

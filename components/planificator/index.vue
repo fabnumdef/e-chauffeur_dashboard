@@ -199,45 +199,59 @@ import rideModal from '~/components/modals/planificator/ride.vue';
 import shuttleModal from '~/components/modals/planificator/shuttle.vue';
 import driverHeader from './driver-header.vue';
 import typeModal from '~/components/modals/planificator/choose-type.vue';
-import dateRelatedMixin from '~/components/planificator/mixins/date-related';
-import toggleModalsMixin from '~/components/planificator/mixins/toggle-modals';
-import shuttleHandlerMixin from '~/components/planificator/mixins/shuttle-handler';
-import rideHandlerMixin from '~/components/planificator/mixins/ride-handler';
-import mouseEventsMixin from '~/components/planificator/mixins/mouse-events';
-
-export const generateEmptyRide = () => ({
-  start: null,
-  end: null,
-  phone: null,
-  departure: null,
-  arrival: null,
-  driver: null,
-  status: CREATED,
-  category: null,
-  passengersCount: 1,
-  luggage: false,
-  comments: '',
-});
-
-export const generateEmptyShuttle = () => ({
-  start: null,
-  end: null,
-  phone: null,
-  driver: null,
-  status: CREATED,
-  stops: [],
-  category: null,
-  passengers: [],
-  comments: '',
-  shuttleFactory: {
-    id: null,
-    label: null,
-    stops: [],
-  },
-});
-
+import dateRelated from '~/components/planificator/mixins/date-related';
+import toggleModals from '~/components/planificator/mixins/toggle-modals';
+import shuttleHandler from '~/components/planificator/mixins/shuttle-handler';
+import rideHandler from '~/components/planificator/mixins/ride-handler';
+import mouseEvents from '~/components/planificator/mixins/mouse-events';
+import resetableMixin from '~/helpers/mixins/reset-data';
 
 const MIN_SPLIT_WIDTH = 200;
+
+function reset(type = null) {
+  const shuttle = {
+    shuttle: {
+      start: null,
+      end: null,
+      phone: null,
+      driver: null,
+      status: CREATED,
+      category: null,
+      passengers: [],
+      comments: '',
+      shuttleFactory: {
+        id: null,
+        label: null,
+        stops: [],
+      },
+    },
+  };
+  const ride = {
+    ride: {
+      start: null,
+      end: null,
+      phone: null,
+      departure: null,
+      arrival: null,
+      driver: null,
+      status: CREATED,
+      category: null,
+      passengersCount: 1,
+      luggage: false,
+      comments: '',
+    },
+  };
+  if (type === 'shuttle') {
+    return shuttle;
+  }
+  if (type === 'ride') {
+    return ride;
+  }
+  return {
+    ...shuttle,
+    ...ride,
+  };
+}
 
 export default {
   components: {
@@ -247,11 +261,12 @@ export default {
     typeModal,
   },
   mixins: [
-    dateRelatedMixin(),
-    toggleModalsMixin(),
-    shuttleHandlerMixin(),
-    rideHandlerMixin(),
-    mouseEventsMixin(),
+    dateRelated(),
+    toggleModals(),
+    shuttleHandler(),
+    rideHandler(),
+    mouseEvents(),
+    resetableMixin(reset),
   ],
   props: {
     drivers: {
@@ -333,22 +348,27 @@ export default {
   },
 
   methods: {
+    formatArgsForEvent() {
+      const {
+        id, name, firstname, lastname,
+      } = this.drivers[this.event.split - 1];
+
+      const driverInfos = {
+        id, name, firstname, lastname,
+      };
+      const start = this.$vuecal(this.step).getDateTimeFloorFromVueCal(this.event.start);
+      const end = this.$vuecal(this.step).getDateTimeCeilFromVueCal(this.event.end);
+
+      return [start, end, driverInfos];
+    },
     newDisplacement(type) {
       if (this.event && this.event.split > 1) {
-        const {
-          id, name, firstname, lastname,
-        } = this.drivers[this.event.split - 1];
-
-        const driverInfos = {
-          id, name, firstname, lastname,
-        };
-        const start = this.$vuecal(this.step).getDateTimeFloorFromVueCal(this.event.start);
-        const end = this.$vuecal(this.step).getDateTimeCeilFromVueCal(this.event.end);
+        const args = this.formatArgsForEvent();
 
         if (type === 'shuttle') {
-          this.newShuttle(start, end, driverInfos);
+          this.newShuttle(...args);
         } else {
-          this.newRide(start, end, driverInfos);
+          this.newRide(...args);
         }
       }
     },

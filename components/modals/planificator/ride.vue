@@ -488,7 +488,10 @@ export default {
           }
           this.$toasted.success('La course a bien été mise à jour.');
         } else {
-          const { data: newRide } = await api.create({ ...ride, campus: this.currentCampus });
+          const { data: newRide } = await api.create({
+            ...ride,
+            campus: { id: this.$route.params.campus },
+          });
 
           if (action) {
             await api.mutate(newRide.id, action);

@@ -1,28 +1,8 @@
 import { DateTime } from 'luxon';
-import { CREATED } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
 
-const generateEmptyShuttle = () => ({
-  start: null,
-  end: null,
-  phone: null,
-  driver: null,
-  status: CREATED,
-  category: null,
-  passengers: [],
-  comments: '',
-  shuttleFactory: {
-    id: null,
-    label: null,
-    stops: [],
-  },
-});
+const SHUTTLE = 'shuttle';
 
 export default () => ({
-  data() {
-    return {
-      shuttle: generateEmptyShuttle(),
-    };
-  },
   methods: {
     isShuttle(item) {
       return !!item.shuttle;
@@ -33,11 +13,15 @@ export default () => ({
       this.shuttle.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
     updateShuttle(shuttle) {
-      this.shuttle = Object.assign(generateEmptyShuttle(), shuttle);
+      this.reset(SHUTTLE);
+      this.shuttle = {
+        ...this.shuttle,
+        ...shuttle,
+      };
       this.toggleShuttleModal(true);
     },
     newShuttle(...args) {
-      this.shuttle = generateEmptyShuttle();
+      this.reset();
       this.updateShuttleDates(...args);
       this.toggleShuttleModal(true);
     },

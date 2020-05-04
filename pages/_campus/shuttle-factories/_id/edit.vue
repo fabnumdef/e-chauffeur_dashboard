@@ -94,7 +94,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ecField from '~/components/form/field.vue';
 import stopsTable from '~/components/crud/stops-table.vue';
 import searchCategory from '~/components/form/search-campus-category.vue';
 import searchPoi from '~/components/form/search-poi.vue';
@@ -109,7 +108,6 @@ const EDITABLE_FIELDS = ['id', 'label', 'category', 'stops', 'comments', 'reachD
 export default {
   components: {
     stopsTable,
-    ecField,
     searchCategory,
     searchPoi,
     saveButton,
@@ -144,14 +142,10 @@ export default {
   },
   methods: {
     addStop() {
-      const alreadyExists = this.shuttleFactory.stops.findIndex(({ label }) => label === this.selectedStop.label);
+      const alreadyExists = this.shuttleFactory.stops.findIndex(({ label }) => label === this.selectedStop.label) > -1;
       if (
-        alreadyExists === -1
-        || (
-          alreadyExists !== -1
-        && window
-        && window.confirm
-        && window.confirm('Attention, cet arrêt est déjà listé, êtes-vous sûr de vouloir l\'ajouter ?'))
+        !alreadyExists
+        || (window && window.confirm('Attention, cet arrêt est déjà listé, êtes-vous sûr de vouloir l\'ajouter ?'))
       ) {
         this.shuttleFactory.stops.push(this.selectedStop);
         this.selectedStop = null;
@@ -159,7 +153,7 @@ export default {
     },
     async edit(shuttleFactory, { submitter }) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
-        const ApiShuttleFactories = this.$api.query('shuttleFactories').setMask(EDITABLE_FIELDS.join(','));
+        const ApiShuttleFactories = this.$api.query('shuttleFactories').setMask(EDITABLE_FIELDS);
         const formattedShuttleFactory = { ...shuttleFactory, campus: this.campus };
         let data = {};
         if (this.id) {
@@ -171,14 +165,9 @@ export default {
         switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
           case NEXT_ACTION_NEW:
             this.reset();
-
-            return this.$router.push(this.$context.buildCampusLink('shuttle-factories-new', {
-              params: { id: data.id },
-            }));
+            return this.$router.push(this.$context.buildCampusLink('shuttle-factories-new'));
           case NEXT_ACTION_LIST:
-            return this.$router.push(this.$context.buildCampusLink('shuttle-factories', {
-              params: { id: data.id },
-            }));
+            return this.$router.push(this.$context.buildCampusLink('shuttle-factories'));
           default:
             return this.$router.push(this.$context.buildCampusLink('shuttle-factories-id-edit', {
               params: { id: data.id },

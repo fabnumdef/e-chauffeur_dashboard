@@ -35,34 +35,26 @@
               {{ stop[key] }}
             </div>
             <div v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)">
-              <button
-                class="button is-dark"
+              <ec-button
+                is-dark
                 type="button"
+                icon-left="arrow-down"
                 @click="stopDown(stop)"
-              >
-                <span class="icon is-small">
-                  <fa-icon :icon="['fas', 'arrow-down']" />
-                </span>
-              </button>
-              <button
-                class="button is-dark"
+              />
+              <ec-button
+                is-dark
                 type="button"
+                icon-left="arrow-down"
                 @click="stopUp(stop)"
-              >
-                <span class="icon is-small">
-                  <fa-icon :icon="['fas', 'arrow-up']" />
-                </span>
-              </button>
-              <button
-                class="button is-danger"
+              />
+              <ec-button
+                is-danger
                 type="button"
+                icon-left="trash"
                 @click="deleteStop(index)"
               >
-                <span class="icon is-small">
-                  <fa-icon :icon="['fas', 'trash']" />
-                </span>
-                <span>Supprimer</span>
-              </button>
+                Supprimer
+              </ec-button>
             </div>
           </div>
         </vue-draggable>

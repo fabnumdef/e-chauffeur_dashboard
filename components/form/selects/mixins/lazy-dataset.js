@@ -31,7 +31,7 @@ export default (entity, {
     }
     this.toggleLoading(true);
     await this.handleCommonErrorsBehavior(async () => {
-      const { data } = await listQuery(this.$api);
+      const { data } = await listQuery.call(this, this.$api);
       this.list = data;
     });
     this.toggleLoading(false);
@@ -40,7 +40,7 @@ export default (entity, {
     updateList: debounce(async function updateList(search) {
       this.toggleLoading(true);
       await this.handleCommonErrorsBehavior(async () => {
-        const { data } = await listQuery(this.$api, { search });
+        const { data } = await listQuery.call(this, this.$api, { search });
         this.list = data;
       });
       this.toggleLoading(false);

@@ -34,7 +34,7 @@ export default () => ({
         this.resetState();
         this.$emit('update-passengers', this.passengers);
       } else {
-        this.$toast.error('Veuillez completer l\'email, l\'arret de depart et l\'arret d\'arrivee');
+        this.$toast.error('Veuillez compléter l\'email, l\'arrêt de départ et l\'arrêt d\'arrivée');
       }
     },
     deletePassenger(passenger) {
