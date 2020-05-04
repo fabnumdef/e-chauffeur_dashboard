@@ -57,6 +57,18 @@
         :class="getErrorClass('password')"
       />
     </ec-field>
+    <ec-field
+      label="Permis"
+      field-id="licences"
+      :error-message="getErrorMessage('licences')"
+    >
+      <vue-multiselect
+        v-model="licences"
+        multiple
+        :options="['B', 'C', 'D']"
+        placeholder="Renseignez la liste des permis"
+      />
+    </ec-field>
     <save-button
       :loading="loading"
       :is-new="!id"
@@ -107,11 +119,21 @@ export default {
     ...mapGetters({
       campus: 'context/campus',
     }),
+    licences: {
+      get() {
+        return this.data.licences.length > 0 ? this.data.licences : ['B'];
+      },
+      set(licences) {
+        this.data.licences = licences;
+      },
+    },
   },
   methods: {
     async edit(driver, { submitter }) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
-        const ApiDrivers = this.$api.query('drivers').setMask('id,email,firstname,lastname').setCampus(this.campus.id);
+        const ApiDrivers = this.$api.query('drivers')
+          .setMask('id,email,firstname,lastname,licences')
+          .setCampus(this.campus.id);
         const formattedDriver = {
           ...driver,
           campus: this.campus,
