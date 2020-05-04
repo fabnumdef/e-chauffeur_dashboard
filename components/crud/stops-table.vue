@@ -44,7 +44,7 @@
               <ec-button
                 is-dark
                 type="button"
-                icon-left="arrow-down"
+                icon-left="arrow-up"
                 @click="stopUp(stop)"
               />
               <ec-button
