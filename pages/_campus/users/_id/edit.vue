@@ -57,18 +57,7 @@
         :class="getErrorClass('password')"
       />
     </ec-field>
-    <ec-field
-      label="Permis"
-      field-id="licences"
-      :error-message="getErrorMessage('licences')"
-    >
-      <vue-multiselect
-        v-model="licences"
-        multiple
-        :options="['B', 'C', 'D']"
-        placeholder="Renseignez la liste des permis"
-      />
-    </ec-field>
+
     <ec-field
       label="Rôles"
       :error-message="getErrorMessage('roles')"
@@ -130,17 +119,6 @@ export default {
     ...mapGetters({
       campus: 'context/campus',
     }),
-    isDriver() {
-      return this.user.roles && !!this.user.roles.find(({ role }) => role === 'ROLE_DRIVER');
-    },
-    licences: {
-      get() {
-        return this.data.licences.length > 0 ? this.data.licences : ['B'];
-      },
-      set(licences) {
-        this.data.licences = licences;
-      },
-    },
   },
   methods: {
     async edit(user, { submitter }) {
