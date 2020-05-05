@@ -65,7 +65,7 @@
       <vue-multiselect
         v-model="licences"
         multiple
-        :options="['B', 'C', 'D']"
+        :options="['B', 'C', 'D', 'E']"
         placeholder="Renseignez la liste des permis"
       />
     </ec-field>
@@ -121,7 +121,10 @@ export default {
     }),
     licences: {
       get() {
-        return this.data.licences.length > 0 ? this.data.licences : ['B'];
+        if (this.data.licences && this.data.licences.length > 0) {
+          return this.data.licences;
+        }
+        return ['B'];
       },
       set(licences) {
         this.data.licences = licences;
