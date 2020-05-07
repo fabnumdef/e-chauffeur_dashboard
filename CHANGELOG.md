@@ -7,6 +7,7 @@
 * Added crud for shuttle factory
 * Added shuttle licence information to drivers in planning
 * Added shuttle creation and update to planificator
+* Add a button to refresh campuses list in sidemenu
 ### Fix
 * Fixed setRides to avoid keeping wrong campuses rides in rides list
 ## Version 1.4.6
