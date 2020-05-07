@@ -65,7 +65,6 @@
             @edit-time-slot="editTimeSlot"
             @open-edit="openEdit"
             @open-create="openCreate"
-            @view-change="viewChange"
           />
         </client-only>
       </main>
@@ -91,7 +90,7 @@ export default {
     // @todo: paginate
     const offset = parseInt(query.driver_offset, 10) || 0;
     const limit = parseInt(query.driver_limit, 10) || 30;
-    const week = query.week ? DateTime.fromISO(query.week) : DateTime.local();
+    const week = query.current ? DateTime.fromISO(query.current) : DateTime.local();
     const after = week.startOf('week').toJSDate();
     const before = week.endOf('week').toJSDate();
 
@@ -106,28 +105,21 @@ export default {
       .setMask(TIMESLOT_DATA)
       .listDrivers(after, before)
       .setFilter('campus', params.campus);
-
+  // console.log(events);
     return {
       timeSlot: newTimeSlot(TYPE),
       drivers: {
-        data: drivers.data,
+        data: drivers.data || [],
         pagination: drivers.pagination,
       },
       events: {
-        data: events.data,
+        data: events.data || [],
         pagination: events.pagination,
       },
     };
   },
 
   methods: {
-    async viewChange({ startDate, endDate }) {
-      const { data, pagination } = this.$api.query('timeSlot')
-        .setMask(TIMESLOT_DATA)
-        .listDrivers(startDate, endDate)
-        .setFilter('campus', this.campus.id);
-      this.events = { data, pagination };
-    },
     async editTimeSlot(timeSlot) {
       const api = this.$api.query('timeSlot').setMask(TIMESLOT_DATA);
       if (timeSlot.id) {

@@ -60,7 +60,6 @@
             @edit-time-slot="editTimeSlot"
             @open-edit="openEdit"
             @open-create="openCreate"
-            @view-change="viewChange"
           />
         </client-only>
       </main>
@@ -84,7 +83,7 @@ export default {
   watchQuery: ['current'],
   async asyncData({ $api, params, query }) {
     // @todo: paginate
-    const week = query.week ? DateTime.fromISO(query.week) : DateTime.local();
+    const week = query.current ? DateTime.fromISO(query.current) : DateTime.local();
     const after = week.startOf('week').toJSDate();
     const before = week.endOf('week').toJSDate();
     const offset = parseInt(query.offset, 10) || 0;
@@ -113,13 +112,6 @@ export default {
   },
 
   methods: {
-    async viewChange({ startDate, endDate }) {
-      const { data, pagination } = this.$api.query('timeSlot')
-        .setMask(TIMESLOT_DATA)
-        .listCars(startDate, endDate)
-        .setFilter('campus', this.campus.id);
-      this.events = { data, pagination };
-    },
     async editTimeSlot(timeSlot) {
       const api = this.$api.query('timeSlot').setMask(TIMESLOT_DATA);
       if (timeSlot.id) {
