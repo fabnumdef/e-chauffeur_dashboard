@@ -1,3 +1,4 @@
+<script>
 import { Pie, mixins } from 'vue-chartjs';
 
 const { reactiveProp } = mixins;
@@ -10,3 +11,10 @@ export default {
     this.renderChart(this.chartData, this.options);
   },
 };
+
+</script>
+<style scoped>
+  canvas {
+    max-width: 100%;
+  }
+</style>

@@ -40,7 +40,7 @@ import {
   IN_PROGRESS, DELIVERED, CANCELED,
   CANCELED_TECHNICAL, CANCELED_REQUESTED_CUSTOMER, CANCELED_CUSTOMER_OVERLOAD, CANCELED_CUSTOMER_MISSING,
 } from '@fabnumdef/e-chauffeur_lib-vue/api/status/states';
-import pieChart from '~/components/charts/pie';
+import pieChart from '~/components/charts/pie.vue';
 import fragmentedTile from '~/components/dashboard/fragments.vue';
 import bgColorsMixin from '~/components/dashboard/mixins/background-colors';
 

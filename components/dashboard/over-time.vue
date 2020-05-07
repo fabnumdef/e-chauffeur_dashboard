@@ -23,7 +23,7 @@
 <script>
 import fragmentedTile from '~/components/dashboard/fragments.vue';
 import timeConfigs from '~/components/form/time-configs.vue';
-import barChart from '~/components/charts/bar';
+import barChart from '~/components/charts/bar.vue';
 
 export default {
   components: {
