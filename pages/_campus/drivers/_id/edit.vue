@@ -7,6 +7,7 @@
       <div class="column">
         <ec-field
           label="Prénom"
+          autocomplete="off"
           field-id="firstname"
           :error-message="getErrorMessage('firstname')"
         >
@@ -27,6 +28,7 @@
           <input
             id="lastname"
             v-model.trim="data.lastname"
+            autocomplete="off"
             class="input"
             :class="getErrorClass('lastname')"
           >
@@ -41,6 +43,7 @@
       <input
         id="email"
         v-model.trim="data.email"
+        autocomplete="off"
         type="text"
         class="input"
         :class="getErrorClass('email')"

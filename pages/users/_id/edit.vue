@@ -25,6 +25,7 @@
               v-model.trim="data.firstname"
               class="input"
               :class="getErrorClass('firstname')"
+              autocomplete="off"
             >
           </ec-field>
         </div>
@@ -39,6 +40,7 @@
               v-model.trim="data.lastname"
               class="input"
               :class="getErrorClass('lastname')"
+              autocomplete="off"
             >
           </ec-field>
         </div>
@@ -53,6 +55,7 @@
           v-model.trim="data.email"
           class="input"
           :class="getErrorClass('email')"
+          autocomplete="off"
         >
       </ec-field>
 
