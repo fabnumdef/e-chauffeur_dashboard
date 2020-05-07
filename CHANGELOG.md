@@ -10,6 +10,7 @@
 * Add a button to refresh campuses list in sidemenu
 ### Fix
 * Fixed setRides to avoid keeping wrong campuses rides in rides list
+* Fix submitter detection for firefox 52.
 ## Version 1.4.6
 ### Features
 * Added loading animation and success message while creating or editing CRUD

@@ -83,7 +83,7 @@ import toggleLoading from '~/helpers/mixins/toggle-loading';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 import resetableMixin from '~/helpers/mixins/reset-data';
 import titleMixin from '~/helpers/mixins/page-title';
-import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import saveButton, { saveButtonHandler } from '~/components/crud/save-button.vue';
 import roleRules from '~/components/form/role-only.vue';
 
 export default {
@@ -121,7 +121,7 @@ export default {
     }),
   },
   methods: {
-    async edit(user, { submitter }) {
+    async edit(user, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
         const ApiUsers = this.$api.query('users')
           .setMask('id,email,firstname,lastname,roles(role),licences')
@@ -137,18 +137,16 @@ export default {
           ({ data } = (await ApiUsers.create(formattedUser)));
         }
         this.$toast.success('Chauffeur enregistré avec succès');
-        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
-          case NEXT_ACTION_NEW:
+        return saveButtonHandler.call(this, event, {
+          onNew: () => {
             this.reset();
-
             return this.$router.push(this.$context.buildCampusLink('users-new'));
-          case NEXT_ACTION_LIST:
-            return this.$router.push(this.$context.buildCampusLink('users'));
-          default:
-            return this.$router.push(this.$context.buildCampusLink('users-id-edit', {
-              params: { id: data.id },
-            }));
-        }
+          },
+          onList: () => this.$router.push(this.$context.buildCampusLink('users')),
+          onOther: () => this.$router.push(this.$context.buildCampusLink('users-id-edit', {
+            params: data,
+          })),
+        });
       }));
     },
   },

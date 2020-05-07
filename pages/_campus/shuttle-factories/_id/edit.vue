@@ -97,7 +97,7 @@ import { mapGetters } from 'vuex';
 import stopsTable from '~/components/crud/stops-table.vue';
 import searchCategory from '~/components/form/search-campus-category.vue';
 import searchPoi from '~/components/form/search-poi.vue';
-import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import saveButton, { saveButtonHandler } from '~/components/crud/save-button.vue';
 import toggleLoading from '~/helpers/mixins/toggle-loading';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 import resetableMixin from '~/helpers/mixins/reset-data';
@@ -151,7 +151,7 @@ export default {
         this.selectedStop = null;
       }
     },
-    async edit(shuttleFactory, { submitter }) {
+    async edit(shuttleFactory, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
         const ApiShuttleFactories = this.$api.query('shuttleFactories').setMask(EDITABLE_FIELDS);
         const formattedShuttleFactory = { ...shuttleFactory, campus: this.campus };
@@ -162,17 +162,16 @@ export default {
           ({ data } = (await ApiShuttleFactories.create(formattedShuttleFactory)));
         }
         this.$toast.success('Trajet enregistré avec succès');
-        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
-          case NEXT_ACTION_NEW:
+        return saveButtonHandler.call(this, event, {
+          onNew: () => {
             this.reset();
             return this.$router.push(this.$context.buildCampusLink('shuttle-factories-new'));
-          case NEXT_ACTION_LIST:
-            return this.$router.push(this.$context.buildCampusLink('shuttle-factories'));
-          default:
-            return this.$router.push(this.$context.buildCampusLink('shuttle-factories-id-edit', {
-              params: { id: data.id },
-            }));
-        }
+          },
+          onList: () => this.$router.push(this.$context.buildCampusLink('shuttle-factories')),
+          onOther: () => this.$router.push(this.$context.buildCampusLink('shuttle-factories-id-edit', {
+            params: data,
+          })),
+        });
       }));
     },
   },

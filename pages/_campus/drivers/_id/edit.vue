@@ -84,7 +84,7 @@ import toggleLoading from '~/helpers/mixins/toggle-loading';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 import resetableMixin from '~/helpers/mixins/reset-data';
 import titleMixin from '~/helpers/mixins/page-title';
-import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import saveButton, { saveButtonHandler } from '~/components/crud/save-button.vue';
 
 export default {
   components: {
@@ -132,7 +132,7 @@ export default {
     },
   },
   methods: {
-    async edit(driver, { submitter }) {
+    async edit(driver, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
         const ApiDrivers = this.$api.query('drivers')
           .setMask('id,email,firstname,lastname,licences')
@@ -148,18 +148,16 @@ export default {
           ({ data } = (await ApiDrivers.create(formattedDriver)));
         }
         this.$toast.success('Chauffeur enregistré avec succès');
-        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
-          case NEXT_ACTION_NEW:
+        return saveButtonHandler.call(this, event, {
+          onNew: () => {
             this.reset();
-
             return this.$router.push(this.$context.buildCampusLink('drivers-new'));
-          case NEXT_ACTION_LIST:
-            return this.$router.push(this.$context.buildCampusLink('drivers'));
-          default:
-            return this.$router.push(this.$context.buildCampusLink('drivers-id-edit', {
-              params: { id: data.id },
-            }));
-        }
+          },
+          onList: () => this.$router.push(this.$context.buildCampusLink('drivers')),
+          onOther: () => this.$router.push(this.$context.buildCampusLink('drivers-id-edit', {
+            params: data,
+          })),
+        });
       }));
     },
   },

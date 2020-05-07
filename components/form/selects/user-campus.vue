@@ -12,7 +12,12 @@
       :value="getObjectValue"
       v-on="$listeners"
     />
-    <ec-button title="Recharger la liste" class="is-narrow" @click="updateList()" icon-left="redo"/>
+    <ec-button
+      title="Recharger la liste"
+      class="is-narrow"
+      icon-left="redo"
+      @click="updateList()"
+    />
   </div>
 </template>
 

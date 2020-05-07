@@ -195,7 +195,7 @@ import titleMixin from '~/helpers/mixins/page-title';
 import formatCoordinates from '~/helpers/format-coordinates';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 import resetableMixin from '~/helpers/mixins/reset-data';
-import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import saveButton, { saveButtonHandler } from '~/components/crud/save-button.vue';
 
 const EDITABLE_FIELDS = 'id,name,location,phone(drivers,everybody),categories(id,label),'
   + 'information,timezone,workedDays,workedHours,defaultRideDuration,defaultReservationScope';
@@ -237,7 +237,7 @@ export default {
     };
   },
   methods: {
-    async edit(campus, { submitter = {} } = {}) {
+    async edit(campus, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
         const ApiCampuses = this.$api.query('campuses').setMask(EDITABLE_FIELDS);
         const formattedCampus = {
@@ -253,22 +253,10 @@ export default {
           ({ data } = (await ApiCampuses.create(formattedCampus)));
         }
         this.$toast.success('Base enregistrée avec succès');
-        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
-          case NEXT_ACTION_NEW:
-            this.reset();
-            return this.$router.push({
-              name: 'campuses-new',
-            });
-          case NEXT_ACTION_LIST:
-            return this.$router.push({
-              name: 'campuses',
-            });
-          default:
-            return this.$router.push({
-              name: 'campuses-id-edit',
-              params: { id: data.id },
-            });
-        }
+        return saveButtonHandler.call(this, event, {
+          baseRoute: 'campuses',
+          routeParams: data,
+        });
       }));
     },
   },
