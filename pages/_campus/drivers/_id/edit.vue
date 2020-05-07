@@ -151,10 +151,10 @@ export default {
         return saveButtonHandler.call(this, event, {
           onNew: () => {
             this.reset();
-            return this.$router.push(this.$context.buildCampusLink('drivers-new'));
+            return this.$router.push(this.campusLink('drivers-new'));
           },
-          onList: () => this.$router.push(this.$context.buildCampusLink('drivers')),
-          onOther: () => this.$router.push(this.$context.buildCampusLink('drivers-id-edit', {
+          onList: () => this.$router.push(this.campusLink('drivers')),
+          onOther: () => this.$router.push(this.campusLink('drivers-id-edit', {
             params: data,
           })),
         });

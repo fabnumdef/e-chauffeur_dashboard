@@ -165,10 +165,10 @@ export default {
         return saveButtonHandler.call(this, event, {
           onNew: () => {
             this.reset();
-            return this.$router.push(this.$context.buildCampusLink('shuttle-factories-new'));
+            return this.$router.push(this.campusLink('shuttle-factories-new'));
           },
-          onList: () => this.$router.push(this.$context.buildCampusLink('shuttle-factories')),
-          onOther: () => this.$router.push(this.$context.buildCampusLink('shuttle-factories-id-edit', {
+          onList: () => this.$router.push(this.campusLink('shuttle-factories')),
+          onOther: () => this.$router.push(this.campusLink('shuttle-factories-id-edit', {
             params: data,
           })),
         });
