@@ -95,7 +95,7 @@ export default {
     }),
     deleteInListMixin(POIS, { confirmation: 'Voulez vous vraiment supprimer ce lieu ?' }),
     importCSVMixin(POIS),
-    exportCSVMixin(POIS, { mask: DEFAULT_MASK }),
+    exportCSVMixin(POIS, { mask: [...DEFAULT_MASK, 'location(coordinates)'] }),
   ],
   computed: {
     ...mapGetters({
