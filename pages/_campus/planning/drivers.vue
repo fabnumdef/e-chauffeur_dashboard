@@ -103,9 +103,9 @@ export default {
 
     const events = await $api.query('timeSlot')
       .setMask(TIMESLOT_DATA)
-      .listDrivers(after, before)
-      .setFilter('campus', params.campus);
-  // console.log(events);
+      .setCampus(params.campus)
+      .listDrivers(after, before);
+
     return {
       timeSlot: newTimeSlot(TYPE),
       drivers: {
@@ -121,7 +121,7 @@ export default {
 
   methods: {
     async editTimeSlot(timeSlot) {
-      const api = this.$api.query('timeSlot').setMask(TIMESLOT_DATA);
+      const api = this.$api.query('timeSlot').setMask(TIMESLOT_DATA).setCampus(this.campus.id);
       if (timeSlot.id) {
         const i = this.events.data.findIndex(({ id }) => id === timeSlot.id);
         const { data } = await api.edit(timeSlot.id, { ...timeSlot, campus: this.campus });
@@ -138,7 +138,7 @@ export default {
     },
 
     async removeTimeSlot({ id }) {
-      const api = this.$api.query('timeSlot').setMask(TIMESLOT_DATA);
+      const api = this.$api.query('timeSlot').setMask(TIMESLOT_DATA).setCampus(this.campus.id);
       if (window && window.confirm('Voulez vous vraiment supprimer cette plage horaire ?')) {
         await api.delete(id);
         const i = this.events.data.findIndex((e) => e.id === id);

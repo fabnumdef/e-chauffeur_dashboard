@@ -6,7 +6,8 @@ export default (queryName, { mask = 'id', exportMethod = 'exportQuery', customQu
   },
   computed: {
     [exportMethod]() {
-      return customQuery(
+      return customQuery.call(
+        this,
         this.$api.query(queryName).setMask(mask),
         { query: this.$route.query, params: this.$route.params },
       );

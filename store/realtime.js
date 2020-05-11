@@ -128,35 +128,44 @@ export const actions = {
     }
   },
   async setDisplacements({ commit }, { campus, start, end }) {
-    const { data: rides } = await this.$api
-      .query('rides')
-      .setCampus(campus)
-      .setMask(RIDE_MASK)
-      .list(start, end);
-    const { data: shuttles } = await this.$api
-      .query('shuttles')
-      .setCampus(campus)
-      .setMask(SHUTTLE_MASK)
-      .list(start, end);
-
-    commit('setRides', rides);
-    commit('setShuttles', shuttles);
+    return Promise.all([
+      (async () => {
+        const { data: rides } = await this.$api
+          .query('rides')
+          .setMask(RIDE_MASK)
+          .setCampus(campus)
+          .list(start, end);
+        commit('setRides', rides);
+      })(),
+      (async () => {
+        const { data: shuttles } = await this.$api
+          .query('shuttles')
+          .setMask(SHUTTLE_MASK)
+          .setCampus(campus)
+          .list(start, end);
+        commit('setShuttles', shuttles);
+      })(),
+    ]);
   },
 
   async appendDisplacements({ commit }, { campus, start, end }) {
-    const { data: rides } = await this.$api
-      .query('rides')
-      .setMask(RIDE_MASK)
-      .setCampus(campus)
-      .list(start, end);
-
-    const { data: shuttles } = await this.$api
-      .query('shuttles')
-      .setMask(SHUTTLE_MASK)
-      .setCampus(campus)
-      .list(start, end);
-
-    rides.forEach((r) => commit('pushRide', r));
-    shuttles.forEach((s) => commit('pushShuttle', s));
+    return Promise.all([
+      (async () => {
+        const { data: rides } = await this.$api
+          .query('rides')
+          .setMask(RIDE_MASK)
+          .setCampus(campus)
+          .list(start, end);
+        rides.forEach((r) => commit('pushRide', r));
+      })(),
+      (async () => {
+        const { data: shuttles } = await this.$api
+          .query('shuttles')
+          .setMask(SHUTTLE_MASK)
+          .setCampus(campus)
+          .list(start, end);
+        shuttles.forEach((s) => commit('pushShuttle', s));
+      })(),
+    ]);
   },
 };

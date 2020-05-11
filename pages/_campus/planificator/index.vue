@@ -78,7 +78,7 @@ export default {
         .setMask(DRIVER_MASK)
         .availableDrivers(start, end);
       drivers.splice(0, 0, { name: 'Requêtes utilisateur', id: null, availabilities: [] });
-      await this.$store.dispatch('realtime/appendDisplacements', { campus: this.campus, start, end });
+      await this.$store.dispatch('realtime/appendDisplacements', { campus: this.campus.id, start, end });
       this.drivers = drivers;
     },
   },
