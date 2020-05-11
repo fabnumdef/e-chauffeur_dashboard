@@ -59,9 +59,36 @@
   </div>
 </template>
 <script>
+/* global SubmitEvent */
 export const NEXT_ACTION_KEY = 'data-next-action';
 export const NEXT_ACTION_LIST = 'list';
 export const NEXT_ACTION_NEW = 'new';
+
+export const saveButtonHandler = function saveButtonHandler({ submitter = {} } = {}, {
+  baseRoute = '',
+  routeParams = {},
+  onNew = () => {
+    this.reset();
+    return this.$router.push({ name: `${baseRoute}-new` });
+  },
+  onList = () => this.$router.push({ name: baseRoute }),
+  onOther = () => this.$router.push({
+    name: `${baseRoute}-id-edit`,
+    params: routeParams,
+  }),
+} = {}) {
+  if (!this) {
+    throw new Error('Please use saveButtonHandler.call(this, ...params) to forward `this`');
+  }
+  switch (submitter.getAttribute ? submitter.getAttribute(NEXT_ACTION_KEY) : false) {
+    case NEXT_ACTION_NEW:
+      return onNew.call(this);
+    case NEXT_ACTION_LIST:
+      return onList.call(this);
+    default:
+      return onOther.call(this);
+  }
+};
 export default {
   props: {
     isNew: {
@@ -74,7 +101,7 @@ export default {
     },
     withoutDropdown: {
       type: Boolean,
-      default: false,
+      default: () => typeof SubmitEvent === 'undefined',
     },
   },
   computed: {

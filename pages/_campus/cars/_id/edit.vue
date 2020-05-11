@@ -55,7 +55,7 @@ import toggleLoading from '~/helpers/mixins/toggle-loading';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 import resetableMixin from '~/helpers/mixins/reset-data';
 import titleMixin from '~/helpers/mixins/page-title';
-import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import saveButton, { saveButtonHandler } from '~/components/crud/save-button.vue';
 
 const EDITABLE_FIELDS = ['id', 'label', 'model'];
 
@@ -96,7 +96,7 @@ export default {
     }),
   },
   methods: {
-    async edit(car, { submitter }) {
+    async edit(car, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
         const ApiCars = this.$api.query('cars').setMask(EDITABLE_FIELDS);
         let data = {};
@@ -106,18 +106,17 @@ export default {
         } else {
           ({ data } = (await ApiCars.create({ ...car, campus: this.campus })));
         }
-        this.$toast.success('Véhicule enregistré avec ssuccès');
-        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
-          case NEXT_ACTION_NEW:
+        this.$toast.success('Véhicule enregistré avec succès');
+        return saveButtonHandler.call(this, event, {
+          onNew: () => {
             this.reset();
-            return this.$router.push(this.$context.buildCampusLink('cars-new'));
-          case NEXT_ACTION_LIST:
-            return this.$router.push(this.$context.buildCampusLink('cars'));
-          default:
-            return this.$router.push(this.$context.buildCampusLink('cars-id-edit', {
-              params: { id: data.id },
-            }));
-        }
+            return this.$router.push(this.campusLink('cars-new'));
+          },
+          onList: () => this.$router.push(this.campusLink('cars')),
+          onOther: () => this.$router.push(this.campusLink('cars-id-edit', {
+            params: data,
+          })),
+        });
       }));
     },
   },

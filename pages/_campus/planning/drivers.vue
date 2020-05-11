@@ -65,7 +65,6 @@
             @edit-time-slot="editTimeSlot"
             @open-edit="openEdit"
             @open-create="openCreate"
-            @view-change="viewChange"
           />
         </client-only>
       </main>
@@ -91,7 +90,7 @@ export default {
     // @todo: paginate
     const offset = parseInt(query.driver_offset, 10) || 0;
     const limit = parseInt(query.driver_limit, 10) || 30;
-    const week = query.week ? DateTime.fromISO(query.week) : DateTime.local();
+    const week = query.current ? DateTime.fromISO(query.current) : DateTime.local();
     const after = week.startOf('week').toJSDate();
     const before = week.endOf('week').toJSDate();
 
@@ -104,32 +103,25 @@ export default {
 
     const events = await $api.query('timeSlot')
       .setMask(TIMESLOT_DATA)
-      .listDrivers(after, before)
-      .setFilter('campus', params.campus);
+      .setCampus(params.campus)
+      .listDrivers(after, before);
 
     return {
       timeSlot: newTimeSlot(TYPE),
       drivers: {
-        data: drivers.data,
+        data: drivers.data || [],
         pagination: drivers.pagination,
       },
       events: {
-        data: events.data,
+        data: events.data || [],
         pagination: events.pagination,
       },
     };
   },
 
   methods: {
-    async viewChange({ startDate, endDate }) {
-      const { data, pagination } = this.$api.query('timeSlot')
-        .setMask(TIMESLOT_DATA)
-        .listDrivers(startDate, endDate)
-        .setFilter('campus', this.campus.id);
-      this.events = { data, pagination };
-    },
     async editTimeSlot(timeSlot) {
-      const api = this.$api.query('timeSlot').setMask(TIMESLOT_DATA);
+      const api = this.$api.query('timeSlot').setMask(TIMESLOT_DATA).setCampus(this.campus.id);
       if (timeSlot.id) {
         const i = this.events.data.findIndex(({ id }) => id === timeSlot.id);
         const { data } = await api.edit(timeSlot.id, { ...timeSlot, campus: this.campus });
@@ -146,7 +138,7 @@ export default {
     },
 
     async removeTimeSlot({ id }) {
-      const api = this.$api.query('timeSlot').setMask(TIMESLOT_DATA);
+      const api = this.$api.query('timeSlot').setMask(TIMESLOT_DATA).setCampus(this.campus.id);
       if (window && window.confirm('Voulez vous vraiment supprimer cette plage horaire ?')) {
         await api.delete(id);
         const i = this.events.data.findIndex((e) => e.id === id);

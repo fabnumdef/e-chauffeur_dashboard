@@ -25,6 +25,7 @@
               v-model.trim="data.firstname"
               class="input"
               :class="getErrorClass('firstname')"
+              autocomplete="off"
             >
           </ec-field>
         </div>
@@ -39,6 +40,7 @@
               v-model.trim="data.lastname"
               class="input"
               :class="getErrorClass('lastname')"
+              autocomplete="off"
             >
           </ec-field>
         </div>
@@ -53,6 +55,7 @@
           v-model.trim="data.email"
           class="input"
           :class="getErrorClass('email')"
+          autocomplete="off"
         >
       </ec-field>
 
@@ -96,7 +99,7 @@ import toggleLoading from '~/helpers/mixins/toggle-loading';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 import resetableMixin from '~/helpers/mixins/reset-data';
 import titleMixin from '~/helpers/mixins/page-title';
-import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import saveButton, { saveButtonHandler } from '~/components/crud/save-button.vue';
 
 export default {
   components: {
@@ -131,7 +134,7 @@ export default {
     },
   },
   methods: {
-    async edit(user, { submitter }) {
+    async edit(user, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
         const ApiUsers = this.$api.query('users').setMask('id,firstname,lastname,email,roles(role,campuses(id,name))');
         let data = {};
@@ -141,22 +144,10 @@ export default {
           ({ data } = (await ApiUsers.create(user)));
         }
         this.$toast.success('Utilisateur enregistrée avec succès');
-        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
-          case NEXT_ACTION_NEW:
-            this.reset();
-            return this.$router.push({
-              name: 'users-new',
-            });
-          case NEXT_ACTION_LIST:
-            return this.$router.push({
-              name: 'users',
-            });
-          default:
-            return this.$router.push({
-              name: 'users-id-edit',
-              params: { id: data.id },
-            });
-        }
+        return saveButtonHandler.call(this, event, {
+          baseRoute: 'users',
+          routeParams: data,
+        });
       }));
     },
   },

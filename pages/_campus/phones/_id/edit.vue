@@ -94,7 +94,7 @@ import toggleLoading from '~/helpers/mixins/toggle-loading';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 import resetableMixin from '~/helpers/mixins/reset-data';
 import titleMixin from '~/helpers/mixins/page-title';
-import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import saveButton, { saveButtonHandler } from '~/components/crud/save-button.vue';
 
 const EDITABLE_FIELDS = [
   'id',
@@ -143,7 +143,7 @@ export default {
     }),
   },
   methods: {
-    async edit(phone, { submitter }) {
+    async edit(phone, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
         const ApiPhones = this.$api.query('phones').setMask(EDITABLE_FIELDS);
         let data = {};
@@ -154,17 +154,16 @@ export default {
           ({ data } = (await ApiPhones.create({ ...phone, campus: this.campus })));
         }
         this.$toast.success('Téléphone enregistré avec succès');
-        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
-          case NEXT_ACTION_NEW:
+        return saveButtonHandler.call(this, event, {
+          onNew: () => {
             this.reset();
-            return this.$router.push(this.$context.buildCampusLink('phones-new'));
-          case NEXT_ACTION_LIST:
-            return this.$router.push(this.$context.buildCampusLink('phones'));
-          default:
-            return this.$router.push(this.$context.buildCampusLink('phones-id-edit', {
-              params: { id: data.id },
-            }));
-        }
+            return this.$router.push(this.campusLink('phones-new'));
+          },
+          onList: () => this.$router.push(this.campusLink('phones')),
+          onOther: () => this.$router.push(this.campusLink('phones-id-edit', {
+            params: data,
+          })),
+        });
       }));
     },
   },

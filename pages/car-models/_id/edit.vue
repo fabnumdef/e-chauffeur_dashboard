@@ -57,7 +57,7 @@ import toggleLoading from '~/helpers/mixins/toggle-loading';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 import resetableMixin from '~/helpers/mixins/reset-data';
 import titleMixin from '~/helpers/mixins/page-title';
-import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import saveButton, { saveButtonHandler } from '~/components/crud/save-button.vue';
 
 export default {
   components: {
@@ -85,7 +85,7 @@ export default {
     return { id };
   },
   methods: {
-    async edit(carModel, { submitter }) {
+    async edit(carModel, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
         const ApiCarModels = this.$api.query('carModels').setMask('id,label,capacity');
         let data = {};
@@ -95,22 +95,10 @@ export default {
           ({ data } = (await ApiCarModels.create(carModel)));
         }
         this.$toast.success('Modèle de véhicule enregistrée avec succès');
-        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
-          case NEXT_ACTION_NEW:
-            this.reset();
-            return this.$router.push({
-              name: 'car-models-new',
-            });
-          case NEXT_ACTION_LIST:
-            return this.$router.push({
-              name: 'car-models',
-            });
-          default:
-            return this.$router.push({
-              name: 'car-models-id-edit',
-              params: { id: data.id },
-            });
-        }
+        return saveButtonHandler.call(this, event, {
+          baseRoute: 'car-models',
+          routeParams: data,
+        });
       }));
     },
   },

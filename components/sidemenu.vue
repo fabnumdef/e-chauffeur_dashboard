@@ -32,12 +32,12 @@
           Historique
         </nuxt-link>
       </li>
-      <li v-if="hasCampus">
+      <li>
         <nuxt-link :to="campusLink('planning')">
           Planning
         </nuxt-link>
       </li>
-      <li v-if="hasCampus">
+      <li>
         <nuxt-link :to="campusLink('planificator')">
           Planificateur
           <span
@@ -46,49 +46,49 @@
           >{{ displacementsToValidate.length }}</span>
         </nuxt-link>
       </li>
-      <li v-if="hasCampus">
+      <li>
         <nuxt-link :to="campusLink('shuttle-factories')">
           Trajets de navette
         </nuxt-link>
       </li>
-      <li v-if="hasCampus && $auth.isRegulator() && !$auth.isAdmin()">
+      <li v-if="$auth.isRegulator(campus.id)">
         <nuxt-link :to="campusLink('drivers')">
           Chauffeurs
         </nuxt-link>
       </li>
-      <li v-if="hasCampus && $auth.isAdmin()">
+      <li v-if="$auth.isAdmin(campus.id)">
         <nuxt-link :to="campusLink('users')">
           Utilisateurs
         </nuxt-link>
       </li>
-      <li v-if="hasCampus">
+      <li>
         <nuxt-link :to="campusLink('cars')">
           Véhicules
         </nuxt-link>
       </li>
-      <li v-if="hasCampus">
+      <li>
         <nuxt-link
           :to="campusLink('phones')"
         >
           Téléphones
         </nuxt-link>
       </li>
-      <li v-if="hasCampus">
+      <li>
         <nuxt-link :to="campusLink('pois')">
           Lieux
         </nuxt-link>
       </li>
-      <li v-if="hasCampus && $auth.isAdmin(campus.id)">
+      <li v-if="$auth.isAdmin(campus.id)">
         <nuxt-link :to="campusLink('edit')">
           Base
         </nuxt-link>
       </li>
-      <li v-if="hasCampus && $auth.isSuperAdmin()">
+      <li v-if="$auth.isSuperAdmin()">
         <nuxt-link :to="campusLink('ratings')">
           Appréciations
         </nuxt-link>
       </li>
-      <li v-if="hasCampus && $auth.isSuperAdmin()">
+      <li v-if="$auth.isSuperAdmin()">
         <nuxt-link
           :to="campusLink('map-vision')"
         >

@@ -20,6 +20,7 @@ export default (type) => {
     throw new Error('kind should be defined');
   }
   return {
+    watchQuery: ['current'],
     computed: {
       calEvents() {
         return this.events.data.map((event) => {

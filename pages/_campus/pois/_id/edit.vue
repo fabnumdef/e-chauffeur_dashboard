@@ -92,7 +92,7 @@ import toggleLoading from '~/helpers/mixins/toggle-loading';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 import resetableMixin from '~/helpers/mixins/reset-data';
 import titleMixin from '~/helpers/mixins/page-title';
-import saveButton, { NEXT_ACTION_KEY, NEXT_ACTION_LIST, NEXT_ACTION_NEW } from '~/components/crud/save-button.vue';
+import saveButton, { saveButtonHandler } from '~/components/crud/save-button.vue';
 
 export default {
   components: {
@@ -131,7 +131,7 @@ export default {
     }),
   },
   methods: {
-    async edit(poi, { submitter }) {
+    async edit(poi, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
         const ApiPois = this.$api.query('pois').setMask('id,label,location(coordinates),campus');
         const formattedPoi = {
@@ -148,22 +148,16 @@ export default {
           ({ data } = (await ApiPois.create(formattedPoi)));
         }
         this.$toast.success('Lieu enregistré avec succès');
-        switch (submitter.getAttribute(NEXT_ACTION_KEY)) {
-          case NEXT_ACTION_NEW:
+        return saveButtonHandler.call(this, event, {
+          onNew: () => {
             this.reset();
-
-            return this.$router.push(this.$context.buildCampusLink('pois-new', {
-              params: { id: data.id },
-            }));
-          case NEXT_ACTION_LIST:
-            return this.$router.push(this.$context.buildCampusLink('pois', {
-              params: { id: data.id },
-            }));
-          default:
-            return this.$router.push(this.$context.buildCampusLink('pois-id-edit', {
-              params: { id: data.id },
-            }));
-        }
+            return this.$router.push(this.campusLink('pois-new'));
+          },
+          onList: () => this.$router.push(this.campusLink('pois')),
+          onOther: () => this.$router.push(this.campusLink('pois-id-edit', {
+            params: data,
+          })),
+        });
       }));
     },
   },

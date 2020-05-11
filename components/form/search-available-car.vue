@@ -70,7 +70,7 @@ export default {
         this.loading = true;
         try {
           const { data } = await this.$api.query('rides')
-            .setCampus(this.campus)
+            .setCampus(this.campusId)
             .setMask(FIELDS)
             .availableCars(
               this.start.toISO(),

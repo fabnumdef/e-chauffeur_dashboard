@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import pieChart from '~/components/charts/pie';
+import pieChart from '~/components/charts/pie.vue';
 import fragmentedTile from '~/components/dashboard/fragments.vue';
 import bgColorsMixin from '~/components/dashboard/mixins/background-colors';
 

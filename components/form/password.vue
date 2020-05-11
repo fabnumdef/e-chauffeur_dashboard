@@ -3,6 +3,7 @@
     <input
       v-bind="$attrs"
       type="password"
+      autocomplete="off"
       class="input"
       :class="{ 'is-danger': !isValid}"
       :value="val || value"

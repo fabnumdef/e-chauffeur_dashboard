@@ -7,8 +7,13 @@
 * Added crud for shuttle factory
 * Added shuttle licence information to drivers in planning
 * Added shuttle creation and update to planificator
+* Add a button to refresh campuses list in sidemenu
+* Split users CRUD for admin
 ### Fix
 * Fixed setRides to avoid keeping wrong campuses rides in rides list
+* Fix submitter detection for firefox 52.
+* Add some autocomplete off to prevent browser autocompletion
+* Fix navigation in planning by watching query
 ## Version 1.4.6
 ### Features
 * Added loading animation and success message while creating or editing CRUD
