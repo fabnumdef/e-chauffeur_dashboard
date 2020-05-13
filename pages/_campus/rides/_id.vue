@@ -60,7 +60,10 @@ const formatDate = (ISODate) => DateTime.fromISO(ISODate).toFormat('dd LLL yyyy 
 
 export default {
   async asyncData({ params, $api }) {
-    const { data } = await $api.query('rides').setMask(mask).get(params.id);
+    const { data } = await $api.query('rides')
+      .setCampus(params.campus)
+      .setMask(mask)
+      .get(params.id);
     const ride = {
       ...data,
       start: formatDate(data.start),

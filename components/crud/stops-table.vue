@@ -34,7 +34,7 @@
             >
               {{ stop[key] }}
             </div>
-            <div v-if="$auth.isSuperAdmin() || $auth.isRegulator(campus.id)">
+            <div v-if="$auth.isSuperAdmin() || $auth.isRegulator($route.params.campus)">
               <ec-button
                 is-dark
                 type="button"

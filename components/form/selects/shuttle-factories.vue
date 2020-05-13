@@ -19,10 +19,22 @@
 import lazyDataset from '~/components/form/selects/mixins/lazy-dataset';
 
 const SHUTTLE_FACTORIES = 'shuttleFactories';
+const mask = 'id,label,stops(id,label)';
 
 export default {
   mixins: [
-    lazyDataset(SHUTTLE_FACTORIES, { mask: 'id,label,stops(id,label)' }),
+    lazyDataset(SHUTTLE_FACTORIES, {
+      mask,
+      listQuery: function query(api, options = {}) {
+        return api.query(SHUTTLE_FACTORIES)
+          .setCampus(this.$route.params.campus)
+          .setMask(mask)
+          .list()
+          .setOffset(0)
+          .setLimit(30)
+          .setSearchTerm(options.search);
+      },
+    }),
   ],
   props: {
     value: {
