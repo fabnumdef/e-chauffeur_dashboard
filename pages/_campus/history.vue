@@ -376,8 +376,8 @@ export default {
         .map((_, i) => async () => {
           const { data } = await this.$api.query('rides')
             .setMask(this.fields.join(','))
+            .setCampus(this.campus.id)
             .list(this.filters.date[0], this.filters.date[1])
-            .setFilter('campus', this.campus.id)
             .setOffset(ROWS_PER_QUERY * i)
             .setLimit(ROWS_PER_QUERY)
             .toCSV(csv);
@@ -390,8 +390,8 @@ export default {
     async getRides() {
       const { data, pagination } = await this.$api.query('rides')
         .setMask(this.fields.join(','))
+        .setCampus(this.campus.id)
         .list(this.filters.date[0], this.filters.date[1])
-        .setFilter('campus', this.campus.id)
         .setOffset(0)
         .setLimit(ROWS_PER_QUERY);
       this.rides = data;

@@ -23,6 +23,7 @@ export default {
     mask: 'id,stops',
     listQuery: async function listQuery(api) {
       const res = await api.query(SHUTTLE_FACTORIES)
+        .setCampus(this.$route.params.campus)
         .setMask('id,stops')
         .get(this.shuttleFactoryId);
 

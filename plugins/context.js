@@ -14,8 +14,7 @@ Vue.mixin({
       const campus = this.$store.getters['context/campus'];
       return merge({
         name: `campus-${name}`,
-        params: { campus: campus.id },
-      }, ...mergables);
+      }, ...mergables, { params: { campus: campus.id } });
     },
   },
 });

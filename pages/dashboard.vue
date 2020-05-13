@@ -95,12 +95,13 @@ export default {
 
   },
   watchQuery: ['before', 'after', 'time-scope', 'time-unit'],
-  async asyncData({ $api, query }) {
+  async asyncData({ $api, query, params }) {
     const start = (query.after ? DateTime.fromISO(query.after) : DateTime.local().startOf('weeks')).toJSDate();
     const end = (query.before ? DateTime.fromISO(query.before) : DateTime.local().endOf('weeks')).toJSDate();
     const timeScope = (query['time-scope'] ? query['time-scope'] : 'week');
     const timeUnit = (query['time-unit'] ? query['time-unit'] : 'day');
     const { data: stats } = await $api.query('rides')
+      .setCampus(params.campus)
       .setMask([
         REQUESTABLE.total, REQUESTABLE.categories, REQUESTABLE.carModels,
         REQUESTABLE.hasPhone,

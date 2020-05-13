@@ -153,7 +153,9 @@ export default {
     },
     async edit(shuttleFactory, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
-        const ApiShuttleFactories = this.$api.query('shuttleFactories').setMask(EDITABLE_FIELDS);
+        const ApiShuttleFactories = this.$api.query('shuttleFactories')
+          .setCampus(this.campus.id)
+          .setMask(EDITABLE_FIELDS);
         const formattedShuttleFactory = { ...shuttleFactory, campus: this.campus };
         let data = {};
         if (this.id) {

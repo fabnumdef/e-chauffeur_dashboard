@@ -23,7 +23,7 @@
           class="column is-narrow"
         >
           <ec-button
-            v-if="$auth.isAdmin(campus.id)"
+            v-if="$auth.isRegulator(campus.id)"
             :to="campusLink('shuttle-factories-new')"
             is-success
             icon-left="plus"
@@ -34,7 +34,7 @@
       </div>
     </template>
     <template
-      v-if="$auth.isAdmin(campus.id)"
+      v-if="$auth.isRegulator(campus.id)"
       #actions="{ row }"
     >
       <ec-button
@@ -81,13 +81,14 @@ export default {
         const list = await l.setFilter('campus', params.campus);
         list.data = list.data.map((shuttleFactory) => ({
           ...shuttleFactory,
-          category: shuttleFactory.category.label,
+          category: shuttleFactory.category ? shuttleFactory.category.label : 'Pas de catégories renseignées',
           stops: shuttleFactory.stops.length > 0
             ? shuttleFactory.stops.length
             : 'Pas d\'arrêts définis',
         }));
         return list;
       },
+      customQuery: (q, { params }) => q.setCampus(params.campus),
     }),
     deleteInListMixin(SHUTTLE_FACTORIES, { confirmation: 'Voulez vous vraiment supprimer ce trajet ?' }),
   ],
