@@ -84,7 +84,10 @@ export default {
       mask: DEFAULT_MASK,
       customList: async (l, { params }) => l.setFilter('campus', params.campus),
     }),
-    deleteInListMixin(PHONES, { confirmation: 'Voulez vous vraiment supprimer ce téléphone ?' }),
+    deleteInListMixin(PHONES, {
+      confirmation: 'Voulez vous vraiment supprimer ce téléphone ?',
+      customQuery: (q, { params }) => q.setCampus(params.campus),
+    }),
     importCSVMixin(PHONES),
     exportCSVMixin(PHONES, { mask: DEFAULT_MASK }),
   ],

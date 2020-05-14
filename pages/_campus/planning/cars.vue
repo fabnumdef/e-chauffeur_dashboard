@@ -90,8 +90,8 @@ export default {
     const limit = parseInt(query.limit, 10) || 30;
     const cars = await $api.query('cars')
       .setMask(CARS_DATA)
+      .setCampus(params.campus)
       .list()
-      .setFilter('campus', params.campus)
       .setOffset(offset)
       .setLimit(limit);
     const events = await $api.query('timeSlot')

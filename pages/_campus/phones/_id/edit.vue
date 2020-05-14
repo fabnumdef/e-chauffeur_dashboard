@@ -145,7 +145,7 @@ export default {
   methods: {
     async edit(phone, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
-        const ApiPhones = this.$api.query('phones').setMask(EDITABLE_FIELDS);
+        const ApiPhones = this.$api.query('phones').setMask(EDITABLE_FIELDS).setCampus(this.campus.id);
         let data = {};
 
         if (this.id) {

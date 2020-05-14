@@ -180,7 +180,7 @@ export default {
   },
   computed: {
     ApiShuttle() {
-      return this.$api.query('shuttles').setMask(mask);
+      return this.$api.query('shuttles').setMask(mask).setCampus(this.campus.id);
     },
     capacity() {
       if (this.shuttle.car && this.shuttle.car.model && this.shuttle.car.model.capacity) {

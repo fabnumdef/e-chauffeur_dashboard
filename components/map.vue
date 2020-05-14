@@ -158,9 +158,9 @@ export default {
   async mounted() {
     const { data } = await this.$api.query('pois')
       .setMask('label,location(coordinates),id')
+      .setCampus(this.campus.id)
       .list()
-      .setLimit(1000)
-      .setFilter('campus', this.campus.id);
+      .setLimit(1000);
     this.pois = data;
   },
   methods: {

@@ -133,7 +133,9 @@ export default {
   methods: {
     async edit(poi, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
-        const ApiPois = this.$api.query('pois').setMask('id,label,location(coordinates),campus');
+        const ApiPois = this.$api.query('pois')
+          .setMask('id,label,location(coordinates),campus')
+          .setCampus(this.campus.id);
         const formattedPoi = {
           ...poi,
           campus: this.campus,
