@@ -90,7 +90,10 @@ export default {
       },
       customQuery: (q, { params }) => q.setCampus(params.campus),
     }),
-    deleteInListMixin(SHUTTLE_FACTORIES, { confirmation: 'Voulez vous vraiment supprimer ce trajet ?' }),
+    deleteInListMixin(SHUTTLE_FACTORIES, {
+      confirmation: 'Voulez vous vraiment supprimer ce trajet ?',
+      customQuery: (q, { params }) => q.setCampus(params.campus),
+    }),
   ],
 
   computed: {
