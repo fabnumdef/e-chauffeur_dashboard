@@ -30,24 +30,80 @@
       />
     </ec-field>
 
-    <ec-field
-      label="Temps moyen entre chaque arrêt (en minutes)"
-      field-id="reachDuration"
-      :error-message="getErrorMessage('reachDuration')"
-    >
-      <input
-        id="reachDuration"
-        v-model="shuttleFactory.reachDuration"
-        class="input"
-        type="number"
-        :class="getErrorClass('reachDuration')"
+    <div>
+      <h3 class="label">
+        Liste des arrêts
+      </h3>
+      <p v-if="!shuttleFactory.stops || shuttleFactory.stops.length === 0">
+        Pas d'arrêts paramétrés
+      </p>
+      <div
+        v-else
+        class="stop-table"
       >
-    </ec-field>
-
-    <stops-table
-      :shuttle-factory="shuttleFactory"
-      :selected-stop="selectedStop"
-    />
+        <div class="header">
+          <div
+            v-for="({ label }, index) in columnKeys"
+            :key="index"
+          >
+            {{ label }}
+          </div>
+          <div>Temps entre arrêts</div>
+          <div>Actions</div>
+        </div>
+        <div class="body">
+          <vue-draggable
+            v-model="shuttleFactory.stops"
+          >
+            <div
+              v-for="(stop, index) in shuttleFactory.stops"
+              :key="index"
+              :class="index % 2 === 0 ? 'row' : 'row-darker'"
+            >
+              <div
+                v-for="({ key }, i) in columnKeys"
+                :key="i"
+              >
+                {{ stop[key] }}
+              </div>
+              <div>
+                <input
+                  v-if="index > 0"
+                  v-model="stop.reachDuration"
+                  type="number"
+                  placeholder="Temps en minutes"
+                >
+                <p v-else>
+                  Arrêt de départ
+                </p>
+              </div>
+              <div v-if="$auth.isRegulator($route.params.campus)">
+                <ec-button
+                  is-dark
+                  type="button"
+                  icon-left="arrow-down"
+                  @click="stopDown(stop)"
+                />
+                <ec-button
+                  is-dark
+                  type="button"
+                  icon-left="arrow-up"
+                  @click="stopUp(stop)"
+                />
+                <ec-button
+                  is-danger
+                  type="button"
+                  icon-left="trash"
+                  @click="deleteStop(index)"
+                >
+                  Supprimer
+                </ec-button>
+              </div>
+            </div>
+          </vue-draggable>
+        </div>
+      </div>
+    </div>
 
     <ec-field
       label="Ajouter un nouvel arrêt"
@@ -86,7 +142,7 @@
 
     <save-button
       :loading="loading"
-      :is-new="!id"
+      :is-new="!shuttleFactory.id"
       has-alt
     />
   </form>
@@ -94,7 +150,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import stopsTable from '~/components/crud/stops-table.vue';
 import searchCategory from '~/components/form/search-campus-category.vue';
 import searchPoi from '~/components/form/search-poi.vue';
 import saveButton, { saveButtonHandler } from '~/components/crud/save-button.vue';
@@ -102,12 +157,12 @@ import toggleLoading from '~/helpers/mixins/toggle-loading';
 import errorsManagementMixin from '~/helpers/mixins/errors-management';
 import resetableMixin from '~/helpers/mixins/reset-data';
 import titleMixin from '~/helpers/mixins/page-title';
+import handleStopsTable from '~/components/crud/mixins/handle-stop-selection';
 
-const EDITABLE_FIELDS = ['id', 'label', 'category', 'stops', 'comments', 'reachDuration'];
+const EDITABLE_FIELDS = ['id', 'label', 'category', 'stops', 'comments'];
 
 export default {
   components: {
-    stopsTable,
     searchCategory,
     searchPoi,
     saveButton,
@@ -121,6 +176,7 @@ export default {
         data: { ...this.shuttleFactory },
       };
     }),
+    handleStopsTable(),
   ],
   props: {
     shuttleFactory: {
@@ -133,7 +189,7 @@ export default {
   data() {
     const { label, id } = this.shuttleFactory;
     this.setTitle(id ? `Trajet de navette #${label}` : 'Trajet de navette', id ? 'Édition' : 'Création');
-    return { id, selectedStop: null };
+    return { selectedStop: null };
   },
   computed: {
     ...mapGetters({
@@ -141,16 +197,6 @@ export default {
     }),
   },
   methods: {
-    addStop() {
-      const alreadyExists = this.shuttleFactory.stops.findIndex(({ label }) => label === this.selectedStop.label) > -1;
-      if (
-        !alreadyExists
-        || (window && window.confirm('Attention, cet arrêt est déjà listé, êtes-vous sûr de vouloir l\'ajouter ?'))
-      ) {
-        this.shuttleFactory.stops.push(this.selectedStop);
-        this.selectedStop = null;
-      }
-    },
     async edit(shuttleFactory, event) {
       return this.raceToggleLoading(() => this.handleCommonErrorsBehavior(async () => {
         const ApiShuttleFactories = this.$api.query('shuttleFactories')
@@ -158,7 +204,7 @@ export default {
           .setMask(EDITABLE_FIELDS);
         const formattedShuttleFactory = { ...shuttleFactory, campus: this.campus };
         let data = {};
-        if (this.id) {
+        if (this.shuttleFactory.id) {
           ({ data } = (await ApiShuttleFactories.edit(formattedShuttleFactory.id, formattedShuttleFactory)));
         } else {
           ({ data } = (await ApiShuttleFactories.create(formattedShuttleFactory)));
@@ -179,3 +225,42 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  @import '~assets/css/head';
+
+  h3 {
+    font-weight: bold;
+  }
+  .actions {
+    text-align: center;
+    width: 200px;
+  }
+  .stop-table {
+    .header {
+      display: flex;
+      div {
+        width: 100%;
+        padding: .8em;
+        border: 1px solid $gray;
+        font-weight: 700;
+      }
+    }
+    .body {
+      .row-darker {
+        background-color: $light-gray;
+      }
+      .row, .row-darker {
+        display: flex;
+        &:hover {
+          background-color: $gray;
+        }
+        div {
+          padding: .6em 1em;
+          width: 100%;
+          border: 1px solid $gray;
+        }
+      }
+    }
+  }
+</style>

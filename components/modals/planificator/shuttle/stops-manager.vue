@@ -15,6 +15,11 @@
             :class="passengersCountClass(interStop.passengers)"
           >{{ interStop.passengers.length }}/{{ capacity }}<fa-icon icon="user" /></span>
           <span v-else>Capacité du véhicule non définie</span>
+          <span>
+            {{ getInterstopDate(interStop.departure.time) }}
+            <fa-icon icon="arrow-right" />
+            {{ getInterstopDate(interStop.arrival.time) }}
+          </span>
           <fa-icon
             v-if="toDisplay[index]"
             icon="angle-up"
@@ -119,9 +124,9 @@
 
 <script>
 import { VueTelInput } from 'vue-tel-input';
+import { DateTime } from 'luxon';
 import searchStop from '~/components/form/selects/stops.vue';
 import displayMixin from '~/components/modals/planificator/shuttle/mixins/display-stops';
-import passengersHandlerMixin from '~/components/modals/planificator/shuttle/mixins/passengers-handler';
 
 export default {
   components: {
@@ -130,7 +135,6 @@ export default {
   },
   mixins: [
     displayMixin(),
-    passengersHandlerMixin(),
   ],
   props: {
     parentStops: {
@@ -154,6 +158,10 @@ export default {
     return {
       stops: [...this.parentStops],
       passengers: [...this.parentPassengers],
+      departure: null,
+      arrival: null,
+      email: '',
+      phone: '',
     };
   },
   watch: {
@@ -162,6 +170,44 @@ export default {
     },
     parentPassengers() {
       this.passengers = [...this.parentPassengers];
+    },
+  },
+  methods: {
+    getInterstopDate(time) {
+      return DateTime.fromISO(time).toLocaleString({ hour: '2-digit', minute: '2-digit', hour12: false });
+    },
+    deletePassenger(passenger) {
+      this.passengers.splice(this.passengers.findIndex(({ email }) => email === passenger.email), 1);
+      this.$emit('update-passengers', this.passengers);
+    },
+    addPassenger() {
+      if (this.email && this.departure && this.arrival) {
+        const departure = this.stops.find((stop) => stop.id === this.departure.id);
+        const arrival = this.stops.find((stop) => stop.id === this.arrival.id);
+        if (departure && arrival) {
+          const passenger = {
+            email: this.email,
+            departure: {
+              id: departure.id,
+              label: departure.label,
+            },
+            arrival: {
+              id: arrival.id,
+              label: arrival.label,
+            },
+          };
+
+          if (this.phone) {
+            passenger.phone = this.phone;
+          }
+
+          this.passengers.push(passenger);
+        }
+        this.resetState();
+        this.$emit('update-passengers', this.passengers);
+      } else {
+        this.$toast.error('Veuillez compléter l\'email, l\'arrêt de départ et l\'arrêt d\'arrivée');
+      }
     },
   },
 };
