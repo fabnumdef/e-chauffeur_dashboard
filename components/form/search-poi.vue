@@ -70,11 +70,11 @@ export default {
       try {
         const { data } = await this.$api.query('pois')
           .setMask(FIELDS)
+          .setCampus(this.currentCampus.id)
           .list()
           .setOffset(0)
           .setLimit(1000)
-          .setSearchTerm(search)
-          .setFilter('campus', this.currentCampus.id);
+          .setSearchTerm(search);
         this.pois = data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');
@@ -90,10 +90,10 @@ export default {
       try {
         const { data } = await this.$api.query('pois')
           .setMask(FIELDS)
+          .setCampus(this.currentCampus.id)
           .list()
           .setOffset(0)
-          .setLimit(1000)
-          .setFilter('campus', this.currentCampus.id);
+          .setLimit(1000);
         this.pois = data;
       } catch (e) {
         this.$toast.error('Une erreur est survenue lors de la récupération des données.');

@@ -93,7 +93,10 @@ export default {
         return list;
       },
     }),
-    deleteInListMixin(POIS, { confirmation: 'Voulez vous vraiment supprimer ce lieu ?' }),
+    deleteInListMixin(POIS, {
+      confirmation: 'Voulez vous vraiment supprimer ce lieu ?',
+      customQuery: (q, { params }) => q.setCampus(params.campus),
+    }),
     importCSVMixin(POIS),
     exportCSVMixin(POIS, { mask: [...DEFAULT_MASK, 'location(coordinates(0,1))', 'campus(id,name)'] }),
   ],

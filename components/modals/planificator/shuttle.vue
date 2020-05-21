@@ -178,7 +178,7 @@ export default {
   },
   computed: {
     ApiShuttle() {
-      return this.$api.query('shuttles').setMask(mask);
+      return this.$api.query('shuttles').setMask(mask).setCampus(this.campus.id);
     },
   },
   watch: {
