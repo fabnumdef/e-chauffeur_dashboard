@@ -101,8 +101,7 @@ export const getters = {
   displacements: (s) => [...s.rides, ...s.shuttles],
   displacementsToValidate: (s) => [
     ...s.rides.filter(({ status }) => status === CREATED),
-    // @todo handle shuttles statuses
-    ...s.shuttles.filter(({ status }) => status === CREATED),
+    // @todo think of a way to notify passenger validation in shuttles
   ],
   todayDisplacements: (s) => {
     const currentTime = DateTime.local();

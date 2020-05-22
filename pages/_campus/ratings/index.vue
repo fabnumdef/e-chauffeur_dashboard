@@ -54,8 +54,9 @@ export default {
     titleMixin('Appréciations'),
     updateListMixin(RATINGS, {
       mask: DEFAULT_MASK,
-      customList: async (l, { params }) => {
-        const list = await l.setFilter('campus', params.campus);
+      customQuery: (q, { params }) => q.setCampus(params.campus),
+      customList: async (l) => {
+        const list = await l.callback();
         list.data = list.data.map((rating) => ({
           ...rating,
           createdAt: DateTime.fromISO(rating.createdAt).toLocaleString(DateTime.DATETIME_SHORT),
@@ -63,7 +64,10 @@ export default {
         return list;
       },
     }),
-    exportCSVMixin(RATINGS, { mask: DEFAULT_MASK }),
+    exportCSVMixin(RATINGS, {
+      mask: DEFAULT_MASK,
+      customQuery: (q, { params }) => q.setCampus(params.campus),
+    }),
   ],
 };
 </script>

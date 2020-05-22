@@ -18,7 +18,7 @@
           class="column is-narrow"
         />
         <import-button
-          v-if="$auth.isAdmin(campus.id)"
+          v-if="$auth.isRegulator(campus.id)"
           class="column is-narrow"
           @import="importCSV"
         />
@@ -26,7 +26,7 @@
           class="column is-narrow"
         >
           <ec-button
-            v-if="$auth.isAdmin(campus.id)"
+            v-if="$auth.isRegulator(campus.id)"
             :to="campusLink('pois-new')"
             is-success
             icon-left="plus"
@@ -37,7 +37,7 @@
       </div>
     </template>
     <template
-      v-if="$auth.isAdmin(campus.id)"
+      v-if="$auth.isRegulator(campus.id)"
       #actions="{ row }"
     >
       <ec-button
@@ -82,8 +82,9 @@ export default {
     searchFilterMixin(),
     updateListMixin(POIS, {
       mask: DEFAULT_MASK,
-      customList: async (l, { params }) => {
-        const list = await l.setFilter('withDisabled', true).setFilter('campus', params.campus);
+      customQuery: (q, { params }) => q.setCampus(params.campus),
+      customList: async (l) => {
+        const list = await l.setFilter('withDisabled', true);
         list.data = list.data.map((poi) => ({
           ...poi,
           enabled: (poi.enabled === false)
@@ -98,7 +99,10 @@ export default {
       customQuery: (q, { params }) => q.setCampus(params.campus),
     }),
     importCSVMixin(POIS),
-    exportCSVMixin(POIS, { mask: [...DEFAULT_MASK, 'location(coordinates(0,1))', 'campus(id,name)'] }),
+    exportCSVMixin(POIS, {
+      mask: [...DEFAULT_MASK, 'location(coordinates(0,1))', 'campus(id,name)'],
+      customQuery: (q, { params }) => q.setCampus(params.campus),
+    }),
   ],
   computed: {
     ...mapGetters({

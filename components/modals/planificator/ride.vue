@@ -259,7 +259,6 @@
         v-if="can(ride, REJECT_BOUNDARY) || can(ride, REJECT_CAPACITY)"
         class="is-danger"
         :options="{[REJECT_BOUNDARY]: 'Refuser (périmètre)', [REJECT_CAPACITY]: 'Refuser (capacité)'}"
-        :open="false"
         @click="edit(ride, $event)"
       >
         Refuser la course

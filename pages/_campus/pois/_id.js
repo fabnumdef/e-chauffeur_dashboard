@@ -4,5 +4,5 @@ export default abstractRoute({
   query: 'pois',
   mask: 'id,label,location(coordinates),campus,enabled',
   key: 'poi',
-  customGet: async (query, { params }) => query.setFilter('campus', params.campus),
+  customQuery: (q, { params }) => q.setCampus(params.campus),
 });

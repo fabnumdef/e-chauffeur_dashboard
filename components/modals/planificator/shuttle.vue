@@ -219,9 +219,15 @@ export default {
         campus: this.campus,
       };
       this.toggleLoading(true);
-      let ApiCallback = async () => this.ApiShuttle.create(formattedData);
+      let ApiCallback = async () => {
+        await this.ApiShuttle.create(formattedData);
+        this.toggleModal();
+      };
       if (formattedData.id) {
-        ApiCallback = async () => this.ApiShuttle.edit(formattedData.id, formattedData);
+        ApiCallback = async () => {
+          await this.ApiShuttle.edit(formattedData.id, formattedData);
+          this.toggleModal();
+        };
       }
 
       await this.handleCommonErrorsBehavior(ApiCallback);

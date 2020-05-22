@@ -32,7 +32,7 @@ export default {
     titleMixin('Appréciation'),
   ],
   async asyncData({ params, $api }) {
-    const { data } = await $api.query('ratings').setMask(mask).get(params.id).setFilter('campus', params.campus);
+    const { data } = await $api.query('ratings').setMask(mask).setCampus(params.campus).get(params.id);
     return {
       ...data,
       createdAt: DateTime.fromISO(data.createdAt).toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS),

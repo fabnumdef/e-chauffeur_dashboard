@@ -82,14 +82,17 @@ export default {
     searchFilterMixin(),
     updateListMixin(PHONES, {
       mask: DEFAULT_MASK,
-      customList: async (l, { params }) => l.setFilter('campus', params.campus),
+      customQuery: (q, { params }) => q.setCampus(params.campus),
     }),
     deleteInListMixin(PHONES, {
       confirmation: 'Voulez vous vraiment supprimer ce téléphone ?',
       customQuery: (q, { params }) => q.setCampus(params.campus),
     }),
     importCSVMixin(PHONES),
-    exportCSVMixin(PHONES, { mask: DEFAULT_MASK }),
+    exportCSVMixin(PHONES, {
+      mask: DEFAULT_MASK,
+      customQuery: (q, { params }) => q.setCampus(params.campus),
+    }),
   ],
   computed: {
     ...mapGetters({
