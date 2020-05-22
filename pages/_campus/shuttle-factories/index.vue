@@ -79,7 +79,7 @@ export default {
       mask: DEFAULT_MASK,
       customQuery: (q, { params }) => q.setCampus(params.campus),
       customList: async (l) => {
-        const list = await l.callback();
+        const list = await l;
         list.data = list.data.map((shuttleFactory) => ({
           ...shuttleFactory,
           category: shuttleFactory.category ? shuttleFactory.category.label : 'Pas de catégories renseignées',
