@@ -77,8 +77,9 @@ export default {
     searchFilterMixin(),
     updateListMixin(SHUTTLE_FACTORIES, {
       mask: DEFAULT_MASK,
-      customList: async (l, { params }) => {
-        const list = await l.setFilter('campus', params.campus);
+      customQuery: (q, { params }) => q.setCampus(params.campus),
+      customList: async (l) => {
+        const list = await l;
         list.data = list.data.map((shuttleFactory) => ({
           ...shuttleFactory,
           category: shuttleFactory.category ? shuttleFactory.category.label : 'Pas de catégories renseignées',
@@ -88,7 +89,6 @@ export default {
         }));
         return list;
       },
-      customQuery: (q, { params }) => q.setCampus(params.campus),
     }),
     deleteInListMixin(SHUTTLE_FACTORIES, {
       confirmation: 'Voulez vous vraiment supprimer ce trajet ?',

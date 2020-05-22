@@ -85,7 +85,10 @@ export default {
       confirmation: 'Voulez vous vraiment supprimer cet utilisateur ?',
       customQuery,
     }),
-    exportCSVMixin(USERS, { mask: DEFAULT_MASK }),
+    exportCSVMixin(USERS, {
+      mask: DEFAULT_MASK,
+      customQuery: (q, { params }) => q.setCampus(params.campus),
+    }),
 
   ],
   computed: {

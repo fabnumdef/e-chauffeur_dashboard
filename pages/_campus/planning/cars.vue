@@ -97,8 +97,7 @@ export default {
     const events = await $api.query('timeSlot')
       .setMask(TIMESLOT_DATA)
       .setCampus(params.campus)
-      .listCars(after, before)
-      .setFilter('campus', params.campus);
+      .listCars(after, before);
     return {
       timeSlot: newTimeSlot(),
       cars: {

@@ -4,6 +4,5 @@ export default abstractRoute({
   query: 'cars',
   mask: 'id,label,model',
   key: 'car',
-  // @todo review
-  customGet: (query, { params }) => query.setFilter('campus', params.campus),
+  customQuery: (q, { params }) => q.setCampus(params.campus),
 });
