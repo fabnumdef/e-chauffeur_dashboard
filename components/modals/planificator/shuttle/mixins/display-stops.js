@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 export default () => ({
   data() {
     return {
@@ -14,7 +16,10 @@ export default () => ({
     },
     interStops() {
       return this.stops.reduce((acc, stop, index) => {
-        const departure = stop;
+        const departure = {
+          ...stop,
+          time: stop.time instanceof DateTime ? stop.time.toISO() : stop.time,
+        };
         const arrival = this.nextStop(index);
         const incomingPassengers = this.passengers.filter((passenger) => passenger.departure.id === departure.id);
         if (index === 0) {
@@ -30,7 +35,6 @@ export default () => ({
           ];
           acc.push({ departure, arrival, passengers });
         }
-
         return acc;
       }, []);
     },
@@ -63,7 +67,13 @@ export default () => ({
       if (index === this.stops.length - 1) {
         return null;
       }
-      return this.stops[index + 1];
+      const next = index + 1;
+      return {
+        ...this.stops[next],
+        time: this.stops[next].time instanceof DateTime
+          ? this.stops[next].time.toISO()
+          : this.stops[next].time,
+      };
     },
   },
 });

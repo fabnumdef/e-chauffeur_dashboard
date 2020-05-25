@@ -19,7 +19,7 @@
 import lazyDataset from '~/components/form/selects/mixins/lazy-dataset';
 
 const SHUTTLE_FACTORIES = 'shuttleFactories';
-const mask = 'id,label,stops(id,label)';
+const mask = 'id,label,stops';
 
 export default {
   mixins: [
