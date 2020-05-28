@@ -1,39 +1,20 @@
 <template>
   <vue-multiselect
     v-bind="$attrs"
-    :allow-empty="false"
-    deselect-label=""
     placeholder="Sélectionner un arret"
-    :options="list"
+    :options="formattedStops"
     :value="value"
     track-by="index"
     label="label"
-    :loading="loading"
     v-on="$listeners"
   />
 </template>
 
 <script>
-import lazyDataset from '~/components/form/selects/mixins/lazy-dataset';
-
 const SHUTTLE_FACTORIES = 'shuttleFactories';
+const MASK = 'id,stops';
 
 export default {
-  mixins: [lazyDataset(SHUTTLE_FACTORIES, {
-    mask: 'id,stops',
-    listQuery: async function listQuery(api) {
-      const res = await api.query(SHUTTLE_FACTORIES)
-        .setCampus(this.$route.params.campus)
-        .setMask('id,stops')
-        .get(this.shuttleFactoryId);
-
-      res.data = res.data.stops.map(
-        ({ id, label }, index) => ({ id, index, label: `${index + 1}: ${label}` }),
-      );
-
-      return res;
-    },
-  })],
   props: {
     shuttleFactoryId: {
       type: String,
@@ -43,6 +24,36 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    isDeparture: {
+      type: Boolean,
+      default: false,
+    },
+    departureIndex: {
+      type: Number,
+      default: 0,
+    },
+  },
+  data() {
+    return {
+      stops: [],
+    };
+  },
+  computed: {
+    formattedStops() {
+      return this.isDeparture
+        ? this.stops.filter((_, i) => i !== this.stops.length - 1)
+        : this.stops.filter((_, i) => i > this.departureIndex && i > 0);
+    },
+  },
+  async mounted() {
+    const { data } = await this.$api.query(SHUTTLE_FACTORIES)
+      .setCampus(this.$route.params.campus)
+      .setMask(MASK)
+      .get(this.shuttleFactoryId);
+
+    this.stops = data.stops.map(
+      ({ id, label }, index) => ({ id, index, label: `${index + 1}: ${label}` }),
+    );
   },
 };
 </script>

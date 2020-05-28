@@ -116,23 +116,15 @@ export default {
   data() {
     const { id } = this.driver;
     this.setTitle(id ? `Chauffeur #${id}` : 'Chauffeur', id ? 'Édition' : 'Création');
-    return { id };
+    return {
+      id,
+      licences: this.driver.licences || ['B'],
+    };
   },
   computed: {
     ...mapGetters({
       campus: 'context/campus',
     }),
-    licences: {
-      get() {
-        if (this.data.licences && this.data.licences.length > 0) {
-          return this.data.licences;
-        }
-        return ['B'];
-      },
-      set(licences) {
-        this.data.licences = licences;
-      },
-    },
   },
   methods: {
     async edit(driver, event) {
@@ -142,6 +134,7 @@ export default {
           .setCampus(this.campus.id);
         const formattedDriver = {
           ...driver,
+          licences: this.licences,
           campus: this.campus,
         };
         let data = {};

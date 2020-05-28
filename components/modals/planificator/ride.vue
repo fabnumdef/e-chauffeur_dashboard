@@ -303,6 +303,7 @@ import searchAvailableCar from '~/components/form/search-available-car.vue';
 import searchAvailableDriver from '~/components/form/search-available-driver.vue';
 import bulmaDropdown from '~/components/dropdown.vue';
 import vueModal from '~/components/modals/default.vue';
+import errorsManagement from '~/helpers/mixins/errors-management';
 
 const EDITABLE_FIELDS = [
   'id',
@@ -343,7 +344,6 @@ export default {
     vueModal,
     VueTelInput,
   },
-
   directives: {
     autofocus: {
       update(el, binding) {
@@ -364,7 +364,7 @@ export default {
       },
     },
   },
-
+  mixins: [errorsManagement()],
   props: {
     currentRide: {
       type: Object,
@@ -391,7 +391,6 @@ export default {
       default: false,
     },
   },
-
   data() {
     return {
       ride: { ...this.currentRide },
@@ -408,7 +407,6 @@ export default {
       isAutoFocus: false,
     };
   },
-
   computed: {
     range() {
       return [
@@ -433,18 +431,15 @@ export default {
       }
     },
   },
-
   methods: {
     toggleModal(newStatus = false) {
       if (!newStatus) {
         this.$emit('toggle-modal', newStatus);
       }
     },
-
     toggleLuggage(value) {
       this.ride.luggage = value;
     },
-
     focusNext(input) {
       if (this.focusState[input]) {
         this.focusState[input] = 'unwatch';
@@ -466,7 +461,6 @@ export default {
     hasBeenFocused(input) {
       this.focusState[input] = 'focused';
     },
-
     updateDates([start, end], {
       id, name, firstname, lastname,
     } = {}) {
@@ -476,13 +470,13 @@ export default {
       this.ride.start = start instanceof DateTime ? start : DateTime.fromJSDate(start);
       this.ride.end = end instanceof DateTime ? end : DateTime.fromJSDate(end);
     },
-
     async edit(ride, action) {
       const api = this.$api
         .query('rides')
         .setMask(EDITABLE_FIELDS)
         .setCampus(this.campus.id);
-      try {
+
+      this.handleCommonErrorsBehavior(async () => {
         if (ride.id) {
           await api.edit(ride.id, { ...ride, campus: this.campus });
           if (action) {
@@ -501,27 +495,22 @@ export default {
           this.$toasted.success('La course a bien été créée.');
         }
         this.toggleModal(false);
-      } catch (e) {
-        this.$toasted.error(`La course n'a pas été créée ou mise à jour (${e}), merci de vérifiez les champs.`);
-      }
+      }, 'La course n\'a pas été créée ou mise à jour, merci de vérifiez les champs.');
     },
 
     async changeStatus(ride, action) {
       if (!ride.id) {
         this.$toasted.error('Changement de status possible uniquement pour une course sauvegardée');
       }
-      try {
+      this.handleCommonErrorsBehavior(async () => {
         await this.$api.query('rides')
           .setMask(EDITABLE_FIELDS)
           .setCampus(this.campus.id)
           .mutate(ride.id, action);
-        this.$toasted.success('Status modifié.');
+        this.$toasted.success('Statut modifié.');
         this.toggleModal(false);
-      } catch (e) {
-        this.$toasted.error(`La course n'a pas été créée ou mise à jour (${e}), merci de vérifiez les champs.`);
-      }
+      }, 'La course n\'a pas été créée ou mise à jour, merci de vérifiez les champs.');
     },
-
     can: ({ status }, action) => {
       const state = Status(status);
       return state.can(action);

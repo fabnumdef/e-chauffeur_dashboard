@@ -97,6 +97,7 @@
           <search-stop
             v-model="departure"
             :shuttle-factory-id="shuttleFactoryId"
+            is-departure
           />
         </ec-field>
 
@@ -108,6 +109,7 @@
           <search-stop
             v-model="arrival"
             :shuttle-factory-id="shuttleFactoryId"
+            :departure-index="departureIndex"
           />
         </ec-field>
       </div>
@@ -163,6 +165,11 @@ export default {
       email: '',
       phone: '',
     };
+  },
+  computed: {
+    departureIndex() {
+      return this.stops.findIndex((stop) => this.departure && stop.id === this.departure.id);
+    },
   },
   watch: {
     parentStops() {
