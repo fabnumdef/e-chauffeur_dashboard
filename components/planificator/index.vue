@@ -162,9 +162,17 @@
           </div>
           <div
             v-if="view.id === 'month' && customEventsCount(evts)"
-            class="vuecal__cell-events-count"
+            class="cell-counts"
           >
-            {{ customEventsCount(evts) }}
+            <div
+              v-if="eventsToValidate(evts) > 0"
+              class="to-validate"
+            >
+              {{ eventsToValidate(evts) }}
+            </div>
+            <div>
+              {{ customEventsCount(evts) }}
+            </div>
           </div>
         </template>
       </vue-cal>
@@ -404,7 +412,13 @@ export default {
     customEventsCount(events) {
       return events ? events.filter((e) => e.class !== 'not-working').length : 0;
     },
-
+    eventsToValidate(events) {
+      return events
+        ? events.filter((e) => (
+          e.class !== 'not-working'
+            && (e.ride && e.ride.status === CREATED))).length
+        : 0;
+    },
   },
 };
 </script>
@@ -421,6 +435,22 @@ export default {
       overflow-x: auto;
     }
     .vuecal {
+      .cell-counts {
+        display: flex;
+        justify-content: center;
+        & > div {
+          background-color: rgba(66,163,185,.8);
+          font-size: .6em;
+          font-weight: 700;
+          color: $white;
+          margin: .2em;
+          padding: .1em .6em;
+          border-radius: 100%;
+          &.to-validate {
+            background-color: rgba($red, .8);
+          }
+        }
+      }
       &__title-bar {
         background: $background;
       }
